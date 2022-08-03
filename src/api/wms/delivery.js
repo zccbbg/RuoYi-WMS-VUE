@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询发货记录列表
 export function listWmsDelivery(query, pageReq) {
   return request({
-    url: '/wms/wmsDelivery/list',
+    url: '/wms/delivery/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsDelivery(query, pageReq) {
 // 查询发货记录详细
 export function getWmsDelivery(id) {
   return request({
-    url: '/wms/wmsDelivery/' + id,
+    url: '/wms/delivery/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsDelivery(id) {
 // 新增发货记录
 export function addWmsDelivery(data) {
   return request({
-    url: '/wms/wmsDelivery',
+    url: '/wms/delivery',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsDelivery(data) {
 // 修改发货记录
 export function updateWmsDelivery(data) {
   return request({
-    url: '/wms/wmsDelivery',
+    url: '/wms/delivery',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsDelivery(data) {
 // 删除发货记录
 export function delWmsDelivery(id) {
   return request({
-    url: '/wms/wmsDelivery/' + id,
+    url: '/wms/delivery/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsDelivery(id) {
 // 导出发货记录
 export function exportWmsDelivery(query) {
   return request({
-    url: '/wms/wmsDelivery/export',
+    url: '/wms/delivery/export',
     method: 'get',
     params: query
   })

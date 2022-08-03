@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询物料列表
 export function listWmsItem(query, pageReq) {
   return request({
-    url: '/wms/wmsItem/list',
+    url: '/wms/item/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsItem(query, pageReq) {
 // 查询物料详细
 export function getWmsItem(id) {
   return request({
-    url: '/wms/wmsItem/' + id,
+    url: '/wms/item/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsItem(id) {
 // 新增物料
 export function addWmsItem(data) {
   return request({
-    url: '/wms/wmsItem',
+    url: '/wms/item',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsItem(data) {
 // 修改物料
 export function updateWmsItem(data) {
   return request({
-    url: '/wms/wmsItem',
+    url: '/wms/item',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsItem(data) {
 // 删除物料
 export function delWmsItem(id) {
   return request({
-    url: '/wms/wmsItem/' + id,
+    url: '/wms/item/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsItem(id) {
 // 导出物料
 export function exportWmsItem(query) {
   return request({
-    url: '/wms/wmsItem/export',
+    url: '/wms/item/export',
     method: 'get',
     params: query
   })

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询出库单列表
 export function listWmsShipmentOrder(query, pageReq) {
   return request({
-    url: '/wms/wmsShipmentOrder/list',
+    url: '/wms/shipmentOrder/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsShipmentOrder(query, pageReq) {
 // 查询出库单详细
 export function getWmsShipmentOrder(id) {
   return request({
-    url: '/wms/wmsShipmentOrder/' + id,
+    url: '/wms/shipmentOrder/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsShipmentOrder(id) {
 // 新增出库单
 export function addWmsShipmentOrder(data) {
   return request({
-    url: '/wms/wmsShipmentOrder',
+    url: '/wms/shipmentOrder',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsShipmentOrder(data) {
 // 修改出库单
 export function updateWmsShipmentOrder(data) {
   return request({
-    url: '/wms/wmsShipmentOrder',
+    url: '/wms/shipmentOrder',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsShipmentOrder(data) {
 // 删除出库单
 export function delWmsShipmentOrder(id) {
   return request({
-    url: '/wms/wmsShipmentOrder/' + id,
+    url: '/wms/shipmentOrder/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsShipmentOrder(id) {
 // 导出出库单
 export function exportWmsShipmentOrder(query) {
   return request({
-    url: '/wms/wmsShipmentOrder/export',
+    url: '/wms/shipmentOrder/export',
     method: 'get',
     params: query
   })

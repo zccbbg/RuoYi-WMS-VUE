@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询货区列表
 export function listWmsArea(query, pageReq) {
   return request({
-    url: '/wms/wmsArea/list',
+    url: '/wms/area/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsArea(query, pageReq) {
 // 查询货区详细
 export function getWmsArea(id) {
   return request({
-    url: '/wms/wmsArea/' + id,
+    url: '/wms/area/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsArea(id) {
 // 新增货区
 export function addWmsArea(data) {
   return request({
-    url: '/wms/wmsArea',
+    url: '/wms/area',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsArea(data) {
 // 修改货区
 export function updateWmsArea(data) {
   return request({
-    url: '/wms/wmsArea',
+    url: '/wms/area',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsArea(data) {
 // 删除货区
 export function delWmsArea(id) {
   return request({
-    url: '/wms/wmsArea/' + id,
+    url: '/wms/area/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsArea(id) {
 // 导出货区
 export function exportWmsArea(query) {
   return request({
-    url: '/wms/wmsArea/export',
+    url: '/wms/area/export',
     method: 'get',
     params: query
   })

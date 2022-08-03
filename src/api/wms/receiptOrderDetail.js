@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询入库单详情列表
 export function listWmsReceiptOrderDetail(query, pageReq) {
   return request({
-    url: '/wms/wmsReceiptOrderDetail/list',
+    url: '/wms/receiptOrderDetail/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsReceiptOrderDetail(query, pageReq) {
 // 查询入库单详情详细
 export function getWmsReceiptOrderDetail(id) {
   return request({
-    url: '/wms/wmsReceiptOrderDetail/' + id,
+    url: '/wms/receiptOrderDetail/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsReceiptOrderDetail(id) {
 // 新增入库单详情
 export function addWmsReceiptOrderDetail(data) {
   return request({
-    url: '/wms/wmsReceiptOrderDetail',
+    url: '/wms/receiptOrderDetail',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsReceiptOrderDetail(data) {
 // 修改入库单详情
 export function updateWmsReceiptOrderDetail(data) {
   return request({
-    url: '/wms/wmsReceiptOrderDetail',
+    url: '/wms/receiptOrderDetail',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsReceiptOrderDetail(data) {
 // 删除入库单详情
 export function delWmsReceiptOrderDetail(id) {
   return request({
-    url: '/wms/wmsReceiptOrderDetail/' + id,
+    url: '/wms/receiptOrderDetail/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsReceiptOrderDetail(id) {
 // 导出入库单详情
 export function exportWmsReceiptOrderDetail(query) {
   return request({
-    url: '/wms/wmsReceiptOrderDetail/export',
+    url: '/wms/receiptOrderDetail/export',
     method: 'get',
     params: query
   })

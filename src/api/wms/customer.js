@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询客户列表
 export function listWmsCustomer(query, pageReq) {
   return request({
-    url: '/wms/wmsCustomer/list',
+    url: '/wms/customer/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsCustomer(query, pageReq) {
 // 查询客户详细
 export function getWmsCustomer(id) {
   return request({
-    url: '/wms/wmsCustomer/' + id,
+    url: '/wms/customer/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsCustomer(id) {
 // 新增客户
 export function addWmsCustomer(data) {
   return request({
-    url: '/wms/wmsCustomer',
+    url: '/wms/customer',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsCustomer(data) {
 // 修改客户
 export function updateWmsCustomer(data) {
   return request({
-    url: '/wms/wmsCustomer',
+    url: '/wms/customer',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsCustomer(data) {
 // 删除客户
 export function delWmsCustomer(id) {
   return request({
-    url: '/wms/wmsCustomer/' + id,
+    url: '/wms/customer/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsCustomer(id) {
 // 导出客户
 export function exportWmsCustomer(query) {
   return request({
-    url: '/wms/wmsCustomer/export',
+    url: '/wms/customer/export',
     method: 'get',
     params: query
   })

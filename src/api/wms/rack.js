@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 查询货架列表
 export function listWmsRack(query, pageReq) {
   return request({
-    url: '/wms/wmsRack/list',
+    url: '/wms/rack/list',
     method: 'post',
     data: query,
     params: pageReq
@@ -13,7 +13,7 @@ export function listWmsRack(query, pageReq) {
 // 查询货架详细
 export function getWmsRack(id) {
   return request({
-    url: '/wms/wmsRack/' + id,
+    url: '/wms/rack/' + id,
     method: 'get'
   })
 }
@@ -21,7 +21,7 @@ export function getWmsRack(id) {
 // 新增货架
 export function addWmsRack(data) {
   return request({
-    url: '/wms/wmsRack',
+    url: '/wms/rack',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addWmsRack(data) {
 // 修改货架
 export function updateWmsRack(data) {
   return request({
-    url: '/wms/wmsRack',
+    url: '/wms/rack',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateWmsRack(data) {
 // 删除货架
 export function delWmsRack(id) {
   return request({
-    url: '/wms/wmsRack/' + id,
+    url: '/wms/rack/' + id,
     method: 'delete'
   })
 }
@@ -47,7 +47,7 @@ export function delWmsRack(id) {
 // 导出货架
 export function exportWmsRack(query) {
   return request({
-    url: '/wms/wmsRack/export',
+    url: '/wms/rack/export',
     method: 'get',
     params: query
   })
