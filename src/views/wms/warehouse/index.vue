@@ -115,9 +115,6 @@
         <el-form-item label="仓库名称" prop="warehouseName">
           <el-input v-model="form.warehouseName" placeholder="请输入仓库名称" />
         </el-form-item>
-        <el-form-item label="删除标识" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标识" />
-        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -174,9 +171,6 @@ export default {
         warehouseName: [
           { required: true, message: "仓库名称不能为空", trigger: "blur" }
         ],
-        delFlag: [
-          { required: true, message: "删除标识不能为空", trigger: "blur" }
-        ],
       },
       columns: [
             { key: 1, label: "仓库编号", visible:  true  },
@@ -213,7 +207,6 @@ export default {
         id: null,
         warehouseNo: null,
         warehouseName: null,
-        delFlag: null,
         remark: null,
         createBy: null,
         createTime: null,

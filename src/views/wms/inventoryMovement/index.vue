@@ -189,9 +189,6 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="删除标识" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标识" />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -244,9 +241,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        delFlag: [
-          { required: true, message: "删除标识不能为空", trigger: "blur" }
-        ],
       },
       columns: [
             { key: 1, label: "库存移动编号", visible:  true  },
@@ -294,7 +288,6 @@ export default {
         checkUserId: null,
         checkTime: null,
         remark: null,
-        delFlag: null,
         createBy: null,
         createTime: null,
         updateBy: null,

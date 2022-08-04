@@ -217,9 +217,6 @@
                         placeholder="选择有效期">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="删除标识" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标识" />
-        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -283,9 +280,6 @@ export default {
         itemName: [
           { required: true, message: "物料名称不能为空", trigger: "blur" }
         ],
-        delFlag: [
-          { required: true, message: "删除标识不能为空", trigger: "blur" }
-        ],
       },
       columns: [
             { key: 1, label: "物料编号", visible:  true  },
@@ -337,7 +331,6 @@ export default {
         warehouseId: null,
         quantity: null,
         expiryDate: null,
-        delFlag: null,
         remark: null,
         createBy: null,
         createTime: null,

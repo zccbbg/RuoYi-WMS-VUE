@@ -154,9 +154,6 @@
         <el-form-item label="货架" prop="rackId">
           <el-input v-model="form.rackId" placeholder="请输入货架" />
         </el-form-item>
-        <el-form-item label="删除标识" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标识" />
-        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -210,9 +207,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        delFlag: [
-          { required: true, message: "删除标识不能为空", trigger: "blur" }
-        ],
       },
       columns: [
             { key: 1, label: "入库单号", visible:  true  },
@@ -255,7 +249,6 @@ export default {
         planQuantity: null,
         realQuantity: null,
         rackId: null,
-        delFlag: null,
         remark: null,
         createBy: null,
         createTime: null,

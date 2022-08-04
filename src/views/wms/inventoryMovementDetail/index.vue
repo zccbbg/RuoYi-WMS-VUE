@@ -141,9 +141,6 @@
         <el-form-item label="实际数量" prop="realQuantity">
           <el-input v-model="form.realQuantity" placeholder="请输入实际数量" />
         </el-form-item>
-        <el-form-item label="删除标识" prop="delFlag">
-          <el-input v-model="form.delFlag" placeholder="请输入删除标识" />
-        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -196,9 +193,6 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        delFlag: [
-          { required: true, message: "删除标识不能为空", trigger: "blur" }
-        ],
       },
       columns: [
             { key: 1, label: "库存移动Id", visible:  true  },
@@ -239,7 +233,6 @@ export default {
         itemId: null,
         planQuantity: null,
         realQuantity: null,
-        delFlag: null,
         remark: null,
         createBy: null,
         createTime: null,
