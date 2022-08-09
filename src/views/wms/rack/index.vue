@@ -19,10 +19,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="所属货区" prop="areaId">
+      <el-form-item label="所属库区" prop="areaId">
         <el-input
           v-model="queryParams.areaId"
-          placeholder="请输入所属货区"
+          placeholder="请输入所属库区"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -95,7 +95,7 @@
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="货架编号" align="center" prop="rackNo" v-if="columns[0].visible"/>
       <el-table-column label="货架名称" align="center" prop="rackName" v-if="columns[1].visible"/>
-      <el-table-column label="所属货区" align="center" prop="areaName" v-if="columns[2].visible"/>
+      <el-table-column label="所属库区" align="center" prop="areaName" v-if="columns[2].visible"/>
       <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[3].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[4].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -135,20 +135,6 @@
         <el-form-item label="货架名称" prop="rackName">
           <el-input v-model="form.rackName" placeholder="请输入货架名称" />
         </el-form-item>
-        <!-- <el-form-item label="所属货区" prop="areaId">
-          <el-input v-model="form.areaId" placeholder="请输入所属货区" />
-        </el-form-item> -->
-
-        <el-form-item label="所属货区" prop="areaId">
-        <el-select v-model="form.areaId"  placeholder="请输入所属货区" clearable size="small">
-          <el-option
-            v-for="item in wmsAreaList"
-            :key="item.id"
-            :label="item.areaName"
-            :value="item.id">
-          </el-option>
-        </el-select>
-        </el-form-item>
 
         <!-- <el-form-item label="所属仓库" prop="warehouseId">
           <el-input v-model="form.warehouseId" placeholder="请输入所属仓库" />
@@ -164,6 +150,22 @@
           </el-option>
         </el-select>
         </el-form-item>
+        <!-- <el-form-item label="所属库区" prop="areaId">
+          <el-input v-model="form.areaId" placeholder="请输入所属库区" />
+        </el-form-item> -->
+
+        <el-form-item label="所属库区" prop="areaId">
+        <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small">
+          <el-option
+            v-for="item in wmsAreaList"
+            :key="item.id"
+            :label="item.areaName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+        </el-form-item>
+
+        
 
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -205,7 +207,7 @@ export default {
       total: 0,
       // 货架表格数据
       wmsRackList: [],
-      // 货区表格数据
+      // 库区表格数据
       wmsAreaList: [],
       wmsAreaMap:new Map(),
       // 仓库表格数据
@@ -232,7 +234,7 @@ export default {
           { required: true, message: "货架编号不能为空", trigger: "blur" }
         ],
         areaId: [
-          { required: true, message: "所属货区不能为空", trigger: "blur" }
+          { required: true, message: "所属库区不能为空", trigger: "blur" }
         ],
         warehouseId: [
           { required: true, message: "所属仓库不能为空", trigger: "blur" }
@@ -241,7 +243,7 @@ export default {
       columns: [
             { key: 1, label: "货架编号", visible:  true  },
             { key: 2, label: "货架名称", visible:  true  },
-            { key: 3, label: "所属货区", visible:  true  },
+            { key: 3, label: "所属库区", visible:  true  },
             { key: 4, label: "所属仓库", visible:  true  },
             { key: 5, label: "备注", visible:  true  },
                              ],

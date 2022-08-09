@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="货区编号" prop="areaNo">
+      <el-form-item label="库区编号" prop="areaNo">
         <el-input
           v-model="queryParams.areaNo"
-          placeholder="请输入货区编号"
+          placeholder="请输入库区编号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="货区名称" prop="areaName">
+      <el-form-item label="库区名称" prop="areaName">
         <el-input
           v-model="queryParams.areaName"
-          placeholder="请输入货区名称"
+          placeholder="请输入库区名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -84,8 +84,8 @@
     <el-table v-loading="loading" :data="wmsAreaList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="ID" align="center" prop="id" />
-      <el-table-column label="货区编号" align="center" prop="areaNo" v-if="columns[0].visible"/>
-      <el-table-column label="货区名称" align="center" prop="areaName" v-if="columns[1].visible"/>
+      <el-table-column label="库区编号" align="center" prop="areaNo" v-if="columns[0].visible"/>
+      <el-table-column label="库区名称" align="center" prop="areaName" v-if="columns[1].visible"/>
       <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -116,14 +116,14 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改货区对话框 -->
+    <!-- 添加或修改库区对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="货区编号" prop="areaNo">
-          <el-input v-model="form.areaNo" placeholder="请输入货区编号" />
+        <el-form-item label="库区编号" prop="areaNo">
+          <el-input v-model="form.areaNo" placeholder="请输入库区编号" />
         </el-form-item>
-        <el-form-item label="货区名称" prop="areaName">
-          <el-input v-model="form.areaName" placeholder="请输入货区名称" />
+        <el-form-item label="库区名称" prop="areaName">
+          <el-input v-model="form.areaName" placeholder="请输入库区名称" />
         </el-form-item>
         <!-- <el-form-item label="所属仓库ID" prop="warehouseId">
           <el-input v-model="form.warehouseId" placeholder="请输入所属仓库ID" />
@@ -175,7 +175,7 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 货区表格数据
+      // 库区表格数据
       wmsAreaList: [],
       // 仓库表格数据
       wmsWarehouseList: [],
@@ -197,18 +197,18 @@ export default {
       // 表单校验
       rules: {
         areaNo: [
-          { required: true, message: "货区编号不能为空", trigger: "blur" }
+          { required: true, message: "库区编号不能为空", trigger: "blur" }
         ],
         areaName: [
-          { required: true, message: "货区名称不能为空", trigger: "blur" }
+          { required: true, message: "库区名称不能为空", trigger: "blur" }
         ],
         warehouseId: [
           { required: true, message: "所属仓库不能为空", trigger: "blur" }
         ],
       },
       columns: [
-            { key: 1, label: "货区编号", visible:  true  },
-            { key: 2, label: "货区名称", visible:  true  },
+            { key: 1, label: "库区编号", visible:  true  },
+            { key: 2, label: "库区名称", visible:  true  },
             { key: 3, label: "所属仓库", visible:  true  },
             { key: 4, label: "备注", visible:  true  },
                              ],
@@ -219,7 +219,7 @@ export default {
     
   },
   methods: {
-    /** 查询货区列表 */
+    /** 查询库区列表 */
     async getList() {
       this.loading = true;
       const {pageNum, pageSize} = this.queryParams;
@@ -292,7 +292,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加货区";
+      this.title = "添加库区";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -301,7 +301,7 @@ export default {
       getWmsArea(id).then(response => {
         this.form = response;
         this.open = true;
-        this.title = "修改货区";
+        this.title = "修改库区";
       });
     },
     /** 提交按钮 */
@@ -327,7 +327,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除货区编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除库区编号为"' + ids + '"的数据项？').then(function() {
         return delWmsArea(ids);
       }).then(() => {
         this.getList();
@@ -337,7 +337,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有货区数据项？').then(() => {
+      this.$modal.confirm('是否确认导出所有库区数据项？').then(() => {
         this.exportLoading = true;
         return exportWmsArea(queryParams);
       }).then(response => {

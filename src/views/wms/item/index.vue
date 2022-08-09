@@ -42,10 +42,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="默认所属货区" prop="areaId">
+      <el-form-item label="默认所属库区" prop="areaId">
         <el-input
           v-model="queryParams.areaId"
-          placeholder="请输入默认所属货区"
+          placeholder="请输入默认所属库区"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -143,7 +143,7 @@
       <el-table-column label="物料分类" align="center" prop="itemType" v-if="columns[2].visible"/>
       <el-table-column label="单位类别" align="center" prop="unit" v-if="columns[3].visible"/>
       <el-table-column label="默认所属货架" align="center" prop="rackId" v-if="columns[4].visible"/>
-      <el-table-column label="默认所属货区" align="center" prop="areaId" v-if="columns[5].visible"/>
+      <el-table-column label="默认所属库区" align="center" prop="areaId" v-if="columns[5].visible"/>
       <el-table-column label="默认所属仓库" align="center" prop="warehouseId" v-if="columns[6].visible"/>
       <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible"/>
       <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
@@ -200,8 +200,8 @@
         <el-form-item label="默认所属货架" prop="rackId">
           <el-input v-model="form.rackId" placeholder="请输入默认所属货架" />
         </el-form-item>
-        <el-form-item label="默认所属货区" prop="areaId">
-          <el-input v-model="form.areaId" placeholder="请输入默认所属货区" />
+        <el-form-item label="默认所属库区" prop="areaId">
+          <el-input v-model="form.areaId" placeholder="请输入默认所属库区" />
         </el-form-item>
         <el-form-item label="默认所属仓库" prop="warehouseId">
           <el-input v-model="form.warehouseId" placeholder="请输入默认所属仓库" />
@@ -287,7 +287,7 @@ export default {
             { key: 3, label: "物料分类", visible:  true  },
             { key: 4, label: "单位类别", visible:  true  },
             { key: 5, label: "默认所属货架", visible:  true  },
-            { key: 6, label: "默认所属货区", visible:  true  },
+            { key: 6, label: "默认所属库区", visible:  true  },
             { key: 7, label: "默认所属仓库", visible:  true  },
             { key: 8, label: "安全库存", visible:  true  },
             { key: 9, label: "有效期", visible:  true  },
