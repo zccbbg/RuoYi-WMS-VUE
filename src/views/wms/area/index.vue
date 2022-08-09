@@ -86,7 +86,7 @@
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="货区编号" align="center" prop="areaNo" v-if="columns[0].visible"/>
       <el-table-column label="货区名称" align="center" prop="areaName" v-if="columns[1].visible"/>
-      <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[2].visible"/>
+      <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -179,6 +179,7 @@ export default {
       wmsAreaList: [],
       // 仓库表格数据
       wmsWarehouseList: [],
+      wmsWarehouseMap:new Map(),
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -215,17 +216,21 @@ export default {
   },
   created() {
     this.getList();
-    this.getWarehouseList();
+    
   },
   methods: {
     /** 查询货区列表 */
-    getList() {
+    async getList() {
       this.loading = true;
       const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
+      await this.getWarehouseList();
       listWmsArea(query, pageReq).then(response => {
         const { content, totalElements } = response
+        content.forEach(item=>{
+          item.warehouseName=this.wmsWarehouseMap.get(item.warehouseId)
+        })
         this.wmsAreaList = content;
         this.total = totalElements;
         this.loading = false;
@@ -240,6 +245,9 @@ export default {
       listWmsWarehouse(query, pageReq).then(response => {
         const { content, totalElements } = response
         this.wmsWarehouseList = content;
+        this.wmsWarehouseList.forEach(warehouse=>{
+          this.wmsWarehouseMap.set(warehouse.id,warehouse.warehouseName)
+        })
         this.total = totalElements;
         this.loading = false;
       });

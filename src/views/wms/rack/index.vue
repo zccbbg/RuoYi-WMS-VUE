@@ -96,7 +96,7 @@
       <el-table-column label="货架编号" align="center" prop="rackNo" v-if="columns[0].visible"/>
       <el-table-column label="货架名称" align="center" prop="rackName" v-if="columns[1].visible"/>
       <el-table-column label="所属货区" align="center" prop="areaId" v-if="columns[2].visible"/>
-      <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[3].visible"/>
+      <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[3].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[4].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -138,9 +138,21 @@
         <el-form-item label="所属货区" prop="areaId">
           <el-input v-model="form.areaId" placeholder="请输入所属货区" />
         </el-form-item>
-        <el-form-item label="所属仓库" prop="warehouseId">
+        <!-- <el-form-item label="所属仓库" prop="warehouseId">
           <el-input v-model="form.warehouseId" placeholder="请输入所属仓库" />
+        </el-form-item> -->
+
+        <el-form-item label="所属仓库" prop="warehouseId">
+        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small">
+          <el-option
+            v-for="item in wmsWarehouseList"
+            :key="item.id"
+            :label="item.warehouseName"
+            :value="item.id">
+          </el-option>
+        </el-select>
         </el-form-item>
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -155,9 +167,11 @@
 
 <script>
 import { listWmsRack, getWmsRack, delWmsRack, addWmsRack, updateWmsRack, exportWmsRack } from "@/api/wms/rack";
+import { listWmsWarehouse } from "@/api/wms/warehouse"
 
 export default {
   name: "WmsRack",
+  name: "WmsWarehouse",
   data() {
     return {
       // 遮罩层
@@ -176,6 +190,9 @@ export default {
       total: 0,
       // 货架表格数据
       wmsRackList: [],
+      // 仓库表格数据
+      wmsWarehouseList: [],
+      wmsWarehouseMap:new Map(),
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -214,17 +231,37 @@ export default {
   },
   created() {
     this.getList();
+    
   },
   methods: {
     /** 查询货架列表 */
-    getList() {
+    async getList() {
       this.loading = true;
       const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
+      await this.getHouseList();
       listWmsRack(query, pageReq).then(response => {
         const { content, totalElements } = response
+        content.forEach(item=>{
+          item.warehouseName=this.wmsWarehouseMap.get(item.warehouseId)
+        })
         this.wmsRackList = content;
+        this.total = totalElements;
+        this.loading = false;
+      });
+    },
+    getHouseList() {
+      this.loading = true;
+      const {pageNum, pageSize} = this.queryParams;
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const pageReq = {page: pageNum - 1, size: pageSize};
+      listWmsWarehouse(query, pageReq).then(response => {
+        const { content, totalElements } = response
+        this.wmsWarehouseList = content;
+        this.wmsWarehouseList.forEach(warehouse => {
+          this.wmsWarehouseMap.set(warehouse.id,warehouse.warehouseName)
+        });
         this.total = totalElements;
         this.loading = false;
       });
