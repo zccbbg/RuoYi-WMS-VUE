@@ -19,10 +19,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="所属仓库ID" prop="warehouseId">
+      <el-form-item label="所属仓库" prop="warehouseId">
         <el-input
           v-model="queryParams.warehouseId"
-          placeholder="请输入所属仓库ID"
+          placeholder="请输入所属仓库"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -86,7 +86,7 @@
       <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="货区编号" align="center" prop="areaNo" v-if="columns[0].visible"/>
       <el-table-column label="货区名称" align="center" prop="areaName" v-if="columns[1].visible"/>
-      <el-table-column label="所属仓库ID" align="center" prop="warehouseId" v-if="columns[2].visible"/>
+      <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[2].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -125,9 +125,21 @@
         <el-form-item label="货区名称" prop="areaName">
           <el-input v-model="form.areaName" placeholder="请输入货区名称" />
         </el-form-item>
-        <el-form-item label="所属仓库ID" prop="warehouseId">
+        <!-- <el-form-item label="所属仓库ID" prop="warehouseId">
           <el-input v-model="form.warehouseId" placeholder="请输入所属仓库ID" />
+        </el-form-item> -->
+        
+        <el-form-item label="所属仓库" prop="warehouseId">
+        <el-select v-model="form.warehouseId"  placeholder="请输入货仓名称" clearable size="small">
+          <el-option
+            v-for="item in wmsWarehouseList"
+            :key="item.id"
+            :label="item.warehouseName"
+            :value="item.id">
+          </el-option>
+        </el-select>
         </el-form-item>
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -142,9 +154,11 @@
 
 <script>
 import { listWmsArea, getWmsArea, delWmsArea, addWmsArea, updateWmsArea, exportWmsArea } from "@/api/wms/area";
+import { listWmsWarehouse, } from "@/api/wms/warehouse";
 
 export default {
   name: "WmsArea",
+  name: "WmsWarehouse",
   data() {
     return {
       // 遮罩层
@@ -163,6 +177,8 @@ export default {
       total: 0,
       // 货区表格数据
       wmsAreaList: [],
+      // 仓库表格数据
+      wmsWarehouseList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -186,19 +202,20 @@ export default {
           { required: true, message: "货区名称不能为空", trigger: "blur" }
         ],
         warehouseId: [
-          { required: true, message: "所属仓库ID不能为空", trigger: "blur" }
+          { required: true, message: "所属仓库不能为空", trigger: "blur" }
         ],
       },
       columns: [
             { key: 1, label: "货区编号", visible:  true  },
             { key: 2, label: "货区名称", visible:  true  },
-            { key: 3, label: "所属仓库ID", visible:  true  },
+            { key: 3, label: "所属仓库", visible:  true  },
             { key: 4, label: "备注", visible:  true  },
                              ],
     };
   },
   created() {
     this.getList();
+    this.getWarehouseList();
   },
   methods: {
     /** 查询货区列表 */
@@ -210,6 +227,19 @@ export default {
       listWmsArea(query, pageReq).then(response => {
         const { content, totalElements } = response
         this.wmsAreaList = content;
+        this.total = totalElements;
+        this.loading = false;
+      });
+    },
+    /** 查询仓库列表 */
+    getWarehouseList() {
+      this.loading = true;
+      const {pageNum, pageSize} = this.queryParams;
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const pageReq = {page: pageNum - 1, size: pageSize};
+      listWmsWarehouse(query, pageReq).then(response => {
+        const { content, totalElements } = response
+        this.wmsWarehouseList = content;
         this.total = totalElements;
         this.loading = false;
       });
