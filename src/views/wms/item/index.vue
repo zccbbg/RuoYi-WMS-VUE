@@ -142,9 +142,9 @@
       <el-table-column label="物料名称" align="center" prop="itemName" v-if="columns[1].visible"/>
       <el-table-column label="物料分类" align="center" prop="itemType" v-if="columns[2].visible"/>
       <el-table-column label="单位类别" align="center" prop="unit" v-if="columns[3].visible"/>
-      <el-table-column label="默认所属货架" align="center" prop="rackId" v-if="columns[4].visible"/>
-      <el-table-column label="默认所属库区" align="center" prop="areaId" v-if="columns[5].visible"/>
-      <el-table-column label="默认所属仓库" align="center" prop="warehouseId" v-if="columns[6].visible"/>
+      <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[6].visible"/>
+      <el-table-column label="所属库区" align="center" prop="areaName" v-if="columns[5].visible"/>
+      <el-table-column label="所属货架" align="center" prop="rackName" v-if="columns[4].visible"/>
       <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible"/>
       <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
         <template slot-scope="scope">
@@ -197,15 +197,48 @@
         <el-form-item label="单位类别" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位类别" />
         </el-form-item>
-        <el-form-item label="默认所属货架" prop="rackId">
-          <el-input v-model="form.rackId" placeholder="请输入默认所属货架" />
+        <!-- <el-form-item label="默认所属仓库" prop="warehouseId">
+          <el-input v-model="form.warehouseId" placeholder="请输入默认所属仓库" />
         </el-form-item>
         <el-form-item label="默认所属库区" prop="areaId">
           <el-input v-model="form.areaId" placeholder="请输入默认所属库区" />
         </el-form-item>
-        <el-form-item label="默认所属仓库" prop="warehouseId">
-          <el-input v-model="form.warehouseId" placeholder="请输入默认所属仓库" />
+        
+        <el-form-item label="默认所属货架" prop="rackId">
+          <el-input v-model="form.rackId" placeholder="请输入默认所属货架" />
+        </el-form-item> -->
+
+        <el-form-item label="所属仓库" prop="warehouseId">
+        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small" @change="onWarehouseChange">
+          <el-option
+            v-for="item in wmsWarehouseList"
+            :key="item.id"
+            :label="item.warehouseName"
+            :value="item.id">
+          </el-option>
+        </el-select>
         </el-form-item>
+        <el-form-item label="所属库区" prop="areaId">
+        <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small" @change="onAreaChange">
+          <el-option
+            v-for="item in wmsAreaListByWarehouse"
+            :key="item.id"
+            :label="item.areaName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+        </el-form-item>
+        <el-form-item label="所属货架" prop="rackId">
+        <el-select v-model="form.rackId"  placeholder="请输入所属货架" clearable size="small" >
+          <el-option
+            v-for="item in wmsRackListByArea"
+            :key="item.id"
+            :label="item.rackName"
+            :value="item.id">
+          </el-option>
+        </el-select>
+        </el-form-item>
+        
         <el-form-item label="安全库存" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入安全库存" />
         </el-form-item>
@@ -231,9 +264,15 @@
 
 <script>
 import { listWmsItem, getWmsItem, delWmsItem, addWmsItem, updateWmsItem, exportWmsItem } from "@/api/wms/item";
+import { listWmsWarehouse } from "@/api/wms/warehouse";
+import { listWmsArea } from "@/api/wms/area";
+import { listWmsRack } from "@/api/wms/rack";
 
 export default {
   name: "WmsItem",
+  name: "WmsWarehouse",
+  name: "WmsArea",
+  name: "WmsRack",
   data() {
     return {
       // 遮罩层
@@ -252,6 +291,17 @@ export default {
       total: 0,
       // 物料表格数据
       wmsItemList: [],
+      // 货架表格数据
+      wmsRackList: [],
+      wmsRackListByArea:[],
+      wmsRackMap:new Map(),
+      // 库区表格数据
+      wmsAreaList: [],
+      wmsAreaListByWarehouse:[],
+      wmsAreaMap:new Map(),
+      // 仓库表格数据
+      wmsWarehouseList: [],
+      wmsWarehouseMap:new Map(),
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -300,15 +350,93 @@ export default {
     this.getList();
   },
   methods: {
+    onWarehouseChange(init){
+      this.wmsAreaListByWarehouse=[]
+      if(init!=true){
+        this.form.areaId=null
+      }
+      this.wmsAreaList.forEach(area=>{
+        if(area.warehouseId==this.form.warehouseId){
+          this.wmsAreaListByWarehouse.push(area)
+        }
+      })
+    },
+    onAreaChange(init){
+      this.wmsRackListByArea=[]
+      if(init!=true){
+        this.form.rackId=null
+      }
+      this.wmsRackList.forEach(rack=>{
+        if(rack.areaId==this.form.areaId){
+          this.wmsRackListByArea.push(rack)
+        }
+      })
+    },
+
     /** 查询物料列表 */
-    getList() {
+    async getList() {
       this.loading = true;
       const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
+      await this.getHouseList(),this.getAreaList(),this.getRackList()
       listWmsItem(query, pageReq).then(response => {
         const { content, totalElements } = response
+        content.forEach(item=>{
+          item.warehouseName=this.wmsWarehouseMap.get(item.warehouseId)
+        });
+        content.forEach(item=>{
+          item.areaName=this.wmsAreaMap.get(item.areaId)
+        });
+        content.forEach(item=>{
+          item.rackName=this.wmsRackMap.get(item.rackId)
+        })
         this.wmsItemList = content;
+        this.total = totalElements;
+        this.loading = false;
+      });
+    },
+    getHouseList() {
+      this.loading = true;
+      const {pageNum, pageSize} = this.queryParams;
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const pageReq = {page: pageNum - 1, size: pageSize};
+      listWmsWarehouse(query, pageReq).then(response => {
+        const { content, totalElements } = response
+        this.wmsWarehouseList = content;
+        this.wmsWarehouseList.forEach(warehouse => {
+          this.wmsWarehouseMap.set(warehouse.id,warehouse.warehouseName)
+        });
+        this.total = totalElements;
+        this.loading = false;
+      });
+    },
+    getAreaList() {
+      this.loading = true;
+      const {pageNum, pageSize} = this.queryParams;
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const pageReq = {page: pageNum - 1, size: pageSize};
+      listWmsArea(query, pageReq).then(response => {
+        const { content, totalElements } = response
+        this.wmsAreaList = content;
+        this.wmsAreaList.forEach(area=>{
+          this.wmsAreaMap.set(area.id,area.areaName)
+        })
+        this.total = totalElements;
+        this.loading = false;
+      });
+    },
+    getRackList() {
+      this.loading = true;
+      const {pageNum, pageSize} = this.queryParams;
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const pageReq = {page: pageNum - 1, size: pageSize};
+      listWmsRack(query, pageReq).then(response => {
+        const { content, totalElements } = response
+        this.wmsRackList = content;
+        this.wmsRackList.forEach(rack=>{
+          this.wmsRackMap.set(rack.id,rack.rackName)
+        })
         this.total = totalElements;
         this.loading = false;
       });
@@ -362,15 +490,18 @@ export default {
       this.title = "添加物料";
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    async handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getWmsItem(id).then(response => {
+      await getWmsItem(id).then(response => {
         this.form = response;
         this.open = true;
         this.title = "修改物料";
       });
+      this.onWarehouseChange(true)
+      this.onAreaChange(true)
     },
+    
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
