@@ -141,7 +141,7 @@
         </el-form-item> -->
 
         <el-form-item label="所属仓库" prop="warehouseId">
-        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small">
+        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small" @change="onWarehouseChange">
           <el-option
             v-for="item in wmsWarehouseList"
             :key="item.id"
@@ -157,7 +157,7 @@
         <el-form-item label="所属库区" prop="areaId">
         <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small">
           <el-option
-            v-for="item in wmsAreaList"
+            v-for="item in wmsAreaListByWarehouse"
             :key="item.id"
             :label="item.areaName"
             :value="item.id">
@@ -209,6 +209,7 @@ export default {
       wmsRackList: [],
       // 库区表格数据
       wmsAreaList: [],
+      wmsAreaListByWarehouse:[],
       wmsAreaMap:new Map(),
       // 仓库表格数据
       wmsWarehouseList: [],
@@ -255,6 +256,18 @@ export default {
     
   },
   methods: {
+
+    onWarehouseChange(init){
+      this.wmsAreaListByWarehouse=[]
+      if(init!=true){
+        this.form.areaId=null
+      }
+      this.wmsAreaList.forEach(area=>{
+        if(area.warehouseId==this.form.warehouseId){
+          this.wmsAreaListByWarehouse.push(area)
+        }
+      })
+    },
     /** 查询货架列表 */
     async getList() {
       this.loading = true;
@@ -349,14 +362,15 @@ export default {
       this.title = "添加货架";
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    async handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getWmsRack(id).then(response => {
+      await getWmsRack(id).then(response => {
         this.form = response;
         this.open = true;
         this.title = "修改货架";
       });
+      this.onWarehouseChange(true)
     },
     /** 提交按钮 */
     submitForm() {
