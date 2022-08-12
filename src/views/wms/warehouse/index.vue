@@ -1,14 +1,28 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+      <el-form-item label="时间" prop="value1">
+        <!-- 时间 -->
+        <el-date-picker
+          value-format="yyyy年MM月dd日"
+          v-model="value1"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          size="small"
+          clearable
+          >
+        </el-date-picker>
+      </el-form-item>
+
       <el-form-item label="仓库编号" prop="warehouseNo">
         <el-input
           v-model="queryParams.warehouseNo"
           placeholder="请输入仓库编号"
           clearable
           size="small"
-          @keyup.enter.native="handleQuery"
-        />
+          @keyup.enter.native="handleQuery"/>
       </el-form-item>
       <el-form-item label="仓库名称" prop="warehouseName">
         <el-input
@@ -134,6 +148,8 @@ export default {
   name: "WmsWarehouse",
   data() {
     return {
+        value1: '',
+       
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -182,7 +198,20 @@ export default {
   created() {
     this.getList();
   },
+  watch:{
+      value1(){
+        alert("开始时间："+this.value1[0]+" 结束时间："+this.value1[1])
+      },
+    },
   methods: {
+    // onChangeEnd(){    
+      
+    //   alert("开始时间："+this.value1[0]+" 结束时间："+this.value1[1])
+      
+    // },
+
+    
+
     /** 查询仓库列表 */
     getList() {
       this.loading = true;
