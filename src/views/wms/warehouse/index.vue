@@ -4,16 +4,18 @@
       <el-form-item label="时间" prop="value1">
         <!-- 时间 -->
         <el-date-picker
-          value-format="yyyy年MM月dd日"
-          v-model="value1"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          size="small"
-          clearable
-          >
-        </el-date-picker>
+        value-format="yyyy年MM月dd日"
+      v-model="value2"
+      type="daterange"
+      align="right"
+      unlink-panels
+      range-separator="至"
+      start-placeholder="开始日期"
+      end-placeholder="结束日期"
+      :picker-options="pickerOptions"
+      size="small"
+          clearable>
+    </el-date-picker>
       </el-form-item>
 
       <el-form-item label="仓库编号" prop="warehouseNo">
@@ -148,7 +150,44 @@ export default {
   name: "WmsWarehouse",
   data() {
     return {
-        value1: '',
+      pickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+              picker.$emit('pick', [start, end]);
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+              picker.$emit('pick', [start, end]);
+            }
+          },{
+            text: '最近100天',
+            onClick(picker) {
+              const end = new Date();
+              const start = new Date();
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 100);
+              picker.$emit('pick', [start, end]);
+            }
+          }]
+        },
+        
+        value2: '',
+        
        
       // 遮罩层
       loading: true,
@@ -199,8 +238,8 @@ export default {
     this.getList();
   },
   watch:{
-      value1(){
-        alert("开始时间："+this.value1[0]+" 结束时间："+this.value1[1])
+      value2(){
+        alert("开始时间："+this.value2[0]+" 结束时间："+this.value2[1])
       },
     },
   methods: {
