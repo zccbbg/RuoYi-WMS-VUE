@@ -239,16 +239,13 @@ export default {
     /** 查询仓库列表 */
     getWarehouseList() {
       this.loading = true;
-      const {pageNum, pageSize} = this.queryParams;
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-      const pageReq = {page: pageNum - 1, size: pageSize};
-      listWmsWarehouse(query, pageReq).then(response => {
+      listWmsWarehouse(query).then(response => {
         const { content, totalElements } = response
         this.wmsWarehouseList = content;
         this.wmsWarehouseList.forEach(warehouse=>{
           this.wmsWarehouseMap.set(warehouse.id,warehouse.warehouseName)
         })
-        this.total = totalElements;
         this.loading = false;
       });
     },
