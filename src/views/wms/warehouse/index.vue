@@ -1,23 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="时间" prop="value1">
-        <!-- 时间 -->
-        <el-date-picker
-        value-format="yyyy年MM月dd日"
-      v-model="value2"
-      type="daterange"
-      align="right"
-      unlink-panels
-      range-separator="至"
-      start-placeholder="开始日期"
-      end-placeholder="结束日期"
-      :picker-options="pickerOptions"
-      size="small"
-          clearable>
-    </el-date-picker>
-      </el-form-item>
-
       <el-form-item label="仓库编号" prop="warehouseNo">
         <el-input
           v-model="queryParams.warehouseNo"
@@ -26,9 +9,9 @@
           size="small"
           @keyup.enter.native="handleQuery"/>
       </el-form-item>
-      <el-form-item label="仓库名称" prop="warehouseName">
+      <el-form-item label="仓库名称" prop="warehouseNameLike">
         <el-input
-          v-model="queryParams.warehouseName"
+          v-model="queryParams.warehouseNameLike"
           placeholder="请输入仓库名称"
           clearable
           size="small"
@@ -149,46 +132,7 @@ import { listWmsWarehouse, getWmsWarehouse, delWmsWarehouse, addWmsWarehouse, up
 export default {
   name: "WmsWarehouse",
   data() {
-    return {
-      pickerOptions: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          },{
-            text: '最近100天',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 100);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        },
-        
-        value2: '',
-        
-       
+    return {       
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -214,7 +158,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         warehouseNo: null,
-        warehouseName: null,
+        warehouseNameLike: null,
       },
       // 表单参数
       form: {},
@@ -243,14 +187,6 @@ export default {
       },
     },
   methods: {
-    // onChangeEnd(){    
-      
-    //   alert("开始时间："+this.value1[0]+" 结束时间："+this.value1[1])
-      
-    // },
-
-    
-
     /** 查询仓库列表 */
     getList() {
       this.loading = true;
