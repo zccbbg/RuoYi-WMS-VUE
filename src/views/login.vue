@@ -56,7 +56,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2018-2022 ruoyi.vip All Rights Reserved.</span>
+      <span>Copyright © 2017-2022 ichengle.top 技术支持：18556959326,微信同号.</span>
     </div>
   </div>
 </template>
