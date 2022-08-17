@@ -238,17 +238,6 @@
           </el-option>
         </el-select>
         </el-form-item>
-
-
-        <!-- 及联组建练习
-        <div class="block">
-         <el-cascader
-           v-model="cascader"
-           :options="areaOptions"
-           
-           @change="handleChange"></el-cascader>
-        </div> -->
-
         <el-form-item label="安全库存" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入安全库存" />
         </el-form-item>
@@ -280,12 +269,8 @@ import { listWmsRack } from "@/api/wms/rack";
 
 export default {
   name: "WmsItem",
-  name: "WmsWarehouse",
-  name: "WmsArea",
-  name: "WmsRack",
   data() {
     return {
-      // cascader:[], 
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -302,7 +287,6 @@ export default {
       total: 0,
       // 物料表格数据
       wmsItemList: [],
-      // areaOptions:[],
       // 货架表格数据
       wmsRackList: [],
       wmsRackListByArea:[],
@@ -362,13 +346,6 @@ export default {
     this.getList();
   },
   methods: {
-
-   
-    // handleChange(value) {
-    //     console.log(value);
-    //   },
-
-    
     onWarehouseChange(init){
       this.wmsAreaListByWarehouse=[]
       if(init!=true){
@@ -416,45 +393,7 @@ export default {
         this.total = totalElements;
         this.loading = false;
       });
-
-      // let rackMap = new Map();
-      // this.wmsRackList.forEach(rack=>{
-      //   let list=rackMap.get(rack.areaId)
-      //   if(list==null){
-      //     list=[]
-      //   }
-
-      //   list.push({
-      //     value:rack.id,
-      //     label:rack.rackName,
-      //   })
-      //   rackMap.set(rack.areaId,list)
-
-      // })
-      // let areaMap = new Map();
-      // this.wmsAreaList.forEach(area=>{
-      //   let list=areaMap.get(area.warehouseId)
-      //   if(list==null){                                                             
-      //     list=[]
-      //   }
-
-      //   list.push({
-      //       value:area.id,
-      //       label:area.areaName,
-      //       children:rackMap.get(area.id)
-      //     })
-      //   areaMap.set(area.warehouseId,list)
-      // })
-
-      // this.wmsWarehouseList.forEach(warehouse=>{
-      //   this.areaOptions.push({
-      //     value:warehouse.id,
-      //     label:warehouse.warehouseName,
-      //     children:areaMap.get(warehouse.id),
-            
-      //   })
-      // });
-
+     
     },
     getHouseList() {
       this.loading = true;
@@ -599,7 +538,7 @@ export default {
         this.exportLoading = true;
         return exportWmsItem(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }

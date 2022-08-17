@@ -7,11 +7,12 @@
           placeholder="请输入仓库编号"
           clearable
           size="small"
-          @keyup.enter.native="handleQuery"/>
+          @keyup.enter.native="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="仓库名称" prop="warehouseNameLike">
+      <el-form-item label="仓库名称" prop="warehouseName">
         <el-input
-          v-model="queryParams.warehouseNameLike"
+          v-model="queryParams.warehouseName"
           placeholder="请输入仓库名称"
           clearable
           size="small"
@@ -132,7 +133,7 @@ import { listWmsWarehouse, getWmsWarehouse, delWmsWarehouse, addWmsWarehouse, up
 export default {
   name: "WmsWarehouse",
   data() {
-    return {       
+    return {
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -158,7 +159,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         warehouseNo: null,
-        warehouseNameLike: null,
+        warehouseName: null,
       },
       // 表单参数
       form: {},
@@ -181,11 +182,6 @@ export default {
   created() {
     this.getList();
   },
-  watch:{
-      value2(){
-        alert("开始时间："+this.value2[0]+" 结束时间："+this.value2[1])
-      },
-    },
   methods: {
     /** 查询仓库列表 */
     getList() {

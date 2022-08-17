@@ -135,8 +135,10 @@
         <el-form-item label="货架名称" prop="rackName">
           <el-input v-model="form.rackName" placeholder="请输入货架名称" />
         </el-form-item>
-
-        <!-- <el-form-item label="所属仓库" prop="warehouseId">
+        <el-form-item label="所属货区" prop="areaId">
+          <el-input v-model="form.areaId" placeholder="请输入所属货区" />
+        </el-form-item>
+        <el-form-item label="所属仓库" prop="warehouseId">
           <el-input v-model="form.warehouseId" placeholder="请输入所属仓库" />
         </el-form-item> -->
 
@@ -150,9 +152,6 @@
           </el-option>
         </el-select>
         </el-form-item>
-        <!-- <el-form-item label="所属库区" prop="areaId">
-          <el-input v-model="form.areaId" placeholder="请输入所属库区" />
-        </el-form-item> -->
 
         <el-form-item label="所属库区" prop="areaId">
         <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small">
@@ -186,9 +185,6 @@ import { listWmsArea } from "@/api/wms/area";
 
 export default {
   name: "WmsRack",
-  name: "WmsWarehouse",
-  name: "WmsArea",
-
   data() {
     return {
       // 遮罩层
@@ -252,8 +248,6 @@ export default {
   },
   created() {
     this.getList();
-    // this.getAreaList();
-    
   },
   methods: {
 
@@ -409,7 +403,7 @@ export default {
         this.exportLoading = true;
         return exportWmsRack(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }

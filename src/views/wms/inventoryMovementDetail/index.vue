@@ -310,7 +310,7 @@ export default {
         this.exportLoading = true;
         return exportWmsInventoryMovementDetail(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }

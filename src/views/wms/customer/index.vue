@@ -384,7 +384,7 @@ export default {
         this.exportLoading = true;
         return exportWmsCustomer(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }

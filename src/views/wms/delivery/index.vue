@@ -320,7 +320,7 @@ export default {
         this.exportLoading = true;
         return exportWmsDelivery(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }

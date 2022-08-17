@@ -139,7 +139,6 @@
           </el-option>
         </el-select>
         </el-form-item>
-
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -158,7 +157,6 @@ import { listWmsWarehouse, } from "@/api/wms/warehouse";
 
 export default {
   name: "WmsArea",
-  name: "WmsWarehouse",
   data() {
     return {
       // 遮罩层
@@ -338,7 +336,7 @@ export default {
         this.exportLoading = true;
         return exportWmsArea(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }
