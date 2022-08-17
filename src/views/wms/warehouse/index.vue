@@ -288,7 +288,7 @@ export default {
         this.exportLoading = true;
         return exportWmsWarehouse(queryParams);
       }).then(response => {
-        this.download(response.msg);
+        this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => {});
     }

@@ -8,6 +8,9 @@ import { blobValidate } from "@/utils/ruoyi";
 const baseURL = process.env.VUE_APP_BASE_API
 
 export default {
+  download(fileName){
+    window.location.href = baseURL+"/common/download?fileName=" + encodeURI(fileName)+"&delete="+true;
+  },
   name(name, isDelete = true) {
     var url = baseURL + "/common/download?fileName=" + encodeURI(name) + "&delete=" + isDelete
     axios({
