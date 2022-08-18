@@ -1,28 +1,28 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="客户编号" prop="customerNo">
+      <el-form-item label="编号" prop="customerNo">
         <el-input
           v-model="queryParams.customerNo"
-          placeholder="请输入客户编号"
+          placeholder="请输入编号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="客户名称" prop="customerName">
+      <el-form-item label="名称" prop="customerName">
         <el-input
           v-model="queryParams.customerName"
-          placeholder="请输入客户名称"
+          placeholder="请输入名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="客户地址" prop="address">
+      <el-form-item label="地址" prop="address">
         <el-input
           v-model="queryParams.address"
-          placeholder="请输入客户地址"
+          placeholder="请输入地址"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -131,9 +131,9 @@
 
     <el-table v-loading="loading" :data="wmsCustomerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="客户编号" align="center" prop="customerNo" v-if="columns[0].visible"/>
-      <el-table-column label="客户名称" align="center" prop="customerName" v-if="columns[1].visible"/>
-      <el-table-column label="客户地址" align="center" prop="address" v-if="columns[2].visible"/>
+      <el-table-column label="编号" align="center" prop="customerNo" v-if="columns[0].visible"/>
+      <el-table-column label="名称" align="center" prop="customerName" v-if="columns[1].visible"/>
+      <el-table-column label="地址" align="center" prop="address" v-if="columns[2].visible"/>
       <el-table-column label="手机号" align="center" prop="mobile" v-if="columns[3].visible"/>
       <el-table-column label="座机号" align="center" prop="tel" v-if="columns[4].visible"/>
       <el-table-column label="联系人" align="center" prop="customerPerson" v-if="columns[5].visible"/>
@@ -171,14 +171,14 @@
     <!-- 添加或修改客户对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="客户编号" prop="customerNo">
-          <el-input v-model="form.customerNo" placeholder="请输入客户编号" />
+        <el-form-item label="编号" prop="customerNo">
+          <el-input v-model="form.customerNo" placeholder="请输入编号" />
         </el-form-item>
-        <el-form-item label="客户名称" prop="customerName">
-          <el-input v-model="form.customerName" placeholder="请输入客户名称" />
+        <el-form-item label="名称" prop="customerName">
+          <el-input v-model="form.customerName" placeholder="请输入名称" />
         </el-form-item>
-        <el-form-item label="客户地址" prop="address">
-          <el-input v-model="form.address" placeholder="请输入客户地址" />
+        <el-form-item label="地址" prop="address">
+          <el-input v-model="form.address" placeholder="请输入地址" />
         </el-form-item>
         <el-form-item label="手机号" prop="mobile">
           <el-input v-model="form.mobile" placeholder="请输入手机号" />
@@ -252,16 +252,16 @@ export default {
       // 表单校验
       rules: {
         customerNo: [
-          { required: true, message: "客户编号不能为空", trigger: "blur" }
+          { required: true, message: "编号不能为空", trigger: "blur" }
         ],
         customerName: [
-          { required: true, message: "客户名称不能为空", trigger: "blur" }
+          { required: true, message: "名称不能为空", trigger: "blur" }
         ],
       },
       columns: [
-            { key: 1, label: "客户编号", visible:  true  },
-            { key: 2, label: "客户名称", visible:  true  },
-            { key: 3, label: "客户地址", visible:  true  },
+            { key: 1, label: "编号", visible:  true  },
+            { key: 2, label: "名称", visible:  true  },
+            { key: 3, label: "地址", visible:  true  },
             { key: 4, label: "手机号", visible:  true  },
             { key: 5, label: "座机号", visible:  true  },
             { key: 6, label: "联系人", visible:  true  },

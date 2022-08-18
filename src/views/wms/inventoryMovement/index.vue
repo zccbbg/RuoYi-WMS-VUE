@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="库存移动编号" prop="inventoryMovementNo">
+      <el-form-item label="编号" prop="inventoryMovementNo">
         <el-input
           v-model="queryParams.inventoryMovementNo"
-          placeholder="请输入库存移动编号"
+          placeholder="请输入编号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -112,7 +112,7 @@
 
     <el-table v-loading="loading" :data="wmsInventoryMovementList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="库存移动编号" align="center" prop="inventoryMovementNo" v-if="columns[0].visible"/>
+      <el-table-column label="编号" align="center" prop="inventoryMovementNo" v-if="columns[0].visible"/>
       <el-table-column label="原货架Id" align="center" prop="sourceRackId" v-if="columns[1].visible"/>
       <el-table-column label="目标货架" align="center" prop="targetRackId" v-if="columns[2].visible"/>
       <el-table-column label="状态" align="center" prop="status" v-if="columns[3].visible"/>
@@ -155,8 +155,8 @@
     <!-- 添加或修改库存移动对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="库存移动编号" prop="inventoryMovementNo">
-          <el-input v-model="form.inventoryMovementNo" placeholder="请输入库存移动编号" />
+        <el-form-item label="编号" prop="inventoryMovementNo">
+          <el-input v-model="form.inventoryMovementNo" placeholder="请输入编号" />
         </el-form-item>
         <el-form-item label="原货架Id" prop="sourceRackId">
           <el-input v-model="form.sourceRackId" placeholder="请输入原货架Id" />
@@ -242,7 +242,7 @@ export default {
       rules: {
       },
       columns: [
-            { key: 1, label: "库存移动编号", visible:  true  },
+            { key: 1, label: "编号", visible:  true  },
             { key: 2, label: "原货架Id", visible:  true  },
             { key: 3, label: "目标货架", visible:  true  },
             { key: 4, label: "状态", visible:  true  },

@@ -1,19 +1,19 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="仓库编号" prop="warehouseNo">
+      <el-form-item label="编号" prop="warehouseNo">
         <el-input
           v-model="queryParams.warehouseNo"
-          placeholder="请输入仓库编号"
+          placeholder="请输入编号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="仓库名称" prop="warehouseName">
+      <el-form-item label="名称" prop="warehouseName">
         <el-input
           v-model="queryParams.warehouseName"
-          placeholder="请输入仓库名称"
+          placeholder="请输入名称"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -74,8 +74,8 @@
 
     <el-table v-loading="loading" :data="wmsWarehouseList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="仓库编号" align="center" prop="warehouseNo" v-if="columns[0].visible"/>
-      <el-table-column label="仓库名称" align="center" prop="warehouseName" v-if="columns[1].visible"/>
+      <el-table-column label="编号" align="center" prop="warehouseNo" v-if="columns[0].visible"/>
+      <el-table-column label="名称" align="center" prop="warehouseName" v-if="columns[1].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[2].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -108,11 +108,11 @@
     <!-- 添加或修改仓库对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="仓库编号" prop="warehouseNo">
-          <el-input v-model="form.warehouseNo" placeholder="请输入仓库编号" />
+        <el-form-item label="编号" prop="warehouseNo">
+          <el-input v-model="form.warehouseNo" placeholder="请输入编号" />
         </el-form-item>
-        <el-form-item label="仓库名称" prop="warehouseName">
-          <el-input v-model="form.warehouseName" placeholder="请输入仓库名称" />
+        <el-form-item label="名称" prop="warehouseName">
+          <el-input v-model="form.warehouseName" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -165,15 +165,15 @@ export default {
       // 表单校验
       rules: {
         warehouseNo: [
-          { required: true, message: "仓库编号不能为空", trigger: "blur" }
+          { required: true, message: "编号不能为空", trigger: "blur" }
         ],
         warehouseName: [
-          { required: true, message: "仓库名称不能为空", trigger: "blur" }
+          { required: true, message: "名称不能为空", trigger: "blur" }
         ],
       },
       columns: [
-            { key: 1, label: "仓库编号", visible:  true  },
-            { key: 2, label: "仓库名称", visible:  true  },
+            { key: 1, label: "编号", visible:  true  },
+            { key: 2, label: "名称", visible:  true  },
                 { key: 4, label: "备注", visible:  true  },
                          ],
     };
