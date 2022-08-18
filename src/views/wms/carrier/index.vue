@@ -56,13 +56,14 @@
         />
       </el-form-item>
       <el-form-item label="级别" prop="level">
-        <el-input
-          v-model="queryParams.level"
-          placeholder="请输入级别"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-select v-model="queryParams.level" placeholder="请选择级别" clearable size="small" @change="handleQuery">
+              <el-option
+                  v-for="dict in dict.type.wms_carrier_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+        </el-select>
       </el-form-item>
       <template v-if="showMoreCondition">
       <el-form-item label="Email" prop="email">
@@ -190,7 +191,14 @@
           <el-input v-model="form.contact" placeholder="请输入联系人" />
         </el-form-item>
         <el-form-item label="级别" prop="level">
-          <el-input v-model="form.level" placeholder="请输入级别" />
+          <el-select v-model="form.level" placeholder="请选择级别">
+            <el-option
+                  v-for="dict in dict.type.wms_carrier_level"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="Email" prop="email">
           <el-input v-model="form.email" placeholder="请输入Email" />
@@ -212,6 +220,7 @@ import { listWmsCarrier, getWmsCarrier, delWmsCarrier, addWmsCarrier, updateWmsC
 
 export default {
   name: "WmsCarrier",
+  dicts: ['wms_carrier_level'],
   data() {
     return {
       // 遮罩层
