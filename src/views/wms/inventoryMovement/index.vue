@@ -112,7 +112,6 @@
 
     <el-table v-loading="loading" :data="wmsInventoryMovementList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="库存移动编号" align="center" prop="inventoryMovementNo" v-if="columns[0].visible"/>
       <el-table-column label="原货架Id" align="center" prop="sourceRackId" v-if="columns[1].visible"/>
       <el-table-column label="目标货架" align="center" prop="targetRackId" v-if="columns[2].visible"/>

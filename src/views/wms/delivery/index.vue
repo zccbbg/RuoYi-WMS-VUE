@@ -93,7 +93,6 @@
 
     <el-table v-loading="loading" :data="wmsDeliveryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="出库单主表Id" align="center" prop="shipmentOrderId" v-if="columns[0].visible"/>
       <el-table-column label="承运商Id" align="center" prop="carrierId" v-if="columns[1].visible"/>
       <el-table-column label="发货日期" align="center" prop="deliveryDate" width="180" v-if="columns[2].visible">

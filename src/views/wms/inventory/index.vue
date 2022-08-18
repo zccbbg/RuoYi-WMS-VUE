@@ -83,7 +83,6 @@
 
     <el-table v-loading="loading" :data="wmsInventoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="物料ID" align="center" prop="itemId" v-if="columns[0].visible"/>
       <el-table-column label="货架id" align="center" prop="rackId" v-if="columns[1].visible"/>
       <el-table-column label="库存" align="center" prop="quantity" v-if="columns[2].visible"/>

@@ -131,7 +131,6 @@
 
     <el-table v-loading="loading" :data="wmsCustomerList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="客户编号" align="center" prop="customerNo" v-if="columns[0].visible"/>
       <el-table-column label="客户名称" align="center" prop="customerName" v-if="columns[1].visible"/>
       <el-table-column label="客户地址" align="center" prop="address" v-if="columns[2].visible"/>

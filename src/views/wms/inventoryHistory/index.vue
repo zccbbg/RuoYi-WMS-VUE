@@ -97,7 +97,6 @@
 
     <el-table v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="操作id" align="center" prop="formId" v-if="columns[0].visible"/>
       <el-table-column label="操作类型" align="center" prop="formType" v-if="columns[1].visible"/>
       <el-table-column label="物料ID" align="center" prop="itemId" v-if="columns[2].visible"/>

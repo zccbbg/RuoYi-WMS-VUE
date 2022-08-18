@@ -120,7 +120,6 @@
 
     <el-table v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="出库单号，系统自动生成" align="center" prop="shipmentOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="出库类型" align="center" prop="shipmentOrderType" v-if="columns[1].visible"/>
       <el-table-column label="出库订单" align="center" prop="orderNo" v-if="columns[2].visible"/>

@@ -120,7 +120,6 @@
 
     <el-table v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="id" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="入库类型" align="center" prop="receiptOrderType" v-if="columns[1].visible"/>
       <el-table-column label="供应商" align="center" prop="supplierId" v-if="columns[2].visible"/>
