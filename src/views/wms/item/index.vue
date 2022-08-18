@@ -21,7 +21,12 @@
       </el-form-item>
       <el-form-item label="分类" prop="itemType">
         <el-select v-model="queryParams.itemType" placeholder="请选择分类" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+              <el-option
+                  v-for="dict in dict.type.wms_item_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="单位类别" prop="unit">
@@ -190,7 +195,12 @@
         </el-form-item>
         <el-form-item label="分类" prop="itemType">
           <el-select v-model="form.itemType" placeholder="请选择分类">
-            <el-option label="请选择字典生成" value="" />
+            <el-option
+                  v-for="dict in dict.type.wms_item_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="单位类别" prop="unit">
@@ -268,6 +278,7 @@ import { listWmsRack } from "@/api/wms/rack";
 
 export default {
   name: "WmsItem",
+  dicts: ['wms_item_type'],
   data() {
     return {
       // 遮罩层
