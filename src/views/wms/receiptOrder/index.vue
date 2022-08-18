@@ -59,7 +59,7 @@
             size="small"
             v-model="queryParams.checkTime"
             type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
+            value-format="yyyy-MM-ddTHH:mm:ss"
             placeholder="选择审核时间">
         </el-date-picker>
       </el-form-item>
@@ -195,7 +195,7 @@
           <el-date-picker clearable size="small"
                         v-model="form.checkTime"
                         type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-ddTHH:mm:ss"
                         placeholder="选择审核时间">
           </el-date-picker>
         </el-form-item>

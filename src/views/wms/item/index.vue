@@ -81,7 +81,7 @@
             size="small"
             v-model="queryParams.expiryDate"
             type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
+            value-format="yyyy-MM-ddTHH:mm:ss"
             placeholder="选择有效期">
         </el-date-picker>
       </el-form-item>
@@ -206,17 +206,6 @@
         <el-form-item label="单位类别" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位类别" />
         </el-form-item>
-        <!-- <el-form-item label="默认所属仓库" prop="warehouseId">
-          <el-input v-model="form.warehouseId" placeholder="请输入默认所属仓库" />
-        </el-form-item>
-        <el-form-item label="默认所属库区" prop="areaId">
-          <el-input v-model="form.areaId" placeholder="请输入默认所属库区" />
-        </el-form-item>
-        
-        <el-form-item label="默认所属货架" prop="rackId">
-          <el-input v-model="form.rackId" placeholder="请输入默认所属货架" />
-        </el-form-item> -->
-
         <el-form-item label="所属仓库" prop="warehouseId">
         <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small" @change="onWarehouseChange">
           <el-option
@@ -254,7 +243,7 @@
           <el-date-picker clearable size="small"
                         v-model="form.expiryDate"
                         type="datetime"
-                        value-format="yyyy-MM-dd HH:mm:ss"
+                        value-format="yyyy-MM-ddTHH:mm:ss"
                         placeholder="选择有效期">
           </el-date-picker>
         </el-form-item>
