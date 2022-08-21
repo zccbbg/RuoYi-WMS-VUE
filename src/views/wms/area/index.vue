@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+    <el-form
+      :model="queryParams"
+      ref="queryForm"
+      :inline="true"
+      v-show="showSearch"
+      label-width="100px"
+      size="medium"
+      class="ry_form"
+    >
       <el-form-item label="编号" prop="areaNo">
         <el-input
           v-model="queryParams.areaNo"
@@ -29,8 +37,16 @@
         />
       </el-form-item>
       <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+          >搜索</el-button
+        >
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
+          >重置</el-button
+        >
       </el-form-item>
     </el-form>
 
@@ -43,7 +59,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['wms:wmsArea:add']"
-        >新增</el-button>
+          >新增</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -54,7 +71,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['wms:wmsArea:edit']"
-        >修改</el-button>
+          >修改</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -65,7 +83,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['wms:wmsArea:remove']"
-        >删除</el-button>
+          >删除</el-button
+        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -76,18 +95,51 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['wms:wmsArea:export']"
-        >导出</el-button>
+          >导出</el-button
+        >
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+      <right-toolbar
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+        :columns="columns"
+      ></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsAreaList" @selection-change="handleSelectionChange">
+    <el-table
+      v-loading="loading"
+      :data="wmsAreaList"
+      @selection-change="handleSelectionChange"
+    >
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="areaNo" v-if="columns[0].visible"/>
-      <el-table-column label="名称" align="center" prop="areaName" v-if="columns[1].visible"/>
-      <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible"/>
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column
+        label="编号"
+        align="center"
+        prop="areaNo"
+        v-if="columns[0].visible"
+      />
+      <el-table-column
+        label="名称"
+        align="center"
+        prop="areaName"
+        v-if="columns[1].visible"
+      />
+      <el-table-column
+        label="所属仓库"
+        align="center"
+        prop="warehouseName"
+        v-if="columns[2].visible"
+      />
+      <el-table-column
+        label="备注"
+        align="center"
+        prop="remark"
+        v-if="columns[3].visible"
+      />
+      <el-table-column
+        label="操作"
+        align="center"
+        class-name="small-padding fixed-width"
+      >
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -95,20 +147,22 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['wms:wmsArea:edit']"
-          >修改</el-button>
+            >修改</el-button
+          >
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['wms:wmsArea:remove']"
-          >删除</el-button>
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
@@ -117,26 +171,35 @@
 
     <!-- 添加或修改库区对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
+      <el-form
+        ref="form"
+        :model="form"
+        :rules="rules"
+        label-width="108px"
+        inline
+        class="dialog-form-two"
+      >
         <el-form-item label="编号" prop="areaNo">
           <el-input v-model="form.areaNo" placeholder="请输入编号" />
         </el-form-item>
         <el-form-item label="名称" prop="areaName">
           <el-input v-model="form.areaName" placeholder="请输入名称" />
         </el-form-item>
-        <!-- <el-form-item label="所属仓库ID" prop="warehouseId">
-          <el-input v-model="form.warehouseId" placeholder="请输入所属仓库ID" />
-        </el-form-item> -->
-        
         <el-form-item label="所属仓库" prop="warehouseId">
-        <el-select v-model="form.warehouseId"  placeholder="请输入货仓名称" clearable size="small">
-          <el-option
-            v-for="item in wmsWarehouseList"
-            :key="item.id"
-            :label="item.warehouseName"
-            :value="item.id">
-          </el-option>
-        </el-select>
+          <el-select
+            v-model="form.warehouseId"
+            placeholder="请输入货仓名称"
+            clearable
+            size="small"
+          >
+            <el-option
+              v-for="item in wmsWarehouseList"
+              :key="item.id"
+              :label="item.warehouseName"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -151,8 +214,15 @@
 </template>
 
 <script>
-import { listWmsArea, getWmsArea, delWmsArea, addWmsArea, updateWmsArea, exportWmsArea } from "@/api/wms/area";
-import { listWmsWarehouse, } from "@/api/wms/warehouse";
+import {
+  listWmsArea,
+  getWmsArea,
+  delWmsArea,
+  addWmsArea,
+  updateWmsArea,
+  exportWmsArea,
+} from "@/api/wms/area";
+import { listWmsWarehouse } from "@/api/wms/warehouse";
 
 export default {
   name: "WmsArea",
@@ -176,7 +246,7 @@ export default {
       wmsAreaList: [],
       // 仓库表格数据
       wmsWarehouseList: [],
-      wmsWarehouseMap:new Map(),
+      wmsWarehouseMap: new Map(),
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -193,22 +263,20 @@ export default {
       form: {},
       // 表单校验
       rules: {
-        areaNo: [
-          { required: true, message: "编号不能为空", trigger: "blur" }
-        ],
+        areaNo: [{ required: true, message: "编号不能为空", trigger: "blur" }],
         areaName: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
+          { required: true, message: "名称不能为空", trigger: "blur" },
         ],
         warehouseId: [
-          { required: true, message: "所属仓库不能为空", trigger: "blur" }
+          { required: true, message: "所属仓库不能为空", trigger: "blur" },
         ],
       },
       columns: [
-            { key: 1, label: "编号", visible:  true  },
-            { key: 2, label: "名称", visible:  true  },
-            { key: 3, label: "所属仓库", visible:  true  },
-            { key: 4, label: "备注", visible:  true  },
-                             ],
+        { key: 1, label: "编号", visible: true },
+        { key: 2, label: "名称", visible: true },
+        { key: 3, label: "所属仓库", visible: true },
+        { key: 4, label: "备注", visible: true },
+      ],
     };
   },
   created() {
@@ -216,34 +284,33 @@ export default {
   },
   methods: {
     /** 查询库区列表 */
-    async getList() {
+    getList() {
       this.loading = true;
-      const {pageNum, pageSize} = this.queryParams;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-      const pageReq = {page: pageNum - 1, size: pageSize};
-      await this.getWarehouseList();
-      listWmsArea(query, pageReq).then(response => {
-        const { content, totalElements } = response
-        content.forEach(item=>{
-          item.warehouseName=this.wmsWarehouseMap.get(item.warehouseId)
-        })
+      const { pageNum, pageSize } = this.queryParams;
+      const query = {
+        ...this.queryParams,
+        pageNum: undefined,
+        pageSize: undefined,
+      };
+      const pageReq = { page: pageNum - 1, size: pageSize };
+      listWmsWarehouse({}).then((response) => {
+        const { content } = response;
+        this.wmsWarehouseList = content;
+        this.wmsWarehouseList.forEach((warehouse) => {
+          this.wmsWarehouseMap.set(warehouse.id, warehouse.warehouseName);
+        });
+        return listWmsArea(query, pageReq);
+      }).then((response) => {
+        const { content, totalElements } = response;
+        content.forEach((item) => {
+          item.warehouseName = this.wmsWarehouseMap.get(item.warehouseId);
+        });
         this.wmsAreaList = content;
         this.total = totalElements;
         this.loading = false;
+       
       });
-    },
-    /** 查询仓库列表 */
-    getWarehouseList() {
-      this.loading = true;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-      listWmsWarehouse(query).then(response => {
-        const { content, totalElements } = response
-        this.wmsWarehouseList = content;
-        this.wmsWarehouseList.forEach(warehouse=>{
-          this.wmsWarehouseMap.set(warehouse.id,warehouse.warehouseName)
-        })
-        this.loading = false;
-      });
+      
     },
     // 取消按钮
     cancel() {
@@ -261,7 +328,7 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
       };
       this.resetForm("form");
     },
@@ -277,9 +344,9 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
+      this.ids = selection.map((item) => item.id);
+      this.single = selection.length !== 1;
+      this.multiple = !selection.length;
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -290,8 +357,8 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids
-      getWmsArea(id).then(response => {
+      const id = row.id || this.ids;
+      getWmsArea(id).then((response) => {
         this.form = response;
         this.open = true;
         this.title = "修改库区";
@@ -299,16 +366,16 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs["form"].validate(valid => {
+      this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.form.id != null) {
-            updateWmsArea(this.form).then(response => {
+            updateWmsArea(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addWmsArea(this.form).then(response => {
+            addWmsArea(this.form).then((response) => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -320,24 +387,32 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除库区编号为"' + ids + '"的数据项？').then(function() {
-        return delWmsArea(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      this.$modal
+        .confirm('是否确认删除库区编号为"' + ids + '"的数据项？')
+        .then(function () {
+          return delWmsArea(ids);
+        })
+        .then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        })
+        .catch(() => {});
     },
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有库区数据项？').then(() => {
-        this.exportLoading = true;
-        return exportWmsArea(queryParams);
-      }).then(response => {
-        this.$download.download(response);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
-  }
+      this.$modal
+        .confirm("是否确认导出所有库区数据项？")
+        .then(() => {
+          this.exportLoading = true;
+          return exportWmsArea(queryParams);
+        })
+        .then((response) => {
+          this.$download.download(response);
+          this.exportLoading = false;
+        })
+        .catch(() => {});
+    },
+  },
 };
 </script>
