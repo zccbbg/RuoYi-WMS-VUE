@@ -12,8 +12,13 @@
       </el-form-item>
       <el-form-item label="入库类型" prop="receiptOrderType">
         <el-select v-model="queryParams.receiptOrderType" placeholder="请选择入库类型" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
+            <el-option
+                  v-for="dict in dict.type.wms_receipt_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
+          </el-select>
       </el-form-item>
       <el-form-item label="供应商" prop="supplierId">
         <el-input
@@ -164,12 +169,14 @@
     <!-- 添加或修改入库单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="入库单号" prop="receiptOrderNo">
-          <el-input v-model="form.receiptOrderNo" placeholder="请输入入库单号" />
-        </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-select v-model="form.receiptOrderType" placeholder="请选择入库类型">
-            <el-option label="请选择字典生成" value="" />
+            <el-option
+                  v-for="dict in dict.type.wms_receipt_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
@@ -177,27 +184,6 @@
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号" />
-        </el-form-item>
-        <el-form-item label="入库状态">
-          <el-radio-group v-model="form.receiptOrderStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="审核状态">
-          <el-radio-group v-model="form.checkStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="审核人" prop="checkUserId">
-          <el-input v-model="form.checkUserId" placeholder="请输入审核人" />
-        </el-form-item>
-        <el-form-item label="审核时间" prop="checkTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.checkTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择审核时间">
-          </el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -216,6 +202,7 @@ import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, addWmsRece
 
 export default {
   name: "WmsReceiptOrder",
+  dicts: ['wms_receipt_type'],
   data() {
     return {
       // 遮罩层
