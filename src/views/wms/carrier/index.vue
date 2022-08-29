@@ -130,7 +130,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsCarrierList" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="wmsCarrierList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编号" align="center" prop="carrierNo" v-if="columns[0].visible"/>
       <el-table-column label="名称" align="center" prop="carrierName" v-if="columns[1].visible"/>
@@ -159,7 +159,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"
@@ -217,185 +217,188 @@
 
 <script>
 import { listWmsCarrier, getWmsCarrier, delWmsCarrier, addWmsCarrier, updateWmsCarrier, exportWmsCarrier } from "@/api/wms/carrier";
+import WmsTable from "@/components/WmsTable/index.vue";
 
 export default {
-  name: "WmsCarrier",
-  dicts: ['wms_carrier_level'],
-  data() {
-    return {
-      // 遮罩层
-      loading: true,
-      // 导出遮罩层
-      exportLoading: false,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 承运商表格数据
-      wmsCarrierList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        carrierNo: null,
-        carrierName: null,
-        address: null,
-        mobile: null,
-        tel: null,
-        contact: null,
-        level: null,
-        email: null,
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        carrierNo: [
-          { required: true, message: "编号不能为空", trigger: "blur" }
-        ],
-        carrierName: [
-          { required: true, message: "名称不能为空", trigger: "blur" }
-        ],
-      },
-      columns: [
-            { key: 1, label: "编号", visible:  true  },
-            { key: 2, label: "名称", visible:  true  },
-            { key: 3, label: "地址", visible:  true  },
-            { key: 4, label: "手机号", visible:  true  },
-            { key: 5, label: "座机号", visible:  true  },
-            { key: 6, label: "联系人", visible:  true  },
-            { key: 7, label: "级别", visible:  true  },
-            { key: 8, label: "Email", visible:  true  },
-            { key: 9, label: "备注", visible:  true  },
-                             ],
-      showMoreCondition: false
-    };
-  },
-  created() {
-    this.getList();
-  },
-  methods: {
-    /** 查询承运商列表 */
-    getList() {
-      this.loading = true;
-      const {pageNum, pageSize} = this.queryParams;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-      const pageReq = {page: pageNum - 1, size: pageSize};
-      listWmsCarrier(query, pageReq).then(response => {
-        const { content, totalElements } = response
-        this.wmsCarrierList = content;
-        this.total = totalElements;
-        this.loading = false;
-      });
+    name: "WmsCarrier",
+    dicts: ["wms_carrier_level"],
+    data() {
+        return {
+            // 遮罩层
+            loading: true,
+            // 导出遮罩层
+            exportLoading: false,
+            // 选中数组
+            ids: [],
+            // 非单个禁用
+            single: true,
+            // 非多个禁用
+            multiple: true,
+            // 显示搜索条件
+            showSearch: true,
+            // 总条数
+            total: 0,
+            // 承运商表格数据
+            wmsCarrierList: [],
+            // 弹出层标题
+            title: "",
+            // 是否显示弹出层
+            open: false,
+            // 查询参数
+            queryParams: {
+                pageNum: 1,
+                pageSize: 10,
+                carrierNo: null,
+                carrierName: null,
+                address: null,
+                mobile: null,
+                tel: null,
+                contact: null,
+                level: null,
+                email: null,
+            },
+            // 表单参数
+            form: {},
+            // 表单校验
+            rules: {
+                carrierNo: [
+                    { required: true, message: "编号不能为空", trigger: "blur" }
+                ],
+                carrierName: [
+                    { required: true, message: "名称不能为空", trigger: "blur" }
+                ],
+            },
+            columns: [
+                { key: 1, label: "编号", visible: true },
+                { key: 2, label: "名称", visible: true },
+                { key: 3, label: "地址", visible: true },
+                { key: 4, label: "手机号", visible: true },
+                { key: 5, label: "座机号", visible: true },
+                { key: 6, label: "联系人", visible: true },
+                { key: 7, label: "级别", visible: true },
+                { key: 8, label: "Email", visible: true },
+                { key: 9, label: "备注", visible: true },
+            ],
+            showMoreCondition: false
+        };
     },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        carrierNo: null,
-        carrierName: null,
-        address: null,
-        mobile: null,
-        tel: null,
-        contact: null,
-        level: null,
-        email: null,
-        remark: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null
-      };
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加承运商";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getWmsCarrier(id).then(response => {
-        this.form = response;
-        this.open = true;
-        this.title = "修改承运商";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateWmsCarrier(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addWmsCarrier(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除承运商编号为"' + ids + '"的数据项？').then(function() {
-        return delWmsCarrier(ids);
-      }).then(() => {
+    created() {
         this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有承运商数据项？').then(() => {
-        this.exportLoading = true;
-        return exportWmsCarrier(queryParams);
-      }).then(response => {
-        this.$download.download(response);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
-  }
+    methods: {
+        /** 查询承运商列表 */
+        getList() {
+            this.loading = true;
+            const { pageNum, pageSize } = this.queryParams;
+            const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined };
+            const pageReq = { page: pageNum - 1, size: pageSize };
+            listWmsCarrier(query, pageReq).then(response => {
+                const { content, totalElements } = response;
+                this.wmsCarrierList = content;
+                this.total = totalElements;
+                this.loading = false;
+            });
+        },
+        // 取消按钮
+        cancel() {
+            this.open = false;
+            this.reset();
+        },
+        // 表单重置
+        reset() {
+            this.form = {
+                id: null,
+                carrierNo: null,
+                carrierName: null,
+                address: null,
+                mobile: null,
+                tel: null,
+                contact: null,
+                level: null,
+                email: null,
+                remark: null,
+                createBy: null,
+                createTime: null,
+                updateBy: null,
+                updateTime: null
+            };
+            this.resetForm("form");
+        },
+        /** 搜索按钮操作 */
+        handleQuery() {
+            this.queryParams.pageNum = 1;
+            this.getList();
+        },
+        /** 重置按钮操作 */
+        resetQuery() {
+            this.resetForm("queryForm");
+            this.handleQuery();
+        },
+        // 多选框选中数据
+        handleSelectionChange(selection) {
+            this.ids = selection.map(item => item.id);
+            this.single = selection.length !== 1;
+            this.multiple = !selection.length;
+        },
+        /** 新增按钮操作 */
+        handleAdd() {
+            this.reset();
+            this.open = true;
+            this.title = "添加承运商";
+        },
+        /** 修改按钮操作 */
+        handleUpdate(row) {
+            this.reset();
+            const id = row.id || this.ids;
+            getWmsCarrier(id).then(response => {
+                this.form = response;
+                this.open = true;
+                this.title = "修改承运商";
+            });
+        },
+        /** 提交按钮 */
+        submitForm() {
+            this.$refs["form"].validate(valid => {
+                if (valid) {
+                    if (this.form.id != null) {
+                        updateWmsCarrier(this.form).then(response => {
+                            this.$modal.msgSuccess("修改成功");
+                            this.open = false;
+                            this.getList();
+                        });
+                    }
+                    else {
+                        addWmsCarrier(this.form).then(response => {
+                            this.$modal.msgSuccess("新增成功");
+                            this.open = false;
+                            this.getList();
+                        });
+                    }
+                }
+            });
+        },
+        /** 删除按钮操作 */
+        handleDelete(row) {
+            const ids = row.id || this.ids;
+            this.$modal.confirm("是否确认删除承运商编号为\"" + ids + "\"的数据项？").then(function () {
+                return delWmsCarrier(ids);
+            }).then(() => {
+                this.getList();
+                this.$modal.msgSuccess("删除成功");
+            }).catch(() => { });
+        },
+        /** 导出按钮操作 */
+        handleExport() {
+            const queryParams = this.queryParams;
+            this.$modal.confirm("是否确认导出所有承运商数据项？").then(() => {
+                this.exportLoading = true;
+                return exportWmsCarrier(queryParams);
+            }).then(response => {
+                this.$download.download(response);
+                this.exportLoading = false;
+            }).catch(() => { });
+        }
+    },
+    components: { WmsTable }
 };
 </script>

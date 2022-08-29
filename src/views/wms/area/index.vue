@@ -105,7 +105,7 @@
       ></right-toolbar>
     </el-row>
 
-    <el-table
+    <WmsTable
       v-loading="loading"
       :data="wmsAreaList"
       @selection-change="handleSelectionChange"
@@ -159,7 +159,7 @@
           >
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
 
     <pagination
       v-show="total > 0"
