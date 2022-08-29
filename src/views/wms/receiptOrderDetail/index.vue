@@ -64,9 +64,17 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <template v-if="showMoreCondition">
+      <el-form-item label="入库状态" prop="receiptOrderStatus">
+        <el-select v-model="queryParams.receiptOrderStatus" placeholder="请选择入库状态" clearable size="small">
+              <el-option label="请选择字典生成" value="" />
+        </el-select>
+      </el-form-item>
+    </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>
       </el-form-item>
     </el-form>
 
@@ -127,6 +135,7 @@
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
       <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[6].visible"/>
       <el-table-column label="所属库区" align="center" prop="areaId" v-if="columns[7].visible"/>
+      <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" v-if="columns[8].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -182,6 +191,11 @@
         <el-form-item label="所属库区" prop="areaId">
           <el-input v-model="form.areaId" placeholder="请输入所属库区" />
         </el-form-item>
+        <el-form-item label="入库状态">
+          <el-radio-group v-model="form.receiptOrderStatus">
+            <el-radio label="1">请选择字典生成</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -228,7 +242,8 @@ export default {
         realQuantity: null,
         rackId: null,
         warehouseId: null,
-        areaId: null
+        areaId: null,
+        receiptOrderStatus: null
       },
       // 表单参数
       form: {},
@@ -244,7 +259,9 @@ export default {
                 { key: 7, label: "备注", visible:  true  },
                             { key: 12, label: "所属仓库", visible:  false  },
             { key: 13, label: "所属库区", visible:  false  },
+            { key: 14, label: "入库状态", visible:  false  },
          ],
+      showMoreCondition: false
     };
   },
   created() {
@@ -284,7 +301,8 @@ export default {
         updateBy: null,
         updateTime: null,
         warehouseId: null,
-        areaId: null
+        areaId: null,
+        receiptOrderStatus: 0
       };
       this.resetForm("form");
     },

@@ -12,12 +12,7 @@
       </el-form-item>
       <el-form-item label="入库类型" prop="receiptOrderType">
         <el-select v-model="queryParams.receiptOrderType" placeholder="请选择入库类型" clearable size="small">
-            <el-option
-                  v-for="dict in dict.type.wms_receipt_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
+              <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
       <el-form-item label="供应商" prop="supplierId">
@@ -43,42 +38,9 @@
               <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
-      <el-form-item label="实际到货时间" prop="actualTimeOfArrival">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.actualTimeOfArrival"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择实际到货时间">
-        </el-date-picker>
-      </el-form-item>
-      <el-form-item label="预计到货时间" prop="estimatedTimeOfArrival">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.estimatedTimeOfArrival"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择预计到货时间">
-        </el-date-picker>
-      </el-form-item>
-      <template v-if="showMoreCondition">
-      <el-form-item label="入库时间" prop="storageTime">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.storageTime"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择入库时间">
-        </el-date-picker>
-      </el-form-item>
-    </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>
       </el-form-item>
     </el-form>
 
@@ -137,21 +99,6 @@
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" v-if="columns[4].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
-      <el-table-column label="实际到货时间" align="center" prop="actualTimeOfArrival" width="180" v-if="columns[6].visible">
-        <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.actualTimeOfArrival, '')}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="预计到货时间" align="center" prop="estimatedTimeOfArrival" width="180" v-if="columns[7].visible">
-        <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.estimatedTimeOfArrival, '')}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="入库时间" align="center" prop="storageTime" width="180" v-if="columns[8].visible">
-        <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.storageTime, '')}}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -188,12 +135,7 @@
         </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-select v-model="form.receiptOrderType" placeholder="请选择入库类型">
-            <el-option
-                  v-for="dict in dict.type.wms_receipt_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
+            <el-option label="请选择字典生成" value="" />
           </el-select>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
@@ -210,30 +152,6 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
-        <el-form-item label="实际到货时间" prop="actualTimeOfArrival">
-          <el-date-picker clearable size="small"
-                        v-model="form.actualTimeOfArrival"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择实际到货时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="预计到货时间" prop="estimatedTimeOfArrival">
-          <el-date-picker clearable size="small"
-                        v-model="form.estimatedTimeOfArrival"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择预计到货时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="入库时间" prop="storageTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.storageTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择入库时间">
-          </el-date-picker>
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -248,7 +166,6 @@ import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, addWmsRece
 
 export default {
   name: "WmsReceiptOrder",
-  dicts: ['wms_receipt_type'],
   data() {
     return {
       // 遮罩层
@@ -280,9 +197,6 @@ export default {
         supplierId: null,
         orderNo: null,
         receiptOrderStatus: null,
-        actualTimeOfArrival: null,
-        estimatedTimeOfArrival: null,
-        storageTime: null
       },
       // 表单参数
       form: {},
@@ -296,11 +210,7 @@ export default {
             { key: 4, label: "订单号", visible:  true  },
             { key: 5, label: "入库状态", visible:  true  },
             { key: 6, label: "备注", visible:  true  },
-                                { key: 12, label: "实际到货时间", visible:  false  },
-            { key: 13, label: "预计到货时间", visible:  false  },
-            { key: 14, label: "入库时间", visible:  false  },
-         ],
-      showMoreCondition: false
+                             ],
     };
   },
   created() {
@@ -338,10 +248,7 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null,
-        actualTimeOfArrival: null,
-        estimatedTimeOfArrival: null,
-        storageTime: null
+        updateTime: null
       };
       this.resetForm("form");
     },
