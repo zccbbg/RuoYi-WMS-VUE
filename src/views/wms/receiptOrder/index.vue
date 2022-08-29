@@ -40,7 +40,12 @@
       </el-form-item>
       <el-form-item label="入库状态" prop="receiptOrderStatus">
         <el-select v-model="queryParams.receiptOrderStatus" placeholder="请选择入库状态" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+              <el-option
+                    v-for="dict in dict.type.wms_receipt_status"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                  ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item class="flex_one tr">
@@ -58,7 +63,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['wms:wmsReceiptOrder:add']"
-        >新增</el-button>
+        >创建入库单</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -135,9 +140,6 @@
     <!-- 添加或修改入库单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="入库单号" prop="receiptOrderNo">
-          <el-input v-model="form.receiptOrderNo" placeholder="请输入入库单号" />
-        </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-select v-model="form.receiptOrderType" placeholder="请选择入库类型">
             <el-option
@@ -153,11 +155,6 @@
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号" />
-        </el-form-item>
-        <el-form-item label="入库状态">
-          <el-radio-group v-model="form.receiptOrderStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -176,7 +173,7 @@ import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, addWmsRece
 
 export default {
   name: "WmsReceiptOrder",
-  dicts: ['wms_receipt_type'],
+  dicts: ['wms_receipt_type','wms_receipt_status'],
   data() {
     return {
       // 遮罩层
@@ -283,7 +280,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加入库单";
+      this.title = "创建入库单";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
