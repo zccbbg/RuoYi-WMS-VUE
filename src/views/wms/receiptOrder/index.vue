@@ -18,7 +18,7 @@
                   :label="dict.label"
                   :value="dict.value"
                 ></el-option>
-          </el-select>
+        </el-select>
       </el-form-item>
       <el-form-item label="供应商" prop="supplierId">
         <el-input
@@ -43,29 +43,35 @@
               <el-option label="请选择字典生成" value="" />
         </el-select>
       </el-form-item>
-      <el-form-item label="审核状态" prop="checkStatus">
-        <el-select v-model="queryParams.checkStatus" placeholder="请选择审核状态" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="审核人" prop="checkUserId">
-        <el-input
-          v-model="queryParams.checkUserId"
-          placeholder="请输入审核人"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <template v-if="showMoreCondition">
-      <el-form-item label="审核时间" prop="checkTime">
+      <el-form-item label="实际到货时间" prop="actualTimeOfArrival">
         <el-date-picker
             clearable
             size="small"
-            v-model="queryParams.checkTime"
+            v-model="queryParams.actualTimeOfArrival"
             type="datetime"
             value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择审核时间">
+            placeholder="选择实际到货时间">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="预计到货时间" prop="estimatedTimeOfArrival">
+        <el-date-picker
+            clearable
+            size="small"
+            v-model="queryParams.estimatedTimeOfArrival"
+            type="datetime"
+            value-format="yyyy-MM-ddTHH:mm:ss"
+            placeholder="选择预计到货时间">
+        </el-date-picker>
+      </el-form-item>
+      <template v-if="showMoreCondition">
+      <el-form-item label="入库时间" prop="storageTime">
+        <el-date-picker
+            clearable
+            size="small"
+            v-model="queryParams.storageTime"
+            type="datetime"
+            value-format="yyyy-MM-ddTHH:mm:ss"
+            placeholder="选择入库时间">
         </el-date-picker>
       </el-form-item>
     </template>
@@ -123,21 +129,29 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="入库类型" align="center" prop="receiptOrderType" v-if="columns[1].visible"/>
       <el-table-column label="供应商" align="center" prop="supplierId" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" v-if="columns[4].visible"/>
-      <el-table-column label="审核状态" align="center" prop="checkStatus" v-if="columns[5].visible"/>
-      <el-table-column label="审核人" align="center" prop="checkUserId" v-if="columns[6].visible"/>
-      <el-table-column label="审核时间" align="center" prop="checkTime" width="180" v-if="columns[7].visible">
+      <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
+      <el-table-column label="实际到货时间" align="center" prop="actualTimeOfArrival" width="180" v-if="columns[6].visible">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.checkTime, '')}}</span>
+            <span>{{ parseTime(scope.row.actualTimeOfArrival, '')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[8].visible"/>
+      <el-table-column label="预计到货时间" align="center" prop="estimatedTimeOfArrival" width="180" v-if="columns[7].visible">
+        <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.estimatedTimeOfArrival, '')}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="入库时间" align="center" prop="storageTime" width="180" v-if="columns[8].visible">
+        <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.storageTime, '')}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -156,7 +170,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"
@@ -169,6 +183,9 @@
     <!-- 添加或修改入库单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
+        <el-form-item label="入库单号" prop="receiptOrderNo">
+          <el-input v-model="form.receiptOrderNo" placeholder="请输入入库单号" />
+        </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-select v-model="form.receiptOrderType" placeholder="请选择入库类型">
             <el-option
@@ -185,8 +202,37 @@
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号" />
         </el-form-item>
+        <el-form-item label="入库状态">
+          <el-radio-group v-model="form.receiptOrderStatus">
+            <el-radio label="1">请选择字典生成</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
+        <el-form-item label="实际到货时间" prop="actualTimeOfArrival">
+          <el-date-picker clearable size="small"
+                        v-model="form.actualTimeOfArrival"
+                        type="datetime"
+                        value-format="yyyy-MM-ddTHH:mm:ss"
+                        placeholder="选择实际到货时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="预计到货时间" prop="estimatedTimeOfArrival">
+          <el-date-picker clearable size="small"
+                        v-model="form.estimatedTimeOfArrival"
+                        type="datetime"
+                        value-format="yyyy-MM-ddTHH:mm:ss"
+                        placeholder="选择预计到货时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="入库时间" prop="storageTime">
+          <el-date-picker clearable size="small"
+                        v-model="form.storageTime"
+                        type="datetime"
+                        value-format="yyyy-MM-ddTHH:mm:ss"
+                        placeholder="选择入库时间">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -234,9 +280,9 @@ export default {
         supplierId: null,
         orderNo: null,
         receiptOrderStatus: null,
-        checkStatus: null,
-        checkUserId: null,
-        checkTime: null,
+        actualTimeOfArrival: null,
+        estimatedTimeOfArrival: null,
+        storageTime: null
       },
       // 表单参数
       form: {},
@@ -249,11 +295,11 @@ export default {
             { key: 3, label: "供应商", visible:  true  },
             { key: 4, label: "订单号", visible:  true  },
             { key: 5, label: "入库状态", visible:  true  },
-            { key: 6, label: "审核状态", visible:  true  },
-            { key: 7, label: "审核人", visible:  true  },
-            { key: 8, label: "审核时间", visible:  true  },
-            { key: 9, label: "备注", visible:  true  },
-                             ],
+            { key: 6, label: "备注", visible:  true  },
+                                { key: 12, label: "实际到货时间", visible:  false  },
+            { key: 13, label: "预计到货时间", visible:  false  },
+            { key: 14, label: "入库时间", visible:  false  },
+         ],
       showMoreCondition: false
     };
   },
@@ -288,14 +334,14 @@ export default {
         supplierId: null,
         orderNo: null,
         receiptOrderStatus: 0,
-        checkStatus: 0,
-        checkUserId: null,
-        checkTime: null,
         remark: null,
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
+        actualTimeOfArrival: null,
+        estimatedTimeOfArrival: null,
+        storageTime: null
       };
       this.resetForm("form");
     },

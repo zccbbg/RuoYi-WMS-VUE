@@ -37,10 +37,28 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="货架" prop="rackId">
+      <el-form-item label="所属货架" prop="rackId">
         <el-input
           v-model="queryParams.rackId"
-          placeholder="请输入货架"
+          placeholder="请输入所属货架"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="所属仓库" prop="warehouseId">
+        <el-input
+          v-model="queryParams.warehouseId"
+          placeholder="请输入所属仓库"
+          clearable
+          size="small"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="所属库区" prop="areaId">
+        <el-input
+          v-model="queryParams.areaId"
+          placeholder="请输入所属库区"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -105,8 +123,10 @@
       <el-table-column label="物料" align="center" prop="itemId" v-if="columns[1].visible"/>
       <el-table-column label="计划数量" align="center" prop="planQuantity" v-if="columns[2].visible"/>
       <el-table-column label="实际数量" align="center" prop="realQuantity" v-if="columns[3].visible"/>
-      <el-table-column label="货架" align="center" prop="rackId" v-if="columns[4].visible"/>
+      <el-table-column label="所属货架" align="center" prop="rackId" v-if="columns[4].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
+      <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[6].visible"/>
+      <el-table-column label="所属库区" align="center" prop="areaId" v-if="columns[7].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -150,11 +170,17 @@
         <el-form-item label="实际数量" prop="realQuantity">
           <el-input v-model="form.realQuantity" placeholder="请输入实际数量" />
         </el-form-item>
-        <el-form-item label="货架" prop="rackId">
-          <el-input v-model="form.rackId" placeholder="请输入货架" />
+        <el-form-item label="所属货架" prop="rackId">
+          <el-input v-model="form.rackId" placeholder="请输入所属货架" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
+        <el-form-item label="所属仓库" prop="warehouseId">
+          <el-input v-model="form.warehouseId" placeholder="请输入所属仓库" />
+        </el-form-item>
+        <el-form-item label="所属库区" prop="areaId">
+          <el-input v-model="form.areaId" placeholder="请输入所属库区" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -201,6 +227,8 @@ export default {
         planQuantity: null,
         realQuantity: null,
         rackId: null,
+        warehouseId: null,
+        areaId: null
       },
       // 表单参数
       form: {},
@@ -212,9 +240,11 @@ export default {
             { key: 2, label: "物料", visible:  true  },
             { key: 3, label: "计划数量", visible:  true  },
             { key: 4, label: "实际数量", visible:  true  },
-            { key: 5, label: "货架", visible:  true  },
+            { key: 5, label: "所属货架", visible:  true  },
                 { key: 7, label: "备注", visible:  true  },
-                         ],
+                            { key: 12, label: "所属仓库", visible:  false  },
+            { key: 13, label: "所属库区", visible:  false  },
+         ],
     };
   },
   created() {
@@ -252,7 +282,9 @@ export default {
         createBy: null,
         createTime: null,
         updateBy: null,
-        updateTime: null
+        updateTime: null,
+        warehouseId: null,
+        areaId: null
       };
       this.resetForm("form");
     },
