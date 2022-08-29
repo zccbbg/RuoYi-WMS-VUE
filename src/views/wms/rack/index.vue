@@ -90,7 +90,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsRackList" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="wmsRackList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编号" align="center" prop="rackNo" v-if="columns[0].visible"/>
       <el-table-column label="名称" align="center" prop="rackName" v-if="columns[1].visible"/>
@@ -115,7 +115,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"

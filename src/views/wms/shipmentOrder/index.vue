@@ -118,7 +118,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="出库单号，系统自动生成" align="center" prop="shipmentOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="出库类型" align="center" prop="shipmentOrderType" v-if="columns[1].visible"/>
@@ -151,7 +151,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"

@@ -110,7 +110,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsInventoryMovementList" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="wmsInventoryMovementList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="编号" align="center" prop="inventoryMovementNo" v-if="columns[0].visible"/>
       <el-table-column label="原货架Id" align="center" prop="sourceRackId" v-if="columns[1].visible"/>
@@ -142,7 +142,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"

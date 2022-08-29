@@ -99,7 +99,7 @@
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="wmsReceiptOrderDetailList" @selection-change="handleSelectionChange">
+    <WmsTable v-loading="loading" :data="wmsReceiptOrderDetailList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderId" v-if="columns[0].visible"/>
       <el-table-column label="物料" align="center" prop="itemId" v-if="columns[1].visible"/>
@@ -125,7 +125,7 @@
           >删除</el-button>
         </template>
       </el-table-column>
-    </el-table>
+    </WmsTable>
     
     <pagination
       v-show="total>0"
