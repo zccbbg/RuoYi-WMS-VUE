@@ -12,7 +12,12 @@
       </el-form-item>
       <el-form-item label="入库类型" prop="receiptOrderType">
         <el-select v-model="queryParams.receiptOrderType" placeholder="请选择入库类型" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
+            <el-option
+                  v-for="dict in dict.type.wms_receipt_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="供应商" prop="supplierId">
@@ -135,7 +140,12 @@
         </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-select v-model="form.receiptOrderType" placeholder="请选择入库类型">
-            <el-option label="请选择字典生成" value="" />
+            <el-option
+                  v-for="dict in dict.type.wms_receipt_type"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+                ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
@@ -166,6 +176,7 @@ import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, addWmsRece
 
 export default {
   name: "WmsReceiptOrder",
+  dicts: ['wms_receipt_type'],
   data() {
     return {
       // 遮罩层
