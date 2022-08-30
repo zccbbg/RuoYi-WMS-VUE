@@ -40,6 +40,8 @@ import DictData from '@/components/DictData'
 //wms table组件
 import WmsTable from '@/components/WmsTable'
 
+import WmsSupplierSelect from '@/components/WmsSupplierSelect'
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -60,6 +62,7 @@ Vue.component('FileUpload', FileUpload)
 Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('WmsTable',WmsTable)
+Vue.component('WmsSupplierSelect',WmsSupplierSelect)
 
 Vue.use(directive)
 Vue.use(plugins)

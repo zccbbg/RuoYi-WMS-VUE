@@ -21,13 +21,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="供应商" prop="supplierId">
-        <el-input
-          v-model="queryParams.supplierId"
-          placeholder="请输入供应商"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <WmsSupplierSelect v-model="queryParams.supplierId" size="small"/>
       </el-form-item>
       <el-form-item label="订单号" prop="orderNo">
         <el-input
@@ -141,17 +135,15 @@
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
         <el-form-item label="入库类型" prop="receiptOrderType">
-          <el-select v-model="form.receiptOrderType" placeholder="请选择入库类型">
-            <el-option
-                  v-for="dict in dict.type.wms_receipt_type"
+          <el-radio-group v-model="form.receiptOrderType">
+            <el-radio-button v-for="dict in dict.type.wms_receipt_type"
                   :key="dict.value"
                   :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-          </el-select>
+                  :value="dict.value"></el-radio-button>
+          </el-radio-group>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
-          <el-input v-model="form.supplierId" placeholder="请输入供应商" />
+          <WmsSupplierSelect v-model="form.supplierId"/>
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号" />
@@ -170,6 +162,7 @@
 
 <script>
 import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, addWmsReceiptOrder, updateWmsReceiptOrder, exportWmsReceiptOrder } from "@/api/wms/receiptOrder";
+import { listWmsSupplier} from '@/api/wms/supplier'
 
 export default {
   name: "WmsReceiptOrder",
