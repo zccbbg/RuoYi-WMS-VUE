@@ -1,6 +1,21 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+      <el-form-item label="入库状态" prop="receiptOrderStatus">
+        <el-radio-group v-model="queryParams.receiptOrderStatus" @change="handleQuery" size="small">
+          <el-radio-button v-for="dict in dict.type.wms_receipt_status"
+                :key="dict.value"
+                :label="dict.value">{{dict.label}}</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="入库类型" prop="receiptOrderType">
+        <el-radio-group v-model="queryParams.receiptOrderType" @change="handleQuery" size="small">
+          <el-radio-button v-for="dict in dict.type.wms_receipt_type"
+                :key="dict.value"
+                :label="dict.value">{{dict.label}}</el-radio-button>
+        </el-radio-group>
+      </el-form-item>
+      </br>
       <el-form-item label="入库单号" prop="receiptOrderNo">
         <el-input
           v-model="queryParams.receiptOrderNo"
@@ -9,19 +24,6 @@
           size="small"
           @keyup.enter.native="handleQuery"
         />
-      </el-form-item>
-      <el-form-item label="入库类型" prop="receiptOrderType">
-        <el-select v-model="queryParams.receiptOrderType" placeholder="请选择入库类型" clearable size="small">
-            <el-option
-                  v-for="dict in dict.type.wms_receipt_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="供应商" prop="supplierId">
-        <WmsSupplierSelect v-model="queryParams.supplierId" size="small"/>
       </el-form-item>
       <el-form-item label="订单号" prop="orderNo">
         <el-input
@@ -32,15 +34,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="入库状态" prop="receiptOrderStatus">
-        <el-select v-model="queryParams.receiptOrderStatus" placeholder="请选择入库状态" clearable size="small">
-              <el-option
-                    v-for="dict in dict.type.wms_receipt_status"
-                    :key="dict.value"
-                    :label="dict.label"
-                    :value="dict.value"
-                  ></el-option>
-        </el-select>
+      <el-form-item label="供应商" prop="supplierId">
+        <WmsSupplierSelect v-model="queryParams.supplierId" size="small"/>
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -130,39 +125,11 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改入库单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="入库类型" prop="receiptOrderType">
-          <el-radio-group v-model="form.receiptOrderType">
-            <el-radio-button v-for="dict in dict.type.wms_receipt_type"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"></el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="供应商" prop="supplierId">
-          <WmsSupplierSelect v-model="form.supplierId"/>
-        </el-form-item>
-        <el-form-item label="订单号" prop="orderNo">
-          <el-input v-model="form.orderNo" placeholder="请输入订单号" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, addWmsReceiptOrder, updateWmsReceiptOrder, exportWmsReceiptOrder } from "@/api/wms/receiptOrder";
-import { listWmsSupplier} from '@/api/wms/supplier'
+import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, exportWmsReceiptOrder } from "@/api/wms/receiptOrder";
 
 export default {
   name: "WmsReceiptOrder",
@@ -185,10 +152,6 @@ export default {
       total: 0,
       // 入库单表格数据
       wmsReceiptOrderList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -199,8 +162,6 @@ export default {
         orderNo: null,
         receiptOrderStatus: null,
       },
-      // 表单参数
-      form: {},
       // 表单校验
       rules: {
       },
@@ -230,11 +191,6 @@ export default {
         this.total = totalElements;
         this.loading = false;
       });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
     },
     // 表单重置
     reset() {
@@ -272,8 +228,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.open = true;
-      this.title = "创建入库单";
+      this.$router.push("/wms/receiptOrder/edit")
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -281,28 +236,6 @@ export default {
       const id = row.id || this.ids
       getWmsReceiptOrder(id).then(response => {
         this.form = response;
-        this.open = true;
-        this.title = "修改入库单";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateWmsReceiptOrder(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addWmsReceiptOrder(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
       });
     },
     /** 删除按钮操作 */
