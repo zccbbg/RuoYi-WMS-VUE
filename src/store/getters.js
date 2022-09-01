@@ -14,5 +14,8 @@ const getters = {
   topbarRouters:state => state.permission.topbarRouters,
   defaultRoutes:state => state.permission.defaultRoutes,
   sidebarRouters:state => state.permission.sidebarRouters,
+
+  // 字典相关
+  items: state => state.dict.items,
 }
 export default getters

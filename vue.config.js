@@ -51,7 +51,7 @@ module.exports = {
       },
       stylus: {
         import: [
-          resolve('./src/style/base.styl')
+          resolve('./src/style/variables.styl')
         ],
         paths: resolve('./src/style')
       },

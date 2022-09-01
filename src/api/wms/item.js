@@ -9,6 +9,14 @@ export function listWmsItem(query, pageReq) {
     params: pageReq
   })
 }
+// 查询物料列表
+export function allWmsItem(query) {
+  return request({
+    url: '/wms/item/all',
+    method: 'post',
+    data: query
+  })
+}
 
 // 查询物料详细
 export function getWmsItem(id) {

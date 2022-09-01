@@ -26,6 +26,14 @@ export function addWmsReceiptOrder(data) {
     data: data
   })
 }
+// 新增或编辑入库单
+export function addOrUpdateWmsReceiptOrder(data) {
+  return request({
+    url: '/wms/receiptOrder/add-or-update',
+    method: 'post',
+    data: data
+  })
+}
 
 // 修改入库单
 export function updateWmsReceiptOrder(data) {

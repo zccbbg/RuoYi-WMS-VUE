@@ -50,7 +50,7 @@
           plain
           icon="el-icon-plus"
           size="mini"
-          @click="handleAdd"
+          @click="handleAdd()"
           v-hasPermi="['wms:wmsReceiptOrder:add']"
         >创建入库单</el-button>
       </el-col>
@@ -104,20 +104,20 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            @click.stop="handleUpdate(scope.row)"
             v-hasPermi="['wms:wmsReceiptOrder:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
+            @click.stop="handleDelete(scope.row)"
             v-hasPermi="['wms:wmsReceiptOrder:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
     </WmsTable>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -192,23 +192,6 @@ export default {
         this.loading = false;
       });
     },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        receiptOrderNo: null,
-        receiptOrderType: null,
-        supplierId: null,
-        orderNo: null,
-        receiptOrderStatus: 0,
-        remark: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null
-      };
-      this.resetForm("form");
-    },
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1;
@@ -227,16 +210,12 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.$router.push("/wms/receiptOrder/edit")
+      this.$router.push({path: "/wms/receiptOrder/edit"});
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
       const id = row.id || this.ids
-      getWmsReceiptOrder(id).then(response => {
-        this.form = response;
-      });
+      this.$router.push({path: "/wms/receiptOrder/edit", query: {id}});
     },
     /** 删除按钮操作 */
     handleDelete(row) {
