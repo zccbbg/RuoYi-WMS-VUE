@@ -39,9 +39,9 @@
             el-input(v-model="it.realQuantity" placeholder="实际数量")
           td
             el-select(v-model="it.receiptOrderStatus")
-              el-option(:value="0") 未入库
-              el-option(:value="1") 已入库
-              el-option(:value="2") 部分入库
+              el-option(:value="0" label="未入库")
+              el-option(:value="1" label="已入库")
+              el-option(:value="2" label="部分入库")
           td
             a.red(@click="form.details.splice(index, 1)") 删除
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
@@ -57,12 +57,7 @@
 </template>
 
 <script>
-import {
-  addOrUpdateWmsReceiptOrder,
-  addWmsReceiptOrder,
-  getWmsReceiptOrder,
-  updateWmsReceiptOrder
-} from '@/api/wms/receiptOrder'
+import { addOrUpdateWmsReceiptOrder, getWmsReceiptOrder } from '@/api/wms/receiptOrder'
 import { randomId } from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
 
@@ -101,24 +96,42 @@ export default {
   },
   methods: {
     cancel() {
-      this.$tab.closeOpenPage({path: '/wms/receiptOrder'});
+      this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
     },
     /** 提交按钮 */
     submitForm() {
       this.$refs['form'].validate(valid => {
-        if (valid) {
-          addOrUpdateWmsReceiptOrder(this.form).then(response => {
-            this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
-            this.cancel();
-          })
+        if (!valid) {
+          return
         }
+        const details = this.form.details.map(it => {
+          return {
+            itemId: it.prod.id,
+            rackId: it.prod.rackId,
+            areaId: it.prod.areaId,
+            warehouseId: it.prod.warehouseId,
+            planQuantity: it.planQuantity,
+            realQuantity: it.realQuantity,
+            receiptOrderStatus: it.receiptOrderStatus,
+            delFlag: 0
+          }
+        })
+        const req = {...this.form, details}
+        addOrUpdateWmsReceiptOrder(req).then(response => {
+          this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
+          this.cancel();
+        })
       })
     },
     loadDetail(id) {
       getWmsReceiptOrder(id).then(response => {
+        const {details, items} = response
+        const map = {};
+        (items || []).forEach(it => {map[it.id] = it});
+        details && details.forEach(it => it.prod = map[it.itemId])
         this.form = {
-          details: [],
-          ...response
+          ...response,
+          details
         }
       })
     },
@@ -141,7 +154,7 @@ export default {
       this.resetForm('form')
     },
     confirmSelectItem() {
-      const value = this.$refs['item-select'].rightList;
+      const value = this.$refs['item-select'].rightList
       this.form.details = value.map(it => {
         return {
           prod: it,
@@ -151,14 +164,14 @@ export default {
           delFlag: 0
         }
       })
-      this.closeModal();
+      this.closeModal()
     },
     closeModal() {
       this.modalObj.show = false
     },
     showAddItem() {
-      const ok = () => this.confirmSelectItem();
-      const cancel = () => this.closeModal();
+      const ok = () => this.confirmSelectItem()
+      const cancel = () => this.closeModal()
       this.modalObj = {
         show: true,
         title: '添加物料',
