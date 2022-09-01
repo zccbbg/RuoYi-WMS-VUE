@@ -48,7 +48,13 @@ module.exports = {
     loaderOptions: {
       sass: {
         sassOptions: { outputStyle: "expanded" }
-      }
+      },
+      stylus: {
+        import: [
+          resolve('./src/style/base.styl')
+        ],
+        paths: resolve('./src/style')
+      },
     }
   },
   configureWebpack: {

@@ -1,0 +1,98 @@
+*
+  -webkit-touch-callout:none
+  -webkit-tap-highlight-color: transparent
+  box-sizing: border-box
+html *
+  outline: 0
+html, body, div, span, small, p, em, i, b, th, td, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, form, textarea,input
+  padding: 0
+  margin: 0
+
+a
+  color var(--active)
+  text-decoration: none
+  &:active, &:visited
+    color: currentColor
+
+a,
+img
+  border: none
+  touch-callout: none
+
+ul,
+li,
+ol
+  list-style: none
+i,
+em
+  font-style: normal
+s
+  text-decoration: none
+
+table
+  border-spacing: 0
+  border-collapse: collapse
+
+input:focus,
+select:focus,
+textarea:focus,
+select,
+button
+  margin: 0
+  outline: none
+  appearance:none
+
+input,
+button
+  background-image: none
+
+// @for num from 1 through 10
+for num in (1..20)
+  .mt{num * 5}
+    margin-top: 5px * num
+  .mr{num * 5}
+    margin-right: 5px * num
+  .mb{num * 5}
+    margin-bottom: 5px * num
+  .ml{num * 5}
+    margin-left: 5px * num
+  .m{num * 5}
+    margin: 5px * num
+  .pt{num * 5}
+    padding-top: 5px * num
+  .pr{num * 5}
+    padding-right: 5px * num
+  .pb{num * 5}
+    padding-bottom: 5px * num
+  .pl{num * 5}
+    padding-left: 5px * num
+  .p{num * 5}
+    padding: 5px * num
+// @for num from 1 through 10
+for num in (1..5)
+  .mt{num * 8}
+    margin-top: 8px * num
+  .mr{num * 8}
+    margin-right: 8px * num
+  .mb{num * 8}
+    margin-bottom: 8px * num
+  .ml{num * 8}
+    margin-left: 8px * num
+  .m{num * 8}
+    margin: 8px * num
+  .pt{num * 8}
+    padding-top: 8px * num
+  .pr{num * 8}
+    padding-right: 8px * num
+  .pb{num * 8}
+    padding-bottom: 8px * num
+  .pl{num * 8}
+    padding-left: 8px * num
+  .p{num * 8}
+    padding: 8px * num
+for num in (1..20)
+  .pct{num * 5}
+    width 5% * num
+for num in (1..30)
+  .w{num * 10}
+    width 10px * num

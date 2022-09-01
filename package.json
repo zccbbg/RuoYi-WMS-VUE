@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vue-cli-service serve",
+    "start": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "preview": "node build/index.js --preview",
@@ -58,7 +59,8 @@
     "vue-meta": "2.4.0",
     "vue-router": "3.4.9",
     "vuedraggable": "2.24.3",
-    "vuex": "3.6.0"
+    "vuex": "3.6.0",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "4.4.6",
@@ -72,6 +74,10 @@
     "eslint": "7.15.0",
     "eslint-plugin-vue": "7.2.0",
     "lint-staged": "10.5.3",
+    "pug": "^2.0.3",
+    "pug-plain-loader": "^1.0.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "runjs": "4.4.2",
     "sass": "1.32.13",
     "sass-loader": "10.1.1",
