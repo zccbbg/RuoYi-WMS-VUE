@@ -1,7 +1,7 @@
 <template>
   <el-select placeholder="请选择供应商" clearable v-model="supplier">
       <el-option
-            v-for="supplier in wmsSupplierList"
+            v-for="supplier in supplierList"
             :key="supplier.id"
             :label="supplier.supplierName"
             :value="supplier.id"
@@ -9,15 +9,16 @@
   </el-select>
 </template>
 <script>
-import { listWmsSupplier} from '@/api/wms/supplier'
+import { mapGetters } from 'vuex';
 export default {
   props: ['value','size'],
   data() {
     return {
-      wmsSupplierList: [],
+      
     }
   },
   computed: {
+    ...mapGetters(['supplierList']),
     supplier: {
       get() {
         return this.value;
@@ -28,15 +29,8 @@ export default {
     }
   },
   created() {
-    this.getSupplierList();
   },
   methods: {
-    getSupplierList(){
-      listWmsSupplier({},{page:0,size:1000}).then(response => {
-        const { content } = response
-        this.wmsSupplierList = content;
-      });
-    },
   }
 }
 </script>

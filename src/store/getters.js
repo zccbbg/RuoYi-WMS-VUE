@@ -17,5 +17,9 @@ const getters = {
 
   // 字典相关
   items: state => state.dict.items,
+
+  // wms相关
+  supplierList: state=>state.wms.supplierList,
+  supplierMap: state=>state.wms.supplierMap
 }
 export default getters

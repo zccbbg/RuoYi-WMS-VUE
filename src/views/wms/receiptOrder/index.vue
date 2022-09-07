@@ -94,7 +94,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="入库类型" align="center" prop="receiptOrderType" v-if="columns[1].visible"/>
-      <el-table-column label="供应商" align="center" prop="supplierId" v-if="columns[2].visible"/>
+      <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" v-if="columns[4].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
@@ -129,11 +129,15 @@
 </template>
 
 <script>
-import { listWmsReceiptOrder, getWmsReceiptOrder, delWmsReceiptOrder, exportWmsReceiptOrder } from "@/api/wms/receiptOrder";
+import { listWmsReceiptOrder, delWmsReceiptOrder, exportWmsReceiptOrder } from "@/api/wms/receiptOrder";
+import { mapGetters } from 'vuex';
 
 export default {
   name: "WmsReceiptOrder",
   dicts: ['wms_receipt_type','wms_receipt_status'],
+  computed:{
+    ...mapGetters(['supplierMap'])
+  },
   data() {
     return {
       // 遮罩层
@@ -176,9 +180,16 @@ export default {
     };
   },
   created() {
-    this.getList();
+    let supplierPromise= this.$store.dispatch('wms/getSuppliers')
+    Promise.all([supplierPromise]).then(() => {
+      this.getList();
+    });
+    
   },
   methods: {
+    getSupplier(row, column){
+      return this.supplierMap.get(row.supplierId)
+    },
     /** 查询入库单列表 */
     getList() {
       this.loading = true;
