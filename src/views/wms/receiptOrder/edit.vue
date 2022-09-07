@@ -12,7 +12,7 @@
       el-form-item(label="订单号" prop="orderNo")
         el-input(v-model="form.orderNo" placeholder="请输入订单号")
       el-form-item(label="备注" prop="remark")
-        el-input(v-model="form.remark" placeholder="请输入备注")
+        el-input(v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea" show-word-limit)
     el-divider
     .flex-center.mb8
       .flex-one 入库单详情

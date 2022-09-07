@@ -2,7 +2,7 @@
 .prod-sku-select-wrapper
   .search
     el-form(inline label-width="64")
-      el-form-item(label="商品状态")
+      el-form-item(label="商品类型")
         .w200
           el-select(v-model="query.itemType" clearable)
             el-option(
