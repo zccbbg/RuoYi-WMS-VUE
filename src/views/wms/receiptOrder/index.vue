@@ -93,7 +93,7 @@
     <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
-      <el-table-column label="入库类型" align="center" prop="receiptOrderType" v-if="columns[1].visible"/>
+      <el-table-column label="入库类型" align="center" :formatter="getReceiptOrderType" v-if="columns[1].visible"/>
       <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" v-if="columns[4].visible"/>
@@ -136,7 +136,12 @@ export default {
   name: "WmsReceiptOrder",
   dicts: ['wms_receipt_type','wms_receipt_status'],
   computed:{
-    ...mapGetters(['supplierMap'])
+    ...mapGetters(['supplierMap']),
+    receiptTypeMap(){
+      let obj = this.dict.type.wms_receipt_type.map( item=> [item.value, item.label])
+      let map= new Map(obj)
+      return map
+    }
   },
   data() {
     return {
@@ -187,6 +192,9 @@ export default {
     
   },
   methods: {
+    getReceiptOrderType(row){
+      return this.receiptTypeMap.get(row.receiptOrderType+"")
+    },
     getSupplier(row, column){
       return this.supplierMap.get(row.supplierId)
     },
