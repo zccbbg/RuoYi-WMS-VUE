@@ -42,6 +42,8 @@ import WmsTable from '@/components/WmsTable'
 
 import WmsSupplierSelect from '@/components/WmsSupplierSelect'
 
+import DictRadio from '@/components/DictRadio'
+
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
 Vue.prototype.getConfigKey = getConfigKey
@@ -63,6 +65,7 @@ Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('WmsTable',WmsTable)
 Vue.component('WmsSupplierSelect',WmsSupplierSelect)
+Vue.component('DictRadio',DictRadio)
 
 Vue.use(directive)
 Vue.use(plugins)

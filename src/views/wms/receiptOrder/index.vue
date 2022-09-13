@@ -2,18 +2,10 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="入库状态" prop="receiptOrderStatus">
-        <el-radio-group v-model="queryParams.receiptOrderStatus" @change="handleQuery" size="small">
-          <el-radio-button v-for="dict in dict.type.wms_receipt_status"
-                :key="dict.value"
-                :label="dict.value">{{dict.label}}</el-radio-button>
-        </el-radio-group>
+        <DictRadio v-model="queryParams.receiptOrderStatus" @change="handleQuery" size="small" :radioData="dict.type.wms_receipt_status" :showAll="'all'"/>
       </el-form-item>
       <el-form-item label="入库类型" prop="receiptOrderType">
-        <el-radio-group v-model="queryParams.receiptOrderType" @change="handleQuery" size="small">
-          <el-radio-button v-for="dict in dict.type.wms_receipt_type"
-                :key="dict.value"
-                :label="dict.value">{{dict.label}}</el-radio-button>
-        </el-radio-group>
+        <DictRadio v-model="queryParams.receiptOrderType" @change="handleQuery" size="small" :radioData="dict.type.wms_receipt_type" :showAll="'all'"/>
       </el-form-item>
       </br>
       <el-form-item label="入库单号" prop="receiptOrderNo">
@@ -96,7 +88,7 @@
       <el-table-column label="入库类型" align="center" :formatter="getReceiptOrderType" v-if="columns[1].visible"/>
       <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
-      <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" v-if="columns[4].visible"/>
+      <el-table-column label="入库状态" align="center" :formatter="getReceiptOrderStatus" v-if="columns[4].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -139,6 +131,11 @@ export default {
     ...mapGetters(['supplierMap']),
     receiptTypeMap(){
       let obj = this.dict.type.wms_receipt_type.map( item=> [item.value, item.label])
+      let map= new Map(obj)
+      return map
+    },
+    receiptStatusMap(){
+      let obj = this.dict.type.wms_receipt_status.map( item=> [item.value, item.label])
       let map= new Map(obj)
       return map
     }
@@ -194,6 +191,9 @@ export default {
   methods: {
     getReceiptOrderType(row){
       return this.receiptTypeMap.get(row.receiptOrderType+"")
+    },
+    getReceiptOrderStatus(row){
+      return this.receiptStatusMap.get(row.receiptOrderStatus+"")
     },
     getSupplier(row, column){
       return this.supplierMap.get(row.supplierId)
