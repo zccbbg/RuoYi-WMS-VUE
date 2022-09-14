@@ -21,7 +21,7 @@ const getters = {
   // wms相关
   supplierList: state=>state.wms.supplierList,
   supplierMap: state=>state.wms.supplierMap,
-  wmsWarehouseList: state=>state.wms.warehouseList,
-  wmsWarehouseMap: state=>state.wms.warehouseMap
+  warehouseList: state=>state.wms.warehouseList,
+  warehouseMap: state=>state.wms.warehouseMap
 }
 export default getters

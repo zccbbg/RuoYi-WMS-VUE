@@ -318,7 +318,7 @@
             @change="onWarehouseChange"
           >
             <el-option
-              v-for="item in wmsWarehouseList"
+              v-for="item in warehouseList"
               :key="item.id"
               :label="item.warehouseName"
               :value="item.id"
@@ -402,7 +402,7 @@ export default {
   name: "WmsItem",
   dicts: ["wms_item_type"],
   computed: {
-    ...mapGetters(['wmsWarehouseMap', 'wmsWarehouseList','supplierList']),
+    ...mapGetters(['warehouseMap', 'warehouseList','supplierList']),
   },
   data() {
     return {
@@ -518,7 +518,7 @@ export default {
       listWmsItem(query, pageReq).then((response) => {
         const { content, totalElements } = response;
         content.forEach((item) => {
-          item.warehouseName = this.wmsWarehouseMap.get(item.warehouseId);
+          item.warehouseName = this.warehouseMap.get(item.warehouseId);
         });
         content.forEach((item) => {
           item.areaName = this.wmsAreaMap.get(item.areaId);

@@ -17,12 +17,10 @@ const mutations = {
   },
   SET_WAREHOUSE(state, list){
     state.warehouseList = list;
-    console.log(list)
     state.warehouseMap = new Map();
     list.forEach((warehouse) => {
       state.warehouseMap.set(warehouse.id, warehouse.warehouseName)
     })
-    console.log([...state.warehouseMap.entries()])
   }
 }
 const actions = {
