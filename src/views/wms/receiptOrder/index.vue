@@ -87,14 +87,14 @@
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="入库类型" align="center" v-if="columns[1].visible">
         <template slot-scope="scope">
-          <el-tag size="medium" :type="getReceiptOrderTypeTag(scope.row)">{{getReceiptOrderType(scope.row)}}</el-tag>
+          <el-tag size="medium" effect="plain" :type="getReceiptOrderTypeTag(scope.row)">{{getReceiptOrderType(scope.row)}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="入库状态" align="center" v-if="columns[4].visible">
         <template slot-scope="scope">
-          <el-tag size="medium" :type="getReceiptOrderStatusTag(scope.row)">{{getReceiptOrderStatus(scope.row)}}</el-tag>
+          <el-tag size="medium" effect="plain" :type="getReceiptOrderStatusTag(scope.row)">{{getReceiptOrderStatus(scope.row)}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
@@ -209,13 +209,13 @@ export default {
     },
     getReceiptOrderStatusTag(row){
       switch (row.receiptOrderStatus){
-        case 1:
-          return "";
-        case 2:
+        case 0:
           return "info";
-        case 3:
+        case 1:
+          return "warning";
+        case 2:
           return "danger";
-        case 4:
+        case 3:
           return "success";
       }
     },
