@@ -1,8 +1,11 @@
 import { listWmsSupplier } from "@/api/wms/supplier";
+import { listWmsWarehouse } from "@/api/wms/warehouse";
 
 const state = {
   supplierList: [],
-  supplierMap: new Map()
+  supplierMap: new Map(),
+  warehouseList: [],
+  warehouseMap: new Map()
 }
 const mutations = {
   SET_SUPPLIERS(state, list) {
@@ -11,7 +14,15 @@ const mutations = {
     list.forEach((supplier) => {
       state.supplierMap.set(supplier.id, supplier.supplierName)
     })
-    
+  },
+  SET_WAREHOUSE(state, list){
+    state.warehouseList = list;
+    console.log(list)
+    state.warehouseMap = new Map();
+    list.forEach((warehouse) => {
+      state.warehouseMap.set(warehouse.id, warehouse.warehouseName)
+    })
+    console.log([...state.warehouseMap.entries()])
   }
 }
 const actions = {
@@ -20,6 +31,13 @@ const actions = {
       .then(res => {
         const { content } =res
         commit('SET_SUPPLIERS', content);
+      })
+  },
+  getWarehouseList({ commit }) {
+    return listWmsWarehouse({}, { page: 0, size: 1000 })
+      .then(res => {
+        const { content } =res
+        commit('SET_WAREHOUSE', content);
       })
   }
 }
