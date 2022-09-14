@@ -85,10 +85,18 @@
     <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
-      <el-table-column label="入库类型" align="center" :formatter="getReceiptOrderType" v-if="columns[1].visible"/>
+      <el-table-column label="入库类型" align="center" v-if="columns[1].visible">
+        <template slot-scope="scope">
+          <el-tag size="medium" :type="getReceiptOrderTypeTag(scope.row)">{{getReceiptOrderType(scope.row)}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
-      <el-table-column label="入库状态" align="center" :formatter="getReceiptOrderStatus" v-if="columns[4].visible"/>
+      <el-table-column label="入库状态" align="center" v-if="columns[4].visible">
+        <template slot-scope="scope">
+          <el-tag size="medium" :type="getReceiptOrderStatusTag(scope.row)">{{getReceiptOrderStatus(scope.row)}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -189,6 +197,28 @@ export default {
     
   },
   methods: {
+    getReceiptOrderTypeTag(row){
+      switch (row.receiptOrderType){
+        case 1:
+          return "success";
+        case 2:
+          return "info";
+        case 3:
+          return "danger";
+      }
+    },
+    getReceiptOrderStatusTag(row){
+      switch (row.receiptOrderStatus){
+        case 1:
+          return "";
+        case 2:
+          return "info";
+        case 3:
+          return "danger";
+        case 4:
+          return "success";
+      }
+    },
     getReceiptOrderType(row){
       return this.receiptTypeMap.get(row.receiptOrderType+"")
     },
