@@ -15,34 +15,24 @@
         el-input(v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea" show-word-limit)
     el-divider
     .flex-center.mb8
-      .flex-one 入库单详情
+      .flex-one 物料明细
       .ops
         el-button(type="primary" plain size="small" @click="showAddItem") 添加物料
     .table
       table.common-table
         tr
-          th(style="width: 240px") 物料
+          th 物料名
+          th 物料编号
+          th 物料类型
           th 计划数量
-          th 实际数量
-          th 入库状态
           th 操作
         tr(v-for="(it, index) in form.details")
-          td
-            template(v-if="it.prod")
-              div {{it.prod.itemName}}
-              .mt8
-                el-tag(v-if="it.prod.itemType" size="mini") {{it.prod.itemType}}
-                span.ml8 {{it.prod.itemNo}}
-          td
-            el-input(v-model="it.planQuantity" placeholder="计划数量")
-          td
-            el-input(v-model="it.realQuantity" placeholder="实际数量")
-          td
-            el-select(v-model="it.receiptOrderStatus")
-              el-option(:value="0" label="未入库")
-              el-option(:value="1" label="已入库")
-              el-option(:value="2" label="部分入库")
-          td
+          td(align="center") {{it.prod.itemName}}
+          td(align="center") {{it.prod.itemNo}}
+          td(align="center") {{it.prod.itemType}}
+          td(align="center")
+            el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
+          td(align="center")
             a.red(@click="form.details.splice(index, 1)") 删除
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16

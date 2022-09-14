@@ -202,7 +202,7 @@ export default {
         case 1:
           return "success";
         case 2:
-          return "info";
+          return "warning";
         case 3:
           return "danger";
       }
