@@ -22,6 +22,10 @@ const getters = {
   supplierList: state=>state.wms.supplierList,
   supplierMap: state=>state.wms.supplierMap,
   warehouseList: state=>state.wms.warehouseList,
-  warehouseMap: state=>state.wms.warehouseMap
+  warehouseMap: state=>state.wms.warehouseMap,
+  areaList: state=>state.wms.areaList,
+  areaMap: state=>state.wms.areaMap,
+  rackList: state=>state.wms.rackList,
+  rackMap: state=>state.wms.rackMap,
 }
 export default getters

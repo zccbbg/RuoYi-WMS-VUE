@@ -335,7 +335,7 @@
             @change="onAreaChange"
           >
             <el-option
-              v-for="item in wmsAreaListByWarehouse"
+              v-for="item in areaListByWarehouse"
               :key="item.id"
               :label="item.areaName"
               :value="item.id"
@@ -351,7 +351,7 @@
             size="small"
           >
             <el-option
-              v-for="item in wmsRackListByArea"
+              v-for="item in rackListByArea"
               :key="item.id"
               :label="item.rackName"
               :value="item.id"
@@ -394,15 +394,13 @@ import {
   updateWmsItem,
   exportWmsItem,
 } from "@/api/wms/item";
-import { listWmsArea } from "@/api/wms/area";
-import { listWmsRack } from "@/api/wms/rack";
 import { mapGetters } from "vuex";
 
 export default {
   name: "WmsItem",
   dicts: ["wms_item_type"],
   computed: {
-    ...mapGetters(['warehouseMap', 'warehouseList','supplierList']),
+    ...mapGetters(['warehouseMap', 'warehouseList','areaList','areaMap','rackList','rackMap']),
   },
   data() {
     return {
@@ -423,13 +421,9 @@ export default {
       // 物料表格数据
       wmsItemList: [],
       // 货架表格数据
-      wmsRackList: [],
-      wmsRackListByArea: [],
-      wmsRackMap: new Map(),
+      rackListByArea: [],
       // 库区表格数据
-      wmsAreaList: [],
-      wmsAreaListByWarehouse: [],
-      wmsAreaMap: new Map(),
+      areaListByWarehouse: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -473,32 +467,33 @@ export default {
     };
   },
   created() {
-    let getWareHouseList = this.$store.dispatch("wms/getWarehouseList");
-    Promise.all([getWareHouseList]).then(() => {
-      console.log(this.supplierList)
+    let getWareHouseListPromise = this.$store.dispatch("wms/getWarehouseList");
+    let getAreaListPromise = this.$store.dispatch("wms/getAreaList");
+    let getRackListPromise = this.$store.dispatch("wms/getRackList");
+    Promise.all([getWareHouseListPromise,getAreaListPromise,getRackListPromise]).then(() => {
       this.getList();
     });
   },
   methods: {
     onWarehouseChange(init) {
-      this.wmsAreaListByWarehouse = [];
+      this.areaListByWarehouse = [];
       if (init != true) {
         this.form.areaId = null;
       }
-      this.wmsAreaList.forEach((area) => {
+      this.areaList.forEach((area) => {
         if (area.warehouseId == this.form.warehouseId) {
-          this.wmsAreaListByWarehouse.push(area);
+          this.areaListByWarehouse.push(area);
         }
       });
     },
     onAreaChange(init) {
-      this.wmsRackListByArea = [];
+      this.rackListByArea = [];
       if (init != true) {
         this.form.rackId = null;
       }
-      this.wmsRackList.forEach((rack) => {
+      this.rackList.forEach((rack) => {
         if (rack.areaId == this.form.areaId) {
-          this.wmsRackListByArea.push(rack);
+          this.rackListByArea.push(rack);
         }
       });
     },
@@ -513,58 +508,18 @@ export default {
         pageSize: undefined,
       };
       const pageReq = { page: pageNum - 1, size: pageSize };
-      this.getAreaList();
-      this.getRackList();
       listWmsItem(query, pageReq).then((response) => {
         const { content, totalElements } = response;
         content.forEach((item) => {
           item.warehouseName = this.warehouseMap.get(item.warehouseId);
         });
         content.forEach((item) => {
-          item.areaName = this.wmsAreaMap.get(item.areaId);
+          item.areaName = this.areaMap.get(item.areaId);
         });
         content.forEach((item) => {
-          item.rackName = this.wmsRackMap.get(item.rackId);
+          item.rackName = this.rackMap.get(item.rackId);
         });
         this.wmsItemList = content;
-        this.total = totalElements;
-        this.loading = false;
-      });
-    },
-    getAreaList() {
-      this.loading = true;
-      const { pageNum, pageSize } = this.queryParams;
-      const query = {
-        ...this.queryParams,
-        pageNum: undefined,
-        pageSize: undefined,
-      };
-      const pageReq = { page: pageNum - 1, size: pageSize };
-      listWmsArea(query, pageReq).then((response) => {
-        const { content, totalElements } = response;
-        this.wmsAreaList = content;
-        this.wmsAreaList.forEach((area) => {
-          this.wmsAreaMap.set(area.id, area.areaName);
-        });
-        this.total = totalElements;
-        this.loading = false;
-      });
-    },
-    getRackList() {
-      this.loading = true;
-      const { pageNum, pageSize } = this.queryParams;
-      const query = {
-        ...this.queryParams,
-        pageNum: undefined,
-        pageSize: undefined,
-      };
-      const pageReq = { page: pageNum - 1, size: pageSize };
-      listWmsRack(query, pageReq).then((response) => {
-        const { content, totalElements } = response;
-        this.wmsRackList = content;
-        this.wmsRackList.forEach((rack) => {
-          this.wmsRackMap.set(rack.id, rack.rackName);
-        });
         this.total = totalElements;
         this.loading = false;
       });
