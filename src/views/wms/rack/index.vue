@@ -371,12 +371,14 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateWmsRack(this.form).then(response => {
+              this.$store.dispatch("wms/getRackList");
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addWmsRack(this.form).then(response => {
+              this.$store.dispatch("wms/getRackList");
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -391,6 +393,7 @@ export default {
       this.$modal.confirm('是否确认删除货架编号为"' + ids + '"的数据项？').then(function() {
         return delWmsRack(ids);
       }).then(() => {
+        this.$store.dispatch("wms/getRackList");
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});

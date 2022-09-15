@@ -39,7 +39,7 @@ const mutations = {
     state.rackList = list;
     state.rackMap = new Map();
     list.forEach((rack) => {
-      state.areaMap.set(rack.id, rack.rackName)
+      state.rackMap.set(rack.id, rack.rackName)
     })
   },
 }

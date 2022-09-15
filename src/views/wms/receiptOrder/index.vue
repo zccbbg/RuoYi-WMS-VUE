@@ -190,11 +190,7 @@ export default {
     };
   },
   created() {
-    let supplierPromise= this.$store.dispatch('wms/getSuppliers')
-    Promise.all([supplierPromise]).then(() => {
-      this.getList();
-    });
-    
+    this.getList();
   },
   methods: {
     getReceiptOrderTypeTag(row){

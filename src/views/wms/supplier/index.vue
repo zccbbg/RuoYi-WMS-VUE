@@ -361,12 +361,14 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateWmsSupplier(this.form).then(response => {
+              this.$store.dispatch('wms/getSuppliers')
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addWmsSupplier(this.form).then(response => {
+              this.$store.dispatch('wms/getSuppliers')
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -381,6 +383,7 @@ export default {
       this.$modal.confirm('是否确认删除供应商编号为"' + ids + '"的数据项？').then(function() {
         return delWmsSupplier(ids);
       }).then(() => {
+        this.$store.dispatch('wms/getSuppliers')
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});

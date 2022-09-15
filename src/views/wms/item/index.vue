@@ -467,12 +467,7 @@ export default {
     };
   },
   created() {
-    let getWareHouseListPromise = this.$store.dispatch("wms/getWarehouseList");
-    let getAreaListPromise = this.$store.dispatch("wms/getAreaList");
-    let getRackListPromise = this.$store.dispatch("wms/getRackList");
-    Promise.all([getWareHouseListPromise,getAreaListPromise,getRackListPromise]).then(() => {
-      this.getList();
-    });
+    this.getList();
   },
   methods: {
     onWarehouseChange(init) {

@@ -252,12 +252,14 @@ export default {
         if (valid) {
           if (this.form.id != null) {
             updateWmsWarehouse(this.form).then(response => {
+              this.$store.dispatch("wms/getWarehouseList");
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
             addWmsWarehouse(this.form).then(response => {
+              this.$store.dispatch("wms/getWarehouseList");
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -273,6 +275,7 @@ export default {
         return delWmsWarehouse(ids);
       }).then(() => {
         this.getList();
+        this.$store.dispatch("wms/getWarehouseList");
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },

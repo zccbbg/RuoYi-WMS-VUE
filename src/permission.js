@@ -15,6 +15,10 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
     /* has token*/
+    store.dispatch("wms/getWarehouseList");
+    store.dispatch("wms/getAreaList");
+    store.dispatch("wms/getRackList");
+    store.dispatch('wms/getSuppliers')
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()
