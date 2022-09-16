@@ -43,6 +43,7 @@ import WmsTable from '@/components/WmsTable'
 import WmsSupplierSelect from '@/components/WmsSupplierSelect'
 
 import DictRadio from '@/components/DictRadio'
+import WmsWarehouseCascader from '@/components/WmsWarehouseCascader'
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -66,6 +67,7 @@ Vue.component('ImagePreview', ImagePreview)
 Vue.component('WmsTable',WmsTable)
 Vue.component('WmsSupplierSelect',WmsSupplierSelect)
 Vue.component('DictRadio',DictRadio)
+Vue.component('WmsWarehouseCascader',WmsWarehouseCascader)
 
 Vue.use(directive)
 Vue.use(plugins)

@@ -309,55 +309,8 @@
         <el-form-item label="单位类别" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位类别" />
         </el-form-item>
-        <el-form-item label="所属仓库" prop="warehouseId">
-          <el-select
-            v-model="form.warehouseId"
-            placeholder="请输入所属仓库"
-            clearable
-            size="small"
-            @change="onWarehouseChange"
-          >
-            <el-option
-              v-for="item in warehouseList"
-              :key="item.id"
-              :label="item.warehouseName"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属库区" prop="areaId">
-          <el-select
-            v-model="form.areaId"
-            placeholder="请输入所属库区"
-            clearable
-            size="small"
-            @change="onAreaChange"
-          >
-            <el-option
-              v-for="item in areaListByWarehouse"
-              :key="item.id"
-              :label="item.areaName"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="所属货架" prop="rackId">
-          <el-select
-            v-model="form.rackId"
-            placeholder="请输入所属货架"
-            clearable
-            size="small"
-          >
-            <el-option
-              v-for="item in rackListByArea"
-              :key="item.id"
-              :label="item.rackName"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="仓库/库区/货架" prop="rackId">
+          <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>
         </el-form-item>
         <el-form-item label="安全库存" prop="quantity">
           <el-input v-model="form.quantity" placeholder="请输入安全库存" />
@@ -470,29 +423,6 @@ export default {
     this.getList();
   },
   methods: {
-    onWarehouseChange(init) {
-      this.areaListByWarehouse = [];
-      if (init != true) {
-        this.form.areaId = null;
-      }
-      this.areaList.forEach((area) => {
-        if (area.warehouseId == this.form.warehouseId) {
-          this.areaListByWarehouse.push(area);
-        }
-      });
-    },
-    onAreaChange(init) {
-      this.rackListByArea = [];
-      if (init != true) {
-        this.form.rackId = null;
-      }
-      this.rackList.forEach((rack) => {
-        if (rack.areaId == this.form.areaId) {
-          this.rackListByArea.push(rack);
-        }
-      });
-    },
-
     /** 查询物料列表 */
     getList() {
       this.loading = true;
@@ -573,17 +503,31 @@ export default {
       const id = row.id || this.ids;
       await getWmsItem(id).then((response) => {
         this.form = response;
+        this.form.place=[]
+        if(response.warehouseId){
+          this.form.place.push(response.warehouseId)
+        }
+        if(response.areaId){
+          this.form.place.push(response.areaId)
+        }
+        if(response.rackId){
+          this.form.place.push(response.rackId)
+        }
         this.open = true;
         this.title = "修改物料";
       });
-      this.onWarehouseChange(true);
-      this.onAreaChange(true);
     },
 
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
+          if(this.form.place){
+            this.form.warehouseId=this.form.place[0]
+            this.form.areaId=this.form.place[1]
+            this.form.rackId=this.form.place[2]
+
+          }
           if (this.form.id != null) {
             updateWmsItem(this.form).then((response) => {
               this.$modal.msgSuccess("修改成功");
