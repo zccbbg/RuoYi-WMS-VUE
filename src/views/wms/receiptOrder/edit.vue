@@ -98,11 +98,15 @@ export default {
           return
         }
         const details = this.form.details.map(it => {
-          console.log(it.prod.place)
-          if(it.prod.place){
-            it.prod.warehouseId=it.prod.place[0]
-            it.prod.areaId=it.prod.place[1]
-            it.prod.rackId=it.prod.place[2]
+          console.log(it.place)
+          if(it.place){
+            it.prod.warehouseId=it.place[0]
+            it.prod.areaId=it.place[1]
+            it.prod.rackId=it.place[2]
+          }else{
+            it.prod.warehouseId=null
+            it.prod.areaId=null
+            it.prod.rackId=null
           }
           return {
             itemId: it.prod.id,

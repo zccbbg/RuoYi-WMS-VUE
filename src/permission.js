@@ -19,7 +19,7 @@ router.beforeEach((to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      //当页面刷新，vuex里面没值，请求重新获取
+      //当页面刷新，vuex里面没值，请求重新获取,数据会重新初始化
       if (store.getters.roles.length === 0) {
         isRelogin.show = true
         store.dispatch("wms/getWarehouseList");
