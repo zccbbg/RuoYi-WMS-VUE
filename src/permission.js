@@ -15,16 +15,17 @@ router.beforeEach((to, from, next) => {
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
     /* has token*/
-    store.dispatch("wms/getWarehouseList");
-    store.dispatch("wms/getAreaList");
-    store.dispatch("wms/getRackList");
-    store.dispatch('wms/getSuppliers')
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done()
     } else {
+      //当页面刷新，vuex里面没值，请求重新获取
       if (store.getters.roles.length === 0) {
         isRelogin.show = true
+        store.dispatch("wms/getWarehouseList");
+        store.dispatch("wms/getAreaList");
+        store.dispatch("wms/getRackList");
+        store.dispatch('wms/getSuppliers')
         // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(() => {
           isRelogin.show = false

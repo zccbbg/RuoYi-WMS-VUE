@@ -34,7 +34,7 @@
           td(align="center")
             el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
           td(align="center") 
-            WmsWarehouseCascader(v-model="it.prod.place" size="small")
+            WmsWarehouseCascader(v-model="it.place" size="small")
           td(align="center")
             a.red(@click="form.details.splice(index, 1)") 删除
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
@@ -98,6 +98,12 @@ export default {
           return
         }
         const details = this.form.details.map(it => {
+          console.log(it.prod.place)
+          if(it.prod.place){
+            it.prod.warehouseId=it.prod.place[0]
+            it.prod.areaId=it.prod.place[1]
+            it.prod.rackId=it.prod.place[2]
+          }
           return {
             itemId: it.prod.id,
             rackId: it.prod.rackId,
