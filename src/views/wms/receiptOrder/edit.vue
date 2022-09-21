@@ -25,9 +25,7 @@
           th 物料编号
           th 物料类型
           th 计划数量
-          th 所属仓库
-          th 所属库区
-          th 所属货架
+          th 仓库/库区/货架
           th 操作
         tr(v-for="(it, index) in form.details")
           td(align="center") {{it.prod.itemName}}
@@ -35,9 +33,8 @@
           td(align="center") {{it.prod.itemType}}
           td(align="center")
             el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
-          td(align="center") {{it.prod.warehouseId}}
-          td(align="center") {{it.prod.areaId}}
-          td(align="center") {{it.prod.rackId}}
+          td(align="center") 
+            WmsWarehouseCascader(v-model="it.prod.place" size="small")
           td(align="center")
             a.red(@click="form.details.splice(index, 1)") 删除
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")

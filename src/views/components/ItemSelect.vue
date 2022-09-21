@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 import { listWmsItem } from '@/api/wms/item'
 
 export default {

@@ -503,16 +503,6 @@ export default {
       const id = row.id || this.ids;
       await getWmsItem(id).then((response) => {
         this.form = response;
-        this.form.place=[]
-        if(response.warehouseId){
-          this.form.place.push(response.warehouseId)
-        }
-        if(response.areaId){
-          this.form.place.push(response.areaId)
-        }
-        if(response.rackId){
-          this.form.place.push(response.rackId)
-        }
         this.open = true;
         this.title = "修改物料";
       });
