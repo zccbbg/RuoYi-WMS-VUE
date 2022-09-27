@@ -114,6 +114,13 @@
             @click.stop="handleDelete(scope.row)"
             v-hasPermi="['wms:wmsReceiptOrder:remove']"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click.stop="handleStatus(scope.row)"
+            v-hasPermi="['wms:wmsReceiptOrder:status']"
+          >发货/入库</el-button>
         </template>
       </el-table-column>
     </WmsTable>
@@ -261,6 +268,10 @@ export default {
     handleUpdate(row) {
       const id = row.id || this.ids
       this.$router.push({path: "/wms/receiptOrder/edit", query: {id}});
+    },
+    handleStatus(row) {
+      const id = row.id || this.ids
+      this.$router.push({path: "/wms/receiptOrder/status", query: {id}});
     },
     /** 删除按钮操作 */
     handleDelete(row) {
