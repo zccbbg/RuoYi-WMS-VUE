@@ -223,7 +223,7 @@ import {
   exportWmsArea,
 } from "@/api/wms/area";
 import { listWmsWarehouse } from "@/api/wms/warehouse";
-
+import { mapGetters } from 'vuex';
 export default {
   name: "WmsArea",
   data() {
@@ -278,6 +278,9 @@ export default {
         { key: 4, label: "备注", visible: true },
       ],
     };
+  },
+  computed:{
+    ...mapGetters(['warehouseMap','warehouseList'])
   },
   created() {
     this.getList();
