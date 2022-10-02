@@ -83,7 +83,7 @@
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+            @click.stop="handleUpdate(scope.row)"
             v-hasPermi="['wms:wmsWarehouse:edit']"
           >修改</el-button>
           <el-button
