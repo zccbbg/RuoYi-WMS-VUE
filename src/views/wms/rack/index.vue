@@ -135,8 +135,12 @@
           <el-input v-model="form.rackName" placeholder="请输入名称" />
         </el-form-item>
 
-        <el-form-item label="所属仓库" prop="warehouseId">
-        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small">
+        <el-form-item label="仓库/库区" prop="areaId">
+          <WmsAreaCascader v-model="form.place" size="small"></WmsAreaCascader>
+        </el-form-item>
+
+        <!-- <el-form-item label="所属仓库" prop="warehouseId">
+        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small" @change="onWarehouseChange()">
           <el-option
             v-for="item in warehouseList"
             :key="item.id"
@@ -147,15 +151,15 @@
         </el-form-item>
 
         <el-form-item label="所属库区" prop="areaId">
-        <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small">
+        <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small" >
           <el-option
-            v-for="item in areaList"
+            v-for="item in wmsAreaListByWarehouse"
             :key="item.id"
             :label="item.areaName"
             :value="item.id">
           </el-option>
         </el-select>
-        </el-form-item>
+        </el-form-item> -->
 
         
 
@@ -172,12 +176,16 @@
 </template>
 
 <script>
+import WmsAreaCascader from '@/components/WmsAreaCascader'
 import { listWmsRack, getWmsRack, delWmsRack, addWmsRack, updateWmsRack, exportWmsRack } from "@/api/wms/rack";
 // import { listWmsWarehouse } from "@/api/wms/warehouse";
 // import { listWmsArea } from "@/api/wms/area";
 import { mapGetters } from "vuex";
 export default {
   name: "WmsRack",
+  components:{
+    WmsAreaCascader,
+  },
   
   data() {
     return {
@@ -253,7 +261,7 @@ export default {
     //   if(init!=true){
     //     this.form.areaId=null
     //   }
-    //   this.wmsAreaList.forEach(area=>{
+    //   this.areaList.forEach(area=>{
     //     if(area.warehouseId==this.form.warehouseId){
     //       this.wmsAreaListByWarehouse.push(area)
     //     }
@@ -361,7 +369,7 @@ export default {
         this.open = true;
         this.title = "修改货架";
       });
-      this.onWarehouseChange(true)
+      // this.onWarehouseChange(true)
     },
     /** 提交按钮 */
     submitForm() {
