@@ -17,18 +17,20 @@
           th 物料编号
           th 物料类型
           th 计划数量
+          th 实际数量
           th 仓库/库区/货架
-          th 操作
+          th 入库状态
         tr(v-for="(it, index) in form.details")
           td(align="center") {{it.prod.itemName}}
           td(align="center") {{it.prod.itemNo}}
           td(align="center") {{it.prod.itemType}}
+          td(align="center") {{it.planQuantity}}
           td(align="center")
             el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
           td(align="center") 
             WmsWarehouseCascader(v-model="it.place" size="small")
-          td(align="center")
-            a.red(@click="form.details.splice(index, 1)") 删除
+          td
+            DictSelect(v-model="it.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
       el-button(@click="cancel") 取消
@@ -43,7 +45,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'WmsReceiptOrder',
   components: { ItemSelect },
-  dicts: ['wms_receipt_type'],
+  dicts: ['wms_receipt_type','wms_receipt_status'],
   computed: {
   ...mapGetters(['supplierMap']),
   },
