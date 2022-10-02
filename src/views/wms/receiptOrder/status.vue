@@ -1,5 +1,5 @@
 <template lang="pug">
-.receipt-order-wrapper.app-container
+.receipt-order-wrapper.app-container(v-loading="loading")
   .receipt-order-content
     el-form(label-width="108px" :model="form" ref="form" :rules="rules")
       el-form-item(label="入库单号" prop="receiptOrderNo") {{form.receiptOrderNo}}
@@ -11,26 +11,19 @@
     .flex-center.mb8
       .flex-one 物料明细
     .table
-      table.common-table
-        tr
-          th 物料名
-          th 物料编号
-          th 物料类型
-          th 计划数量
-          th 实际数量
-          th 仓库/库区/货架
-          th 入库状态
-        tr(v-for="(it, index) in form.details")
-          td(align="center") {{it.prod.itemName}}
-          td(align="center") {{it.prod.itemNo}}
-          td(align="center") {{it.prod.itemType}}
-          td(align="center") {{it.planQuantity}}
-          td(align="center")
-            el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
-          td(align="center") 
-            WmsWarehouseCascader(v-model="it.place" size="small")
-          td
-            DictSelect(v-model="it.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small")
+      WmsTable(:data="form.details")
+        el-table-column(type="selection" width="55" align="center")
+        el-table-column(label="物料名" align="center" prop="prod.itemName")
+        el-table-column(label="物料编号" align="center" prop="prod.itemNo")
+        el-table-column(label="物料类型" align="center" prop="prod.itemType")
+        el-table-column(label="计划数量" align="center" prop="planQuantity")
+        el-table-column(label="实际数量" align="center" prop="planQuantity")
+        el-table-column(label="仓库/库区/货架" align="center")
+          template(slot-scope="scope")
+            WmsWarehouseCascader(v-model="scope.row.prod.place" size="small")
+        el-table-column(label="入库状态")
+          template(slot-scope="scope")
+            DictSelect(v-model="scope.row.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
       el-button(@click="cancel") 取消
@@ -51,6 +44,8 @@ export default {
   },
   data() {
     return {
+      // 遮罩层
+      loading: true,
       // 表单参数
       form: {
         details: []
@@ -118,8 +113,9 @@ export default {
       })
     },
     loadDetail(id) {
+      this.loading = true;
       getWmsReceiptOrder(id).then(response => {
-        console.log(this.dict.type.wms_receipt_type)
+        this.loading = false;
         const {details, items} = response
         const map = {};
         (items || []).forEach(it => {map[it.id] = it});
