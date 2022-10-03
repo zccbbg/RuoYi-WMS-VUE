@@ -3,6 +3,7 @@
   .receipt-order-content
     el-form(label-width="108px" :model="form" ref="form" :rules="rules")
       el-form-item(label="入库单号" prop="receiptOrderNo") {{form.receiptOrderNo}}
+      el-form-item(label="入库状态" prop="receiptOrderNo") {{receiptStatusMap.get(form.receiptOrderStatus+"")}}
       el-form-item(label="入库类型" prop="receiptOrderType") {{selectDictLabel(dict.type.wms_receipt_type, form.receiptOrderType)}}
       el-form-item(label="供应商" prop="supplierId") {{supplierMap.get(form.supplierId)}}
       el-form-item(label="订单号" prop="orderNo") {{form.orderNo}}
@@ -10,6 +11,8 @@
     el-divider
     .flex-center.mb8
       .flex-one 物料明细
+      .ops
+        el-button(type="primary" plain size="small" @click="batch") 批量设置入库状态
     el-dialog(title="请选择入库状态" :visible.sync="open" width="50%" append-to-body)
       DictRadio(v-model="dialogStatus" :radioData="dict.type.wms_receipt_status")
       .dialog-footer(slot="footer")
@@ -30,10 +33,9 @@
             WmsWarehouseCascader(v-model="scope.row.prod.place" size="small")
         el-table-column(label="入库状态" width="150")
           template(slot-scope="scope")
-            DictSelect(v-model="scope.row.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small")
+            DictSelect(v-model="scope.row.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small" @change="setReceiptOrderStatus")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
-      el-button(@click="batch" :disabled="multiple") 批量设置入库状态
       el-button(@click="cancel") 取消
       el-button(@click="submitForm" type="primary" ) 保存
 </template>
@@ -49,6 +51,11 @@ export default {
   dicts: ['wms_receipt_type','wms_receipt_status'],
   computed: {
   ...mapGetters(['supplierMap']),
+  receiptStatusMap(){
+      let obj = this.dict.type.wms_receipt_status.map( item=> [item.value, item.label])
+      let map= new Map(obj)
+      return map
+    }
   },
   data() {
     return {
@@ -86,6 +93,7 @@ export default {
           detail.receiptOrderStatus=this.dialogStatus
         }
       })
+      this.setReceiptOrderStatus()
       this.cancelDialog()
     },
     cancelDialog() {
@@ -98,7 +106,11 @@ export default {
       this.multiple = !selection.length
     },
     batch(){
-      this.open=true
+      if(this.multiple){
+        this.$modal.alert("请先选择物料");
+      }else{
+        this.open=true
+      }
     },
     cancel() {
       this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
@@ -109,9 +121,7 @@ export default {
         if (!valid) {
           return
         }
-        let receiptOrderStatusArray = []
         const details = this.form.details.map(it => {
-          receiptOrderStatusArray.push(Number(it.receiptOrderStatus))
           if(it.place){
             it.prod.warehouseId=it.place[0]
             it.prod.areaId=it.place[1]
@@ -132,7 +142,6 @@ export default {
             delFlag: 0
           }
         })
-        this.form.receiptOrderStatus=this.getReceiptOrderStatus(receiptOrderStatusArray);
         const req = {...this.form, details}
         addOrUpdateWmsReceiptOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
@@ -140,7 +149,14 @@ export default {
         })
       })
     },
-    getReceiptOrderStatus(receiptOrderStatusArray){
+    setReceiptOrderStatus(){
+      this.form.receiptOrderStatus=this.getReceiptOrderStatus();
+    },
+    getReceiptOrderStatus(){
+      let receiptOrderStatusArray = []
+      this.form.details.map(it => {
+          receiptOrderStatusArray.push(Number(it.receiptOrderStatus))
+      })
       if(receiptOrderStatusArray.length==0){
         return 0
       }
@@ -149,8 +165,8 @@ export default {
           return i
         }
       }
-      if (receiptOrderStatusArray.includes(3) ){
-        if (receiptOrderStatusArray.includes(0) || receiptOrderStatusArray.includes(1) || receiptOrderStatusArray.includes(2)){
+      if (receiptOrderStatusArray.includes(3) || receiptOrderStatusArray.includes(2)){
+        if (receiptOrderStatusArray.includes(0) || receiptOrderStatusArray.includes(1) ){
           return 2
         }
       }
