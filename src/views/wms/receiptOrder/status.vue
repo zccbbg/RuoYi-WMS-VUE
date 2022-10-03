@@ -109,8 +109,9 @@ export default {
         if (!valid) {
           return
         }
+        let receiptOrderStatusArray = []
         const details = this.form.details.map(it => {
-          console.log(it.place)
+          receiptOrderStatusArray.push(Number(it.receiptOrderStatus))
           if(it.place){
             it.prod.warehouseId=it.place[0]
             it.prod.areaId=it.place[1]
@@ -131,12 +132,37 @@ export default {
             delFlag: 0
           }
         })
+        this.form.receiptOrderStatus=this.getReceiptOrderStatus(receiptOrderStatusArray);
         const req = {...this.form, details}
         addOrUpdateWmsReceiptOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel();
         })
       })
+    },
+    getReceiptOrderStatus(receiptOrderStatusArray){
+      if(receiptOrderStatusArray.length==0){
+        return 0
+      }
+      for(let i=0;i<4;i++){
+        if(receiptOrderStatusArray.every((item) => item==i)){
+          return i
+        }
+      }
+      if (receiptOrderStatusArray.includes(3) ){
+        if (receiptOrderStatusArray.includes(0) || receiptOrderStatusArray.includes(1) || receiptOrderStatusArray.includes(2)){
+          return 2
+        }
+      }
+      if(receiptOrderStatusArray.includes(1)){
+        return 1
+      }else if (receiptOrderStatusArray.includes(2) ){
+        return 2
+      }else if (receiptOrderStatusArray.includes(0) ){
+        return 0
+      }else if (receiptOrderStatusArray.includes(3) ){
+        return 3
+      }
     },
     loadDetail(id) {
       this.loading = true;
@@ -151,35 +177,6 @@ export default {
           details
         }
       })
-    },
-    confirmSelectItem() {
-      const value = this.$refs['item-select'].rightList
-      this.form.details = value.map(it => {
-        return {
-          prod: it,
-          planQuantity: null,
-          realQuantity: null,
-          receiptOrderStatus: 0,
-          delFlag: 0
-        }
-      })
-      this.closeModal()
-    },
-    closeModal() {
-      this.modalObj.show = false
-    },
-    showAddItem() {
-      const ok = () => this.confirmSelectItem()
-      const cancel = () => this.closeModal()
-      this.modalObj = {
-        show: true,
-        title: '添加物料',
-        width: '50%',
-        component: 'add-item',
-        model: {},
-        ok,
-        cancel
-      }
     }
   }
 }
