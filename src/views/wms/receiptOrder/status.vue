@@ -10,22 +10,30 @@
     el-divider
     .flex-center.mb8
       .flex-one 物料明细
+    el-dialog(title="请选择入库状态" :visible.sync="open" width="50%" append-to-body)
+      DictRadio(v-model="dialogStatus" :radioData="dict.type.wms_receipt_status")
+      .dialog-footer(slot="footer")
+        el-button(type="primary" @click="dialogConfirm") 确 定
+        el-button(@click="cancelDialog") 取 消
     .table
-      WmsTable(:data="form.details")
+      WmsTable(:data="form.details" @selection-change="handleSelectionChange")
         el-table-column(type="selection" width="55" align="center")
         el-table-column(label="物料名" align="center" prop="prod.itemName")
         el-table-column(label="物料编号" align="center" prop="prod.itemNo")
         el-table-column(label="物料类型" align="center" prop="prod.itemType")
         el-table-column(label="计划数量" align="center" prop="planQuantity")
-        el-table-column(label="实际数量" align="center" prop="planQuantity")
-        el-table-column(label="仓库/库区/货架" align="center")
+        el-table-column(label="实际数量" align="center" width="150")
+          template(slot-scope="scope")
+            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small")
+        el-table-column(label="仓库/库区/货架" align="center" width="200")
           template(slot-scope="scope")
             WmsWarehouseCascader(v-model="scope.row.prod.place" size="small")
-        el-table-column(label="入库状态")
+        el-table-column(label="入库状态" width="150")
           template(slot-scope="scope")
             DictSelect(v-model="scope.row.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
+      el-button(@click="batch" :disabled="multiple") 批量设置入库状态
       el-button(@click="cancel") 取消
       el-button(@click="submitForm" type="primary" ) 保存
 </template>
@@ -44,25 +52,19 @@ export default {
   },
   data() {
     return {
+      open: false,
       // 遮罩层
       loading: true,
+      ids: [],
       // 表单参数
       form: {
         details: []
       },
       // 表单校验
       rules: {},
-      modalObj: {
-        show: false,
-        title: '',
-        width: '50%',
-        component: null,
-        model: {},
-        ok: () => {
-        },
-        cancel: () => {
-        }
-      }
+      dialogStatus:null,
+      // 非多个禁用
+      multiple: true,
     }
   },
   created() {
@@ -74,6 +76,30 @@ export default {
     }
   },
   methods: {
+    dialogConfirm(){
+      if(!this.dialogStatus){
+        this.$modal.alert("请选择入库状态")
+        return
+      }
+      this.form.details.forEach(detail=>{
+        if(this.ids.includes(detail.id)){
+          detail.receiptOrderStatus=this.dialogStatus
+        }
+      })
+      this.cancelDialog()
+    },
+    cancelDialog() {
+      this.open = false;
+      this.dialogStatus=null;
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.multiple = !selection.length
+    },
+    batch(){
+      this.open=true
+    },
     cancel() {
       this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
     },
@@ -162,6 +188,6 @@ export default {
 .receipt-order-wrapper
   .receipt-order-content
     min-width 640px
-    width 50%
+    width 70%
     margin 0 auto
 </style>
