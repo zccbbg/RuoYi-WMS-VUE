@@ -99,12 +99,12 @@
     <el-table
       v-loading="loading"
       :data="wmsWarehouseList"
-      row-key="id"
+      row-key="key"
       :tree-props="{ children: 'children' }" 
     >
       <el-table-column
         label="编号"
-        align="center"
+        align="left"
         prop="warehouseNo"
         v-if="columns[0].visible"
       />
@@ -267,28 +267,40 @@ export default {
         this.total = totalElements;
         this.loading = false;
         this.setChildren();
-        
-
       });
     },
+    
     setChildren(){
-      let warehouseChildMap = new Map();
+      let warehouseChildMap=new Map()
+      let areaChildMap=new Map()
 
-      this.areaList.forEach((area) => {
-        let children = warehouseChildMap.get(area.warehouseId)
+      this.rackList.forEach((rack)=>{
+        let children=areaChildMap.get(rack.areaId)
         if(!children){
           children=[]
-        }
-        children.push({id:area.id,warehouseName:area.areaName,warehouseNo:area.areaNo})
-      
-        warehouseChildMap.set(area.warehouseId, children);
+        };
+        children.push({key:'rack'+rack.id,id:rack.id,warehouseName:rack.rackName,warehouseNo:rack.rackNo})
+        areaChildMap.set(rack.areaId,children)
       });
-      this.wmsWarehouseList.forEach((warehouse) => {
-        warehouse.isParent=1
+
+      this.areaList.forEach((area)=>{
+        let children=warehouseChildMap.get(area.warehouseId)
+        if(!children){
+          children=[]
+        };
+        children.push({key:'area'+area.id,id:area.id,warehouseName:area.areaName,warehouseNo:area.areaNo,children:areaChildMap.get(area.id)})
+        warehouseChildMap.set(area.warehouseId,children)
+      });
+
+      this.wmsWarehouseList.forEach((warehouse)=>{
+        this.isParent=1;
+        warehouse.key=warehouse.id
         warehouse.children=warehouseChildMap.get(warehouse.id)
-      });
-      debugger
+      })
+      
     },
+      
+
     // 取消按钮
     cancel() {
       this.open = false;
