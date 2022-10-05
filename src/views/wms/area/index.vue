@@ -193,7 +193,7 @@
             size="small"
           >
             <el-option
-              v-for="item in wmsWarehouseList"
+              v-for="item in warehouseList"
               :key="item.id"
               :label="item.warehouseName"
               :value="item.id"
@@ -298,15 +298,15 @@ export default {
       const pageReq = { page: pageNum - 1, size: pageSize };
       listWmsWarehouse({}).then((response) => {
         const { content } = response;
-        this.wmsWarehouseList = content;
-        this.wmsWarehouseList.forEach((warehouse) => {
-          this.wmsWarehouseMap.set(warehouse.id, warehouse.warehouseName);
+        this.warehouseList = content;
+        this.warehouseList.forEach((warehouse) => {
+          this.warehouseMap.set(warehouse.id, warehouse.warehouseName);
         });
         return listWmsArea(query, pageReq);
       }).then((response) => {
         const { content, totalElements } = response;
         content.forEach((item) => {
-          item.warehouseName = this.wmsWarehouseMap.get(item.warehouseId);
+          item.warehouseName = this.warehouseMap.get(item.warehouseId);
         });
         this.wmsAreaList = content;
         this.total = totalElements;

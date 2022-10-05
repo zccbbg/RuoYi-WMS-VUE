@@ -125,6 +125,7 @@
         align="center"
         class-name="small-padding fixed-width"
       >
+
         <template slot-scope="scope" v-if="scope.row.isParent">
           <el-button
             size="mini"
@@ -293,7 +294,7 @@ export default {
       });
 
       this.wmsWarehouseList.forEach((warehouse)=>{
-        this.isParent=1;
+        warehouse.isParent=1;
         warehouse.key=warehouse.id
         warehouse.children=warehouseChildMap.get(warehouse.id)
       })
