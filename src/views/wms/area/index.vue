@@ -296,14 +296,14 @@ export default {
         pageSize: undefined,
       };
       const pageReq = { page: pageNum - 1, size: pageSize };
-      listWmsWarehouse({}).then((response) => {
-        const { content } = response;
-        this.warehouseList = content;
-        this.warehouseList.forEach((warehouse) => {
-          this.warehouseMap.set(warehouse.id, warehouse.warehouseName);
-        });
-        return listWmsArea(query, pageReq);
-      }).then((response) => {
+      // listWmsWarehouse({}).then((response) => {
+      //   const { content } = response;
+      //   this.warehouseList = content;
+      //   this.warehouseList.forEach((warehouse) => {
+      //     this.warehouseMap.set(warehouse.id, warehouse.warehouseName);
+      //   });
+      //   return
+         listWmsArea(query, pageReq).then((response) => {
         const { content, totalElements } = response;
         content.forEach((item) => {
           item.warehouseName = this.warehouseMap.get(item.warehouseId);
