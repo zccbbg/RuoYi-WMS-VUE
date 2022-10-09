@@ -1,8 +1,9 @@
 <template lang="pug">
-.receipt-order-wrapper.app-container
+.receipt-order-wrapper.app-container(v-loading="loading")
   .receipt-order-content
     el-form(label-width="108px" :model="form" ref="form" :rules="rules")
       el-form-item(label="入库单号" prop="receiptOrderNo") {{form.receiptOrderNo}}
+      el-form-item(label="入库状态" prop="receiptOrderNo") {{receiptStatusMap.get(form.receiptOrderStatus+"")}}
       el-form-item(label="入库类型" prop="receiptOrderType") {{selectDictLabel(dict.type.wms_receipt_type, form.receiptOrderType)}}
       el-form-item(label="供应商" prop="supplierId") {{supplierMap.get(form.supplierId)}}
       el-form-item(label="订单号" prop="orderNo") {{form.orderNo}}
@@ -10,25 +11,29 @@
     el-divider
     .flex-center.mb8
       .flex-one 物料明细
+      .ops
+        el-button(type="primary" plain size="small" @click="batch") 批量设置入库状态
+    el-dialog(title="请选择入库状态" :visible.sync="open" width="50%" append-to-body)
+      DictRadio(v-model="dialogStatus" :radioData="dict.type.wms_receipt_status")
+      .dialog-footer(slot="footer")
+        el-button(type="primary" @click="dialogConfirm") 确 定
+        el-button(@click="cancelDialog") 取 消
     .table
-      table.common-table
-        tr
-          th 物料名
-          th 物料编号
-          th 物料类型
-          th 计划数量
-          th 仓库/库区/货架
-          th 操作
-        tr(v-for="(it, index) in form.details")
-          td(align="center") {{it.prod.itemName}}
-          td(align="center") {{it.prod.itemNo}}
-          td(align="center") {{it.prod.itemType}}
-          td(align="center")
-            el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
-          td(align="center") 
-            WmsWarehouseCascader(v-model="it.place" size="small")
-          td(align="center")
-            a.red(@click="form.details.splice(index, 1)") 删除
+      WmsTable(:data="form.details" @selection-change="handleSelectionChange")
+        el-table-column(type="selection" width="55" align="center")
+        el-table-column(label="物料名" align="center" prop="prod.itemName")
+        el-table-column(label="物料编号" align="center" prop="prod.itemNo")
+        el-table-column(label="物料类型" align="center" prop="prod.itemType")
+        el-table-column(label="计划数量" align="center" prop="planQuantity")
+        el-table-column(label="实际数量" align="center" width="150")
+          template(slot-scope="scope")
+            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small")
+        el-table-column(label="仓库/库区/货架" align="center" width="200")
+          template(slot-scope="scope")
+            WmsWarehouseCascader(v-model="scope.row.prod.place" size="small")
+        el-table-column(label="入库状态" width="150")
+          template(slot-scope="scope")
+            DictSelect(v-model="scope.row.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small" @change="setReceiptOrderStatus")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
       el-button(@click="cancel") 取消
@@ -43,29 +48,30 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'WmsReceiptOrder',
   components: { ItemSelect },
-  dicts: ['wms_receipt_type'],
+  dicts: ['wms_receipt_type','wms_receipt_status'],
   computed: {
   ...mapGetters(['supplierMap']),
+  receiptStatusMap(){
+      let obj = this.dict.type.wms_receipt_status.map( item=> [item.value, item.label])
+      let map= new Map(obj)
+      return map
+    }
   },
   data() {
     return {
+      open: false,
+      // 遮罩层
+      loading: true,
+      ids: [],
       // 表单参数
       form: {
         details: []
       },
       // 表单校验
       rules: {},
-      modalObj: {
-        show: false,
-        title: '',
-        width: '50%',
-        component: null,
-        model: {},
-        ok: () => {
-        },
-        cancel: () => {
-        }
-      }
+      dialogStatus:null,
+      // 非多个禁用
+      multiple: true,
     }
   },
   created() {
@@ -77,6 +83,35 @@ export default {
     }
   },
   methods: {
+    dialogConfirm(){
+      if(!this.dialogStatus){
+        this.$modal.alert("请选择入库状态")
+        return
+      }
+      this.form.details.forEach(detail=>{
+        if(this.ids.includes(detail.id)){
+          detail.receiptOrderStatus=this.dialogStatus
+        }
+      })
+      this.setReceiptOrderStatus()
+      this.cancelDialog()
+    },
+    cancelDialog() {
+      this.open = false;
+      this.dialogStatus=null;
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.multiple = !selection.length
+    },
+    batch(){
+      if(this.multiple){
+        this.$modal.alert("请先选择物料");
+      }else{
+        this.open=true
+      }
+    },
     cancel() {
       this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
     },
@@ -87,7 +122,6 @@ export default {
           return
         }
         const details = this.form.details.map(it => {
-          console.log(it.place)
           if(it.place){
             it.prod.warehouseId=it.place[0]
             it.prod.areaId=it.place[1]
@@ -115,9 +149,41 @@ export default {
         })
       })
     },
+    setReceiptOrderStatus(){
+      this.form.receiptOrderStatus=this.getReceiptOrderStatus();
+    },
+    getReceiptOrderStatus(){
+      let receiptOrderStatusArray = []
+      this.form.details.map(it => {
+          receiptOrderStatusArray.push(Number(it.receiptOrderStatus))
+      })
+      if(receiptOrderStatusArray.length==0){
+        return 0
+      }
+      for(let i=0;i<4;i++){
+        if(receiptOrderStatusArray.every((item) => item==i)){
+          return i
+        }
+      }
+      if (receiptOrderStatusArray.includes(3) || receiptOrderStatusArray.includes(2)){
+        if (receiptOrderStatusArray.includes(0) || receiptOrderStatusArray.includes(1) ){
+          return 2
+        }
+      }
+      if(receiptOrderStatusArray.includes(1)){
+        return 1
+      }else if (receiptOrderStatusArray.includes(2) ){
+        return 2
+      }else if (receiptOrderStatusArray.includes(0) ){
+        return 0
+      }else if (receiptOrderStatusArray.includes(3) ){
+        return 3
+      }
+    },
     loadDetail(id) {
+      this.loading = true;
       getWmsReceiptOrder(id).then(response => {
-        console.log(this.dict.type.wms_receipt_type)
+        this.loading = false;
         const {details, items} = response
         const map = {};
         (items || []).forEach(it => {map[it.id] = it});
@@ -127,35 +193,6 @@ export default {
           details
         }
       })
-    },
-    confirmSelectItem() {
-      const value = this.$refs['item-select'].rightList
-      this.form.details = value.map(it => {
-        return {
-          prod: it,
-          planQuantity: null,
-          realQuantity: null,
-          receiptOrderStatus: 0,
-          delFlag: 0
-        }
-      })
-      this.closeModal()
-    },
-    closeModal() {
-      this.modalObj.show = false
-    },
-    showAddItem() {
-      const ok = () => this.confirmSelectItem()
-      const cancel = () => this.closeModal()
-      this.modalObj = {
-        show: true,
-        title: '添加物料',
-        width: '50%',
-        component: 'add-item',
-        model: {},
-        ok,
-        cancel
-      }
     }
   }
 }
@@ -164,6 +201,6 @@ export default {
 .receipt-order-wrapper
   .receipt-order-content
     min-width 640px
-    width 50%
+    width 70%
     margin 0 auto
 </style>
