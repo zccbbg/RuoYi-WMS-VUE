@@ -1,5 +1,5 @@
 <template lang="pug">
-.receipt-order-wrapper.app-container
+.receipt-order-edit-wrapper.app-container
   .receipt-order-content
     el-form(label-width="108px" :model="form" ref="form" :rules="rules")
       el-form-item(label="入库单号" prop="receiptOrderNo")
@@ -15,7 +15,7 @@
         el-input(v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea" show-word-limit)
     el-divider
     .flex-center.mb8
-      .flex-one 物料明细
+      .flex-one.large-tip.bolder-font 物料明细
       .ops
         el-button(type="primary" plain size="small" @click="showAddItem") 添加物料
     .table
@@ -33,7 +33,7 @@
           td(align="center") {{it.prod.itemType}}
           td(align="center")
             el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
-          td(align="center") 
+          td(align="center")
             WmsWarehouseCascader(v-model="it.place" size="small")
           td(align="center")
             a.red(@click="form.details.splice(index, 1)") 删除
@@ -189,9 +189,9 @@ export default {
 }
 </script>
 <style lang="stylus">
-.receipt-order-wrapper
+.receipt-order-edit-wrapper
   .receipt-order-content
-    min-width 640px
-    width 50%
+    width 70%
+    min-width 900px
     margin 0 auto
 </style>

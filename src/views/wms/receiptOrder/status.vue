@@ -1,5 +1,5 @@
 <template lang="pug">
-.receipt-order-wrapper.app-container(v-loading="loading")
+.receipt-order-status-wrapper.app-container(v-loading="loading")
   .receipt-order-content
     el-form(label-width="108px" :model="form" ref="form" :rules="rules")
       el-form-item(label="入库单号" prop="receiptOrderNo") {{form.receiptOrderNo}}
@@ -10,7 +10,7 @@
       el-form-item(label="备注" prop="remark" ) {{form.remark}}
     el-divider
     .flex-center.mb8
-      .flex-one 物料明细
+      .flex-one.large-tip.bolder-font 物料明细
       .ops
         el-button(type="primary" plain size="small" @click="batch") 批量设置入库状态
     el-dialog(title="请选择入库状态" :visible.sync="open" width="50%" append-to-body)
@@ -32,8 +32,8 @@
           template(slot-scope="scope")
             WmsWarehouseCascader(v-model="scope.row.prod.place" size="small")
         el-table-column(label="入库状态" width="150")
-          template(slot-scope="scope")
-            DictSelect(v-model="scope.row.receiptOrderStatus" :options="dict.type.wms_receipt_status" size="small" @change="setReceiptOrderStatus")
+          template(slot-scope="{ row }")
+            DictSelect(v-model="row.receiptOrderStatus" :options="row.range" size="small" @change="setReceiptOrderStatus")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
       el-button(@click="cancel") 取消
@@ -187,20 +187,30 @@ export default {
         const {details, items} = response
         const map = {};
         (items || []).forEach(it => {map[it.id] = it});
-        details && details.forEach(it => it.prod = map[it.itemId])
+        details && details.forEach(it => {
+          it.prod = map[it.itemId];
+          it.range = this.getRange(it.receiptOrderStatus);
+        })
         this.form = {
           ...response,
           details
         }
       })
+    },
+    getRange(status) {
+      const arr = this.dict.type.wms_receipt_status;
+      if (status === 4 || status === 3) {
+        return arr.filter(it => +it.value === status).map(it => ({label: it.label, value: it.value}));
+      }
+      return arr.filter(it => +it.value >= status).map(it => ({label: it.label, value: it.value}));
     }
   }
 }
 </script>
 <style lang="stylus">
-.receipt-order-wrapper
+.receipt-order-status-wrapper
   .receipt-order-content
-    min-width 640px
     width 70%
+    min-width 900px
     margin 0 auto
 </style>

@@ -7,10 +7,10 @@
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <div class="right-menu-item">技术支持：18556959326,微信同号</div>
-        
+        <div class="right-menu-item"></div>
+
         <!-- <search id="header-search" class="right-menu-item" />
-        
+
         <el-tooltip content="源码地址" effect="dark" placement="bottom">
           <ruo-yi-git id="ruoyi-git" class="right-menu-item hover-effect" />
         </el-tooltip>

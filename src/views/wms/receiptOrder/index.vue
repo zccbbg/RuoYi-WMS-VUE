@@ -117,7 +117,7 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
+            icon="el-icon-truck"
             @click.stop="handleStatus(scope.row)"
             v-hasPermi="['wms:wmsReceiptOrder:status']"
           >发货/入库</el-button>
