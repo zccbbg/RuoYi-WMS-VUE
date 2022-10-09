@@ -139,30 +139,6 @@
           <WmsAreaCascader v-model="form.place" size="small"></WmsAreaCascader>
         </el-form-item>
 
-        <!-- <el-form-item label="所属仓库" prop="warehouseId">
-        <el-select v-model="form.warehouseId"  placeholder="请输入所属仓库" clearable size="small" @change="onWarehouseChange()">
-          <el-option
-            v-for="item in warehouseList"
-            :key="item.id"
-            :label="item.warehouseName"
-            :value="item.id">
-          </el-option>
-        </el-select>
-        </el-form-item>
-
-        <el-form-item label="所属库区" prop="areaId">
-        <el-select v-model="form.areaId"  placeholder="请输入所属库区" clearable size="small" >
-          <el-option
-            v-for="item in wmsAreaListByWarehouse"
-            :key="item.id"
-            :label="item.areaName"
-            :value="item.id">
-          </el-option>
-        </el-select>
-        </el-form-item> -->
-
-        
-
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -178,8 +154,6 @@
 <script>
 import WmsAreaCascader from '@/components/WmsAreaCascader'
 import { listWmsRack, getWmsRack, delWmsRack, addWmsRack, updateWmsRack, exportWmsRack } from "@/api/wms/rack";
-// import { listWmsWarehouse } from "@/api/wms/warehouse";
-// import { listWmsArea } from "@/api/wms/area";
 import { mapGetters } from "vuex";
 export default {
   name: "WmsRack",
@@ -205,13 +179,6 @@ export default {
       total: 0,
       // 货架表格数据
       wmsRackList: [],
-      // 库区表格数据
-      wmsAreaList: [],
-      wmsAreaListByWarehouse:[],
-      // wmsAreaMap:new Map(),
-      // 仓库表格数据
-      wmsWarehouseList: [],
-      // wmsWarehouseMap:new Map(),
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -256,17 +223,6 @@ export default {
   },
   methods: {
 
-    // onWarehouseChange(init){
-    //   this.wmsAreaListByWarehouse=[]
-    //   if(init!=true){
-    //     this.form.areaId=null
-    //   }
-    //   this.areaList.forEach(area=>{
-    //     if(area.warehouseId==this.form.warehouseId){
-    //       this.wmsAreaListByWarehouse.push(area)
-    //     }
-    //   })
-    // },
     /** 查询货架列表 */
     getList() {
       this.loading = true;
@@ -287,36 +243,6 @@ export default {
         this.loading = false;
       });
     },
-    // getHouseList() {
-    //   this.loading = true;
-    //   const {pageNum, pageSize} = this.queryParams;
-    //   const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-    //   const pageReq = {page: pageNum - 1, size: pageSize};
-    //   listWmsWarehouse(query, pageReq).then(response => {
-    //     const { content, totalElements } = response
-    //     this.wmsWarehouseList = content;
-    //     this.wmsWarehouseList.forEach(warehouse => {
-    //       this.wmsWarehouseMap.set(warehouse.id,warehouse.warehouseName)
-    //     });
-    //     this.total = totalElements;
-    //     this.loading = false;
-    //   });
-    // },
-    // getAreaList() {
-    //   this.loading = true;
-    //   const {pageNum, pageSize} = this.queryParams;
-    //   const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-    //   const pageReq = {page: pageNum - 1, size: pageSize};
-    //   listWmsArea(query, pageReq).then(response => {
-    //     const { content, totalElements } = response
-    //     this.wmsAreaList = content;
-    //     this.wmsAreaList.forEach(area=>{
-    //       this.wmsAreaMap.set(area.id,area.areaName)
-    //     })
-    //     this.total = totalElements;
-    //     this.loading = false;
-    //   });
-    // },
     // 取消按钮
     cancel() {
       this.open = false;
