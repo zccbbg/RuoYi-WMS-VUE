@@ -22,9 +22,11 @@ export default {
 		...mapGetters(['areaList','warehouseList']),
 		selections:{
 			get(){
+				console.log("get:"+this.value)
 				return this.value;
 			},
 			set(v){
+				console.log("组件里面:"+v)
 				this.$emit('input',v);
 			}
 		}
