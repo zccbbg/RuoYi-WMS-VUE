@@ -135,7 +135,7 @@
           <el-input v-model="form.rackName" placeholder="请输入名称" />
         </el-form-item>
 
-        <el-form-item label="仓库/库区" prop="areaId">
+        <el-form-item label="仓库/库区" prop="place">
           <WmsAreaCascader v-model="form.place" size="small"></WmsAreaCascader>
         </el-form-item>
 
@@ -199,12 +199,9 @@ export default {
         rackNo: [
           { required: true, message: "编号不能为空", trigger: "blur" }
         ],
-        areaId: [
-          { required: true, message: "所属库区不能为空", trigger: "blur" }
-        ],
-        warehouseId: [
-          { required: true, message: "所属仓库不能为空", trigger: "blur" }
-        ],
+        place: [
+          { required: true, message: "请选择仓库和库区", trigger: "blur" }
+        ]
       },
       columns: [
             { key: 1, label: "编号", visible:  true  },
@@ -292,6 +289,10 @@ export default {
       const id = row.id || this.ids
       await getWmsRack(id).then(response => {
         this.form = response;
+        let place=[]
+        place[0]=this.form.warehouseId
+        place[1]=this.form.areaId
+        this.form.place=place
         this.open = true;
         this.title = "修改货架";
       });
@@ -301,6 +302,11 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          if(this.form.place){
+            console.log(this.form.place)
+            this.form.warehouseId=this.form.place[0]
+            this.form.areaId=this.form.place[1]
+          }
           if (this.form.id != null) {
             updateWmsRack(this.form).then(response => {
               this.$store.dispatch("wms/getRackList");
