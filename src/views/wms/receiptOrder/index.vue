@@ -99,26 +99,29 @@
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
+        <template v-slot="{ row }">
           <el-button
+            v-if="0 === row.receiptOrderStatus"
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click.stop="handleUpdate(scope.row)"
+            @click.stop="handleUpdate(row)"
             v-hasPermi="['wms:wmsReceiptOrder:edit']"
           >修改</el-button>
           <el-button
+            v-if="0 === row.receiptOrderStatus"
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click.stop="handleDelete(scope.row)"
+            @click.stop="handleDelete(row)"
             v-hasPermi="['wms:wmsReceiptOrder:remove']"
           >删除</el-button>
           <el-button
+            v-if="row.detailCount"
             size="mini"
             type="text"
             icon="el-icon-truck"
-            @click.stop="handleStatus(scope.row)"
+            @click.stop="handleStatus(row)"
             v-hasPermi="['wms:wmsReceiptOrder:status']"
           >发货/入库</el-button>
         </template>
