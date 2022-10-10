@@ -3,7 +3,7 @@
   .receipt-order-content
     el-form(label-width="108px" :model="form" ref="form" :rules="rules")
       el-form-item(label="入库单号" prop="receiptOrderNo") {{form.receiptOrderNo}}
-      el-form-item(label="入库状态" prop="receiptOrderNo") {{receiptStatusMap.get(form.receiptOrderStatus+"")}}
+      el-form-item(label="入库状态" prop="receiptOrderNo") {{receiptStatusMap.get(form.receiptOrderStatus+'')}}
       el-form-item(label="入库类型" prop="receiptOrderType") {{selectDictLabel(dict.type.wms_receipt_type, form.receiptOrderType)}}
       el-form-item(label="供应商" prop="supplierId") {{supplierMap.get(form.supplierId)}}
       el-form-item(label="订单号" prop="orderNo") {{form.orderNo}}
@@ -12,9 +12,11 @@
     .flex-center.mb8
       .flex-one.large-tip.bolder-font 物料明细
       .ops
-        el-button(type="primary" plain size="small" @click="batch") 批量设置入库状态
+        el-button(
+          v-if="mergeDetailStatusArray.length === 1"
+          type="primary" plain size="small" @click="batch") 批量设置入库状态
     el-dialog(title="请选择入库状态" :visible.sync="open" width="50%" append-to-body)
-      DictRadio(v-model="dialogStatus" :radioData="dict.type.wms_receipt_status")
+      DictRadio(v-model="dialogStatus" :radioData="dialogStatusRange")
       .dialog-footer(slot="footer")
         el-button(type="primary" @click="dialogConfirm") 确 定
         el-button(@click="cancelDialog") 取 消
@@ -48,13 +50,23 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'WmsReceiptOrder',
   components: { ItemSelect },
-  dicts: ['wms_receipt_type','wms_receipt_status'],
+  dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
-  ...mapGetters(['supplierMap']),
-  receiptStatusMap(){
-      let obj = this.dict.type.wms_receipt_status.map( item=> [item.value, item.label])
-      let map= new Map(obj)
+    ...mapGetters(['supplierMap']),
+    receiptStatusMap() {
+      let obj = this.dict.type.wms_receipt_status.map(item => [item.value, item.label])
+      let map = new Map(obj)
       return map
+    },
+    mergeDetailStatusArray() {
+      const arr = this.sourceDetails || []
+      return [...new Set(arr.filter(it => it.receiptOrderStatus !== null).map(it => it.receiptOrderStatus))]
+    },
+    dialogStatusRange() {
+      if (this.mergeDetailStatusArray.length !== 1) {
+        return []
+      }
+      return this.getRange(this.mergeDetailStatusArray[0])
     }
   },
   data() {
@@ -67,11 +79,12 @@ export default {
       form: {
         details: []
       },
+      sourceDetails: [],
       // 表单校验
       rules: {},
-      dialogStatus:null,
+      dialogStatus: null,
       // 非多个禁用
-      multiple: true,
+      multiple: true
     }
   },
   created() {
@@ -79,37 +92,37 @@ export default {
     if (id) {
       this.loadDetail(id)
     } else {
-      this.cancel();
+      this.cancel()
     }
   },
   methods: {
-    dialogConfirm(){
-      if(!this.dialogStatus){
-        this.$modal.alert("请选择入库状态")
+    dialogConfirm() {
+      if (!this.dialogStatus) {
+        this.$modal.alert('请选择入库状态')
         return
       }
-      this.form.details.forEach(detail=>{
-        if(this.ids.includes(detail.id)){
-          detail.receiptOrderStatus=this.dialogStatus
+      this.form.details.forEach(detail => {
+        if (this.ids.includes(detail.id)) {
+          detail.receiptOrderStatus = this.dialogStatus
         }
       })
       this.setReceiptOrderStatus()
       this.cancelDialog()
     },
     cancelDialog() {
-      this.open = false;
-      this.dialogStatus=null;
+      this.open = false
+      this.dialogStatus = null
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
       this.multiple = !selection.length
     },
-    batch(){
-      if(this.multiple){
-        this.$modal.alert("请先选择物料");
-      }else{
-        this.open=true
+    batch() {
+      if (this.multiple) {
+        this.$modal.alert('请先选择物料')
+      } else {
+        this.open = true
       }
     },
     cancel() {
@@ -122,14 +135,14 @@ export default {
           return
         }
         const details = this.form.details.map(it => {
-          if(it.place){
-            it.prod.warehouseId=it.place[0]
-            it.prod.areaId=it.place[1]
-            it.prod.rackId=it.place[2]
-          }else{
-            it.prod.warehouseId=null
-            it.prod.areaId=null
-            it.prod.rackId=null
+          if (it.place) {
+            it.prod.warehouseId = it.place[0]
+            it.prod.areaId = it.place[1]
+            it.prod.rackId = it.place[2]
+          } else {
+            it.prod.warehouseId = null
+            it.prod.areaId = null
+            it.prod.rackId = null
           }
           return {
             itemId: it.prod.id,
@@ -142,55 +155,58 @@ export default {
             delFlag: 0
           }
         })
-        const req = {...this.form, details}
+        const req = { ...this.form, details }
         addOrUpdateWmsReceiptOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
-          this.cancel();
+          this.cancel()
         })
       })
     },
-    setReceiptOrderStatus(){
-      this.form.receiptOrderStatus=this.getReceiptOrderStatus();
+    setReceiptOrderStatus() {
+      this.form.receiptOrderStatus = this.getReceiptOrderStatus()
     },
-    getReceiptOrderStatus(){
+    getReceiptOrderStatus() {
       let receiptOrderStatusArray = []
       this.form.details.map(it => {
-          receiptOrderStatusArray.push(Number(it.receiptOrderStatus))
+        receiptOrderStatusArray.push(Number(it.receiptOrderStatus))
       })
-      if(receiptOrderStatusArray.length==0){
+      if (receiptOrderStatusArray.length == 0) {
         return 0
       }
-      for(let i=0;i<4;i++){
-        if(receiptOrderStatusArray.every((item) => item==i)){
+      for (let i = 0; i < 4; i++) {
+        if (receiptOrderStatusArray.every((item) => item == i)) {
           return i
         }
       }
-      if (receiptOrderStatusArray.includes(3) || receiptOrderStatusArray.includes(2)){
-        if (receiptOrderStatusArray.includes(0) || receiptOrderStatusArray.includes(1) ){
+      if (receiptOrderStatusArray.includes(3) || receiptOrderStatusArray.includes(2)) {
+        if (receiptOrderStatusArray.includes(0) || receiptOrderStatusArray.includes(1)) {
           return 2
         }
       }
-      if(receiptOrderStatusArray.includes(1)){
+      if (receiptOrderStatusArray.includes(1)) {
         return 1
-      }else if (receiptOrderStatusArray.includes(2) ){
+      } else if (receiptOrderStatusArray.includes(2)) {
         return 2
-      }else if (receiptOrderStatusArray.includes(0) ){
+      } else if (receiptOrderStatusArray.includes(0)) {
         return 0
-      }else if (receiptOrderStatusArray.includes(3) ){
+      } else if (receiptOrderStatusArray.includes(3)) {
         return 3
       }
     },
     loadDetail(id) {
-      this.loading = true;
+      this.loading = true
       getWmsReceiptOrder(id).then(response => {
-        this.loading = false;
-        const {details, items} = response
+        this.loading = false
+        const { details, items } = response
         const map = {};
-        (items || []).forEach(it => {map[it.id] = it});
-        details && details.forEach(it => {
-          it.prod = map[it.itemId];
-          it.range = this.getRange(it.receiptOrderStatus);
+        (items || []).forEach(it => {
+          map[it.id] = it
         })
+        details && details.forEach(it => {
+          it.prod = map[it.itemId]
+          it.range = this.getRange(it.receiptOrderStatus)
+        })
+        this.sourceDetails = details.map(it => ({ ...it }))
         this.form = {
           ...response,
           details
@@ -198,11 +214,17 @@ export default {
       })
     },
     getRange(status) {
-      const arr = this.dict.type.wms_receipt_status;
+      const arr = this.dict.type.wms_receipt_status
       if (status === 4 || status === 3) {
-        return arr.filter(it => +it.value === status).map(it => ({label: it.label, value: it.value}));
+        return arr.filter(it => +it.value === status).map(it => ({ label: it.label, value: it.value }))
       }
-      return arr.filter(it => +it.value >= status).map(it => ({label: it.label, value: it.value}));
+      if (status === 2) {
+        return arr.filter(it => +it.value >= status && +it.value !== 4).map(it => ({
+          label: it.label,
+          value: it.value
+        }))
+      }
+      return arr.filter(it => +it.value >= status).map(it => ({ label: it.label, value: it.value }))
     }
   }
 }
