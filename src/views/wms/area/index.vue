@@ -222,7 +222,6 @@ import {
   updateWmsArea,
   exportWmsArea,
 } from "@/api/wms/area";
-import { listWmsWarehouse } from "@/api/wms/warehouse";
 import { mapGetters } from 'vuex';
 export default {
   name: "WmsArea",
@@ -244,9 +243,6 @@ export default {
       total: 0,
       // 库区表格数据
       wmsAreaList: [],
-      // 仓库表格数据
-      wmsWarehouseList: [],
-      wmsWarehouseMap: new Map(),
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -296,14 +292,7 @@ export default {
         pageSize: undefined,
       };
       const pageReq = { page: pageNum - 1, size: pageSize };
-      // listWmsWarehouse({}).then((response) => {
-      //   const { content } = response;
-      //   this.warehouseList = content;
-      //   this.warehouseList.forEach((warehouse) => {
-      //     this.warehouseMap.set(warehouse.id, warehouse.warehouseName);
-      //   });
-      //   return
-         listWmsArea(query, pageReq).then((response) => {
+      listWmsArea(query, pageReq).then((response) => {
         const { content, totalElements } = response;
         content.forEach((item) => {
           item.warehouseName = this.warehouseMap.get(item.warehouseId);
