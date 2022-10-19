@@ -309,7 +309,7 @@
         <el-form-item label="单位类别" prop="unit">
           <el-input v-model="form.unit" placeholder="请输入单位类别" />
         </el-form-item>
-        <el-form-item label="仓库/库区/货架" prop="rackId">
+        <el-form-item label="仓库/库区/货架" prop="place">
           <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>
         </el-form-item>
         <el-form-item label="安全库存" prop="quantity">
@@ -403,6 +403,7 @@ export default {
         itemName: [
           { required: true, message: "名称不能为空", trigger: "blur" },
         ],
+        
       },
       columns: [
         { key: 1, label: "编号", visible: true },

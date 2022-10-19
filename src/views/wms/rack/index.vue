@@ -373,10 +373,8 @@ export default {
       this.reset();
       const id = row.id || this.ids;
       await getWmsRack(id).then((response) => {
+        response.place = [response.warehouseId,response.areaId];
         this.form = response;
-        this.form.place = [];
-        this.form.place[0] = this.form.warehouseId;
-        this.form.place[1] = this.form.areaId;
         this.open = true;
         this.title = "修改货架";
       });
