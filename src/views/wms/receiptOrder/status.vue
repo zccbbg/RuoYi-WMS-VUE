@@ -32,7 +32,7 @@
             el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small")
         el-table-column(label="仓库/库区/货架" align="center" width="200")
           template(slot-scope="scope")
-            WmsWarehouseCascader(v-model="scope.row.prod.place" size="small")
+            WmsWarehouseCascader(v-model="scope.row.place" size="small")
         el-table-column(label="入库状态" width="150")
           template(slot-scope="{ row }")
             DictSelect(v-model="row.receiptOrderStatus" :options="row.range" size="small" @change="setReceiptOrderStatus")
@@ -145,6 +145,7 @@ export default {
             it.prod.rackId = null
           }
           return {
+            id: it.id,
             itemId: it.prod.id,
             rackId: it.prod.rackId,
             areaId: it.prod.areaId,
@@ -196,7 +197,6 @@ export default {
     loadDetail(id) {
       this.loading = true
       getWmsReceiptOrder(id).then(response => {
-        this.loading = false
         const { details, items } = response
         const map = {};
         (items || []).forEach(it => {
@@ -204,6 +204,9 @@ export default {
         })
         details && details.forEach(it => {
           it.prod = map[it.itemId]
+          if ((!it.place || it.place.length === 0) && it.prod) {
+            it.place = it.prod.place;
+          }
           it.range = this.getRange(it.receiptOrderStatus)
         })
         this.sourceDetails = details.map(it => ({ ...it }))
@@ -211,6 +214,8 @@ export default {
           ...response,
           details
         }
+      }).finally(() => {
+        this.loading = false
       })
     },
     getRange(status) {
