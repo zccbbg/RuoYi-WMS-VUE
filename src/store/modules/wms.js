@@ -2,9 +2,12 @@ import { listWmsSupplier } from "@/api/wms/supplier";
 import { listWmsWarehouse } from "@/api/wms/warehouse";
 import { listWmsArea } from "@/api/wms/area";
 import { listWmsRack } from "@/api/wms/rack";
+import {listWmsCustomer} from "@/api/wms/customer";
 
 const state = {
   supplierList: [],
+  customerList: [],
+  customerMap: new Map(),
   supplierMap: new Map(),
   warehouseList: [],
   warehouseMap: new Map(),
@@ -19,6 +22,13 @@ const mutations = {
     state.supplierMap = new Map();
     list.forEach((supplier) => {
       state.supplierMap.set(supplier.id, supplier.supplierName)
+    })
+  },
+  SET_CUSTOMERS(state, list) {
+    state.customerList = list;
+    state.customerMap = new Map();
+    list.forEach((customer) => {
+      state.customerMap.set(customer.id, customer.customerName)
     })
   },
   SET_WAREHOUSE(state, list){
@@ -49,6 +59,13 @@ const actions = {
       .then(res => {
         const { content } =res
         commit('SET_SUPPLIERS', content);
+      })
+  },
+  getCustomer({ commit }) {
+    return listWmsCustomer({}, { page: 0, size: 1000 })
+      .then(res => {
+        const { content } =res
+        commit('SET_CUSTOMERS', content);
       })
   },
   getWarehouseList({ commit }) {

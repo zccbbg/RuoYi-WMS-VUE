@@ -26,6 +26,7 @@ router.beforeEach((to, from, next) => {
         store.dispatch("wms/getAreaList");
         store.dispatch("wms/getRackList");
         store.dispatch('wms/getSuppliers')
+        store.dispatch('wms/getCustomer')
         // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(() => {
           isRelogin.show = false

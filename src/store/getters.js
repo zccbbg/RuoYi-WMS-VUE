@@ -20,6 +20,8 @@ const getters = {
 
   // wms相关
   supplierList: state=>state.wms.supplierList,
+  customerList: state=>state.wms.customerList,
+  customerMap: state=>state.wms.customerMap,
   supplierMap: state=>state.wms.supplierMap,
   warehouseList: state=>state.wms.warehouseList,
   warehouseMap: state=>state.wms.warehouseMap,

@@ -1,73 +1,37 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="出库单号，系统自动生成" prop="shipmentOrderNo">
+      <el-form-item label="出库状态" prop="shipmentOrderStatus">
+        <DictRadio v-model="queryParams.shipmentOrderStatus" @change="handleQuery" size="small" :radioData="dict.type.wms_shipment_status" :showAll="'all'"/>
+      </el-form-item>
+      <el-form-item label="出库类型" prop="shipmentOrderType">
+        <DictRadio v-model="queryParams.shipmentOrderType" @change="handleQuery" size="small" :radioData="dict.type.wms_shipment_type" :showAll="'all'"/>
+      </el-form-item>
+      </br>
+      <el-form-item label="出库单号" prop="shipmentOrderNo">
         <el-input
           v-model="queryParams.shipmentOrderNo"
-          placeholder="请输入出库单号，系统自动生成"
+          placeholder="请输入出库单号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="出库类型" prop="shipmentOrderType">
-        <el-select v-model="queryParams.shipmentOrderType" placeholder="请选择出库类型" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="出库订单" prop="orderNo">
+      <el-form-item label="订单号" prop="orderNo">
         <el-input
           v-model="queryParams.orderNo"
-          placeholder="请输入出库订单"
+          placeholder="请输入订单号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="客户" prop="customerId">
-        <el-input
-          v-model="queryParams.customerId"
-          placeholder="请输入客户"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <WmsCustomerSelect v-model="queryParams.customerId" size="small"/>
       </el-form-item>
-      <el-form-item label="出库单状态" prop="shipmentOrderStatus">
-        <el-select v-model="queryParams.shipmentOrderStatus" placeholder="请选择出库单状态" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="审核状态" prop="checkStatus">
-        <el-select v-model="queryParams.checkStatus" placeholder="请选择审核状态" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="审核人" prop="checkUserId">
-        <el-input
-          v-model="queryParams.checkUserId"
-          placeholder="请输入审核人"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <template v-if="showMoreCondition">
-      <el-form-item label="审核时间" prop="checkTime">
-        <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.checkTime"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择审核时间">
-        </el-date-picker>
-      </el-form-item>
-    </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini" @click="showMoreCondition = !showMoreCondition">{{showMoreCondition ? '收起条件' : '展开条件'}}</el-button>
       </el-form-item>
     </el-form>
 
@@ -78,81 +42,59 @@
           plain
           icon="el-icon-plus"
           size="mini"
-          @click="handleAdd"
-          v-hasPermi="['wms:wmsShipmentOrder:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:wmsShipmentOrder:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:wmsShipmentOrder:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['wms:wmsShipmentOrder:export']"
-        >导出</el-button>
+          @click="handleAdd()"
+          v-hasPermi="['wms:shipmentOrder:add']"
+        >创建出库单</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <WmsTable v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="出库单号，系统自动生成" align="center" prop="shipmentOrderNo" v-if="columns[0].visible"/>
-      <el-table-column label="出库类型" align="center" prop="shipmentOrderType" v-if="columns[1].visible"/>
-      <el-table-column label="出库订单" align="center" prop="orderNo" v-if="columns[2].visible"/>
-      <el-table-column label="客户" align="center" prop="customerId" v-if="columns[3].visible"/>
-      <el-table-column label="出库单状态" align="center" prop="shipmentOrderStatus" v-if="columns[4].visible"/>
-      <el-table-column label="审核状态" align="center" prop="checkStatus" v-if="columns[5].visible"/>
-      <el-table-column label="审核人" align="center" prop="checkUserId" v-if="columns[6].visible"/>
-      <el-table-column label="审核时间" align="center" prop="checkTime" width="180" v-if="columns[7].visible">
+      <el-table-column label="出库单号" align="center" prop="shipmentOrderNo" v-if="columns[0].visible"/>
+      <el-table-column label="出库类型" align="center" v-if="columns[1].visible">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.checkTime, '')}}</span>
+          <el-tag size="medium" effect="plain" :type="getShipmentOrderTypeTag(scope.row)">{{getShipmentOrderType(scope.row)}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[8].visible"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="客户" align="center" :formatter="getCustomer" v-if="columns[2].visible"/>
+      <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
+      <el-table-column label="出库状态" align="center" v-if="columns[4].visible">
         <template slot-scope="scope">
+          <el-tag size="medium" effect="plain" :type="getShipmentOrderStatusTag(scope.row)">{{getShipmentOrderStatus(scope.row)}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template v-slot="{ row }">
           <el-button
+            v-if="11 === row.shipmentOrderStatus"
             size="mini"
             type="text"
             icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsShipmentOrder:edit']"
+            @click.stop="handleUpdate(row)"
+            v-hasPermi="['wms:shipmentOrder:edit']"
           >修改</el-button>
           <el-button
+            v-if="11 === row.shipmentOrderStatus"
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsShipmentOrder:remove']"
+            @click.stop="handleDelete(row)"
+            v-hasPermi="['wms:shipmentOrder:remove']"
           >删除</el-button>
+          <el-button
+            v-if="row.detailCount"
+            size="mini"
+            type="text"
+            icon="el-icon-truck"
+            @click.stop="handleStatus(row)"
+            v-hasPermi="['wms:shipmentOrder:status']"
+          >发货/出库</el-button>
         </template>
       </el-table-column>
     </WmsTable>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -160,62 +102,29 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 添加或修改出库单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="出库单号，系统自动生成" prop="shipmentOrderNo">
-          <el-input v-model="form.shipmentOrderNo" placeholder="请输入出库单号，系统自动生成" />
-        </el-form-item>
-        <el-form-item label="出库类型" prop="shipmentOrderType">
-          <el-select v-model="form.shipmentOrderType" placeholder="请选择出库类型">
-            <el-option label="请选择字典生成" value="" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="出库订单" prop="orderNo">
-          <el-input v-model="form.orderNo" placeholder="请输入出库订单" />
-        </el-form-item>
-        <el-form-item label="客户" prop="customerId">
-          <el-input v-model="form.customerId" placeholder="请输入客户" />
-        </el-form-item>
-        <el-form-item label="出库单状态">
-          <el-radio-group v-model="form.shipmentOrderStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="审核状态">
-          <el-radio-group v-model="form.checkStatus">
-            <el-radio label="1">请选择字典生成</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="审核人" prop="checkUserId">
-          <el-input v-model="form.checkUserId" placeholder="请输入审核人" />
-        </el-form-item>
-        <el-form-item label="审核时间" prop="checkTime">
-          <el-date-picker clearable size="small"
-                        v-model="form.checkTime"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择审核时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { listWmsShipmentOrder, getWmsShipmentOrder, delWmsShipmentOrder, addWmsShipmentOrder, updateWmsShipmentOrder, exportWmsShipmentOrder } from "@/api/wms/shipmentOrder";
+import { listWmsShipmentOrder, delWmsShipmentOrder, exportWmsShipmentOrder } from "@/api/wms/shipmentOrder";
+import { mapGetters } from 'vuex';
 
 export default {
-  name: "WmsShipmentOrder",
+  name: "wmsShipmentOrder",
+  dicts: ['wms_shipment_type','wms_shipment_status'],
+  computed:{
+    ...mapGetters(['customerMap']),
+    shipmentTypeMap(){
+      let obj = this.dict.type.wms_shipment_type.map( item=> [item.value, item.label])
+      let map= new Map(obj)
+      return map
+    },
+    shipmentStatusMap(){
+      let obj = this.dict.type.wms_shipment_status.map( item=> [item.value, item.label])
+      let map= new Map(obj)
+      return map
+    }
+  },
   data() {
     return {
       // 遮罩层
@@ -234,46 +143,64 @@ export default {
       total: 0,
       // 出库单表格数据
       wmsShipmentOrderList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         shipmentOrderNo: null,
         shipmentOrderType: null,
-        orderNo: null,
         customerId: null,
+        orderNo: null,
         shipmentOrderStatus: null,
-        checkStatus: null,
-        checkUserId: null,
-        checkTime: null,
       },
-      // 表单参数
-      form: {},
       // 表单校验
       rules: {
       },
       columns: [
-            { key: 1, label: "出库单号，系统自动生成", visible:  true  },
-            { key: 2, label: "出库类型", visible:  true  },
-            { key: 3, label: "出库订单", visible:  true  },
-            { key: 4, label: "客户", visible:  true  },
-            { key: 5, label: "出库单状态", visible:  true  },
-            { key: 6, label: "审核状态", visible:  true  },
-            { key: 7, label: "审核人", visible:  true  },
-            { key: 8, label: "审核时间", visible:  true  },
-            { key: 9, label: "备注", visible:  true  },
-                             ],
-      showMoreCondition: false
+        { key: 1, label: "出库单号", visible:  true  },
+        { key: 2, label: "出库类型", visible:  true  },
+        { key: 3, label: "供应商", visible:  true  },
+        { key: 4, label: "订单号", visible:  true  },
+        { key: 5, label: "出库状态", visible:  true  },
+        { key: 6, label: "备注", visible:  true  },
+      ],
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    getShipmentOrderTypeTag(row){
+      switch (row.shipmentOrderType){
+        case 1:
+          return "success";
+        case 2:
+          return "warning";
+        case 3:
+          return "danger";
+      }
+    },
+    getShipmentOrderStatusTag(row){
+      switch (row.shipmentOrderStatus){
+        case 11:
+          return "info";
+        case 12:
+          return "warning";
+        case 14:
+          return "danger";
+        case 13:
+          return "success";
+      }
+    },
+    getShipmentOrderType(row){
+      return this.shipmentTypeMap.get(row.shipmentOrderType+"")
+    },
+    getShipmentOrderStatus(row){
+      return this.shipmentStatusMap.get(row.shipmentOrderStatus+"")
+    },
+    getCustomer(row, column){
+      return this.customerMap.get(row.customerId)
+    },
     /** 查询出库单列表 */
     getList() {
       this.loading = true;
@@ -286,31 +213,6 @@ export default {
         this.total = totalElements;
         this.loading = false;
       });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        shipmentOrderNo: null,
-        shipmentOrderType: null,
-        orderNo: null,
-        customerId: null,
-        shipmentOrderStatus: 0,
-        checkStatus: 0,
-        checkUserId: null,
-        checkTime: null,
-        remark: null,
-        createBy: null,
-        createTime: null,
-        updateBy: null,
-        updateTime: null
-      };
-      this.resetForm("form");
     },
     /** 搜索按钮操作 */
     handleQuery() {
@@ -330,39 +232,16 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加出库单";
+      this.$router.push({path: "/wms/shipmentOrder/edit"});
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
-      this.reset();
       const id = row.id || this.ids
-      getWmsShipmentOrder(id).then(response => {
-        this.form = response;
-        this.open = true;
-        this.title = "修改出库单";
-      });
+      this.$router.push({path: "/wms/shipmentOrder/edit", query: {id}});
     },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateWmsShipmentOrder(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addWmsShipmentOrder(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+    handleStatus(row) {
+      const id = row.id || this.ids
+      this.$router.push({path: "/wms/shipmentOrder/status", query: {id}});
     },
     /** 删除按钮操作 */
     handleDelete(row) {

@@ -41,6 +41,9 @@ import DictData from '@/components/DictData'
 import WmsTable from '@/components/WmsTable'
 
 import WmsSupplierSelect from '@/components/WmsSupplierSelect'
+import WmsCustomerSelect from '@/components/WmsCustomerSelect'
+import KrPrintDesigner from "kr-print-designer";
+import "kr-print-designer/lib/kr-print-designer.css";
 
 import DictRadio from '@/components/DictRadio'
 
@@ -69,9 +72,11 @@ Vue.component('ImageUpload', ImageUpload)
 Vue.component('ImagePreview', ImagePreview)
 Vue.component('WmsTable',WmsTable)
 Vue.component('WmsSupplierSelect',WmsSupplierSelect)
+Vue.component('WmsCustomerSelect',WmsCustomerSelect)
 Vue.component('DictRadio',DictRadio)
 Vue.component('DictSelect',DictSelect)
 Vue.component('WmsWarehouseCascader',WmsWarehouseCascader)
+Vue.use(KrPrintDesigner);
 
 Vue.use(directive)
 Vue.use(plugins)

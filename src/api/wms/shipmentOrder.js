@@ -18,6 +18,14 @@ export function getWmsShipmentOrder(id) {
   })
 }
 
+export function addOrUpdateWmsShipmentOrder(data) {
+  return request({
+    url: '/wms/shipmentOrder/add-or-update',
+    method: 'post',
+    data: data
+  })
+}
+
 // 新增出库单
 export function addWmsShipmentOrder(data) {
   return request({

@@ -159,7 +159,7 @@
         </template>
       </el-table-column>
     </WmsTable>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -355,12 +355,14 @@ export default {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
+              this.$store.dispatch('wms/getCustomer')
             });
           } else {
             addWmsCustomer(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
+              this.$store.dispatch('wms/getCustomer')
             });
           }
         }
@@ -373,6 +375,7 @@ export default {
         return delWmsCustomer(ids);
       }).then(() => {
         this.getList();
+        this.$store.dispatch('wms/getCustomer')
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
