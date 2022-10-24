@@ -84,7 +84,7 @@
             v-hasPermi="['wms:shipmentOrder:remove']"
           >删除</el-button>
           <el-button
-            v-if="row.detailCount"
+            v-if="row.detailCount && [11,12].includes(row.shipmentOrderStatus)"
             size="mini"
             type="text"
             icon="el-icon-truck"
