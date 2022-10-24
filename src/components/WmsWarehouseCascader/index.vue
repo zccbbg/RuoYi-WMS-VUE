@@ -21,7 +21,6 @@ export default {
     ...mapGetters(['rackList', 'areaList', 'warehouseList']),
     selections: {
       get() {
-        console.log(this.value);
         return this.value
       },
       set(v) {
