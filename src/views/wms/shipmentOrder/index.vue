@@ -1,11 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+             class="ry_form">
       <el-form-item label="出库状态" prop="shipmentOrderStatus">
-        <DictRadio v-model="queryParams.shipmentOrderStatus" @change="handleQuery" size="small" :radioData="dict.type.wms_shipment_status" :showAll="'all'"/>
+        <DictRadio v-model="queryParams.shipmentOrderStatus" @change="handleQuery" size="small"
+                   :radioData="dict.type.wms_shipment_status" :showAll="'all'"/>
       </el-form-item>
       <el-form-item label="出库类型" prop="shipmentOrderType">
-        <DictRadio v-model="queryParams.shipmentOrderType" @change="handleQuery" size="small" :radioData="dict.type.wms_shipment_type" :showAll="'all'"/>
+        <DictRadio v-model="queryParams.shipmentOrderType" @change="handleQuery" size="small"
+                   :radioData="dict.type.wms_shipment_type" :showAll="'all'"/>
       </el-form-item>
       </br>
       <el-form-item label="出库单号" prop="shipmentOrderNo">
@@ -44,24 +47,29 @@
           size="mini"
           @click="handleAdd()"
           v-hasPermi="['wms:shipmentOrder:add']"
-        >创建出库单</el-button>
+        >创建出库单
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <WmsTable v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="出库单号" align="center" prop="shipmentOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="出库类型" align="center" v-if="columns[1].visible">
         <template slot-scope="scope">
-          <el-tag size="medium" effect="plain" :type="getShipmentOrderTypeTag(scope.row)">{{getShipmentOrderType(scope.row)}}</el-tag>
+          <el-tag size="medium" effect="plain" :type="getShipmentOrderTypeTag(scope.row)">
+            {{ getShipmentOrderType(scope.row) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="客户" align="center" :formatter="getCustomer" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="出库状态" align="center" v-if="columns[4].visible">
         <template slot-scope="scope">
-          <el-tag size="medium" effect="plain" :type="getShipmentOrderStatusTag(scope.row)">{{getShipmentOrderStatus(scope.row)}}</el-tag>
+          <el-tag size="medium" effect="plain" :type="getShipmentOrderStatusTag(scope.row)">
+            {{ getShipmentOrderStatus(scope.row) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
@@ -74,7 +82,8 @@
             icon="el-icon-edit"
             @click.stop="handleUpdate(row)"
             v-hasPermi="['wms:shipmentOrder:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             v-if="11 === row.shipmentOrderStatus"
             size="mini"
@@ -82,7 +91,8 @@
             icon="el-icon-delete"
             @click.stop="handleDelete(row)"
             v-hasPermi="['wms:shipmentOrder:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
           <el-button
             v-if="row.detailCount && [11,12].includes(row.shipmentOrderStatus)"
             size="mini"
@@ -90,7 +100,22 @@
             icon="el-icon-truck"
             @click.stop="handleStatus(row)"
             v-hasPermi="['wms:shipmentOrder:status']"
-          >发货/出库</el-button>
+          >发货/出库
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-print"
+            @click.stop="printOut(row,false)"
+          >预览
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-print"
+            @click.stop="printOut(row,true)"
+          >打印
+          </el-button>
         </template>
       </el-table-column>
     </WmsTable>
@@ -106,22 +131,28 @@
 </template>
 
 <script>
-import { listWmsShipmentOrder, delWmsShipmentOrder, exportWmsShipmentOrder } from "@/api/wms/shipmentOrder";
-import { mapGetters } from 'vuex';
+import {
+  listWmsShipmentOrder,
+  delWmsShipmentOrder,
+  exportWmsShipmentOrder,
+  getWmsShipmentOrder
+} from "@/api/wms/shipmentOrder";
+import {mapGetters} from 'vuex';
+import {STOCK_OUT_TEMPLATE} from '@/utils/printData'
 
 export default {
   name: "wmsShipmentOrder",
-  dicts: ['wms_shipment_type','wms_shipment_status'],
-  computed:{
-    ...mapGetters(['customerMap']),
-    shipmentTypeMap(){
-      let obj = this.dict.type.wms_shipment_type.map( item=> [item.value, item.label])
-      let map= new Map(obj)
+  dicts: ['wms_shipment_type', 'wms_shipment_status'],
+  computed: {
+    ...mapGetters(['customerMap', 'warehouseMap', 'areaMap', 'rackMap']),
+    shipmentTypeMap() {
+      let obj = this.dict.type.wms_shipment_type.map(item => [item.value, item.label])
+      let map = new Map(obj)
       return map
     },
-    shipmentStatusMap(){
-      let obj = this.dict.type.wms_shipment_status.map( item=> [item.value, item.label])
-      let map= new Map(obj)
+    shipmentStatusMap() {
+      let obj = this.dict.type.wms_shipment_status.map(item => [item.value, item.label])
+      let map = new Map(obj)
       return map
     }
   },
@@ -154,15 +185,14 @@ export default {
         shipmentOrderStatus: null,
       },
       // 表单校验
-      rules: {
-      },
+      rules: {},
       columns: [
-        { key: 1, label: "出库单号", visible:  true  },
-        { key: 2, label: "出库类型", visible:  true  },
-        { key: 3, label: "供应商", visible:  true  },
-        { key: 4, label: "订单号", visible:  true  },
-        { key: 5, label: "出库状态", visible:  true  },
-        { key: 6, label: "备注", visible:  true  },
+        {key: 1, label: "出库单号", visible: true},
+        {key: 2, label: "出库类型", visible: true},
+        {key: 3, label: "供应商", visible: true},
+        {key: 4, label: "订单号", visible: true},
+        {key: 5, label: "出库状态", visible: true},
+        {key: 6, label: "备注", visible: true},
       ],
     };
   },
@@ -170,8 +200,8 @@ export default {
     this.getList();
   },
   methods: {
-    getShipmentOrderTypeTag(row){
-      switch (row.shipmentOrderType){
+    getShipmentOrderTypeTag(row) {
+      switch (row.shipmentOrderType) {
         case 1:
           return "success";
         case 2:
@@ -180,8 +210,8 @@ export default {
           return "danger";
       }
     },
-    getShipmentOrderStatusTag(row){
-      switch (row.shipmentOrderStatus){
+    getShipmentOrderStatusTag(row) {
+      switch (row.shipmentOrderStatus) {
         case 11:
           return "info";
         case 12:
@@ -192,13 +222,13 @@ export default {
           return "success";
       }
     },
-    getShipmentOrderType(row){
-      return this.shipmentTypeMap.get(row.shipmentOrderType+"")
+    getShipmentOrderType(row) {
+      return this.shipmentTypeMap.get(row.shipmentOrderType + "")
     },
-    getShipmentOrderStatus(row){
-      return this.shipmentStatusMap.get(row.shipmentOrderStatus+"")
+    getShipmentOrderStatus(row) {
+      return this.shipmentStatusMap.get(row.shipmentOrderStatus + "")
     },
-    getCustomer(row, column){
+    getCustomer(row, column) {
       return this.customerMap.get(row.customerId)
     },
     /** 查询出库单列表 */
@@ -208,7 +238,7 @@ export default {
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWmsShipmentOrder(query, pageReq).then(response => {
-        const { content, totalElements } = response
+        const {content, totalElements} = response
         this.wmsShipmentOrderList = content;
         this.total = totalElements;
         this.loading = false;
@@ -227,12 +257,56 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
     handleAdd() {
       this.$router.push({path: "/wms/shipmentOrder/edit"});
+    },
+    printOut(row,print) {
+      //查询详情
+      getWmsShipmentOrder(row.id).then(response => {
+        const {details, items} = response
+        const map = {};
+        (items || []).forEach(it => {
+          map[it.id] = it
+        });
+        let detailList = [], totalCount = 0;
+        details && details.forEach(it => {
+          const prod = map[it.itemId]
+          totalCount += it.planQuantity
+          let place = this.warehouseMap.get(it.warehouseId);
+          if (it.areaId) {
+            place += `/${this.areaMap.get(it.areaId)}`
+          }
+          if (it.rackId) {
+            place += `/${this.rackMap.get(it.rackId)}`
+          }
+          detailList.push({
+            itemName: prod.itemName,
+            itemNo: prod.itemNo,
+            itemType: prod.itemType,
+            planQuantity: it.planQuantity,
+            place
+          })
+        })
+        let result = {
+          remark: row.remark,
+          shipmentOrderNo: row.shipmentOrderNo,
+          customerName: this.customerMap.get(row.customerId),
+          orderNo: row.orderNo,
+          shipmentType: this.shipmentTypeMap.get(row.shipmentOrderType+""),
+          createTime: row.createTime,
+          details: detailList,
+          totalCount
+        }
+        if (print) {
+          this.$lodop.print(STOCK_OUT_TEMPLATE, [result]);
+        } else {
+          this.$lodop.preview(STOCK_OUT_TEMPLATE, [result]);
+        }
+      })
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -246,12 +320,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除出库单编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除出库单编号为"' + ids + '"的数据项？').then(function () {
         return delWmsShipmentOrder(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -262,7 +337,8 @@ export default {
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
-      }).catch(() => {});
+      }).catch(() => {
+      });
     }
   }
 };

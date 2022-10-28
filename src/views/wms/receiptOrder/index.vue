@@ -1,11 +1,14 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+             class="ry_form">
       <el-form-item label="入库状态" prop="receiptOrderStatus">
-        <DictRadio v-model="queryParams.receiptOrderStatus" @change="handleQuery" size="small" :radioData="dict.type.wms_receipt_status" :showAll="'all'"/>
+        <DictRadio v-model="queryParams.receiptOrderStatus" @change="handleQuery" size="small"
+                   :radioData="dict.type.wms_receipt_status" :showAll="'all'"/>
       </el-form-item>
       <el-form-item label="入库类型" prop="receiptOrderType">
-        <DictRadio v-model="queryParams.receiptOrderType" @change="handleQuery" size="small" :radioData="dict.type.wms_receipt_type" :showAll="'all'"/>
+        <DictRadio v-model="queryParams.receiptOrderType" @change="handleQuery" size="small"
+                   :radioData="dict.type.wms_receipt_type" :showAll="'all'"/>
       </el-form-item>
       </br>
       <el-form-item label="入库单号" prop="receiptOrderNo">
@@ -44,7 +47,8 @@
           size="mini"
           @click="handleAdd()"
           v-hasPermi="['wms:wmsReceiptOrder:add']"
-        >创建入库单</el-button>
+        >创建入库单
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -55,7 +59,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['wms:wmsReceiptOrder:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -66,7 +71,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['wms:wmsReceiptOrder:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -77,24 +83,29 @@
           :loading="exportLoading"
           @click="handleExport"
           v-hasPermi="['wms:wmsReceiptOrder:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
       <el-table-column label="入库类型" align="center" v-if="columns[1].visible">
         <template slot-scope="scope">
-          <el-tag size="medium" effect="plain" :type="getReceiptOrderTypeTag(scope.row)">{{getReceiptOrderType(scope.row)}}</el-tag>
+          <el-tag size="medium" effect="plain" :type="getReceiptOrderTypeTag(scope.row)">
+            {{ getReceiptOrderType(scope.row) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
       <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
       <el-table-column label="入库状态" align="center" v-if="columns[4].visible">
         <template slot-scope="scope">
-          <el-tag size="medium" effect="plain" :type="getReceiptOrderStatusTag(scope.row)">{{getReceiptOrderStatus(scope.row)}}</el-tag>
+          <el-tag size="medium" effect="plain" :type="getReceiptOrderStatusTag(scope.row)">
+            {{ getReceiptOrderStatus(scope.row) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
@@ -107,7 +118,8 @@
             icon="el-icon-edit"
             @click.stop="handleUpdate(row)"
             v-hasPermi="['wms:wmsReceiptOrder:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             v-if="0 === row.receiptOrderStatus"
             size="mini"
@@ -115,7 +127,8 @@
             icon="el-icon-delete"
             @click.stop="handleDelete(row)"
             v-hasPermi="['wms:wmsReceiptOrder:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
           <el-button
             v-if="row.detailCount"
             size="mini"
@@ -123,7 +136,22 @@
             icon="el-icon-truck"
             @click.stop="handleStatus(row)"
             v-hasPermi="['wms:wmsReceiptOrder:status']"
-          >发货/入库</el-button>
+          >发货/入库
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-print"
+            @click.stop="printOut(row,false)"
+          >预览
+          </el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-print"
+            @click.stop="printOut(row,true)"
+          >打印
+          </el-button>
         </template>
       </el-table-column>
     </WmsTable>
@@ -139,22 +167,28 @@
 </template>
 
 <script>
-import { listWmsReceiptOrder, delWmsReceiptOrder, exportWmsReceiptOrder } from "@/api/wms/receiptOrder";
-import { mapGetters } from 'vuex';
+import {
+  listWmsReceiptOrder,
+  delWmsReceiptOrder,
+  exportWmsReceiptOrder,
+  getWmsReceiptOrder
+} from "@/api/wms/receiptOrder";
+import {mapGetters} from 'vuex';
+import {STOCK_IN_TEMPLATE} from "@/utils/printData";
 
 export default {
   name: "WmsReceiptOrder",
-  dicts: ['wms_receipt_type','wms_receipt_status'],
-  computed:{
-    ...mapGetters(['supplierMap']),
-    receiptTypeMap(){
-      let obj = this.dict.type.wms_receipt_type.map( item=> [item.value, item.label])
-      let map= new Map(obj)
+  dicts: ['wms_receipt_type', 'wms_receipt_status'],
+  computed: {
+    ...mapGetters(['supplierMap', 'warehouseMap', 'areaMap', 'rackMap']),
+    receiptTypeMap() {
+      let obj = this.dict.type.wms_receipt_type.map(item => [item.value, item.label])
+      let map = new Map(obj)
       return map
     },
-    receiptStatusMap(){
-      let obj = this.dict.type.wms_receipt_status.map( item=> [item.value, item.label])
-      let map= new Map(obj)
+    receiptStatusMap() {
+      let obj = this.dict.type.wms_receipt_status.map(item => [item.value, item.label])
+      let map = new Map(obj)
       return map
     }
   },
@@ -187,24 +221,23 @@ export default {
         receiptOrderStatus: null,
       },
       // 表单校验
-      rules: {
-      },
+      rules: {},
       columns: [
-            { key: 1, label: "入库单号", visible:  true  },
-            { key: 2, label: "入库类型", visible:  true  },
-            { key: 3, label: "供应商", visible:  true  },
-            { key: 4, label: "订单号", visible:  true  },
-            { key: 5, label: "入库状态", visible:  true  },
-            { key: 6, label: "备注", visible:  true  },
-                             ],
+        {key: 1, label: "入库单号", visible: true},
+        {key: 2, label: "入库类型", visible: true},
+        {key: 3, label: "供应商", visible: true},
+        {key: 4, label: "订单号", visible: true},
+        {key: 5, label: "入库状态", visible: true},
+        {key: 6, label: "备注", visible: true},
+      ],
     };
   },
   created() {
     this.getList();
   },
   methods: {
-    getReceiptOrderTypeTag(row){
-      switch (row.receiptOrderType){
+    getReceiptOrderTypeTag(row) {
+      switch (row.receiptOrderType) {
         case 1:
           return "success";
         case 2:
@@ -213,8 +246,8 @@ export default {
           return "danger";
       }
     },
-    getReceiptOrderStatusTag(row){
-      switch (row.receiptOrderStatus){
+    getReceiptOrderStatusTag(row) {
+      switch (row.receiptOrderStatus) {
         case 0:
           return "info";
         case 1:
@@ -225,13 +258,13 @@ export default {
           return "success";
       }
     },
-    getReceiptOrderType(row){
-      return this.receiptTypeMap.get(row.receiptOrderType+"")
+    getReceiptOrderType(row) {
+      return this.receiptTypeMap.get(row.receiptOrderType + "")
     },
-    getReceiptOrderStatus(row){
-      return this.receiptStatusMap.get(row.receiptOrderStatus+"")
+    getReceiptOrderStatus(row) {
+      return this.receiptStatusMap.get(row.receiptOrderStatus + "")
     },
-    getSupplier(row, column){
+    getSupplier(row, column) {
       return this.supplierMap.get(row.supplierId)
     },
     /** 查询入库单列表 */
@@ -241,7 +274,7 @@ export default {
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWmsReceiptOrder(query, pageReq).then(response => {
-        const { content, totalElements } = response
+        const {content, totalElements} = response
         this.wmsReceiptOrderList = content;
         this.total = totalElements;
         this.loading = false;
@@ -260,7 +293,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -279,12 +312,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除入库单编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除入库单编号为"' + ids + '"的数据项？').then(function () {
         return delWmsReceiptOrder(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -295,7 +329,52 @@ export default {
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
-      }).catch(() => {});
+      }).catch(() => {
+      });
+    },
+    printOut(row, print) {
+      //查询详情
+      getWmsReceiptOrder(row.id).then(response => {
+        const {details, items} = response
+        const map = {};
+        (items || []).forEach(it => {
+          map[it.id] = it
+        });
+        let detailList = [], totalCount = 0;
+        details && details.forEach(it => {
+          const prod = map[it.itemId]
+          totalCount += it.planQuantity
+          let place = this.warehouseMap.get(it.warehouseId);
+          if (it.areaId) {
+            place += `/${this.areaMap.get(it.areaId)}`
+          }
+          if (it.rackId) {
+            place += `/${this.rackMap.get(it.rackId)}`
+          }
+          detailList.push({
+            itemName: prod.itemName,
+            itemNo: prod.itemNo,
+            itemType: prod.itemType,
+            planQuantity: it.planQuantity,
+            place
+          })
+        })
+        let result = {
+          remark: row.remark,
+          receiptOrderNo: row.receiptOrderNo,
+          supplierName: this.supplierMap.get(row.supplierId),
+          orderNo: row.orderNo,
+          receiptType: this.receiptTypeMap.get(row.receiptOrderType + ""),
+          createTime: row.createTime,
+          details: detailList,
+          totalCount
+        }
+        if (print) {
+          this.$lodop.print(STOCK_IN_TEMPLATE, [result]);
+        } else {
+          this.$lodop.preview(STOCK_IN_TEMPLATE, [result]);
+        }
+      })
     }
   }
 };
