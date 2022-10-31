@@ -1,9 +1,6 @@
 <template>
   <div>
     <div>
-      <PanelGroup></PanelGroup>
-    </div>
-    <div>
       <el-card style="margin: 20px 20px; font-size: 14px">
         <div slot="header">
           <span>工作台</span>
@@ -15,95 +12,90 @@
         </div>
         <div class="first">
           <ul>
-            <li class="li" style="width: 33%">突发卫生事件（重）</li>
-            <li class="li" style="width: 33%">爆发疫情（中）</li>
-            <li class="li" style="width: 33%">聚集性疫情（轻）</li>
+            <li class="li" style="width: 33%">仓库</li>
+            <li class="li" style="width: 33%">库区</li>
+            <li class="li" style="width: 33%">货架</li>
           </ul>
           <ul>
-            <li class="da" style="width: 33%">0</li>
-            <li class="da" style="width: 33%">3</li>
-            <li class="da" style="width: 33%">0</li>
+            <li class="da" style="width: 33%">10</li>
+            <li class="da" style="width: 33%">20</li>
+            <li class="da" style="width: 33%">30</li>
           </ul>
         </div>
       </el-card>
 
       <el-card style="margin: 20px 20px; font-size: 14px">
         <el-row :gutter="10">
+           <el-col :span="8">
+            <el-card shadow="always" style="padding-bottom: 20px">
+              <div slot="header">
+                <span>预警/到期</span>
+              </div>
+              <ul>
+                <li class="li" style="width: 50%">库存预警</li>
+                <li class="li" style="width: 50%">库存到期</li>
+              </ul>
+              <ul>
+                <li class="da" style="width: 50%">10</li>
+                <li class="da" style="width: 50%">5</li>
+              </ul>
+            </el-card>
+          </el-col>
           <el-col :span="16">
             <el-card shadow="always" style="padding-bottom: 20px">
               <div slot="header">
-                <span>群体事件</span>
+                <span>客户/供应商/承运商/物料</span>
               </div>
               <div>
                 <ul>
-                  <li class="li">传染病</li>
-                  <li class="li">食物中毒</li>
-                  <li class="li">职业中毒</li>
-                  <li class="li">水污染</li>
+                  <li class="li">客户</li>
+                  <li class="li">供应商</li>
+                  <li class="li">承运商</li>
+                  <li class="li">物料</li>
                 </ul>
                 <ul>
-                  <li class="da">1,1257</li>
-                  <li class="da">1,1257</li>
-                  <li class="da">1,1257</li>
-                  <li class="da">1,1257</li>
+                  <li class="da">50</li>
+                  <li class="da">5</li>
+                  <li class="da">4</li>
+                  <li class="da">24</li>
                 </ul>
               </div>
-            </el-card>
-          </el-col>
-
-          <el-col :span="8">
-            <el-card shadow="always" style="padding-bottom: 20px">
-              <div slot="header">
-                <span>散发事件</span>
-              </div>
-              <ul>
-                <li class="li" style="width: 50%">传染病</li>
-                <li class="li" style="width: 50%">群体事件</li>
-              </ul>
-              <ul>
-                <li class="da" style="width: 50%">1,1257</li>
-                <li class="da" style="width: 50%">1,1257</li>
-              </ul>
             </el-card>
           </el-col>
         </el-row>
       </el-card>
 
       <el-card style="margin: 20px 20px; font-size: 14px">
-        <el-row :gutter="10">
-          <el-col :span="12">
-            <el-card shadow="always">
-              <div slot="header">
-                <span>调查单位top5</span>
-              </div>
-              <template>
-                <el-table style="width: 100%" :data="tableData" >
-                  <el-table-column prop="date" label="排序" width="width" align="center">
-                  </el-table-column>
-                  <el-table-column prop="name" label="单位" width="width" align="center">
-                  </el-table-column>
-                  <el-table-column prop="address" label="事件数" width="width" align="center">
-                  </el-table-column>
-                </el-table>
-              </template>
+        <div slot="header">
+          <span>发展历程</span>
+        </div>
+        <el-timeline>
+          <el-timeline-item timestamp="2018年" placement="top">
+            <el-card>
+              <h4>参与京东服务市场商品分析应用开发，参与京东服务市场会员积分应用开发</h4>
             </el-card>
-          </el-col>
-          <el-col :span="12">
-            <el-card shadow="always">
-              <div slot="header">
-                <span>乡镇街道时间统计</span>
-              </div>
-              <el-table style="width: 100%" :data="tableData">
-                  <el-table-column prop="date" label="排序" width="width" align="center">
-                  </el-table-column>
-                  <el-table-column prop="name" label="单位" width="width" align="center">
-                  </el-table-column>
-                  <el-table-column prop="address" label="事件数" width="width" align="center">
-                  </el-table-column>
-                </el-table>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2019年" placement="top">
+            <el-card>
+              <h4>参与京东服务市场商品搬家应用开发，参与京东服务市场商品搬家应用开发，参与拼多多服务市场订单应用开发</h4>
             </el-card>
-          </el-col>
-        </el-row>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2020年" placement="top">
+            <el-card>
+              <h4>所参与开发的拼多多服务市场订单应用排名类目第一，参与快手服务市场订单应用开发</h4>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2021年" placement="top">
+            <el-card>
+              <h4>参与美团、饿了么应用市场应用开发</h4>
+            </el-card>
+          </el-timeline-item>
+          <el-timeline-item timestamp="2022年" placement="top">
+            <el-card>
+              <h4>参与抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
+            </el-card>
+          </el-timeline-item>
+        </el-timeline>
       </el-card>
     </div>
   </div>
