@@ -57,6 +57,9 @@ export default {
       return variables;
     }
   },
+  created() {
+    this.$store.dispatch('loadAllDict')
+  },
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })

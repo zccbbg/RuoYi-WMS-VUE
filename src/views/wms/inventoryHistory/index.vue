@@ -1,173 +1,158 @@
-<template>
-  <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="操作id" prop="formId">
-        <el-input
-          v-model="queryParams.formId"
-          placeholder="请输入操作id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="操作类型" prop="formType">
-        <el-select v-model="queryParams.formType" placeholder="请选择操作类型" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="物料ID" prop="itemId">
-        <el-input
+<template lang="pug">
+  .app-container
+    el-form.ry_form(
+      v-show="showSearch"
+      :inline="true"
+      label-width="100px"
+      :model="queryParams"
+      ref="queryForm"
+      size="medium"
+    )
+      el-form-item(label="操作类型" prop="formType")
+        in-out-type-select(v-model="queryParams.formType")
+      el-form-item(label="物料" prop="itemId")
+        item-select(
           v-model="queryParams.itemId"
+          clearable
           placeholder="请输入物料ID"
-          clearable
           size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="货架id" prop="rackId">
-        <el-input
-          v-model="queryParams.rackId"
-          placeholder="请输入货架id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="库存变化" prop="quantity">
-        <el-input
-          v-model="queryParams.quantity"
-          placeholder="请输入库存变化"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
+        )
+      el-form-item(label="货架id" prop="rackId")
+        wms-warehouse-cascader(
+          v-model="queryParams.warehouseArr"
+        )
+      el-form-item.flex_one.tr
+        el-button(
+          icon="el-icon-search"
+          size="mini"
           type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['wms:wmsInventoryHistory:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:wmsInventoryHistory:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:wmsInventoryHistory:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
+          @click="handleQuery"
+        ) 搜索
+        el-button(icon="el-icon-refresh" size="mini" @click="resetQuery") 重置
+    el-row.mb8(:gutter="10")
+      el-col(:span="1.5")
+        el-button(
           v-hasPermi="['wms:wmsInventoryHistory:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-    </el-row>
-
-    <WmsTable v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="操作id" align="center" prop="formId" v-if="columns[0].visible"/>
-      <el-table-column label="操作类型" align="center" prop="formType" v-if="columns[1].visible"/>
-      <el-table-column label="物料ID" align="center" prop="itemId" v-if="columns[2].visible"/>
-      <el-table-column label="货架id" align="center" prop="rackId" v-if="columns[3].visible"/>
-      <el-table-column label="库存变化" align="center" prop="quantity" v-if="columns[4].visible"/>
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
+          icon="el-icon-download"
+          :loading="exportLoading"
+          plain
+          size="mini"
+          type="warning"
+          @click="handleExport"
+        ) 导出
+      right-toolbar(:columns="columns" :showSearch.sync="showSearch" @queryTable="getList")
+    WmsTable(v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange")
+      el-table-column(
+        v-if="columns[0].visible"
+        align="center"
+        label="操作id"
+        prop="formId"
+      )
+      el-table-column(
+        v-if="columns[1].visible"
+        align="center"
+        label="操作类型"
+        prop="formType"
+      )
+        template(v-slot="{ row }")
+          span {{row.formType ? opTypeMap[row.formType] : row.formType }}
+      el-table-column(
+        v-if="columns[2].visible"
+        align="center"
+        label="物料名称"
+        prop="itemName"
+      )
+      el-table-column(
+        align="center"
+        label="物料编号"
+        prop="itemNo"
+      )
+      el-table-column(
+        v-if="columns[3].visible"
+        align="center"
+        label="货架"
+        prop="rackId"
+      )
+        template(v-slot="{ row }")
+          span {{row.warehouseName}}
+          span(v-if="row.areaName") /{{row.areaName}}
+          span(v-if="row.rackName") /{{row.rackName}}
+      el-table-column(
+        v-if="columns[4].visible"
+        align="center"
+        label="库存变化"
+        prop="quantity"
+      )
+      el-table-column(
+        v-if="columns[5].visible"
+        align="center"
+        label="备注"
+        prop="remark"
+      )
+      el-table-column(align="center" class-name="small-padding fixed-width" label="操作")
+        template(slot-scope="scope")
+          el-button(
             v-hasPermi="['wms:wmsInventoryHistory:edit']"
-          >修改</el-button>
-          <el-button
+            icon="el-icon-edit"
             size="mini"
             type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
+            @click="handleUpdate(scope.row)"
+          ) 修改
+          el-button(
             v-hasPermi="['wms:wmsInventoryHistory:remove']"
-          >删除</el-button>
-        </template>
-      </el-table-column>
-    </WmsTable>
-    
-    <pagination
+            icon="el-icon-delete"
+            size="mini"
+            type="text"
+            @click="handleDelete(scope.row)"
+          ) 删除
+    pagination(
       v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
       :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.pageNum"
+      :total="total"
       @pagination="getList"
-    />
-
-    <!-- 添加或修改库存记录对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
-        <el-form-item label="操作id" prop="formId">
-          <el-input v-model="form.formId" placeholder="请输入操作id" />
-        </el-form-item>
-        <el-form-item label="操作类型" prop="formType">
-          <el-select v-model="form.formType" placeholder="请选择操作类型">
-            <el-option label="请选择字典生成" value="" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="物料ID" prop="itemId">
-          <el-input v-model="form.itemId" placeholder="请输入物料ID" />
-        </el-form-item>
-        <el-form-item label="货架id" prop="rackId">
-          <el-input v-model="form.rackId" placeholder="请输入货架id" />
-        </el-form-item>
-        <el-form-item label="库存变化" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入库存变化" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-  </div>
+    )
+    // 添加或修改库存记录对话框
+    el-dialog(
+      append-to-body
+      :title="title"
+      :visible.sync="open"
+      width="50%"
+    )
+      el-form.dialog-form-two(
+        inline
+        label-width="108px"
+        :model="form"
+        ref="form"
+        :rules="rules"
+      )
+        el-form-item(label="操作id" prop="formId")
+          el-input(v-model="form.formId" placeholder="请输入操作id")
+        el-form-item(label="操作类型" prop="formType")
+          el-select(v-model="form.formType" placeholder="请选择操作类型")
+            el-option(label="请选择字典生成" value="")
+        el-form-item(label="物料ID" prop="itemId")
+          el-input(v-model="form.itemId" placeholder="请输入物料ID")
+        el-form-item(label="货架id" prop="rackId")
+          el-input(v-model="form.rackId" placeholder="请输入货架id")
+        el-form-item(label="库存变化" prop="quantity")
+          el-input(v-model="form.quantity" placeholder="请输入库存变化")
+        el-form-item(label="备注" prop="remark")
+          el-input(v-model="form.remark" placeholder="请输入备注")
+      .dialog-footer(slot="footer")
+        el-button(type="primary" @click="submitForm") 确 定
+        el-button(@click="cancel") 取 消
 </template>
 
 <script>
 import { listWmsInventoryHistory, getWmsInventoryHistory, delWmsInventoryHistory, addWmsInventoryHistory, updateWmsInventoryHistory, exportWmsInventoryHistory } from "@/api/wms/inventoryHistory";
+import ItemSelect from '@/components/ItemSelect'
+import InOutTypeSelect from '@/components/InOutTypeSelect'
+import { mapGetters } from 'vuex'
 
 export default {
   name: "WmsInventoryHistory",
+  components: { InOutTypeSelect, ItemSelect },
   data() {
     return {
       // 遮罩层
@@ -197,7 +182,7 @@ export default {
         formId: null,
         formType: null,
         itemId: null,
-        rackId: null,
+        warehouseArr: null,
         quantity: null,
       },
       // 表单参数
@@ -215,6 +200,9 @@ export default {
                              ],
     };
   },
+  computed: {
+    ...mapGetters(['opTypeMap'])
+  },
   created() {
     this.getList();
   },
@@ -222,8 +210,9 @@ export default {
     /** 查询库存记录列表 */
     getList() {
       this.loading = true;
-      const {pageNum, pageSize} = this.queryParams;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
+      const {pageNum, pageSize, warehouseArr} = this.queryParams;
+      const {warehouseId, areaId, rackId} = warehouseArr || [];
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined, warehouseId, areaId, rackId};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWmsInventoryHistory(query, pageReq).then(response => {
         const { content, totalElements } = response
