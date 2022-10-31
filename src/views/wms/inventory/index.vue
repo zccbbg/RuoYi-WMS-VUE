@@ -66,7 +66,7 @@
           div 编号： {{row.itemId}}
           div {{row.itemName}}
           div {{row.itemNo}}
-      el-table-column(align="left" label="仓库位置")
+      el-table-column(align="left" label="仓库/库区/货架")
         template(v-slot="{ row }")
           span(v-if="row.warehouseName") {{row.warehouseName}}
           span(v-if="row.areaName") /{{row.areaName}}

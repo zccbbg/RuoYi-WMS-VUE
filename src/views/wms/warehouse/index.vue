@@ -53,29 +53,6 @@
           >新增</el-button
         >
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:wmsWarehouse:edit']"
-          >修改</el-button
-        >
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:wmsWarehouse:remove']"
-          >删除</el-button
-        >
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -109,7 +86,7 @@
         v-if="columns[0].visible"
       />
       <el-table-column
-        label="名称"
+        label="仓库/库区/货架"
         align="center"
         prop="warehouseName"
         v-if="columns[1].visible"
