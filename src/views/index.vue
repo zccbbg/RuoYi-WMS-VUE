@@ -92,7 +92,7 @@
           </el-timeline-item>
           <el-timeline-item timestamp="2022年" placement="top">
             <el-card>
-              <h4>累计服务10万+拼多多店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
+              <h4>累计服务10万+电商平台店铺、5万+外卖平台店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
             </el-card>
           </el-timeline-item>
         </el-timeline>
