@@ -82,17 +82,17 @@
           </el-timeline-item>
           <el-timeline-item timestamp="2020年" placement="top">
             <el-card>
-              <h4>所参与开发的拼多多服务市场订单应用排名类目第一，参与快手服务市场订单应用开发</h4>
+              <h4>所参与开发的拼多多订单应用排名服务市场类目第一，开始快手服务市场订单应用开发</h4>
             </el-card>
           </el-timeline-item>
           <el-timeline-item timestamp="2021年" placement="top">
             <el-card>
-              <h4>参与美团、饿了么应用市场应用开发</h4>
+              <h4>日处理拼多多订单200万条，开始美团、饿了么应用市场应用开发</h4>
             </el-card>
           </el-timeline-item>
           <el-timeline-item timestamp="2022年" placement="top">
             <el-card>
-              <h4>参与抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
+              <h4>累计服务10万+拼多多店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
             </el-card>
           </el-timeline-item>
         </el-timeline>
