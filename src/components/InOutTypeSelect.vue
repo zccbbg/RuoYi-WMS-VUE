@@ -3,6 +3,7 @@
     el-select(
       v-model="value1"
       clearable
+      :size="size"
     )
       el-option(
         v-for="item in opTypes"
@@ -21,7 +22,16 @@ import { mapGetters } from 'vuex'
 let optionsCache = null
 export default {
   name: 'InOutTypeSelect',
-  props: ['value'],
+  props: {
+    value: {
+      type: [String, Number],
+      default: null
+    },
+    size: {
+      type: String,
+      default: 'small'
+    }
+  },
   data() {
     return {
     }

@@ -7,6 +7,7 @@
       clearable
       :remote-method="doSearch"
       :loading="loading"
+      :size="size"
       )
       el-option(
         v-for="item in options"
@@ -23,7 +24,16 @@ import { listWmsItem } from '@/api/wms/item'
 
 export default {
   name: 'ItemSelect',
-  props: ['value'],
+  props: {
+    value: {
+      type: [String, Number],
+      default: null
+    },
+    size: {
+      type: String,
+      default: 'small'
+    }
+  },
   data() {
     return {
       options: [],
