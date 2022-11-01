@@ -3,7 +3,9 @@
   placeholder="请选择仓库信息"
   :options="options"
   v-model="selections"
+  :props="{ checkStrictly: true }"
   clearable
+  :size="size"
   filterable></el-cascader>
 </template>
 
@@ -11,7 +13,16 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  props: ['value', 'size'],
+  props: {
+    value: {
+      type: [String, Number],
+      default: null
+    },
+    size: {
+      type: String,
+      default: 'small'
+    }
+  },
   data() {
     return {
       options: []

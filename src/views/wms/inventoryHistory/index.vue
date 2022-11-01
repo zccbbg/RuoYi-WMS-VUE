@@ -9,7 +9,7 @@
       size="medium"
     )
       el-form-item(label="操作类型" prop="formType")
-        in-out-type-select(v-model="queryParams.formType")
+        in-out-type-select(v-model="queryParams.formType" size="small")
       el-form-item(label="物料" prop="itemId")
         item-select(
           v-model="queryParams.itemId"
@@ -17,9 +17,10 @@
           placeholder="请输入物料ID"
           size="small"
         )
-      el-form-item(label="货架id" prop="rackId")
+      el-form-item(label="仓库" prop="rackId")
         wms-warehouse-cascader(
           v-model="queryParams.warehouseArr"
+          size="small"
         )
       el-form-item.flex_one.tr
         el-button(
@@ -70,7 +71,7 @@
       el-table-column(
         v-if="columns[3].visible"
         align="center"
-        label="货架"
+        label="仓库"
         prop="rackId"
       )
         template(v-slot="{ row }")
@@ -89,22 +90,6 @@
         label="备注"
         prop="remark"
       )
-      el-table-column(align="center" class-name="small-padding fixed-width" label="操作")
-        template(slot-scope="scope")
-          el-button(
-            v-hasPermi="['wms:wmsInventoryHistory:edit']"
-            icon="el-icon-edit"
-            size="mini"
-            type="text"
-            @click="handleUpdate(scope.row)"
-          ) 修改
-          el-button(
-            v-hasPermi="['wms:wmsInventoryHistory:remove']"
-            icon="el-icon-delete"
-            size="mini"
-            type="text"
-            @click="handleDelete(scope.row)"
-          ) 删除
     pagination(
       v-show="total>0"
       :limit.sync="queryParams.pageSize"
@@ -211,7 +196,7 @@ export default {
     getList() {
       this.loading = true;
       const {pageNum, pageSize, warehouseArr} = this.queryParams;
-      const {warehouseId, areaId, rackId} = warehouseArr || [];
+      const [warehouseId, areaId, rackId] = warehouseArr || [];
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined, warehouseId, areaId, rackId};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWmsInventoryHistory(query, pageReq).then(response => {
