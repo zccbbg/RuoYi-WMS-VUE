@@ -50,6 +50,7 @@ import DictRadio from '@/components/DictRadio'
 import DictSelect from '@/components/DictSelect'
 
 import WmsWarehouseCascader from '@/components/WmsWarehouseCascader'
+import vuePlugsPrint from '@/utils/vuePlugsPrint'
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -76,8 +77,9 @@ Vue.component('WmsCustomerSelect',WmsCustomerSelect)
 Vue.component('DictRadio',DictRadio)
 Vue.component('DictSelect',DictSelect)
 Vue.component('WmsWarehouseCascader',WmsWarehouseCascader)
-Vue.use(KrPrintDesigner);
 
+Vue.use(KrPrintDesigner);
+Vue.use(vuePlugsPrint);
 Vue.use(directive)
 Vue.use(plugins)
 Vue.use(VueMeta)

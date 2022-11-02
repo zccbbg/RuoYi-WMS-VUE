@@ -1,169 +1,213 @@
-<template>
-  <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
-             class="ry_form">
-      <el-form-item label="入库状态" prop="receiptOrderStatus">
-        <DictRadio v-model="queryParams.receiptOrderStatus" @change="handleQuery" size="small"
-                   :radioData="dict.type.wms_receipt_status" :showAll="'all'"/>
-      </el-form-item>
-      <el-form-item label="入库类型" prop="receiptOrderType">
-        <DictRadio v-model="queryParams.receiptOrderType" @change="handleQuery" size="small"
-                   :radioData="dict.type.wms_receipt_type" :showAll="'all'"/>
-      </el-form-item>
-      </br>
-      <el-form-item label="入库单号" prop="receiptOrderNo">
-        <el-input
-          v-model="queryParams.receiptOrderNo"
-          placeholder="请输入入库单号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="订单号" prop="orderNo">
-        <el-input
-          v-model="queryParams.orderNo"
-          placeholder="请输入订单号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="供应商" prop="supplierId">
-        <WmsSupplierSelect v-model="queryParams.supplierId" size="small"/>
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd()"
-          v-hasPermi="['wms:wmsReceiptOrder:add']"
-        >创建入库单
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
+<template lang="pug">
+.app-container
+  el-form.ry_form(
+    v-show="showSearch"
+    :inline="true"
+    label-width="100px"
+    :model="queryParams"
+    ref="queryForm"
+    size="medium"
+  )
+    el-form-item(label="入库状态" prop="receiptOrderStatus")
+      DictRadio(
+        v-model="queryParams.receiptOrderStatus"
+        :radioData="dict.type.wms_receipt_status"
+        :showAll="'all'"
+        size="small"
+        @change="handleQuery"
+      )
+    el-form-item(label="入库类型" prop="receiptOrderType")
+      DictRadio(
+        v-model="queryParams.receiptOrderType"
+        :radioData="dict.type.wms_receipt_type"
+        :showAll="'all'"
+        size="small"
+        @change="handleQuery"
+      )
+    el-form-item(label="入库单号" prop="receiptOrderNo")
+      el-input(
+        v-model="queryParams.receiptOrderNo"
+        clearable
+        placeholder="请输入入库单号"
+        size="small"
+        @keyup.enter.native="handleQuery"
+      )
+    el-form-item(label="订单号" prop="orderNo")
+      el-input(
+        v-model="queryParams.orderNo"
+        clearable
+        placeholder="请输入订单号"
+        size="small"
+        @keyup.enter.native="handleQuery"
+      )
+    el-form-item(label="供应商" prop="supplierId")
+      WmsSupplierSelect(v-model="queryParams.supplierId" size="small")
+    el-form-item.flex_one.tr
+      el-button(
+        icon="el-icon-search"
+        size="mini"
+        type="primary"
+        @click="handleQuery"
+      ) 搜索
+      el-button(
+        icon="el-icon-refresh"
+        size="mini"
+        @click="resetQuery"
+      ) 重置
+  el-row.mb8(:gutter="10")
+    el-col(:span="1.5")
+      el-button(
+        v-hasPermi="['wms:wmsReceiptOrder:add']"
+        icon="el-icon-plus"
+        plain
+        size="mini"
+        type="primary"
+        @click="handleAdd()"
+      ) 创建入库单
+    el-col(:span="1.5")
+      el-button(
+        v-hasPermi="['wms:wmsReceiptOrder:edit']"
+        :disabled="single"
+        icon="el-icon-edit"
+        plain
+        size="mini"
+        type="success"
+        @click="handleUpdate"
+      ) 修改
+    el-col(:span="1.5")
+      el-button(
+        v-hasPermi="['wms:wmsReceiptOrder:remove']"
+        :disabled="multiple"
+        icon="el-icon-delete"
+        plain
+        size="mini"
+        type="danger"
+        @click="handleDelete"
+      ) 删除
+    el-col(:span="1.5")
+      el-button(
+        v-hasPermi="['wms:wmsReceiptOrder:export']"
+        icon="el-icon-download"
+        :loading="exportLoading"
+        plain
+        size="mini"
+        type="warning"
+        @click="handleExport"
+      ) 导出
+    right-toolbar(
+      :columns="columns"
+      :showSearch.sync="showSearch"
+      @queryTable="getList"
+    )
+  WmsTable(
+    v-loading="loading"
+    :data="wmsReceiptOrderList"
+    @selection-change="handleSelectionChange"
+  )
+    el-table-column(
+      align="center"
+      type="selection"
+      width="55"
+    )
+    el-table-column(
+      v-if="columns[0].visible"
+      align="center"
+      label="入库单号"
+      prop="receiptOrderNo"
+    )
+    el-table-column(
+      v-if="columns[1].visible"
+      align="center"
+      label="入库类型"
+    )
+      template(slot-scope="scope")
+        el-tag(
+          effect="plain"
+          size="medium"
+          :type="getReceiptOrderTypeTag(scope.row)"
+        ) {{ getReceiptOrderType(scope.row) }}
+    el-table-column(
+      v-if="columns[2].visible"
+      align="center"
+      :formatter="getSupplier"
+      label="供应商"
+    )
+    el-table-column(
+      v-if="columns[3].visible"
+      align="center"
+      label="订单号"
+      prop="orderNo"
+    )
+    el-table-column(
+      v-if="columns[4].visible"
+      align="center"
+      label="入库状态"
+    )
+      template(slot-scope="scope")
+        el-tag(
+          effect="plain"
+          size="medium"
+          :type="getReceiptOrderStatusTag(scope.row)"
+        ) {{ getReceiptOrderStatus(scope.row) }}
+    el-table-column(
+      v-if="columns[5].visible"
+      align="center"
+      label="备注"
+      prop="remark"
+    )
+    el-table-column(
+      align="center"
+      class-name="small-padding fixed-width"
+      label="操作"
+    )
+      template(v-slot="{ row }")
+        el-button(
+          v-hasPermi="['wms:wmsReceiptOrder:edit']"
+          v-if="0 === row.receiptOrderStatus"
           icon="el-icon-edit"
           size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:wmsReceiptOrder:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
+          type="text"
+          @click.stop="handleUpdate(row)"
+        ) 修改
+        el-button(
+          v-hasPermi="['wms:wmsReceiptOrder:remove']"
+          v-if="0 === row.receiptOrderStatus"
           icon="el-icon-delete"
           size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:wmsReceiptOrder:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
+          type="text"
+          @click.stop="handleDelete(row)"
+        ) 删除
+        el-button(
+          v-hasPermi="['wms:wmsReceiptOrder:status']"
+          v-if="row.detailCount"
+          icon="el-icon-truck"
           size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['wms:wmsReceiptOrder:export']"
-        >导出
-        </el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-    </el-row>
-
-    <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="入库单号" align="center" prop="receiptOrderNo" v-if="columns[0].visible"/>
-      <el-table-column label="入库类型" align="center" v-if="columns[1].visible">
-        <template slot-scope="scope">
-          <el-tag size="medium" effect="plain" :type="getReceiptOrderTypeTag(scope.row)">
-            {{ getReceiptOrderType(scope.row) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="供应商" align="center" :formatter="getSupplier" v-if="columns[2].visible"/>
-      <el-table-column label="订单号" align="center" prop="orderNo" v-if="columns[3].visible"/>
-      <el-table-column label="入库状态" align="center" v-if="columns[4].visible">
-        <template slot-scope="scope">
-          <el-tag size="medium" effect="plain" :type="getReceiptOrderStatusTag(scope.row)">
-            {{ getReceiptOrderStatus(scope.row) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[5].visible"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template v-slot="{ row }">
-          <el-button
-            v-if="0 === row.receiptOrderStatus"
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click.stop="handleUpdate(row)"
-            v-hasPermi="['wms:wmsReceiptOrder:edit']"
-          >修改
-          </el-button>
-          <el-button
-            v-if="0 === row.receiptOrderStatus"
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click.stop="handleDelete(row)"
-            v-hasPermi="['wms:wmsReceiptOrder:remove']"
-          >删除
-          </el-button>
-          <el-button
-            v-if="row.detailCount"
-            size="mini"
-            type="text"
-            icon="el-icon-truck"
-            @click.stop="handleStatus(row)"
-            v-hasPermi="['wms:wmsReceiptOrder:status']"
-          >发货/入库
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-print"
-            @click.stop="printOut(row,false)"
-          >预览
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-print"
-            @click.stop="printOut(row,true)"
-          >打印
-          </el-button>
-        </template>
-      </el-table-column>
-    </WmsTable>
-
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
-  </div>
+          type="text"
+          @click.stop="handleStatus(row)"
+        ) 发货/入库
+        el-button(
+          icon="el-icon-print"
+          size="mini"
+          type="text"
+          @click.stop="printOut(row,true)"
+        ) 打印
+  pagination(
+    v-show="total>0"
+    :limit.sync="queryParams.pageSize"
+    :page.sync="queryParams.pageNum"
+    :total="total"
+    @pagination="getList"
+  )
+  el-dialog(:visible="modalObj.show" :title="modalObj.title" :width="modalObj.width")
+    template(v-if="modalObj.component === 'print-type'")
+      el-radio-group(v-model="modalObj.form.value")
+        el-radio(:label="1") lodop打印
+        el-radio(:label="2") 浏览器打印
+    template(v-if="modalObj.form.value === 2 || modalObj.component === 'window-print-preview'")
+      receipt-order-print(:row="modalObj.form.row" ref="receiptOrderPrintRef")
+    template(v-slot:footer)
+      el-button(@click="modalObj.cancel") 取消
+      el-button(@click="modalObj.ok" type="primary") 确认
 </template>
 
 <script>
@@ -175,9 +219,11 @@ import {
 } from "@/api/wms/receiptOrder";
 import {mapGetters} from 'vuex';
 import {STOCK_IN_TEMPLATE} from "@/utils/printData";
+import ReceiptOrderPrint from '@/views/wms/receiptOrder/ReceiptOrderPrint'
 
 export default {
   name: "WmsReceiptOrder",
+  components: { ReceiptOrderPrint },
   dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
     ...mapGetters(['supplierMap', 'warehouseMap', 'areaMap', 'rackMap']),
@@ -194,6 +240,17 @@ export default {
   },
   data() {
     return {
+      modalObj: {
+        show: false,
+        title: '选择打印方式',
+        width: '520px',
+        component: null,
+        form: {
+          value: null
+        },
+        ok: () => {},
+        cancel: () => {}
+      },
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -333,6 +390,54 @@ export default {
       });
     },
     printOut(row, print) {
+      this.modalObj = {
+        show: true,
+        title: '选择打印方式',
+        width: '520px',
+        component: 'print-type',
+        form: {
+          value: 1,
+          row,
+          print
+        },
+        ok: () => {
+          if (this.modalObj.form.value === 1) {
+            this.doPrintOut(row, print);
+          } else {
+            this.windowPrintOut(row, print);
+          }
+        },
+        cancel: () => {
+          this.modalObj.show = false;
+        }
+      }
+    },
+    windowPrintOut(row, print) {
+      if (print) {
+        this.$refs['receiptOrderPrintRef'].start();
+       return;
+      }
+      this.$nextTick(() => {
+        this.modalObj = {
+          show: true,
+          title: '浏览器打印预览',
+          width: '800px',
+          component: 'window-print-preview',
+          form: {
+            value: 1,
+            row,
+            print
+          },
+          ok: () => {
+            this.modalObj.show = false;
+          },
+          cancel: () => {
+            this.modalObj.show = false;
+          }
+        }
+      })
+    },
+    doPrintOut(row, print) {
       //查询详情
       getWmsReceiptOrder(row.id).then(response => {
         const {details, items} = response
