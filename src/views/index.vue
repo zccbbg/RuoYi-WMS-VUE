@@ -83,7 +83,7 @@
             h4 日处理拼多多订单200万条，开始美团、饿了么应用市场应用开发
         el-timeline-item(placement="top" timestamp="2022年")
           el-card
-            h4 累计服务10万+拼多多店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms
+            h4 累计服务10万+电商平台店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms
 </template>
 
 <script>
