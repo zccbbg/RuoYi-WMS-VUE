@@ -117,7 +117,7 @@ Print.prototype = {
           if (!frameWindow.document.execCommand('print', false, null)) {
             frameWindow.print();
           }
-          if (options.callback && options.orderList) options.callback(options.orderList)
+          if (options.callback ) options.callback()
         } catch (e) {
           frameWindow.print();
         }

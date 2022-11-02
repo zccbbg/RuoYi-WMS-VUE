@@ -1,6 +1,32 @@
 <template lang="pug">
 .receipt-order-print(ref="receiptOrderPrintRef" hidden="hidden")
-  .title {{row.orderNo}}
+  .title {{row.receiptOrderNo}}
+  .summary
+    .col1 供应商: {{row.supplierName}}
+    .col1 订单号: {{row.orderNo}}
+    .col1 入库类型: {{row.receiptType}}
+    .col1 日期: {{row.createTime}}
+  table.common-table
+    tr
+      th 物料名
+      th 物料编号
+      th 物料类型
+      th 数量
+      th 仓库/库区/货架
+    tr(v-for="it in row.details")
+      td {{it.itemName || ''}}
+      td {{it.itemNo || ''}}
+      td {{it.itemType || ''}}
+      td {{it.planQuantity}}
+      td {{it.place}}
+    tr
+      td 合计
+      td
+      td
+      td {{row.totalCount}}
+      td
+  .foot
+    .col2 备注: {{row.remark}}
 </template>
 
 <script>
@@ -37,7 +63,7 @@ export default {
     width: 100% !important;
   }
 
-  .shipping-order {
+  .receipt-order-print {
     width: 100% !important;
     font-size: 14px;
   }
@@ -49,59 +75,18 @@ export default {
 
 }
 
-.shipping-order
-
-  .headTitle
-    text-align: center;
-    font-size: 0.5rem;
-    padding-top: 10px;
-
-  .receiverInfo
-    font-size: 12px;
-    display: flex;
-    -webkit-box-pack: start;
-    justify-content: flex-start;
-    -webkit-box-align: start;
-    align-items: flex-start;
-    word-break: break-all;
-    flex-wrap: wrap;
-
-    .content1
-      display: flex;
-      -webkit-box-align: start;
-      align-items: flex-start;
-      margin-right: 1.5rem;
-      word-break: break-all;
-
-      .content-title
-        min-width: 3.125rem;
-        white-space: nowrap;
-
-      .content-text
-        -webkit-box-flex: 1;
-        flex: 1;
-        word-break: break-all;
-
-  .table
-    width 100%
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-
-    .chris-table-header
-      overflow: auto;
-
-      th
-        font-size: 0.5rem;
-        text-align: center;
-        background-color: transparent;
-
-    .chris-table-body
-      td
-        word-break: break-all;
-        text-align center
-
-.pagebreak
-  padding-left: 2px;
-  padding-right: 2px;
+.receipt-order-print
+  padding 12px
+  line-height 1.8
+  .summary
+    display flex
+    flex-wrap wrap
+    .col1
+      width 50%
+  .title
+    font-size 18px
+    text-align center
+  .common-table
+    td, th
+      border-color black
 </style>

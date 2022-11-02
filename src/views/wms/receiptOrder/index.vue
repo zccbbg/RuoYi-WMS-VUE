@@ -1,213 +1,213 @@
 <template lang="pug">
-.app-container
-  el-form.ry_form(
-    v-show="showSearch"
-    :inline="true"
-    label-width="100px"
-    :model="queryParams"
-    ref="queryForm"
-    size="medium"
-  )
-    el-form-item(label="入库状态" prop="receiptOrderStatus")
-      DictRadio(
-        v-model="queryParams.receiptOrderStatus"
-        :radioData="dict.type.wms_receipt_status"
-        :showAll="'all'"
-        size="small"
-        @change="handleQuery"
-      )
-    el-form-item(label="入库类型" prop="receiptOrderType")
-      DictRadio(
-        v-model="queryParams.receiptOrderType"
-        :radioData="dict.type.wms_receipt_type"
-        :showAll="'all'"
-        size="small"
-        @change="handleQuery"
-      )
-    el-form-item(label="入库单号" prop="receiptOrderNo")
-      el-input(
-        v-model="queryParams.receiptOrderNo"
-        clearable
-        placeholder="请输入入库单号"
-        size="small"
-        @keyup.enter.native="handleQuery"
-      )
-    el-form-item(label="订单号" prop="orderNo")
-      el-input(
-        v-model="queryParams.orderNo"
-        clearable
-        placeholder="请输入订单号"
-        size="small"
-        @keyup.enter.native="handleQuery"
-      )
-    el-form-item(label="供应商" prop="supplierId")
-      WmsSupplierSelect(v-model="queryParams.supplierId" size="small")
-    el-form-item.flex_one.tr
-      el-button(
-        icon="el-icon-search"
-        size="mini"
-        type="primary"
-        @click="handleQuery"
-      ) 搜索
-      el-button(
-        icon="el-icon-refresh"
-        size="mini"
-        @click="resetQuery"
-      ) 重置
-  el-row.mb8(:gutter="10")
-    el-col(:span="1.5")
-      el-button(
-        v-hasPermi="['wms:wmsReceiptOrder:add']"
-        icon="el-icon-plus"
-        plain
-        size="mini"
-        type="primary"
-        @click="handleAdd()"
-      ) 创建入库单
-    el-col(:span="1.5")
-      el-button(
-        v-hasPermi="['wms:wmsReceiptOrder:edit']"
-        :disabled="single"
-        icon="el-icon-edit"
-        plain
-        size="mini"
-        type="success"
-        @click="handleUpdate"
-      ) 修改
-    el-col(:span="1.5")
-      el-button(
-        v-hasPermi="['wms:wmsReceiptOrder:remove']"
-        :disabled="multiple"
-        icon="el-icon-delete"
-        plain
-        size="mini"
-        type="danger"
-        @click="handleDelete"
-      ) 删除
-    el-col(:span="1.5")
-      el-button(
-        v-hasPermi="['wms:wmsReceiptOrder:export']"
-        icon="el-icon-download"
-        :loading="exportLoading"
-        plain
-        size="mini"
-        type="warning"
-        @click="handleExport"
-      ) 导出
-    right-toolbar(
-      :columns="columns"
-      :showSearch.sync="showSearch"
-      @queryTable="getList"
+  .app-container
+    el-form.ry_form(
+      v-show="showSearch"
+      :inline="true"
+      label-width="100px"
+      :model="queryParams"
+      ref="queryForm"
+      size="medium"
     )
-  WmsTable(
-    v-loading="loading"
-    :data="wmsReceiptOrderList"
-    @selection-change="handleSelectionChange"
-  )
-    el-table-column(
-      align="center"
-      type="selection"
-      width="55"
-    )
-    el-table-column(
-      v-if="columns[0].visible"
-      align="center"
-      label="入库单号"
-      prop="receiptOrderNo"
-    )
-    el-table-column(
-      v-if="columns[1].visible"
-      align="center"
-      label="入库类型"
-    )
-      template(slot-scope="scope")
-        el-tag(
-          effect="plain"
-          size="medium"
-          :type="getReceiptOrderTypeTag(scope.row)"
-        ) {{ getReceiptOrderType(scope.row) }}
-    el-table-column(
-      v-if="columns[2].visible"
-      align="center"
-      :formatter="getSupplier"
-      label="供应商"
-    )
-    el-table-column(
-      v-if="columns[3].visible"
-      align="center"
-      label="订单号"
-      prop="orderNo"
-    )
-    el-table-column(
-      v-if="columns[4].visible"
-      align="center"
-      label="入库状态"
-    )
-      template(slot-scope="scope")
-        el-tag(
-          effect="plain"
-          size="medium"
-          :type="getReceiptOrderStatusTag(scope.row)"
-        ) {{ getReceiptOrderStatus(scope.row) }}
-    el-table-column(
-      v-if="columns[5].visible"
-      align="center"
-      label="备注"
-      prop="remark"
-    )
-    el-table-column(
-      align="center"
-      class-name="small-padding fixed-width"
-      label="操作"
-    )
-      template(v-slot="{ row }")
+      el-form-item(label="入库状态" prop="receiptOrderStatus")
+        DictRadio(
+          v-model="queryParams.receiptOrderStatus"
+          :radioData="dict.type.wms_receipt_status"
+          :showAll="'all'"
+          size="small"
+          @change="handleQuery"
+        )
+      el-form-item(label="入库类型" prop="receiptOrderType")
+        DictRadio(
+          v-model="queryParams.receiptOrderType"
+          :radioData="dict.type.wms_receipt_type"
+          :showAll="'all'"
+          size="small"
+          @change="handleQuery"
+        )
+      el-form-item(label="入库单号" prop="receiptOrderNo")
+        el-input(
+          v-model="queryParams.receiptOrderNo"
+          clearable
+          placeholder="请输入入库单号"
+          size="small"
+          @keyup.enter.native="handleQuery"
+        )
+      el-form-item(label="订单号" prop="orderNo")
+        el-input(
+          v-model="queryParams.orderNo"
+          clearable
+          placeholder="请输入订单号"
+          size="small"
+          @keyup.enter.native="handleQuery"
+        )
+      el-form-item(label="供应商" prop="supplierId")
+        WmsSupplierSelect(v-model="queryParams.supplierId" size="small")
+      el-form-item.flex_one.tr
+        el-button(
+          icon="el-icon-search"
+          size="mini"
+          type="primary"
+          @click="handleQuery"
+        ) 搜索
+        el-button(
+          icon="el-icon-refresh"
+          size="mini"
+          @click="resetQuery"
+        ) 重置
+    el-row.mb8(:gutter="10")
+      el-col(:span="1.5")
+        el-button(
+          v-hasPermi="['wms:wmsReceiptOrder:add']"
+          icon="el-icon-plus"
+          plain
+          size="mini"
+          type="primary"
+          @click="handleAdd()"
+        ) 创建入库单
+      el-col(:span="1.5")
         el-button(
           v-hasPermi="['wms:wmsReceiptOrder:edit']"
-          v-if="0 === row.receiptOrderStatus"
+          :disabled="single"
           icon="el-icon-edit"
+          plain
           size="mini"
-          type="text"
-          @click.stop="handleUpdate(row)"
+          type="success"
+          @click="handleUpdate"
         ) 修改
+      el-col(:span="1.5")
         el-button(
           v-hasPermi="['wms:wmsReceiptOrder:remove']"
-          v-if="0 === row.receiptOrderStatus"
+          :disabled="multiple"
           icon="el-icon-delete"
+          plain
           size="mini"
-          type="text"
-          @click.stop="handleDelete(row)"
+          type="danger"
+          @click="handleDelete"
         ) 删除
+      el-col(:span="1.5")
         el-button(
-          v-hasPermi="['wms:wmsReceiptOrder:status']"
-          v-if="row.detailCount"
-          icon="el-icon-truck"
+          v-hasPermi="['wms:wmsReceiptOrder:export']"
+          icon="el-icon-download"
+          :loading="exportLoading"
+          plain
           size="mini"
-          type="text"
-          @click.stop="handleStatus(row)"
-        ) 发货/入库
-        el-button(
-          icon="el-icon-print"
-          size="mini"
-          type="text"
-          @click.stop="printOut(row,true)"
-        ) 打印
-  pagination(
-    v-show="total>0"
-    :limit.sync="queryParams.pageSize"
-    :page.sync="queryParams.pageNum"
-    :total="total"
-    @pagination="getList"
-  )
-  el-dialog(:visible="modalObj.show" :title="modalObj.title" :width="modalObj.width")
-    template(v-if="modalObj.component === 'print-type'")
-      el-radio-group(v-model="modalObj.form.value")
-        el-radio(:label="1") lodop打印
-        el-radio(:label="2") 浏览器打印
-    template(v-if="modalObj.form.value === 2 || modalObj.component === 'window-print-preview'")
-      receipt-order-print(:row="modalObj.form.row" ref="receiptOrderPrintRef")
-    template(v-slot:footer)
-      el-button(@click="modalObj.cancel") 取消
-      el-button(@click="modalObj.ok" type="primary") 确认
+          type="warning"
+          @click="handleExport"
+        ) 导出
+      right-toolbar(
+        :columns="columns"
+        :showSearch.sync="showSearch"
+        @queryTable="getList"
+      )
+    WmsTable(
+      v-loading="loading"
+      :data="wmsReceiptOrderList"
+      @selection-change="handleSelectionChange"
+    )
+      el-table-column(
+        align="center"
+        type="selection"
+        width="55"
+      )
+      el-table-column(
+        v-if="columns[0].visible"
+        align="center"
+        label="入库单号"
+        prop="receiptOrderNo"
+      )
+      el-table-column(
+        v-if="columns[1].visible"
+        align="center"
+        label="入库类型"
+      )
+        template(slot-scope="scope")
+          el-tag(
+            effect="plain"
+            size="medium"
+            :type="getReceiptOrderTypeTag(scope.row)"
+          ) {{ getReceiptOrderType(scope.row) }}
+      el-table-column(
+        v-if="columns[2].visible"
+        align="center"
+        :formatter="getSupplier"
+        label="供应商"
+      )
+      el-table-column(
+        v-if="columns[3].visible"
+        align="center"
+        label="订单号"
+        prop="orderNo"
+      )
+      el-table-column(
+        v-if="columns[4].visible"
+        align="center"
+        label="入库状态"
+      )
+        template(slot-scope="scope")
+          el-tag(
+            effect="plain"
+            size="medium"
+            :type="getReceiptOrderStatusTag(scope.row)"
+          ) {{ getReceiptOrderStatus(scope.row) }}
+      el-table-column(
+        v-if="columns[5].visible"
+        align="center"
+        label="备注"
+        prop="remark"
+      )
+      el-table-column(
+        align="center"
+        class-name="small-padding fixed-width"
+        label="操作"
+      )
+        template(v-slot="{ row }")
+          el-button(
+            v-hasPermi="['wms:wmsReceiptOrder:edit']"
+            v-if="0 === row.receiptOrderStatus"
+            icon="el-icon-edit"
+            size="mini"
+            type="text"
+            @click.stop="handleUpdate(row)"
+          ) 修改
+          el-button(
+            v-hasPermi="['wms:wmsReceiptOrder:remove']"
+            v-if="0 === row.receiptOrderStatus"
+            icon="el-icon-delete"
+            size="mini"
+            type="text"
+            @click.stop="handleDelete(row)"
+          ) 删除
+          el-button(
+            v-hasPermi="['wms:wmsReceiptOrder:status']"
+            v-if="row.detailCount"
+            icon="el-icon-truck"
+            size="mini"
+            type="text"
+            @click.stop="handleStatus(row)"
+          ) 发货/入库
+          el-button(
+            icon="el-icon-print"
+            size="mini"
+            type="text"
+            @click.stop="printOut(row,true)"
+          ) 打印
+    pagination(
+      v-show="total>0"
+      :limit.sync="queryParams.pageSize"
+      :page.sync="queryParams.pageNum"
+      :total="total"
+      @pagination="getList"
+    )
+    el-dialog(:visible="modalObj.show" :title="modalObj.title" :width="modalObj.width")
+      template(v-if="modalObj.component === 'print-type'")
+        el-radio-group(v-model="modalObj.form.value")
+          el-radio(:label="1") lodop打印
+          el-radio(:label="2") 浏览器打印
+      template(v-if="modalObj.form.value === 2 || modalObj.component === 'window-print-preview'")
+        receipt-order-print(:row="modalObj.form.row" ref="receiptOrderPrintRef")
+      template(v-slot:footer)
+        el-button(@click="modalObj.cancel") 取消
+        el-button(@click="modalObj.ok" type="primary") 确认
 </template>
 
 <script>
@@ -216,13 +216,13 @@ import {
   delWmsReceiptOrder,
   exportWmsReceiptOrder,
   getWmsReceiptOrder
-} from "@/api/wms/receiptOrder";
-import {mapGetters} from 'vuex';
-import {STOCK_IN_TEMPLATE} from "@/utils/printData";
+} from '@/api/wms/receiptOrder'
+import { mapGetters } from 'vuex'
+import { STOCK_IN_TEMPLATE } from '@/utils/printData'
 import ReceiptOrderPrint from '@/views/wms/receiptOrder/ReceiptOrderPrint'
 
 export default {
-  name: "WmsReceiptOrder",
+  name: 'WmsReceiptOrder',
   components: { ReceiptOrderPrint },
   dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
@@ -246,10 +246,13 @@ export default {
         width: '520px',
         component: null,
         form: {
-          value: null
+          value: null,
+          row: null
         },
-        ok: () => {},
-        cancel: () => {}
+        ok: () => {
+        },
+        cancel: () => {
+        }
       },
       // 遮罩层
       loading: true,
@@ -275,77 +278,77 @@ export default {
         receiptOrderType: null,
         supplierId: null,
         orderNo: null,
-        receiptOrderStatus: null,
+        receiptOrderStatus: null
       },
       // 表单校验
       rules: {},
       columns: [
-        {key: 1, label: "入库单号", visible: true},
-        {key: 2, label: "入库类型", visible: true},
-        {key: 3, label: "供应商", visible: true},
-        {key: 4, label: "订单号", visible: true},
-        {key: 5, label: "入库状态", visible: true},
-        {key: 6, label: "备注", visible: true},
-      ],
-    };
+        { key: 1, label: '入库单号', visible: true },
+        { key: 2, label: '入库类型', visible: true },
+        { key: 3, label: '供应商', visible: true },
+        { key: 4, label: '订单号', visible: true },
+        { key: 5, label: '入库状态', visible: true },
+        { key: 6, label: '备注', visible: true }
+      ]
+    }
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     getReceiptOrderTypeTag(row) {
       switch (row.receiptOrderType) {
         case 1:
-          return "success";
+          return 'success'
         case 2:
-          return "warning";
+          return 'warning'
         case 3:
-          return "danger";
+          return 'danger'
       }
     },
     getReceiptOrderStatusTag(row) {
       switch (row.receiptOrderStatus) {
         case 0:
-          return "info";
+          return 'info'
         case 1:
-          return "warning";
+          return 'warning'
         case 2:
-          return "danger";
+          return 'danger'
         case 3:
-          return "success";
+          return 'success'
       }
     },
     getReceiptOrderType(row) {
-      return this.receiptTypeMap.get(row.receiptOrderType + "")
+      return this.receiptTypeMap.get(row.receiptOrderType + '')
     },
     getReceiptOrderStatus(row) {
-      return this.receiptStatusMap.get(row.receiptOrderStatus + "")
+      return this.receiptStatusMap.get(row.receiptOrderStatus + '')
     },
     getSupplier(row, column) {
       return this.supplierMap.get(row.supplierId)
     },
     /** 查询入库单列表 */
     getList() {
-      this.loading = true;
-      const {pageNum, pageSize} = this.queryParams;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
-      const pageReq = {page: pageNum - 1, size: pageSize};
+      this.loading = true
+      const { pageNum, pageSize } = this.queryParams
+      const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined }
+      const pageReq = { page: pageNum - 1, size: pageSize }
       listWmsReceiptOrder(query, pageReq).then(response => {
-        const {content, totalElements} = response
-        this.wmsReceiptOrderList = content;
-        this.total = totalElements;
-        this.loading = false;
-      });
+        const { content, totalElements } = response
+        this.wmsReceiptOrderList = content
+        this.total = totalElements
+        this.loading = false
+      })
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
@@ -355,39 +358,39 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.$router.push({path: "/wms/receiptOrder/edit"});
+      this.$router.push({ path: '/wms/receiptOrder/edit' })
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       const id = row.id || this.ids
-      this.$router.push({path: "/wms/receiptOrder/edit", query: {id}});
+      this.$router.push({ path: '/wms/receiptOrder/edit', query: { id } })
     },
     handleStatus(row) {
       const id = row.id || this.ids
-      this.$router.push({path: "/wms/receiptOrder/status", query: {id}});
+      this.$router.push({ path: '/wms/receiptOrder/status', query: { id } })
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除入库单编号为"' + ids + '"的数据项？').then(function () {
-        return delWmsReceiptOrder(ids);
+      const ids = row.id || this.ids
+      this.$modal.confirm('是否确认删除入库单编号为"' + ids + '"的数据项？').then(function() {
+        return delWmsReceiptOrder(ids)
       }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
+        this.getList()
+        this.$modal.msgSuccess('删除成功')
       }).catch(() => {
-      });
+      })
     },
     /** 导出按钮操作 */
     handleExport() {
-      const queryParams = this.queryParams;
+      const queryParams = this.queryParams
       this.$modal.confirm('是否确认导出所有入库单数据项？').then(() => {
-        this.exportLoading = true;
-        return exportWmsReceiptOrder(queryParams);
+        this.exportLoading = true
+        return exportWmsReceiptOrder(queryParams)
       }).then(response => {
-        this.$download.download(response);
-        this.exportLoading = false;
+        this.$download.download(response)
+        this.exportLoading = false
       }).catch(() => {
-      });
+      })
     },
     printOut(row, print) {
       this.modalObj = {
@@ -397,59 +400,74 @@ export default {
         component: 'print-type',
         form: {
           value: 1,
-          row,
-          print
+          row
         },
         ok: () => {
+          this.modalObj.show = false
           if (this.modalObj.form.value === 1) {
-            this.doPrintOut(row, print);
+            this.doPrintOut(row, print)
           } else {
-            this.windowPrintOut(row, print);
+            this.windowPrintOut(row, print)
           }
         },
         cancel: () => {
-          this.modalObj.show = false;
+          this.modalObj.show = false
         }
       }
     },
     windowPrintOut(row, print) {
-      if (print) {
-        this.$refs['receiptOrderPrintRef'].start();
-       return;
-      }
-      this.$nextTick(() => {
-        this.modalObj = {
-          show: true,
-          title: '浏览器打印预览',
-          width: '800px',
-          component: 'window-print-preview',
-          form: {
-            value: 1,
-            row,
-            print
-          },
-          ok: () => {
-            this.modalObj.show = false;
-          },
-          cancel: () => {
-            this.modalObj.show = false;
-          }
+      this.getOrderDetail(row).then(res => {
+        console.log(res)
+        if (print) {
+          this.modalObj.form.row = res
+          this.$nextTick(() => {
+            this.$refs['receiptOrderPrintRef'].start()
+          })
+          return
         }
+        this.$nextTick(() => {
+          this.modalObj = {
+            show: true,
+            title: '浏览器打印预览',
+            width: '800px',
+            component: 'window-print-preview',
+            form: {
+              value: 1,
+              row,
+              print
+            },
+            ok: () => {
+              this.modalObj.show = false
+            },
+            cancel: () => {
+              this.modalObj.show = false
+            }
+          }
+        })
       })
     },
     doPrintOut(row, print) {
+      this.getOrderDetail(row).then(result => {
+        if (print) {
+          this.$lodop.print(STOCK_IN_TEMPLATE, [result])
+        } else {
+          this.$lodop.preview(STOCK_IN_TEMPLATE, [result])
+        }
+      })
+    },
+    getOrderDetail(row) {
       //查询详情
-      getWmsReceiptOrder(row.id).then(response => {
-        const {details, items} = response
+      return getWmsReceiptOrder(row.id).then(response => {
+        const { details, items } = response
         const map = {};
         (items || []).forEach(it => {
           map[it.id] = it
-        });
-        let detailList = [], totalCount = 0;
+        })
+        let detailList = [], totalCount = 0
         details && details.forEach(it => {
           const prod = map[it.itemId]
           totalCount += it.planQuantity
-          let place = this.warehouseMap.get(it.warehouseId);
+          let place = this.warehouseMap.get(it.warehouseId)
           if (it.areaId) {
             place += `/${this.areaMap.get(it.areaId)}`
           }
@@ -464,23 +482,18 @@ export default {
             place
           })
         })
-        let result = {
+        return {
           remark: row.remark,
           receiptOrderNo: row.receiptOrderNo,
           supplierName: this.supplierMap.get(row.supplierId),
           orderNo: row.orderNo,
-          receiptType: this.receiptTypeMap.get(row.receiptOrderType + ""),
+          receiptType: this.receiptTypeMap.get(row.receiptOrderType + ''),
           createTime: row.createTime,
           details: detailList,
           totalCount
         }
-        if (print) {
-          this.$lodop.print(STOCK_IN_TEMPLATE, [result]);
-        } else {
-          this.$lodop.preview(STOCK_IN_TEMPLATE, [result]);
-        }
       })
     }
   }
-};
+}
 </script>
