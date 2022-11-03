@@ -18,6 +18,14 @@ export function getWmsInventoryMovement(id) {
   })
 }
 
+export function addOrUpdateWmsInventoryMovement(data) {
+  return request({
+    url: '/wms/inventoryMovement/add-or-update',
+    method: 'post',
+    data: data
+  })
+}
+
 // 新增库存移动
 export function addWmsInventoryMovement(data) {
   return request({
