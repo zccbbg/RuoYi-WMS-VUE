@@ -405,7 +405,7 @@ export default {
         ok: () => {
           this.modalObj.show = false
           if (this.modalObj.form.value === 1) {
-            this.doPrintOut(row, print)
+            this.doPrintOut(row, false)
           } else {
             this.windowPrintOut(row, print)
           }
