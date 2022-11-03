@@ -18,48 +18,8 @@
         el-button(icon="el-icon-search" size="mini" type="primary" @click="handleQuery") 搜索
         el-button(icon="el-icon-refresh" size="mini" @click="resetQuery") 重置
     el-row.mb8(:gutter="10")
-      el-col(:span="1.5")
-        el-button(
-          v-hasPermi="['wms:wmsInventory:add']"
-          icon="el-icon-plus"
-          plain
-          size="mini"
-          type="primary"
-          @click="handleAdd"
-        ) 新增
-      el-col(:span="1.5")
-        el-button(
-          v-hasPermi="['wms:wmsInventory:edit']"
-          :disabled="single"
-          icon="el-icon-edit"
-          plain
-          size="mini"
-          type="success"
-          @click="handleUpdate"
-        ) 修改
-      el-col(:span="1.5")
-        el-button(
-          v-hasPermi="['wms:wmsInventory:remove']"
-          :disabled="multiple"
-          icon="el-icon-delete"
-          plain
-          size="mini"
-          type="danger"
-          @click="handleDelete"
-        ) 删除
-      el-col(:span="1.5")
-        el-button(
-          v-hasPermi="['wms:wmsInventory:export']"
-          icon="el-icon-download"
-          :loading="exportLoading"
-          plain
-          size="mini"
-          type="warning"
-          @click="handleExport"
-        ) 导出
       right-toolbar(:columns="columns" :showSearch.sync="showSearch" @queryTable="getList")
     WmsTable(v-loading="loading" :data="wmsInventoryList" @selection-change="handleSelectionChange")
-      el-table-column(align="center" type="selection" width="55")
       el-table-column(align="left" label="编号" prop="id" width="72")
       el-table-column(align="left" label="物料")
         template(v-slot="{ row }")
@@ -72,23 +32,6 @@
           span(v-if="row.areaName") /{{row.areaName}}
           span(v-if="row.rackName") /{{row.rackName}}
       el-table-column(align="left" label="库存" prop="quantity")
-      el-table-column(align="left" label="备注" prop="remark")
-      el-table-column(align="left" class-name="small-padding fixed-width" label="操作" width="120")
-        template(slot-scope="scope")
-          el-button(
-            v-hasPermi="['wms:wmsInventory:edit']"
-            icon="el-icon-edit"
-            size="mini"
-            type="text"
-            @click="handleUpdate(scope.row)"
-          ) 修改
-          el-button(
-            v-hasPermi="['wms:wmsInventory:remove']"
-            icon="el-icon-delete"
-            size="mini"
-            type="text"
-            @click="handleDelete(scope.row)"
-          ) 删除
     pagination(
       v-show="total>0"
       :limit.sync="pageReq.size"
