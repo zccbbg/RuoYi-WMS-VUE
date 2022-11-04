@@ -60,7 +60,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsShipmentOrderDetail:add']"
+          v-hasPermi="['wms:shipmentOrderDetail:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -71,7 +71,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['wms:wmsShipmentOrderDetail:edit']"
+          v-hasPermi="['wms:shipmentOrderDetail:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -82,7 +82,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['wms:wmsShipmentOrderDetail:remove']"
+          v-hasPermi="['wms:shipmentOrderDetail:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -93,7 +93,7 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['wms:wmsShipmentOrderDetail:export']"
+          v-hasPermi="['wms:shipmentOrderDetail:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -114,14 +114,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsShipmentOrderDetail:edit']"
+            v-hasPermi="['wms:shipmentOrderDetail:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsShipmentOrderDetail:remove']"
+            v-hasPermi="['wms:shipmentOrderDetail:remove']"
           >删除</el-button>
         </template>
       </el-table-column>

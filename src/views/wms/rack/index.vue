@@ -67,7 +67,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsRack:add']"
+          v-hasPermi="['wms:rack:add']"
           >新增</el-button
         >
       </el-col>
@@ -79,7 +79,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['wms:wmsRack:edit']"
+          v-hasPermi="['wms:rack:edit']"
           >修改</el-button
         >
       </el-col>
@@ -91,7 +91,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['wms:wmsRack:remove']"
+          v-hasPermi="['wms:rack:remove']"
           >删除</el-button
         >
       </el-col>
@@ -103,7 +103,7 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['wms:wmsRack:export']"
+          v-hasPermi="['wms:rack:export']"
           >导出</el-button
         >
       </el-col>
@@ -161,7 +161,7 @@
             type="text"
             icon="el-icon-edit"
             @click.stop="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsRack:edit']"
+            v-hasPermi="['wms:rack:edit']"
             >修改</el-button
           >
           <el-button
@@ -169,7 +169,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsRack:remove']"
+            v-hasPermi="['wms:rack:remove']"
             >删除</el-button
           >
         </template>

@@ -33,7 +33,7 @@
     el-row.mb8(:gutter="10")
       el-col(:span="1.5")
         el-button(
-          v-hasPermi="['wms:wmsInventoryHistory:export']"
+          v-hasPermi="['wms:inventoryHistory:export']"
           icon="el-icon-download"
           :loading="exportLoading"
           plain

@@ -91,7 +91,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsCarrier:add']"
+          v-hasPermi="['wms:carrier:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -102,7 +102,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['wms:wmsCarrier:edit']"
+          v-hasPermi="['wms:carrier:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -113,7 +113,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['wms:wmsCarrier:remove']"
+          v-hasPermi="['wms:carrier:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -124,7 +124,7 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['wms:wmsCarrier:export']"
+          v-hasPermi="['wms:carrier:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -148,14 +148,14 @@
             type="text"
             icon="el-icon-edit"
             @click.stop="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsCarrier:edit']"
+            v-hasPermi="['wms:carrier:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsCarrier:remove']"
+            v-hasPermi="['wms:carrier:remove']"
           >删除</el-button>
         </template>
       </el-table-column>

@@ -27,7 +27,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsInventoryMovement:add']"
+          v-hasPermi="['wms:inventoryMovement:add']"
         >新增</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -63,7 +63,7 @@
             type="text"
             icon="el-icon-edit"
             @click.stop="handleUpdate(row)"
-            v-hasPermi="['wms:wmsInventoryMovement:edit']"
+            v-hasPermi="['wms:inventoryMovement:edit']"
           >修改
           </el-button>
           <el-button
@@ -72,7 +72,7 @@
             type="text"
             icon="el-icon-delete"
             @click.stop="handleDelete(row)"
-            v-hasPermi="['wms:wmsInventoryMovement:remove']"
+            v-hasPermi="['wms:inventoryMovement:remove']"
           >删除
           </el-button>
           <el-button
@@ -81,7 +81,7 @@
             type="text"
             icon="el-icon-truck"
             @click.stop="handleStatus(row)"
-            v-hasPermi="['wms:wmsInventoryMovement:status']"
+            v-hasPermi="['wms:inventoryMovement:status']"
           >移库
           </el-button>
         </template>

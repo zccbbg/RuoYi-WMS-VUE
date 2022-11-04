@@ -49,7 +49,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsWarehouse:add']"
+          v-hasPermi="['wms:warehouse:add']"
           >新增</el-button
         >
       </el-col>
@@ -62,7 +62,7 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['wms:wmsWarehouse:export']"
+          v-hasPermi="['wms:warehouse:export']"
           >导出</el-button
         >
       </el-col>
@@ -109,7 +109,7 @@
             type="text"
             icon="el-icon-edit"
             @click.stop="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsWarehouse:edit']"
+            v-hasPermi="['wms:warehouse:edit']"
             >修改</el-button
           >
           <el-button
@@ -117,7 +117,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsWarehouse:remove']"
+            v-hasPermi="['wms:warehouse:remove']"
             >删除</el-button
           >
         </template>

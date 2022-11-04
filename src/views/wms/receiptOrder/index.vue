@@ -57,7 +57,7 @@
     el-row.mb8(:gutter="10")
       el-col(:span="1.5")
         el-button(
-          v-hasPermi="['wms:wmsReceiptOrder:add']"
+          v-hasPermi="['wms:receiptOrder:add']"
           icon="el-icon-plus"
           plain
           size="mini"
@@ -66,7 +66,7 @@
         ) 创建入库单
       el-col(:span="1.5")
         el-button(
-          v-hasPermi="['wms:wmsReceiptOrder:edit']"
+          v-hasPermi="['wms:receiptOrder:edit']"
           :disabled="single"
           icon="el-icon-edit"
           plain
@@ -76,7 +76,7 @@
         ) 修改
       el-col(:span="1.5")
         el-button(
-          v-hasPermi="['wms:wmsReceiptOrder:remove']"
+          v-hasPermi="['wms:receiptOrder:remove']"
           :disabled="multiple"
           icon="el-icon-delete"
           plain
@@ -86,7 +86,7 @@
         ) 删除
       el-col(:span="1.5")
         el-button(
-          v-hasPermi="['wms:wmsReceiptOrder:export']"
+          v-hasPermi="['wms:receiptOrder:export']"
           icon="el-icon-download"
           :loading="exportLoading"
           plain
@@ -162,7 +162,7 @@
       )
         template(v-slot="{ row }")
           el-button(
-            v-hasPermi="['wms:wmsReceiptOrder:edit']"
+            v-hasPermi="['wms:receiptOrder:edit']"
             v-if="0 === row.receiptOrderStatus"
             icon="el-icon-edit"
             size="mini"
@@ -170,7 +170,7 @@
             @click.stop="handleUpdate(row)"
           ) 修改
           el-button(
-            v-hasPermi="['wms:wmsReceiptOrder:remove']"
+            v-hasPermi="['wms:receiptOrder:remove']"
             v-if="0 === row.receiptOrderStatus"
             icon="el-icon-delete"
             size="mini"
@@ -178,7 +178,7 @@
             @click.stop="handleDelete(row)"
           ) 删除
           el-button(
-            v-hasPermi="['wms:wmsReceiptOrder:status']"
+            v-hasPermi="['wms:receiptOrder:status']"
             v-if="row.detailCount"
             icon="el-icon-truck"
             size="mini"

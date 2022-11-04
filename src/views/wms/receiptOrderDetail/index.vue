@@ -86,7 +86,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsReceiptOrderDetail:add']"
+          v-hasPermi="['wms:receiptOrderDetail:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -97,7 +97,7 @@
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['wms:wmsReceiptOrderDetail:edit']"
+          v-hasPermi="['wms:receiptOrderDetail:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -108,7 +108,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['wms:wmsReceiptOrderDetail:remove']"
+          v-hasPermi="['wms:receiptOrderDetail:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -119,7 +119,7 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['wms:wmsReceiptOrderDetail:export']"
+          v-hasPermi="['wms:receiptOrderDetail:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -143,14 +143,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsReceiptOrderDetail:edit']"
+            v-hasPermi="['wms:receiptOrderDetail:edit']"
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsReceiptOrderDetail:remove']"
+            v-hasPermi="['wms:receiptOrderDetail:remove']"
           >删除</el-button>
         </template>
       </el-table-column>
