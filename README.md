@@ -45,7 +45,11 @@ npm run build:prod
 #### 出库状态流转
 ![出库状态流转](https://oscimg.oschina.net/oscnet/up-55cad3f077f914e357efeaae0b3feecf942.jpg)
 
-
+## 后端开源项目地址
+https://gitee.com/zccbbg/wms-ruoyi
+## 沟通交流
+![qq群：571255860](https://oscimg.oschina.net/oscnet/up-24096fde7984c52b042b3ad6f9213eaee1c.jpg)
+![微信：18556959326](https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg)
 ## 若依内置功能
 
 1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
