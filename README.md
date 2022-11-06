@@ -40,9 +40,9 @@ npm run build:prod
 8. 库存看板：查看当前物料库存数量
 9. 库存记录：查看当前物料库存操作记录
 ## 状态流转
-####入库状态流转
+#### 入库状态流转
 ![入库状态流转](https://oscimg.oschina.net/oscnet/up-6bdb5ad6d8ab236f763300b71cf175d9a99.jpg)
-####出库状态流转
+#### 出库状态流转
 ![出库状态流转](https://oscimg.oschina.net/oscnet/up-55cad3f077f914e357efeaae0b3feecf942.jpg)
 
 
