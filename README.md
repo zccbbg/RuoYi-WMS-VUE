@@ -47,9 +47,7 @@ npm run build:prod
 
 ## 后端开源项目地址
 https://gitee.com/zccbbg/wms-ruoyi
-## 沟通交流
-![qq群：571255860](https://oscimg.oschina.net/oscnet/up-24096fde7984c52b042b3ad6f9213eaee1c.jpg)
-![微信：18556959326](https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg)
+
 ## 若依内置功能
 
 1.  用户管理：用户是系统操作者，该功能主要完成系统用户配置。
@@ -124,3 +122,6 @@ https://gitee.com/zccbbg/wms-ruoyi
 ## 若依wms交流群
 
 QQ群： [![加入QQ群](https://img.shields.io/badge/571255860-blue.svg)](https://jq.qq.com/?_wv=1027&k=6h7MnEs9) 点击按钮入群。
+
+![qq群：571255860](https://oscimg.oschina.net/oscnet/up-24096fde7984c52b042b3ad6f9213eaee1c.jpg)
+![微信：18556959326](https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg)
