@@ -20,6 +20,8 @@ npm run build:stage
 # 构建生产环境
 npm run build:prod
 ```
+## 后端开源项目地址
+https://gitee.com/zccbbg/wms-ruoyi
 
 ## 若依wms简介
 若依wms是一套基于若依的wms仓库管理系统，支持lodop和网页打印入库单、出库单。毫无保留给个人及企业免费使用。
@@ -28,6 +30,11 @@ npm run build:prod
 * 权限认证使用Jwt，支持多终端认证系统。
 * 支持加载动态权限菜单，多方式轻松权限控制。
 * 高效率开发，使用代码生成器可以一键生成前后端代码。
+
+## 前端项目地址
+https://gitee.com/zccbbg/ruo-yi-wms-vue
+
+ 
 
 ## 若依wms功能
 1. 首页：库存预警与到期提醒、基础数据报表展示
@@ -45,8 +52,16 @@ npm run build:prod
 #### 出库状态流转
 ![出库状态流转](https://oscimg.oschina.net/oscnet/up-55cad3f077f914e357efeaae0b3feecf942.jpg)
 
-## 后端开源项目地址
-https://gitee.com/zccbbg/wms-ruoyi
+## 关于我们
+开发团队成立5年，我们前端开发、后端架构，有一颗热爱开源的心，致力于打造企业级的通用产品设计UI体系让项目 或者更直观，更高效、更简单，未来将持续关注UI交互，持续推出高质量的交互产品。
+
+## 演示图
+![首页](https://oscimg.oschina.net/oscnet/up-89f751967b4145f7da92e23536bf231fbe8.jpg)
+![支持两种打印方式](https://oscimg.oschina.net/oscnet/up-6daf90ef19571c7f0e7641ae59c403d8272.jpg)
+![lodop打印](https://oscimg.oschina.net/oscnet/up-146d2105ae31a27e497323ad19f8bd0d7bd.jpg)
+![网页打印](https://oscimg.oschina.net/oscnet/up-5664440042861199d1f3e60928e0700a9ce.jpg)
+![仓库列表](https://oscimg.oschina.net/oscnet/up-a00eb79bee48e481249a12cb5e6c476aaa3.jpg)
+![库存看板](https://oscimg.oschina.net/oscnet/up-78990915dfba902384ed4b09e3dc0f0fe05.jpg)
 
 ## 若依内置功能
 
@@ -68,21 +83,6 @@ https://gitee.com/zccbbg/wms-ruoyi
 16. 缓存监控：对系统的缓存信息查询，命令统计等。
 17. 在线构建器：拖动表单元素生成相应的HTML代码。
 18. 连接池监视：监视当前系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈。
-
-## 在线体验
-
-- cyl/cyl666
-- 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
-
-演示地址：http://wmstest.ichengle.top
-
-## 演示图
-![首页](https://oscimg.oschina.net/oscnet/up-89f751967b4145f7da92e23536bf231fbe8.jpg)
-![支持两种打印方式](https://oscimg.oschina.net/oscnet/up-6daf90ef19571c7f0e7641ae59c403d8272.jpg)
-![lodop打印](https://oscimg.oschina.net/oscnet/up-146d2105ae31a27e497323ad19f8bd0d7bd.jpg)
-![网页打印](https://oscimg.oschina.net/oscnet/up-5664440042861199d1f3e60928e0700a9ce.jpg)
-![仓库列表](https://oscimg.oschina.net/oscnet/up-a00eb79bee48e481249a12cb5e6c476aaa3.jpg)
-![库存看板](https://oscimg.oschina.net/oscnet/up-78990915dfba902384ed4b09e3dc0f0fe05.jpg)
 <table>
     <tr>
         <td><img src="https://oscimg.oschina.net/oscnet/cd1f90be5f2684f4560c9519c0f2a232ee8.jpg"/></td>
@@ -121,8 +121,6 @@ https://gitee.com/zccbbg/wms-ruoyi
 
 ## 若依wms交流群
 
-
 |  QQ群： [![加入QQ群](https://img.shields.io/badge/571255860-blue.svg)](https://jq.qq.com/?_wv=1027&k=6h7MnEs9) 点击按钮入群                            |                                                   微信                                                   | 公众号  |
 |:------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|:----:|
-| <img src="https://oscimg.oschina.net/oscnet/up-e6bcbc7d2d094d27a5da8803c11f4c9afd1.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg" width="200px"> | 正在创建 | 
-
+| <img src="https://oscimg.oschina.net/oscnet/up-e6bcbc7d2d094d27a5da8803c11f4c9afd1.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-082d2fa59a725c974aba92cde4e68bf64bb.jpg" width="200px"> | <img src="https://oscimg.oschina.net/oscnet/up-ef77e16b37950341791b1d84564328efadb.jpg" width="200px"> | 
