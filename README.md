@@ -21,7 +21,10 @@ npm run build:stage
 npm run build:prod
 ```
 ## 后端开源项目地址
+### gitee
 https://gitee.com/zccbbg/wms-ruoyi
+### github
+https://github.com/zccbbg/wms-ruoyi
 
 ## 在线体验
 - 演示地址：http://wms.ichengle.top
