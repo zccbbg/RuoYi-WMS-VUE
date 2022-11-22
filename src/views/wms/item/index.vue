@@ -321,7 +321,7 @@
             size="small"
             v-model="form.expiryDate"
             type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
             placeholder="选择有效期"
           >
           </el-date-picker>
@@ -403,7 +403,7 @@ export default {
         itemName: [
           { required: true, message: "名称不能为空", trigger: "blur" },
         ],
-        
+
       },
       columns: [
         { key: 1, label: "编号", visible: true },
