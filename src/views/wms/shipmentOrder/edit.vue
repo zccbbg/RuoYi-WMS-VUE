@@ -145,7 +145,7 @@ export default {
       this.form = {
         id: null,
         shipmentOrderNo: 'E-' + randomId(),
-        shipmentOrderType: 1,
+        shipmentOrderType: 11,
         customerId: null,
         orderNo: null,
         shipmentOrderStatus: 11,
