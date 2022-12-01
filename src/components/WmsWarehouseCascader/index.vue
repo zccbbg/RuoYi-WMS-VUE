@@ -6,6 +6,7 @@
   :props="{ checkStrictly: true }"
   clearable
   :size="size"
+  :disabled="disabled"
   filterable></el-cascader>
 </template>
 
@@ -21,6 +22,10 @@ export default {
     size: {
       type: String,
       default: 'small'
+    },
+    disabled:{
+      type: Boolean,
+      default: false
     }
   },
   data() {

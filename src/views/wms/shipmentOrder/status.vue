@@ -29,17 +29,17 @@
         el-table-column(label="计划数量" align="center" prop="planQuantity")
         el-table-column(label="实际数量" align="center" width="150")
           template(slot-scope="scope")
-            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small")
+            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small" :disabled="scope.row.finish")
         el-table-column(label="仓库/库区/货架" align="center" width="200")
           template(slot-scope="scope")
-            WmsWarehouseCascader(v-model="scope.row.place" size="small")
+            WmsWarehouseCascader(v-model="scope.row.place" size="small" :disabled="scope.row.finish")
         el-table-column(label="出库状态" width="150")
           template(slot-scope="{ row }")
-            DictSelect(v-model="row.shipmentOrderStatus" :options="row.range" size="small")
+            DictSelect(v-model="row.shipmentOrderStatus" :options="row.range" size="small" :disabled="row.finish")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
       el-button(@click="cancel") 取消
-      el-button(@click="submitForm" type="primary" ) 保存
+      el-button(@click="submitForm" type="primary" :disabled="finish") 保存
 </template>
 
 <script>
@@ -84,7 +84,8 @@ export default {
       rules: {},
       dialogStatus: null,
       // 非多个禁用
-      multiple: true
+      multiple: true,
+      finish: false
     }
   },
   created() {
@@ -176,8 +177,10 @@ export default {
             it.place = it.prod.place;
           }
           it.range = this.getRange(it.shipmentOrderStatus)
+          it.finish = it.shipmentOrderStatus === 13
         })
         this.sourceDetails = details.map(it => ({ ...it }))
+        this.finish = details.filter(it=>!it.finish)?.length === 0
         this.form = {
           ...response,
           details

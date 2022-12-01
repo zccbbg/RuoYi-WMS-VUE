@@ -22,9 +22,9 @@
             th 目标 仓库/库区/货架
             th 操作
           tr(v-for="(it, index) in form.details")
-            td(align="center") {{it.prod.itemName}}
-            td(align="center") {{it.prod.itemNo}}
-            td(align="center") {{it.prod.itemType}}
+            td(align="center") {{it.prod?it.prod.itemName:''}}
+            td(align="center") {{it.prod?it.prod.itemNo:''}}
+            td(align="center") {{it.prod?it.prod.itemType:''}}
             td(align="center")
               el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
             td(align="center")

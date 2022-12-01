@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="model" v-bind="$props" @change="valueChange">
+  <el-select v-model="model" v-bind="$props" @change="valueChange" :disabled="disabled">
     <el-option
       v-for="item in options"
       :key="item.value"
@@ -12,7 +12,7 @@
 
 <script>
 export default {
-  props: ["size", "value","options"],
+  props: ["size", "value","options","disabled"],
   data() {
     return {
       // value:this.value

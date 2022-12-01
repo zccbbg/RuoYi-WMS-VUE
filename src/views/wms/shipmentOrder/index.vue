@@ -149,7 +149,7 @@
           ) 删除
           el-button(
             v-hasPermi="['wms:shipmentOrder:status']"
-            v-if="row.detailCount && [11,12].includes(row.shipmentOrderStatus)"
+            v-if="row.detailCount"
             icon="el-icon-truck"
             size="mini"
             type="text"

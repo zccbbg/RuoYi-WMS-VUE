@@ -26,20 +26,20 @@
         el-table-column(label="计划数量" align="center" prop="planQuantity")
         el-table-column(label="实际数量" align="center" width="150")
           template(slot-scope="scope")
-            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small")
+            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small" :disabled="scope.row.finish")
         el-table-column(label="源 仓库/库区/货架" align="center" width="200")
           template(slot-scope="scope")
-            WmsWarehouseCascader(v-model="scope.row.sourcePlace" size="small")
-        el-table-column(label="目标 仓库/库区/货架" align="center" width="200")
+            WmsWarehouseCascader(v-model="scope.row.sourcePlace" size="small" :disabled="scope.row.finish")
+        el-table-column(label="目标 仓库/库区/货架" align="center" width="200" )
           template(slot-scope="scope")
-            WmsWarehouseCascader(v-model="scope.row.targetPlace" size="small")
+            WmsWarehouseCascader(v-model="scope.row.targetPlace" size="small" :disabled="scope.row.finish")
         el-table-column(label="移库状态" width="150")
           template(slot-scope="{ row }")
-            DictSelect(v-model="row.moveStatus" :options="row.range" size="small")
+            DictSelect(v-model="row.moveStatus" :options="row.range" size="small" :disabled="row.finish")
       el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
     .tc.mt16
       el-button(@click="cancel") 取消
-      el-button(@click="submitForm" type="primary" ) 保存
+      el-button(@click="submitForm" type="primary" :disabled="finish") 保存
 </template>
 
 <script>
@@ -82,7 +82,8 @@ export default {
       rules: {},
       dialogStatus: null,
       // 非多个禁用
-      multiple: true
+      multiple: true,
+      finish: false
     }
   },
   created() {
@@ -181,7 +182,9 @@ export default {
             it.targetPlace = it.prod.targetPlace;
           }
           it.range = this.getRange(it.moveStatus)
+          it.finish = it.moveStatus === 23
         })
+        this.finish = details.filter(it=>!it.finish)?.length === 0
         this.sourceDetails = details.map(it => ({ ...it }))
         this.form = {
           ...response,

@@ -76,7 +76,7 @@
           >删除
           </el-button>
           <el-button
-            v-if="row.detailCount && [21,22].includes(row.status)"
+            v-if="row.detailCount"
             size="mini"
             type="text"
             icon="el-icon-truck"
