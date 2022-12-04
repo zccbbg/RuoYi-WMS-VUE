@@ -43,17 +43,41 @@
           :loading="loading"
           size="medium"
           type="primary"
-          style="width:100%;"
+          style="width:45%;"
           @click.native.prevent="handleLogin"
         >
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
+        </el-button>
+        <el-button
+          :loading="loading"
+          size="medium"
+          type="primary"
+          style="width:45%;"
+          @click.native.prevent="handleTry"
+        >
+          <span>获取体验账号</span>
         </el-button>
         <div style="float: right;" v-if="register">
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
     </el-form>
+    <el-dialog
+      title="公众号二维码"
+      :visible.sync="dialogVisible"
+      :show-close="false"
+      :center="true"
+      width="30%">
+      <div style="text-align: center">
+        <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">体验</span>获取体验账号</span>
+        <br>
+        <img src="http://macro-oss.oss-cn-shenzhen.aliyuncs.com/mall/banner/qrcode_for_macrozheng_258.jpg" width="160" height="160" style="margin-top: 10px">
+      </div>
+      <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="dialogConfirm">确定</el-button>
+      </span>
+    </el-dialog>
     <!--  底部  -->
     <div class="el-login-footer">
       <span>Copyright © 2017-2022 ichengle.top 技术支持：18556959326,微信同号.</span>
@@ -70,6 +94,7 @@ export default {
   name: "Login",
   data() {
     return {
+      dialogVisible:false,
       codeUrl: "",
       loginForm: {
         username: "",
@@ -127,6 +152,12 @@ export default {
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
     },
+    handleTry(){
+        this.dialogVisible =true
+      },
+    dialogConfirm(){
+        this.dialogVisible =false;
+      },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
