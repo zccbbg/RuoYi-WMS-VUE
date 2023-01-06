@@ -80,7 +80,7 @@
     </el-dialog>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2017-2022 ichengle.top 技术支持：18556959326,微信同号.</span>
+      <span>Copyright © 2017-2022 ichengle.top 技术支持：18015578617,微信同号.</span>
     </div>
   </div>
 </template>
