@@ -152,24 +152,11 @@ export default {
     },
     showTimes() {
       this.timeFormate(new Date())
-//       if(date.getHours()>=0&&date.getHours()<12){
-
-// 　　　　this.hello="上午好"
-
-// 　　}else if(date.getHours()>=12&&date.getHours()<18){
-
-// 　　　　this.hello="下午好"
-
-// 　　}else{
-
-// 　　　　this.hello="晚上好"
-
-// 　　}
 
     },
     helloTimes() {
       let hh = new Date().getHours()
-      if (0 < hh < 12) {
+      if (0 < hh && hh < 12) {
         this.hello = '上午好'
       } else if (hh < 18) {
         this.hello = '下午好'

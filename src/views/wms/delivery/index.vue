@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+             class="ry_form">
       <el-form-item label="出库单主表Id" prop="shipmentOrderId">
         <el-input
           v-model="queryParams.shipmentOrderId"
@@ -10,23 +11,19 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="承运商Id" prop="carrierId">
-        <el-input
-          v-model="queryParams.carrierId"
-          placeholder="请输入承运商Id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="承运商" prop="carrierId">
+
+        <WmsCarrierSelect v-model="queryParams.carrierId"></WmsCarrierSelect>
+
       </el-form-item>
       <el-form-item label="发货日期" prop="deliveryDate">
         <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.deliveryDate"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择发货日期">
+          clearable
+          size="small"
+          v-model="queryParams.deliveryDate"
+          type="datetime"
+          value-format="yyyy-MM-ddTHH:mm:ss"
+          placeholder="选择发货日期">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="快递单号" prop="trackingNo">
@@ -45,24 +42,39 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        该功能正在开发中...
-      </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <WmsTable v-loading="loading" :data="wmsDeliveryList" @selection-change="handleSelectionChange">
-      <el-table-column label="出库单主表Id" align="center" prop="shipmentOrderId" v-if="columns[0].visible"/>
-      <el-table-column label="承运商Id" align="center" prop="carrierId" v-if="columns[1].visible"/>
-      <el-table-column label="发货日期" align="center" prop="deliveryDate" width="180" v-if="columns[2].visible">
+      <el-table-column label="出库单" align="center" prop="shipmentOrderId" v-if="columns[0].visible">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.deliveryDate, '')}}</span>
+          <el-button size="mini"
+                     type="text"
+                     @click.stop="handleView(scope.row)">{{ '查看出库单' }}
+          </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="快递单号" align="center" prop="trackingNo" v-if="columns[3].visible"/>
+      <el-table-column label="承运商" align="center" prop="carrierId" :formatter="getCarrier"
+                       v-if="columns[1].visible"/>
+      <el-table-column label="发货日期" align="center" prop="deliveryDate" width="180" v-if="columns[2].visible">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.deliveryDate, '') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="快递单号" align="center" prop="trackingNo" v-if="columns[3].visible">
+        <!--        https://www.kuaidi100.com/chaxun?com=[]&nu=[]-->
+        <template slot-scope="scope">
+          <a
+            target="_blank"
+            :href=" 'https://www.kuaidi100.com/chaxun?com='+getCarrier(scope.row)+'&nu='+scope.row.trackingNo">{{
+              scope.row.trackingNo
+            }}
+          </a>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[4].visible"/>
     </WmsTable>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -75,24 +87,25 @@
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
         <el-form-item label="出库单主表Id" prop="shipmentOrderId">
-          <el-input v-model="form.shipmentOrderId" placeholder="请输入出库单主表Id" />
+          <el-input v-model="form.shipmentOrderId" placeholder="请输入出库单主表Id"/>
         </el-form-item>
         <el-form-item label="承运商Id" prop="carrierId">
-          <el-input v-model="form.carrierId" placeholder="请输入承运商Id" />
+          <el-input v-model="form.carrierId" placeholder="请输入承运商Id"/>
         </el-form-item>
         <el-form-item label="发货日期" prop="deliveryDate">
           <el-date-picker clearable size="small"
-                        v-model="form.deliveryDate"
-                        type="datetime"
-                        value-format="yyyy-MM-ddTHH:mm:ss"
-                        placeholder="选择发货日期">
+                          v-model="form.deliveryDate"
+                          type="datetime"
+                          value-format="yyyy-MM-ddTHH:mm:ss"
+                          placeholder="选择发货日期">
           </el-date-picker>
         </el-form-item>
+        1
         <el-form-item label="快递单号" prop="trackingNo">
-          <el-input v-model="form.trackingNo" placeholder="请输入快递单号" />
+          <el-input v-model="form.trackingNo" placeholder="请输入快递单号"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -104,10 +117,21 @@
 </template>
 
 <script>
-import { listWmsDelivery, getWmsDelivery, delWmsDelivery, addWmsDelivery, updateWmsDelivery, exportWmsDelivery } from "@/api/wms/delivery";
+import {
+  addWmsDelivery,
+  delWmsDelivery,
+  exportWmsDelivery,
+  getWmsDelivery,
+  listWmsDelivery,
+  updateWmsDelivery
+} from "@/api/wms/delivery";
+import {mapGetters} from "vuex";
 
 export default {
   name: "WmsDelivery",
+  computed: {
+    ...mapGetters(['carrierMap']),
+  },
   data() {
     return {
       // 遮罩层
@@ -142,22 +166,30 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       columns: [
-            { key: 1, label: "出库单主表Id", visible:  true  },
-            { key: 2, label: "承运商Id", visible:  true  },
-            { key: 3, label: "发货日期", visible:  true  },
-            { key: 4, label: "快递单号", visible:  true  },
-            { key: 5, label: "备注", visible:  true  },
-                             ],
+        {key: 1, label: "出库单主表Id", visible: true},
+        {key: 2, label: "承运商Id", visible: true},
+        {key: 3, label: "发货日期", visible: true},
+        {key: 4, label: "快递单号", visible: true},
+        {key: 5, label: "备注", visible: true},
+      ],
     };
   },
   created() {
     this.getList();
-    this.$message.warning('该功能正在开发中...')
+    // this.$message.warning('该功能正在开发中...')
   },
   methods: {
+    //查看出库单
+    handleView(row) {
+      const id = row.shipmentOrderId
+      this.$router.push({path: '/wms/shipmentOrder/status', query: {id}})
+    },
+    // 格式化承运商
+    getCarrier(row, column) {
+      return this.carrierMap.get(row.carrierId)
+    },
     /** 查询发货记录列表 */
     getList() {
       this.loading = true;
@@ -165,7 +197,7 @@ export default {
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWmsDelivery(query, pageReq).then(response => {
-        const { content, totalElements } = response
+        const {content, totalElements} = response
         this.wmsDeliveryList = content;
         this.total = totalElements;
         this.loading = false;
@@ -205,7 +237,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -247,12 +279,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除发货记录编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除发货记录编号为"' + ids + '"的数据项？').then(function () {
         return delWmsDelivery(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -263,7 +296,8 @@ export default {
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
-      }).catch(() => {});
+      }).catch(() => {
+      });
     }
   }
 };

@@ -51,6 +51,7 @@ import DictSelect from '@/components/DictSelect'
 
 import WmsWarehouseCascader from '@/components/WmsWarehouseCascader'
 import vuePlugsPrint from '@/utils/vuePlugsPrint'
+import WmsCarrierSelect from "@/components/WmsCarrierSelect/index.vue";
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
@@ -74,6 +75,7 @@ Vue.component('ImagePreview', ImagePreview)
 Vue.component('WmsTable',WmsTable)
 Vue.component('WmsSupplierSelect',WmsSupplierSelect)
 Vue.component('WmsCustomerSelect',WmsCustomerSelect)
+Vue.component('WmsCarrierSelect',WmsCarrierSelect)
 Vue.component('DictRadio',DictRadio)
 Vue.component('DictSelect',DictSelect)
 Vue.component('WmsWarehouseCascader',WmsWarehouseCascader)

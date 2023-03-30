@@ -1,58 +1,165 @@
-<template lang="pug">
-.shipment-order-status-wrapper.app-container(v-loading="loading")
-  .shipment-order-content
-    el-form(label-width="108px" :model="form" ref="form" :rules="rules")
-      el-form-item(label="出库单号" prop="shipmentOrderNo") {{form.shipmentOrderNo}}
-      el-form-item(label="出库状态" prop="shipmentOrderNo") {{shipmentStatusMap.get(form.shipmentOrderStatus+'')}}
-      el-form-item(label="出库类型" prop="shipmentOrderType") {{selectDictLabel(dict.type.wms_shipment_type, form.shipmentOrderType)}}
-      el-form-item(label="客户" prop="customerId") {{customerMap.get(form.customerId)}}
-      el-form-item(label="订单号" prop="orderNo") {{form.orderNo}}
-      el-form-item(label="备注" prop="remark" ) {{form.remark}}
-    el-divider
-    .flex-center.mb8
-      .flex-one.large-tip.bolder-font 物料明细
-      .ops
-        el-button(
-          v-if="mergeDetailStatusArray.length === 1"
-          type="primary" plain size="small" @click="batch") 批量设置出库状态
-    el-dialog(title="请选择出库状态" :visible.sync="open" width="50%" append-to-body)
-      DictRadio(v-model="dialogStatus" :radioData="dialogStatusRange")
-      .dialog-footer(slot="footer")
-        el-button(type="primary" @click="dialogConfirm") 确 定
-        el-button(@click="cancelDialog") 取 消
-    .table
-      WmsTable(:data="form.details" @selection-change="handleSelectionChange")
-        el-table-column(type="selection" width="55" align="center")
-        el-table-column(label="物料名" align="center" prop="prod.itemName")
-        el-table-column(label="物料编号" align="center" prop="prod.itemNo")
-        el-table-column(label="物料类型" align="center" prop="prod.itemType")
-        el-table-column(label="计划数量" align="center" prop="planQuantity")
-        el-table-column(label="实际数量" align="center" width="150")
-          template(slot-scope="scope")
-            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small" :disabled="scope.row.finish")
-        el-table-column(label="仓库/库区/货架" align="center" width="200")
-          template(slot-scope="scope")
-            WmsWarehouseCascader(v-model="scope.row.place" size="small" :disabled="scope.row.finish")
-        el-table-column(label="出库状态" width="150")
-          template(slot-scope="{ row }")
-            DictSelect(v-model="row.shipmentOrderStatus" :options="row.range" size="small" :disabled="row.finish")
-      el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
-    .tc.mt16
-      el-button(@click="cancel") 取消
-      el-button(@click="submitForm" type="primary" :disabled="finish") 保存
+<template>
+  <div class="shipment-order-status-wrapper app-container" v-loading="loading">
+    <div class="shipment-order-content">
+      <el-form label-width="108px" :model="form" ref="form" :rules="rules">
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-form-item label="出库状态" prop="shipmentOrderNo">
+              <el-tag> {{ shipmentStatusMap.get(form.shipmentOrderStatus + '') }}</el-tag>
+            </el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="出库类型" prop="shipmentOrderType">
+              {{ selectDictLabel(dict.type.wms_shipment_type, form.shipmentOrderType) }}
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-form-item label="出库单号" prop="shipmentOrderNo">{{ form.shipmentOrderNo }}</el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="订单号" prop="orderNo">{{ form.orderNo }}</el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="10">
+            <el-form-item label="客户" prop="customerId">{{ customerMap.get(form.customerId) }}</el-form-item>
+          </el-col>
+          <el-col :span="10">
+            <el-form-item label="备注" prop="remark">{{ form.remark }}</el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <el-divider/>
+
+      <div class="flex-center mb8">
+        <div class="flex-one large-tip bolder-font">物流信息</div>
+        <div class="ops">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="deliveryAdd">新增快递单号
+          </el-button>
+        </div>
+      </div>
+
+      <div class="table">
+        <WmsTable v-loading="loading" :data="form.delivery" @selection-change="handleSelectionChange">
+          <el-table-column label="出库单主表Id" align="center" prop="shipmentOrderId" v-if="columns[0].visible"/>
+          <el-table-column label="承运商" align="center" :formatter="getCarrier" prop="carrierId"
+                           v-if="columns[1].visible"/>
+          <el-table-column label="发货日期" align="center" prop="deliveryDate" width="180" v-if="columns[2].visible">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.deliveryDate, '') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="快递单号" align="center" prop="trackingNo" v-if="columns[3].visible">
+            <!--        https://www.kuaidi100.com/chaxun?com=[]&nu=[]-->
+            <template slot-scope="scope">
+              <a
+                target="_blank"
+                :href=" 'https://www.kuaidi100.com/chaxun?com='+getCarrier(scope.row)+'&nu='+scope.row.trackingNo">{{
+                  scope.row.trackingNo
+                }}
+              </a>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" align="center" prop="remark" v-if="columns[4].visible"/>
+        </WmsTable>
+      </div>
+      <div class="flex-center mb8" style="margin-top: 8px">
+        <div class="flex-one large-tip bolder-font">物料明细</div>
+        <div class="ops">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="batch">批量设置出库状态
+          </el-button>
+        </div>
+      </div>
+      <el-dialog title="请选择出库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
+        <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
+        <div class="dialog-footer" slot="footer">
+          <el-button type="primary" @click="dialogConfirm">确 定</el-button>
+          <el-button @click="cancelDialog">取 消</el-button>
+        </div>
+      </el-dialog>
+      <div class="table">
+        <WmsTable :data="form.details" @selection-change="handleSelectionChange">
+          <el-table-column type="selection" width="55" align="center"></el-table-column>
+          <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+          <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+          <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+          <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
+          <el-table-column label="实际数量" align="center" width="150">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small"
+                               :disabled="scope.row.finish"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="仓库/库区/货架" align="center" width="200">
+            <template slot-scope="scope">
+              <WmsWarehouseCascader v-model="scope.row.place" size="small"
+                                    :disabled="scope.row.finish"></WmsWarehouseCascader>
+            </template>
+          </el-table-column>
+          <el-table-column label="出库状态" width="150">
+            <template slot-scope="{ row }">
+              <DictSelect v-model="row.shipmentOrderStatus" :options="row.range" size="small"
+                          :disabled="row.finish"></DictSelect>
+            </template>
+          </el-table-column>
+        </WmsTable>
+        <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
+      </div>
+      <div class="tc mt16">
+        <el-button @click="cancel">取消</el-button>
+        <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>
+      </div>
+      <!-- 添加或修改发货记录对话框 -->
+      <el-dialog :title="deliveryTitle" :visible.sync="deliveryOpen" width="50%" append-to-body>
+        <el-form ref="deliveryForm" :model="deliveryForm" :rules="rules" label-width="108px" inline
+                 class="dialog-form-two">
+          <el-form-item label="出库单" prop="shipmentOrderId">
+            <el-input v-model="deliveryForm.shipmentOrderId" disabled placeholder="请输入出库单"/>
+          </el-form-item>
+          <el-form-item label="承运商" prop="carrierId">
+            <wms-carrier-select v-model="deliveryForm.carrierId"></wms-carrier-select>
+          </el-form-item>
+          <el-form-item label="发货日期" prop="deliveryDate">
+            <el-date-picker clearable size="small"
+                            v-model="deliveryForm.deliveryDate"
+                            type="datetime"
+                            value-format="yyyy-MM-ddTHH:mm:ss"
+                            placeholder="选择发货日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="快递单号" prop="trackingNo">
+            <el-input v-model="deliveryForm.trackingNo" placeholder="请输入快递单号"/>
+          </el-form-item>
+          <el-form-item label="备注" prop="remark">
+            <el-input v-model="deliveryForm.remark" placeholder="请输入备注"/>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitdeliveryForm">确 定</el-button>
+          <el-button @click="canceldeliveryForm">取 消</el-button>
+        </div>
+      </el-dialog>
+    </div>
+  </div>
 </template>
 
 <script>
-import { addOrUpdateWmsShipmentOrder, getWmsShipmentOrder } from '@/api/wms/shipmentOrder'
+import {addOrUpdateWmsShipmentOrder, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
 import ItemSelect from '@/views/components/ItemSelect'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
+import WmsCarrier from "@/views/wms/carrier/index.vue";
+import {addWmsDelivery, updateWmsDelivery} from "@/api/wms/delivery";
 
 export default {
   name: 'WmsShipmentOrder',
-  components: { ItemSelect },
+  components: {WmsCarrier, ItemSelect},
   dicts: ['wms_shipment_type', 'wms_shipment_status'],
   computed: {
-    ...mapGetters(['customerMap']),
+    ...mapGetters(['customerMap', 'carrierMap']),
     shipmentStatusMap() {
       let obj = this.dict.type.wms_shipment_status.map(item => [item.value, item.label])
       let map = new Map(obj)
@@ -85,18 +192,66 @@ export default {
       dialogStatus: null,
       // 非多个禁用
       multiple: true,
-      finish: false
+      finish: false,
+      // 物流管理
+      deliveryTitle: '',
+      shipmentOrderId: null,
+      deliveryOpen: false,
+      deliveryForm: {},
+      // 发货记录表格数据
+      wmsDeliveryList: [],
+      columns: [
+        {key: 1, label: "出库单主表Id", visible: false},
+        {key: 2, label: "承运商Id", visible: true},
+        {key: 3, label: "发货日期", visible: true},
+        {key: 4, label: "快递单号", visible: true},
+        {key: 5, label: "备注", visible: true},
+      ],
     }
   },
   created() {
-    const { id } = this.$route.query
+    const {id} = this.$route.query
     if (id) {
+      this.shipmentOrderId = id
       this.loadDetail(id)
     } else {
       this.cancel()
     }
   },
   methods: {
+    // 格式化承运商
+    getCarrier(row, column) {
+      return this.carrierMap.get(row.carrierId)
+    },
+    // 新增物流对话框，提交按钮
+    submitdeliveryForm() {
+      this.$refs["deliveryForm"].validate(valid => {
+        if (valid) {
+          if (this.deliveryForm.id != null) {
+            updateWmsDelivery(this.deliveryForm).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.deliveryOpen = false;
+              this.loadDetail(this.shipmentOrderId)
+            });
+          } else {
+            addWmsDelivery(this.deliveryForm).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.deliveryOpen = false;
+              this.loadDetail(this.shipmentOrderId)
+            });
+          }
+        }
+      });
+    },// 新增物流对话框，取消按钮
+    canceldeliveryForm() {
+      this.deliveryOpen = false
+    },
+    // 新增物流信息
+    deliveryAdd() {
+      this.deliveryTitle = "新增物流信息"
+      this.deliveryOpen = true
+      this.deliveryForm.shipmentOrderId = this.shipmentOrderId
+    },
     dialogConfirm() {
       if (!this.dialogStatus) {
         this.$modal.alert('请选择出库状态')
@@ -126,7 +281,7 @@ export default {
       }
     },
     cancel() {
-      this.$tab.closeOpenPage({ path: '/wms/shipmentOrder' })
+      this.$tab.closeOpenPage({path: '/wms/shipmentOrder'})
     },
     /** 提交按钮 */
     submitForm() {
@@ -156,7 +311,7 @@ export default {
             delFlag: 0
           }
         })
-        const req = { ...this.form, details }
+        const req = {...this.form, details}
         addOrUpdateWmsShipmentOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel()
@@ -166,7 +321,7 @@ export default {
     loadDetail(id) {
       this.loading = true
       getWmsShipmentOrder(id).then(response => {
-        const { details, items } = response
+        const {details, items} = response
         const map = {};
         (items || []).forEach(it => {
           map[it.id] = it
@@ -179,8 +334,8 @@ export default {
           it.range = this.getRange(it.shipmentOrderStatus)
           it.finish = it.shipmentOrderStatus === 13
         })
-        this.sourceDetails = details.map(it => ({ ...it }))
-        this.finish = details.filter(it=>!it.finish)?.length === 0
+        this.sourceDetails = details.map(it => ({...it}))
+        this.finish = details.filter(it => !it.finish)?.length === 0
         this.form = {
           ...response,
           details
@@ -192,7 +347,7 @@ export default {
     getRange(status) {
       const arr = this.dict.type.wms_shipment_status
       if (status === 4 || status === 3) {
-        return arr.filter(it => +it.value === status).map(it => ({ label: it.label, value: it.value }))
+        return arr.filter(it => +it.value === status).map(it => ({label: it.label, value: it.value}))
       }
       if (status === 2) {
         return arr.filter(it => +it.value >= status && +it.value !== 4).map(it => ({
@@ -200,7 +355,7 @@ export default {
           value: it.value
         }))
       }
-      return arr.filter(it => +it.value >= status).map(it => ({ label: it.label, value: it.value }))
+      return arr.filter(it => +it.value >= status).map(it => ({label: it.label, value: it.value}))
     }
   }
 }
