@@ -1,49 +1,68 @@
 <template lang="pug">
-  .inventory-movement-edit-wrapper.app-container
-    .inventory-movement-content
-      el-form(label-width="108px" :model="form" ref="form" :rules="rules")
-        el-form-item(label="移库单号" prop="inventoryMovementNo")
-          el-input.w200(v-model="form.inventoryMovementNo" placeholder="移库单号" disabled)
-        el-form-item(label="备注" prop="remark")
-          el-input(v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea" show-word-limit)
-      el-divider
-      .flex-center.mb8
-        .flex-one.large-tip.bolder-font 物料明细
-        .ops
-          el-button(type="primary" plain size="small" @click="showAddItem") 添加物料
-      .table
-        table.common-table
-          tr
-            th 物料名
-            th 物料编号
-            th 物料类型
-            th 计划数量
-            th 源 仓库/库区/货架
-            th 目标 仓库/库区/货架
-            th 操作
-          tr(v-for="(it, index) in form.details")
-            td(align="center") {{it.prod?it.prod.itemName:''}}
-            td(align="center") {{it.prod?it.prod.itemNo:''}}
-            td(align="center") {{it.prod?it.prod.itemType:''}}
-            td(align="center")
-              el-input-number(v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647")
-            td(align="center")
-              WmsWarehouseCascader(v-model="it.sourcePlace" size="small")
-            td(align="center")
-              WmsWarehouseCascader(v-model="it.targetPlace" size="small")
-            td(align="center")
-              a.red(@click="form.details.splice(index, 1)") 删除
-        el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
-      .tc.mt16
-        el-button(@click="cancel") 取消
-        el-button(@click="submitForm" type="primary" ) 保存
-    el-dialog(:visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel")
-      template(v-if="modalObj.component === 'add-item'")
-        item-select(ref="item-select")
-      template(#footer)
-        el-button(v-if="modalObj.cancel" @click="modalObj.cancel") 取消
-        el-button(v-if="modalObj.ok" type="primary" @click="modalObj.ok") 确认
-</template>
+  <div class="inventory-movement-edit-wrapper app-container">
+    <div class="inventory-movement-content">
+      <el-form label-width="108px" :model="form" ref="form" :rules="rules">
+        <el-form-item label="移库单号" prop="inventoryMovementNo">
+          <el-input class="w200" v-model="form.inventoryMovementNo" placeholder="移库单号" disabled="disabled"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea" show-word-limit="show-word-limit"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-divider></el-divider>
+      <div class="flex-center mb8">
+        <div class="flex-one large-tip bolder-font">物料明细</div>
+        <div class="ops">
+          <el-button type="primary" plain="plain" size="small" @click="showAddItem">添加物料</el-button>
+        </div>
+      </div>
+      <div class="table">
+        <table class="common-table">
+          <tr>
+            <th>物料名</th>
+            <th>物料编号</th>
+            <th>物料类型</th>
+            <th>计划数量</th>
+            <th>源 仓库/库区/货架</th>
+            <th>目标 仓库/库区/货架</th>
+            <th>操作</th>
+          </tr>
+          <tr v-for="(it, index) in form.details">
+            <td align="center">{{it.prod?it.prod.itemName:''}}</td>
+            <td align="center">{{it.prod?it.prod.itemNo:''}}</td>
+            <td align="center">{{it.prod?it.prod.itemType:''}}</td>
+            <td align="center">
+              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647"></el-input-number>
+            </td>
+            <td align="center">
+              <WmsWarehouseCascader v-model="it.sourcePlace" size="small"></WmsWarehouseCascader>
+            </td>
+            <td align="center">
+              <WmsWarehouseCascader v-model="it.targetPlace" size="small"></WmsWarehouseCascader>
+            </td>
+            <td align="center"><a class="red" @click="form.details.splice(index, 1)">删除</a></td>
+          </tr>
+        </table>
+        //- <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
+      </div>
+      <div class="tc mt16" >
+        <el-button type="primary" plain="plain" size="small" @click="showAddItem">添加物料</el-button>
+      </div>
+      <div class="tc mt16">
+        <el-button @click="cancel">取消</el-button>
+        <el-button @click="submitForm" type="primary">保存</el-button>
+      </div>
+    </div>
+    <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel">
+      <template v-if="modalObj.component === 'add-item'">
+        <item-select ref="item-select"></item-select>
+      </template>
+      <template footer="footer">
+        <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
+        <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
+      </template>
+    </el-dialog>
+  </div></template>
 
 <script>
 import {addOrUpdateWmsInventoryMovement, getWmsInventoryMovement} from '@/api/wms/inventoryMovement'
@@ -154,7 +173,7 @@ export default {
       this.resetForm('form')
     },
     confirmSelectItem() {
-      const value = this.$refs['item-select'].rightList
+      const value = this.$refs['item-select'].getRightList()
       this.form.details = value.map(it => {
         return {
           prod: it,

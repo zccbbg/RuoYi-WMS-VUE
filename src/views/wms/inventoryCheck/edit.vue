@@ -58,7 +58,10 @@
             </td>
           </tr>
         </table>
-        <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
+        <!-- <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty> -->
+      </div>
+      <div class="tc mt16" >
+        <el-button type="primary" plain="plain" size="small" @click="showAddItem">添加物料</el-button>
       </div>
       <div class="tc mt16">
         <el-button @click="cancel">取消</el-button>
