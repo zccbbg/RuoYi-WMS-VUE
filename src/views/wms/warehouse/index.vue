@@ -1,35 +1,38 @@
 <template>
   <div class="app-container">
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
-          v-hasPermi="['wms:warehouse:add']">新增仓库</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-    </el-row> -->
-    <el-tabs :tab-position="tabPosition" style="height: 600px;" @tab-click="handleTabClick" ref="leftRef">
+    <div class="clearfix">
+      <div style="width: 200px;margin-bottom: 10px;" class="left">
+        <el-input placeholder="请输入仓库编号/名称" v-model="queryWarehouseParam" class="input-with-select"
+          suffix-icon="el-icon-search" @keyup.enter.native="handleSearchWarehouse">
+        </el-input>
+      </div>
+      <div class="left">
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddWarehouse"
+          v-hasPermi="['wms:warehouse:add']" style="margin: 3px 10px;">新增仓库</el-button>
+      </div>
+    </div>
+    <el-tabs :tab-position="tabPosition" style="height: 660px;" @tab-click="handleTabClick" ref="leftRef">
       <el-tab-pane v-for="(it, index) in wmsWarehouseList" :label="it.warehouseName">
-        <div class="clearfix oper_area">
-          <div class="left">
-            <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddWarehouse"
-              v-hasPermi="['wms:warehouse:add']">新增仓库</el-button>
-            <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="handleDeleteWarehouse"
-              v-hasPermi="['wms:warehouse:add']" style="margin-bottom: 14px;">删除仓库</el-button>
-          </div>
-          <div class="right">
-            <el-input placeholder="请输入仓库编号/名称" v-model="queryWarehouseParam" class="input-with-select">
-              <el-button slot="append" icon="el-icon-search" @click="handleSearchWarehouse"></el-button>
-            </el-input>
-          </div>
-        </div>
         <div class="content-wrapper">
-          <h3 style="color:#409EFF;font-weight: bold;" class="content-margin">仓库详情</h3>
+          <div class="clearfix">
+            <div style="color:#409EFF;font-weight: bold;font-size: 15px;" class="content-margin left">基本信息</div>
+            <el-link type="primary" plain size="mini" @click="handleUpdateWarehouse" v-hasPermi="['wms:warehouse:add']"
+              class="left" style="margin-left: 10px;text-decoration: underline;" :underline="false">修改</el-link>
+            <el-link type="danger" plain size="mini" @click="handleDeleteWarehouse" v-hasPermi="['wms:warehouse:add']"
+              class="left" style="margin-left: 10px;text-decoration: underline;" :underline="false">删除</el-link>
+          </div>
           <div class="content-margin info-box">
             <el-row :gutter="20">
               <el-col :span="8">
                 <div>
                   <div style="font-weight: bold;">仓库名称</div>
                   <div style="margin-top: 10px;">{{ it.warehouseName }}</div>
+                </div>
+              </el-col>
+              <el-col :span="8">
+                <div>
+                  <div style="font-weight: bold;">仓库编码</div>
+                  <div style="margin-top: 10px;">{{ it.warehouseNo }}</div>
                 </div>
               </el-col>
               <el-col :span="8">
@@ -46,17 +49,17 @@
             <el-tab-pane label="库区信息" name="first">
               <div class="clearfix oper_area">
                 <div class="left">
-                  <el-button type="success" plain icon="el-icon-plus" size="mini" @click="handleAddArea()"
-                    v-hasPermi="['wms:area:add']">新增库区</el-button>
-                </div>
-                <div class="right">
-                  <el-input placeholder="请输入库区编号/名称" v-model="queryAreaParam" class="input-with-select">
-                    <el-button slot="append" icon="el-icon-search" @click="handleSearchArea"></el-button>
+                  <el-input placeholder="请输入库区编号/名称" v-model="queryAreaParam" class="input-with-select"
+                    suffix-icon="el-icon-search" @keyup.enter.native="handleSearchArea">
                   </el-input>
+                </div>
+                <div class="left" style="margin: 3px 10px;">
+                  <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddArea()"
+                    v-hasPermi="['wms:area:add']">新增库区</el-button>
                 </div>
               </div>
 
-              <WmsTable v-loading="loading" :data="wmsAreaList" >
+              <WmsTable v-loading="loading" :data="wmsAreaList">
                 <el-table-column label="编号" align="center" prop="areaNo" v-if="columns[0].visible" />
                 <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible" />
                 <el-table-column label="名称" align="center" prop="areaName" v-if="columns[1].visible" />
@@ -75,6 +78,7 @@
         </div>
       </el-tab-pane>
     </el-tabs>
+    <!-- </el-card> -->
     <!-- <pagination v-show="total > 0" :total="total" :page.sync="queryAreaParams.pageNum"
       :limit.sync="queryAreaParams.pageSize" @pagination="getList" /> -->
 
@@ -339,17 +343,7 @@ export default {
       this.openArea = true;
       this.title = "添加库区";
     },
-    /** 修改按钮操作 */
-    handleUpdateWarehouse(row) {
-      this.reset();
-      const id = row.id || this.ids;
-      getWmsWarehouse(id).then((response) => {
-        this.warehouseForm = response;
-        this.openWarehouse = true;
-        this.title = "修改仓库";
-      });
-    },
-    /** 修改按钮操作 */
+    /** 修改库区按钮操作 */
     handleUpdateArea(row) {
       this.resetAreaForm();
       const id = row.id || this.ids;
@@ -357,6 +351,16 @@ export default {
         this.areaForm = response;
         this.openArea = true;
         this.title = "修改库区";
+      });
+    },
+    /** 修改仓库按钮操作 */
+    handleUpdateWarehouse() {
+      this.resetWarehouseForm();
+      const id = this.selectedWarehouseId;
+      getWmsWarehouse(id).then((response) => {
+        this.warehouseForm = response;
+        this.openWarehouse = true;
+        this.title = "修改仓库";
       });
     },
     /** 提交按钮（添加仓库） */
@@ -520,7 +524,7 @@ export default {
 
 .info-box {
   /* background-color: #F7FAFC; */
-  width: 600px;
+  width: 500px;
   height: 60px;
   padding: 10px 10px;
 }
@@ -546,5 +550,12 @@ export default {
 
 .oper_area {
   margin-bottom: 10px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+  width: 200px;
 }
 </style>
