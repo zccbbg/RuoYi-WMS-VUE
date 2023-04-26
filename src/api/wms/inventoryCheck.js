@@ -27,6 +27,14 @@ export function addWmsInventoryCheck(data) {
   })
 }
 
+export function addOrUpdateWmsInventoryCheck(data) {
+  return request({
+    url: '/wms/inventoryCheck/add-or-update',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改库存盘点单据
 export function updateWmsInventoryCheck(data) {
   return request({

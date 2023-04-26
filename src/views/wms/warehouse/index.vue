@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-card style="margin-bottom: 10px;">
+    <el-card style="margin-bottom: 12px;">
       <div class="clearfix" style="margin-top: 10px;">
         <div style="width: 200px;margin-bottom: 10px;" class="left">
           <el-input placeholder="请输入仓库编号/名称" v-model="queryWarehouseParam" class="input-with-select"
