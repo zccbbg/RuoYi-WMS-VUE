@@ -1,87 +1,87 @@
 <template>
   <div class="app-container">
-    <div class="clearfix">
-      <div style="width: 200px;margin-bottom: 10px;" class="left">
-        <el-input placeholder="请输入仓库编号/名称" v-model="queryWarehouseParam" class="input-with-select"
-          suffix-icon="el-icon-search" @keyup.enter.native="handleSearchWarehouse">
-        </el-input>
-      </div>
-      <div class="left">
-        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddWarehouse"
-          v-hasPermi="['wms:warehouse:add']" style="margin: 3px 10px;">新增仓库</el-button>
-      </div>
-    </div>
-    <el-tabs :tab-position="tabPosition" style="height: 660px;" @tab-click="handleTabClick" ref="leftRef">
-      <el-tab-pane v-for="(it, index) in wmsWarehouseList" :label="it.warehouseName">
-        <div class="content-wrapper">
-          <div class="clearfix">
-            <div style="color:#409EFF;font-weight: bold;font-size: 15px;" class="content-margin left">基本信息</div>
-            <el-link type="primary" plain size="mini" @click="handleUpdateWarehouse" v-hasPermi="['wms:warehouse:add']"
-              class="left" style="margin-left: 10px;text-decoration: underline;" :underline="false">修改</el-link>
-            <el-link type="danger" plain size="mini" @click="handleDeleteWarehouse" v-hasPermi="['wms:warehouse:add']"
-              class="left" style="margin-left: 10px;text-decoration: underline;" :underline="false">删除</el-link>
-          </div>
-          <div class="content-margin info-box">
-            <el-row :gutter="20">
-              <el-col :span="8">
-                <div>
-                  <div style="font-weight: bold;">仓库名称</div>
-                  <div style="margin-top: 10px;">{{ it.warehouseName }}</div>
-                </div>
-              </el-col>
-              <el-col :span="8">
-                <div>
-                  <div style="font-weight: bold;">仓库编码</div>
-                  <div style="margin-top: 10px;">{{ it.warehouseNo }}</div>
-                </div>
-              </el-col>
-              <el-col :span="8">
-                <div>
-                  <div style="font-weight: bold;">仓库备注</div>
-                  <div style="margin-top: 10px;">{{ it.remark }}</div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
+    <el-card style="margin-bottom: 10px;">
+      <div class="clearfix" style="margin-top: 10px;">
+        <div style="width: 200px;margin-bottom: 10px;" class="left">
+          <el-input placeholder="请输入仓库编号/名称" v-model="queryWarehouseParam" class="input-with-select"
+            suffix-icon="el-icon-search" @keyup.enter.native="handleSearchWarehouse">
+          </el-input>
         </div>
-        <div class="content-wrapper">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="库区信息" name="first">
-              <div class="clearfix oper_area">
-                <div class="left">
-                  <el-input placeholder="请输入库区编号/名称" v-model="queryAreaParam" class="input-with-select"
-                    suffix-icon="el-icon-search" @keyup.enter.native="handleSearchArea">
-                  </el-input>
-                </div>
-                <div class="left" style="margin: 3px 10px;">
-                  <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddArea()"
-                    v-hasPermi="['wms:area:add']">新增库区</el-button>
-                </div>
-              </div>
-
-              <WmsTable v-loading="loading" :data="wmsAreaList">
-                <el-table-column label="编号" align="center" prop="areaNo" v-if="columns[0].visible" />
-                <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible" />
-                <el-table-column label="名称" align="center" prop="areaName" v-if="columns[1].visible" />
-                <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible" />
-                <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-                  <template slot-scope="scope">
-                    <el-button size="mini" type="text" icon="el-icon-edit" @click.stop="handleUpdateArea(scope.row)"
-                      v-hasPermi="['wms:area:edit']">修改</el-button>
-                    <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-                      v-hasPermi="['wms:area:remove']">删除</el-button>
-                  </template>
-                </el-table-column>
-              </WmsTable>
-            </el-tab-pane>
-          </el-tabs>
+        <div class="left">
+          <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddWarehouse"
+            v-hasPermi="['wms:warehouse:add']" style="margin: 3px 10px;">新增仓库</el-button>
         </div>
-      </el-tab-pane>
-    </el-tabs>
-    <!-- </el-card> -->
-    <!-- <pagination v-show="total > 0" :total="total" :page.sync="queryAreaParams.pageNum"
-      :limit.sync="queryAreaParams.pageSize" @pagination="getList" /> -->
+      </div>
+    </el-card>
+    <el-card>
+      <el-tabs :tab-position="tabPosition" style="height: 600px;" @tab-click="handleTabClick" ref="leftRef">
+        <el-tab-pane v-for="(it, index) in wmsWarehouseList" :label="it.warehouseName">
+          <div class="content-wrapper">
+            <div class="clearfix">
+              <div style="color:#409EFF;font-weight: bold;font-size: 15px;" class="content-margin left">基本信息</div>
+              <el-link type="primary" plain size="mini" @click="handleUpdateWarehouse" v-hasPermi="['wms:warehouse:add']"
+                class="left" style="margin-left: 10px;text-decoration: underline;" :underline="false">修改</el-link>
+              <el-link type="danger" plain size="mini" @click="handleDeleteWarehouse" v-hasPermi="['wms:warehouse:add']"
+                class="left" style="margin-left: 10px;text-decoration: underline;" :underline="false">删除</el-link>
+            </div>
+            <div class="content-margin info-box">
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <div>
+                    <div style="font-weight: bold;">仓库名称</div>
+                    <div style="margin-top: 10px;">{{ it.warehouseName }}</div>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div>
+                    <div style="font-weight: bold;">仓库编号</div>
+                    <div style="margin-top: 10px;">{{ it.warehouseNo }}</div>
+                  </div>
+                </el-col>
+                <el-col :span="8">
+                  <div>
+                    <div style="font-weight: bold;">仓库备注</div>
+                    <div style="margin-top: 10px;">{{ it.remark }}</div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+          </div>
+          <div class="content-wrapper">
+            <el-tabs v-model="activeName" @tab-click="handleClick">
+              <el-tab-pane label="库区信息" name="first">
+                <div class="clearfix oper_area">
+                  <div class="left">
+                    <el-input placeholder="请输入库区编号/名称" v-model="queryAreaParam" class="input-with-select"
+                      suffix-icon="el-icon-search" @keyup.enter.native="handleSearchArea">
+                    </el-input>
+                  </div>
+                  <div class="left" style="margin: 3px 10px;">
+                    <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddArea()"
+                      v-hasPermi="['wms:area:add']">新增库区</el-button>
+                  </div>
+                </div>
 
+                <WmsTable v-loading="loading" :data="wmsAreaList">
+                  <el-table-column label="编号" align="center" prop="areaNo" v-if="columns[0].visible" />
+                  <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible" />
+                  <el-table-column label="名称" align="center" prop="areaName" v-if="columns[1].visible" />
+                  <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible" />
+                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                    <template slot-scope="scope">
+                      <el-button size="mini" type="text" icon="el-icon-edit" @click.stop="handleUpdateArea(scope.row)"
+                        v-hasPermi="['wms:area:edit']">修改</el-button>
+                      <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+                        v-hasPermi="['wms:area:remove']">删除</el-button>
+                    </template>
+                  </el-table-column>
+                </WmsTable>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+    </el-card>
     <!-- 添加或修改仓库对话框 -->
     <el-dialog :title="title" :visible.sync="openWarehouse" width="50%" append-to-body>
       <el-form ref="warehouseForm" :model="warehouseForm" :rules="rules" label-width="108px" inline
