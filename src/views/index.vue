@@ -164,7 +164,7 @@
                   </div>
                   <div class="card-panel-description">
                     <div class="card-panel-text">
-                      过期物料
+                      过期
                     </div>
                     <count-to :start-val="0" :end-val="totalExpiry" :duration="3200" class="card-panel-num" />
                   </div>
@@ -174,7 +174,7 @@
           </div>
         </el-card>
         <el-card shadow="always" style="padding-bottom: 20px; font-size: 14px;margin-top: 20px;margin-bottom: 20px;">
-          <div slot="header" ref="warn"><span>库存预警</span></div>
+          <div slot="header" ref="warn"><span>预警</span></div>
           <WmsTable v-loading="loading" :data="warnList">
             <el-table-column align="left" label="编号" prop="id" width="72"></el-table-column>
             <el-table-column align="left" label="物料" prop="itemName">
