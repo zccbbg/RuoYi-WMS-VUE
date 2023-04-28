@@ -36,58 +36,6 @@
       </div> -->
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
-      <!-- <el-col :span="8">
-        <el-card shadow="always" style="padding-bottom: 20px">
-          <div slot="header"><span>预警/到期</span></div>
-          <ul>
-            <li class="li" style="width: 50%">库存预警
-                <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
-            </li>
-            <li class="li" style="width: 50%">库存到期
-                <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
-            </li>
-          </ul>
-          <ul>
-            <li class="da" style="width: 50%">10</li>
-            <li class="da" style="width: 50%">5</li>
-          </ul>
-        </el-card>
-      </el-col>
-      <el-col :span="16">
-        <el-card shadow="always" style="padding-bottom: 20px">
-          <div slot="header"><span>客户/供应商/承运商/物料</span></div>
-          <div>
-            <ul>
-              <li class="li">客户
-                  <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
-              </li>
-              <li class="li">供应商
-                  <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
-              </li>
-              <li class="li">承运商
-                  <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
-              </li>
-              <li class="li">物料
-                  <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline" slot="reference"></i></el-popover>
-              </li>
-            </ul>
-            <ul>
-              <li class="da">
-                <router-link to="/relation/customer">50</router-link>
-              </li>
-              <li class="da">
-                <router-link to="/relation/supplier">5</router-link>
-              </li>
-              <li class="da">
-                <router-link to="/relation/carrier">4</router-link>
-              </li>
-              <li class="da">
-                <router-link to="/item">24</router-link>
-              </li>
-            </ul>
-          </div>
-        </el-card>
-      </el-col> -->
       <el-col :span="12">
         <el-card shadow="always" style="padding-bottom: 20px;">
           <div>
@@ -151,7 +99,7 @@
                   </div>
                   <div class="card-panel-description">
                     <div class="card-panel-text">
-                      库存预警
+                      预警
                     </div>
                     <count-to :start-val="0" :end-val="totalWarn" :duration="3200" class="card-panel-num" />
                   </div>
