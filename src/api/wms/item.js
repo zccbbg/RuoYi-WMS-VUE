@@ -9,6 +9,14 @@ export function listWmsItem(query, pageReq) {
     params: pageReq
   })
 }
+// 查询过期物料列表
+export function listExpiryItem(pageReq) {
+  return request({
+    url: '/wms/item/expiryList',
+    method: 'post',
+    params: pageReq
+  })
+}
 // 查询物料列表
 export function allWmsItem(query) {
   return request({

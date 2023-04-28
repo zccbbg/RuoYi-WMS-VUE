@@ -48,7 +48,13 @@
             <span>{{ parseTime(scope.row.createTime, '')}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible"/>
+      <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible">
+        <template v-slot="{ row }">
+          <el-popover placement="left" width="300" trigger="hover" :content="row.remark" popper-class="popperOptions">
+            <p class="showOverTooltip" slot="reference">{{ row.remark }}</p>
+          </el-popover>
+        </template>
+      </el-table-column>
       <el-table-column label="物料" align="center" prop="remark" v-if="columns[4].visible">
         <template slot-scope="scope">
           <p>物料品种数量：{{scope.row.detailCount}}</p>
@@ -241,3 +247,22 @@ export default {
   }
 };
 </script>
+<style lang="stylus">
+.popperOptions[x-placement^=left] .popper__arrow::after{
+  border-left-color: #565D6B;
+}
+.popperOptions[x-placement^=right] .popper__arrow::after{
+  border-right-color: #565D6B;
+}
+.popperOptions[x-placement^=bottom] .popper__arrow::after{
+  border-bottom-color: #565D6B;
+}
+.popperOptions[x-placement^=top] .popper__arrow::after{
+  border-top-color: #565D6B;
+}
+.popperOptions{
+background-color: #565D6B;
+color: #FFFFFF;
+border: #565D6B;
+}
+</style>

@@ -14,6 +14,14 @@
         <el-form-item label="供应商" prop="supplierId">
           <WmsSupplierSelect v-model="form.supplierId"></WmsSupplierSelect>
         </el-form-item>
+        <el-form-item label="金额" prop="payableAmount">
+          <el-input-number
+            v-model="form.payableAmount"
+            :precision="2"
+            :min="0"
+            label="请输入金额"
+          ></el-input-number>
+        </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号"></el-input>
         </el-form-item>

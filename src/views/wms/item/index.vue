@@ -196,7 +196,7 @@
       <el-table-column
         label="分类"
         align="center"
-        prop="itemType"
+        prop="itemTypeName"
         v-if="columns[2].visible"
       />
       <el-table-column
@@ -410,7 +410,7 @@ export default {
         { key: 2, label: "名称", visible: true },
         { key: 3, label: "分类", visible: true },
         { key: 4, label: "单位类别", visible: true },
-        { key: 5, label: "所属货架", visible: true },
+        { key: 5, label: "所属货架", visible: false },
         { key: 6, label: "所属库区", visible: true },
         { key: 7, label: "所属仓库", visible: true },
         { key: 8, label: "安全库存", visible: true },

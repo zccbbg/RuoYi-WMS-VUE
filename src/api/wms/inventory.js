@@ -10,6 +10,15 @@ export function listWmsInventory(query, pageReq) {
   })
 }
 
+// 查询预警库存列表
+export function listWarnInventory(pageReq) {
+  return request({
+    url: '/wms/inventory/warnList',
+    method: 'post',
+    params: pageReq
+  })
+}
+
 // 查询库存详细
 export function getWmsInventory(id) {
   return request({
