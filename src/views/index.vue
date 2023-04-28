@@ -121,7 +121,7 @@
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
                 <div class="card-panel" @click="handleGo('/relation/carrier')">
                   <div class="card-panel-icon-wrapper icon-people">
-                    <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+                    <svg-icon icon-class="guide" class-name="card-panel-icon" />
                   </div>
                   <div class="card-panel-description">
                     <div class="card-panel-text">
@@ -138,7 +138,7 @@
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
                 <div class="card-panel" @click="handleGo('/relation/customer')">
                   <div class="card-panel-icon-wrapper icon-message">
-                    <svg-icon icon-class="table" class-name="card-panel-icon" />
+                    <svg-icon icon-class="star" class-name="card-panel-icon" />
                   </div>
                   <div class="card-panel-description">
                     <div class="card-panel-text">
@@ -151,26 +151,26 @@
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
                 <div class="card-panel">
                   <div class="card-panel-icon-wrapper icon-money">
-                    <svg-icon icon-class="tab" class-name="card-panel-icon" />
+                    <svg-icon icon-class="eye-open" class-name="card-panel-icon" />
                   </div>
                   <div class="card-panel-description">
                     <div class="card-panel-text">
                       库存预警
                     </div>
-                    <count-to :start-val="0" :end-val="warnList.length" :duration="3200" class="card-panel-num" />
+                    <count-to :start-val="0" :end-val="totalWarn" :duration="3200" class="card-panel-num" />
                   </div>
                 </div>
               </el-col>
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
                 <div class="card-panel">
                   <div class="card-panel-icon-wrapper icon-money">
-                    <svg-icon icon-class="tab" class-name="card-panel-icon" />
+                    <svg-icon icon-class="bug" class-name="card-panel-icon" />
                   </div>
                   <div class="card-panel-description">
                     <div class="card-panel-text">
                       过期物料
                     </div>
-                    <count-to :start-val="0" :end-val="expiryList.length" :duration="3200" class="card-panel-num" />
+                    <count-to :start-val="0" :end-val="totalExpiry" :duration="3200" class="card-panel-num" />
                   </div>
                 </div>
               </el-col>
