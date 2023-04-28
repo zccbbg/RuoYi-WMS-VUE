@@ -247,7 +247,7 @@
             <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible" />
             <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
               <template slot-scope="scope">
-                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, "") }}</span>
+                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, "{yyyy}-{mm}-{dd}") }}</span>
               </template>
             </el-table-column>
             <el-table-column label="备注" align="center" prop="remark" v-if="columns[9].visible" />
