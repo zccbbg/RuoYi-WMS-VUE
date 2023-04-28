@@ -131,10 +131,6 @@
                   </div>
                 </div>
               </el-col>
-            </el-row>
-          </div>
-          <div>
-            <el-row :gutter="40" class="panel-group">
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
                 <div class="card-panel" @click="handleGo('/relation/customer')">
                   <div class="card-panel-icon-wrapper icon-message">
@@ -149,7 +145,7 @@
                 </div>
               </el-col>
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel">
+                <div class="card-panel" @click="goAnchor('warn')">
                   <div class="card-panel-icon-wrapper icon-money">
                     <svg-icon icon-class="eye-open" class-name="card-panel-icon" />
                   </div>
@@ -162,7 +158,7 @@
                 </div>
               </el-col>
               <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel">
+                <div class="card-panel" @click="goAnchor('expiry')">
                   <div class="card-panel-icon-wrapper icon-money">
                     <svg-icon icon-class="bug" class-name="card-panel-icon" />
                   </div>
@@ -178,11 +174,11 @@
           </div>
         </el-card>
         <el-card shadow="always" style="padding-bottom: 20px; font-size: 14px;margin-top: 20px;margin-bottom: 20px;">
-          <div slot="header"><span>库存预警</span></div>
+          <div slot="header" ref="warn"><span>库存预警</span></div>
           <WmsTable v-loading="loading" :data="warnList">
             <el-table-column align="left" label="编号" prop="id" width="72"></el-table-column>
             <el-table-column align="left" label="物料" prop="itemName">
-                <template v-slot="{ row }"><span style="color:red">{{ row.itemName }}</span></template>
+              <template v-slot="{ row }"><span style="color:red">{{ row.itemName }}</span></template>
             </el-table-column>
             <el-table-column align="left" label="编码" prop="itemNo"></el-table-column>
             <el-table-column align="left" label="仓库/库区">
@@ -196,7 +192,7 @@
           </WmsTable>
 
           <pagination v-show="totalWarn > 0" :total="totalWarn" :page.sync="queryWarnParams.pageNum"
-            :limit.sync="queryWarnParams.pageSize" @pagination="getWarnList" :autoScroll="ifScroll"/>
+            :limit.sync="queryWarnParams.pageSize" @pagination="getWarnList" :autoScroll="ifScroll" />
         </el-card>
       </el-col>
       <el-col :span="12">
@@ -231,7 +227,7 @@
           </el-timeline>
         </el-card>
         <el-card style="padding-bottom: 20px; font-size: 14px;margin-top: 20px;">
-          <div slot="header"><span>过期物料</span></div>
+          <div slot="header" ref="expiry"><span>过期物料</span></div>
           <WmsTable v-loading="loading" :data="expiryList">
             <el-table-column label="编号" align="center" prop="itemNo" v-if="columns[0].visible" />
             <el-table-column label="名称" align="center" prop="itemName" v-if="columns[1].visible">
@@ -247,13 +243,14 @@
             <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible" />
             <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
               <template slot-scope="scope">
-                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, "{yyyy}-{mm}-{dd}") }}</span>
+                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, "{yyyy}-{mm}-{dd}")
+                }}</span>
               </template>
             </el-table-column>
             <el-table-column label="备注" align="center" prop="remark" v-if="columns[9].visible" />
           </WmsTable>
           <pagination v-show="totalExpiry > 0" :total="totalExpiry" :page.sync="queryExpiryParams.pageNum"
-            :limit.sync="queryExpiryParams.pageSize" @pagination="getExpiryList" :autoScroll="ifScroll"/>
+            :limit.sync="queryExpiryParams.pageSize" @pagination="getExpiryList" :autoScroll="ifScroll" />
         </el-card>
       </el-col>
     </el-row>
@@ -409,6 +406,12 @@ export default {
     },
     handleGo(path) {
       this.$router.push(path)
+    },
+    goAnchor(elementName) {
+      this.$refs[elementName].scrollIntoView({
+        behavior: "smooth",  // 平滑过渡
+        block: "start"  	// 上边框与视窗顶部平齐。默认值
+      });
     }
   }
 }
