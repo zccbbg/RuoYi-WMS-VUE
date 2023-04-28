@@ -7,20 +7,15 @@
         </el-form-item>
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-radio-group v-model="form.receiptOrderType">
-            <el-radio-button v-for="dict in dict.type.wms_receipt_type" :key="dict.value"
-              :label="dict.value">{{ dict.label }}</el-radio-button>
+            <el-radio-button v-for="dict in dict.type.wms_receipt_type" :key="dict.value" :label="dict.value">{{
+              dict.label }}</el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
           <WmsSupplierSelect v-model="form.supplierId"></WmsSupplierSelect>
         </el-form-item>
-        <el-form-item label="金额" prop="payableAmount">
-          <el-input-number
-            v-model="form.payableAmount"
-            :precision="2"
-            :min="0"
-            label="请输入金额"
-          ></el-input-number>
+        <el-form-item label="金额" prop="payableAmount" v-show="hasSupplier">
+          <el-input-number v-model="form.payableAmount" :precision="2" :min="0" label="请输入金额"></el-input-number>
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号"></el-input>
@@ -44,7 +39,8 @@
             <th>物料编号</th>
             <th>物料类型</th>
             <th>计划数量</th>
-            <th>仓库/库区/货架</th>
+            <th>仓库/库区</th>
+            <th>金额</th>
             <th>操作</th>
           </tr>
           <tr v-for="(it, index) in form.details">
@@ -56,6 +52,10 @@
             </td>
             <td align="center">
               <WmsWarehouseCascader v-model="it.place" size="small"></WmsWarehouseCascader>
+            </td>
+            <td align="center">
+              <el-input-number v-model="it.money" :precision="2" @change="selectMoney" size="mini" :min="0"
+                label="请输入金额"></el-input-number>
             </td>
             <td align="center"><a class="red" @click="form.details.splice(index, 1)">删除</a></td>
           </tr>
@@ -95,7 +95,9 @@ export default {
     return {
       // 表单参数
       form: {
-        details: []
+        details: [],
+        payableAmount: 0.00,
+        supplierId: null
       },
       // 表单校验
       rules: {},
@@ -109,6 +111,19 @@ export default {
         },
         cancel: () => {
         }
+      },
+      hasSupplier: false
+    }
+  },
+  watch: {
+    'form.supplierId': {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.hasSupplier = true
+        } else {
+          this.hasSupplier = false
+        }
       }
     }
   },
@@ -121,6 +136,17 @@ export default {
     }
   },
   methods: {
+    /** 统计入库单金额 */
+    selectMoney() {
+      let sum = 0;
+      this.form.details.map(item => {
+        if (!isNaN(parseFloat(item.money))) {
+          sum += item.money
+        }
+        return item.money
+      })
+      this.form.payableAmount = sum
+    },
     cancel() {
       this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
     },
@@ -145,6 +171,7 @@ export default {
             itemId: it.prod.id,
             rackId: it.prod.rackId,
             areaId: it.prod.areaId,
+            money: it.money,
             warehouseId: it.prod.warehouseId,
             planQuantity: it.planQuantity,
             realQuantity: it.realQuantity,
