@@ -8,21 +8,12 @@
       </el-form-item>
       <el-form-item label="交易类型" prop="transactionType">
         <DictRadio v-model="queryParams.transactionType" @change="handleQuery" size="small"
-                   :radioData="dict.type.wms_supplier_transaction_type" :showAll="'all'"/>
+          :radioData="dict.type.wms_customer_transaction_type" :showAll="'all'" />
       </el-form-item>
       <el-form-item label="统计范围" prop="Time">
-        <el-date-picker
-          v-model="queryParams.Time"
-          type="datetimerange"
-          :picker-options="pickerOptions"
-          range-separator="至"
-          size="small"
-          format="yyyy-MM-dd HH:mm:ss"
-          value-format="yyyy-MM-dd HH:mm:ss"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          :default-time="['00:00:00', '23:59:59']"
-          align="right"
+        <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
+          range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+          start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" align="right"
           @change="handleChange">
         </el-date-picker>
       </el-form-item>
@@ -32,31 +23,78 @@
       </el-form-item>
     </el-form>
 
-    <WmsTable v-loading="loading" :data="wmsSupplierTransactionList" @selection-change="handleSelectionChange">
+    <!-- <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['wms:wmsCustomerTransaction:add']"
+        >新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="success"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          :disabled="single"
+          @click="handleUpdate"
+          v-hasPermi="['wms:wmsCustomerTransaction:edit']"
+        >修改</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          plain
+          icon="el-icon-delete"
+          size="mini"
+          :disabled="multiple"
+          @click="handleDelete"
+          v-hasPermi="['wms:wmsCustomerTransaction:remove']"
+        >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          plain
+          icon="el-icon-download"
+          size="mini"
+          :loading="exportLoading"
+          @click="handleExport"
+          v-hasPermi="['wms:wmsCustomerTransaction:export']"
+        >导出</el-button>
+      </el-col>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+    </el-row> -->
+
+    <WmsTable v-loading="loading" :data="wmsCustomerTransactionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="交易编号" align="center" prop="transactionCode" v-if="columns[0].visible" />
-      <el-table-column label="供应商" align="center" prop="supplierId" v-if="columns[1].visible">
+      <el-table-column label="用户" align="center" prop="customerId" v-if="columns[1].visible">
         <template slot-scope="scope">
-          {{ getSupplierName(scope.row) }}
+          {{ getCustomerName(scope.row) }}
         </template>
       </el-table-column>
       <el-table-column label="交易类型" align="center" prop="transactionType" v-if="columns[2].visible">
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.wms_supplier_transaction_type" :value="scope.row.transactionType" />
+          <dict-tag :options="dict.type.wms_customer_transaction_type" :value="scope.row.transactionType" />
         </template>
       </el-table-column>
       <el-table-column label="交易金额" align="center" prop="transactionAmount" v-if="columns[3].visible" />
       <el-table-column label="上期余额" align="center" prop="previousBalance" v-if="columns[4].visible" />
       <el-table-column label="当前余额" align="center" prop="currentBalance" v-if="columns[5].visible" />
-      <el-table-column label="入库单号" align="center" prop="receiptOrderId" v-if="columns[6].visible" />
+      <el-table-column label="出库单号" align="center" prop="shipmentOrderId" v-if="columns[6].visible" />
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[7].visible" />
       <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[8].visible" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" v-if="columns[9].visible">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)"
-            v-hasPermi="['wms:wmsSupplierTransaction:edit']">修改</el-button>
+            v-hasPermi="['wms:wmsCustomerTransaction:edit']">修改</el-button>
           <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsSupplierTransaction:remove']">删除</el-button>
+            v-hasPermi="['wms:wmsCustomerTransaction:remove']">删除</el-button>
         </template>
       </el-table-column>
     </WmsTable>
@@ -64,24 +102,19 @@
     <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
       @pagination="getList" />
 
-    <!-- 添加或修改供应商账户流水对话框 -->
+    <!-- 添加或修改客户账户流水对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
         <el-form-item label="交易编号" prop="transactionCode">
           <el-input v-model="form.transactionCode" placeholder="请输入交易编号" />
         </el-form-item>
-        <el-form-item label="供应商编号" prop="supplierId">
-          <el-input v-model="form.supplierId" placeholder="请输入供应商编号" />
+        <el-form-item label="用户编号" prop="customerId">
+          <el-input v-model="form.customerId" placeholder="请输入用户编号" />
         </el-form-item>
         <el-form-item label="交易类型" prop="transactionType">
-          <el-radio-group v-model="form.transactionType">
-            <el-radio
-              v-for="dict in dict.type.wms_supplier_transaction_type"
-              :key="dict.value"
-              :label="dict.value"
-            >{{ dict.label }}
-            </el-radio>
-          </el-radio-group>
+          <el-select v-model="form.transactionType" placeholder="请选择交易类型">
+            <el-option label="请选择字典生成" value="" />
+          </el-select>
         </el-form-item>
         <el-form-item label="交易金额" prop="transactionAmount">
           <el-input v-model="form.transactionAmount" placeholder="请输入交易金额" />
@@ -92,8 +125,8 @@
         <el-form-item label="当前余额" prop="currentBalance">
           <el-input v-model="form.currentBalance" placeholder="请输入当前余额" />
         </el-form-item>
-        <el-form-item label="入库单号" prop="receiptOrderId">
-          <el-input v-model="form.receiptOrderId" placeholder="请输入入库单号" />
+        <el-form-item label="出库单号" prop="shipmentOrderId">
+          <el-input v-model="form.shipmentOrderId" placeholder="请输入出库单号" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -108,14 +141,14 @@
 </template>
 
 <script>
-import { listWmsSupplierTransaction, getWmsSupplierTransaction, delWmsSupplierTransaction, addWmsSupplierTransaction, updateWmsSupplierTransaction, exportWmsSupplierTransaction } from "@/api/wms/supplierTransaction";
+import { listWmsCustomerTransaction, getWmsCustomerTransaction, delWmsCustomerTransaction, addWmsCustomerTransaction, updateWmsCustomerTransaction, exportWmsCustomerTransaction } from "@/api/wms/customerTransaction";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "WmsSupplierTransaction",
-  dicts: ["wms_supplier_transaction_type"],
+  name: "WmsCustomerTransaction",
+  dicts: ["wms_customer_transaction_type"],
   computed: {
-    ...mapGetters(['supplierMap']),
+    ...mapGetters(['customerMap']),
   },
   data() {
     return {
@@ -133,8 +166,8 @@ export default {
       showSearch: true,
       // 总条数
       total: 0,
-      // 供应商账户流水表格数据
-      wmsSupplierTransactionList: [],
+      // 客户账户流水表格数据
+      wmsCustomerTransactionList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -144,12 +177,12 @@ export default {
         pageNum: 1,
         pageSize: 10,
         transactionCode: null,
-        supplierId: null,
+        customerId: null,
         transactionType: null,
         transactionAmount: null,
         previousBalance: null,
         currentBalance: null,
-        receiptOrderId: null,
+        shipmentOrderId: null,
       },
       // 表单参数
       form: {},
@@ -158,8 +191,8 @@ export default {
         transactionCode: [
           { required: true, message: "交易编号不能为空", trigger: "blur" }
         ],
-        supplierId: [
-          { required: true, message: "供应商编号不能为空", trigger: "blur" }
+        customerId: [
+          { required: true, message: "用户编号不能为空", trigger: "blur" }
         ],
         transactionType: [
           { required: true, message: "交易类型  1：结款  2：应付 不能为空", trigger: "change" }
@@ -182,16 +215,15 @@ export default {
       },
       columns: [
         { key: 1, label: "交易编号", visible: true },
-        { key: 2, label: "供应商编号", visible: true },
-        { key: 3, label: "交易类型  1：结款  2：应付 ", visible: true },
+        { key: 2, label: "用户编号", visible: true },
+        { key: 3, label: "交易类型", visible: true },
         { key: 4, label: "交易金额", visible: true },
         { key: 5, label: "上期余额", visible: true },
         { key: 6, label: "当前余额", visible: true },
-        { key: 7, label: "入库单号", visible: false },
+        { key: 7, label: "出库单号", visible: false },
         { key: 8, label: "备注", visible: true },
-        { key: 8, label: "创建时间", visible: true },
-        { key: 9, label: "操作", visible: false },
-
+        { key: 9, label: "创建时间", visible: true },
+        { key: 10, label: "操作", visible: false },
       ],
       pickerOptions: {
         shortcuts: [{
@@ -220,21 +252,21 @@ export default {
           }
         }]
       },
-      supplierId: null
+      customerId: null
     };
   },
   created() {
     const {id} = this.$route.query
     if (id) {
-      this.supplierId = id
+      this.customerId = id
       this.getList(id)
     }
   },
   methods: {
-    getSupplierName(row) {
-      return this.supplierMap.get(Number(row.supplierId))
+    getCustomerName(row) {
+      return this.customerMap.get(Number(row.customerId))
     },
-    /** 查询供应商账户流水列表 */
+    /** 查询客户账户流水列表 */
     getList() {
       if (this.queryParams.Time){
         this.queryParams.startTime = this.queryParams.Time[0]
@@ -242,11 +274,11 @@ export default {
       }
       this.loading = true;
       const { pageNum, pageSize } = this.queryParams;
-      const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined,supplierId:this.supplierId};
+      const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined,customerId:this.customerId };
       const pageReq = { page: pageNum - 1, size: pageSize };
-      listWmsSupplierTransaction(query, pageReq).then(response => {
+      listWmsCustomerTransaction(query, pageReq).then(response => {
         const { content, totalElements } = response
-        this.wmsSupplierTransactionList = content;
+        this.wmsCustomerTransactionList = content;
         this.total = totalElements;
         this.loading = false;
       });
@@ -261,12 +293,12 @@ export default {
       this.form = {
         id: null,
         transactionCode: null,
-        supplierId: null,
+        customerId: null,
         transactionType: null,
         transactionAmount: null,
         previousBalance: null,
         currentBalance: null,
-        receiptOrderId: null,
+        shipmentOrderId: null,
         remark: null,
         createTime: null,
         updateTime: null
@@ -293,16 +325,16 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加供应商账户流水";
+      this.title = "添加客户账户流水";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const id = row.id || this.ids
-      getWmsSupplierTransaction(id).then(response => {
+      getWmsCustomerTransaction(id).then(response => {
         this.form = response;
         this.open = true;
-        this.title = "修改供应商账户流水";
+        this.title = "修改客户账户流水";
       });
     },
     /** 提交按钮 */
@@ -310,13 +342,13 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
-            updateWmsSupplierTransaction(this.form).then(response => {
+            updateWmsCustomerTransaction(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
-            addWmsSupplierTransaction(this.form).then(response => {
+            addWmsCustomerTransaction(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
@@ -328,8 +360,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除供应商账户流水编号为"' + ids + '"的数据项？').then(function () {
-        return delWmsSupplierTransaction(ids);
+      this.$modal.confirm('是否确认删除客户账户流水编号为"' + ids + '"的数据项？').then(function () {
+        return delWmsCustomerTransaction(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
@@ -338,16 +370,16 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有供应商账户流水数据项？').then(() => {
+      this.$modal.confirm('是否确认导出所有客户账户流水数据项？').then(() => {
         this.exportLoading = true;
-        return exportWmsSupplierTransaction(queryParams);
+        return exportWmsCustomerTransaction(queryParams);
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
       }).catch(() => { });
     },
-    handleChange(value){
-      if(!value){
+    handleChange(value) {
+      if (!value) {
         this.queryParams.startTime = null;
         this.queryParams.endTime = null;
       }
