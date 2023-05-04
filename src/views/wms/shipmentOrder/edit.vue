@@ -14,8 +14,8 @@
         <el-form-item label="顾客" prop="customerId">
           <WmsCustomerSelect v-model="form.customerId"></WmsCustomerSelect>
         </el-form-item>
-        <el-form-item label="金额" prop="payableAmount" v-show="hasCustomer">
-          <el-input-number v-model="form.payableAmount" :precision="2" :min="0" label="请输入金额"></el-input-number>
+        <el-form-item label="金额" prop="receivableAmount" v-show="hasCustomer">
+          <el-input-number v-model="form.receivableAmount" :precision="2" :min="0" label="请输入金额"></el-input-number>
         </el-form-item>
         <el-form-item label="订单号" prop="orderNo">
           <el-input v-model="form.orderNo" placeholder="请输入订单号"></el-input>
@@ -143,7 +143,7 @@ export default {
         }
         return item.money
       })
-      this.form.payableAmount = sum
+      this.form.receivableAmount = sum
     },
     cancel() {
       this.$tab.closeOpenPage({ path: '/wms/shipmentOrder' })
@@ -169,6 +169,7 @@ export default {
             itemId: it.prod.id,
             rackId: it.prod.rackId,
             areaId: it.prod.areaId,
+            money: it.money,
             warehouseId: it.prod.warehouseId,
             planQuantity: it.planQuantity,
             realQuantity: it.realQuantity,
