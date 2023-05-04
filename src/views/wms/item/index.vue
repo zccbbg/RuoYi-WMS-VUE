@@ -100,7 +100,7 @@
 
     <!-- 添加或修改物料对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
+      <el-form ref="form" :model="form" :rules="rules" label-width="98px" class="dialog-form-two">
         <el-row :gutter="24">
           <el-col :span="12">
             <el-form-item label="编号" prop="itemNo">
@@ -145,12 +145,10 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="备注" prop="remark">
+        </el-row>
+        <el-form-item label="备注" prop="remark">
               <el-input v-model="form.remark" placeholder="请输入备注" />
             </el-form-item>
-          </el-col>
-        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
