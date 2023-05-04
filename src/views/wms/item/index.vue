@@ -115,8 +115,8 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12">
-            <el-form-item label="分类" prop="itemType">
-              <treeselect v-model="form.itemType" :options="deptOptions" :show-count="true" placeholder="请选择分类" />
+            <el-form-item label="仓库/库区" prop="place">
+              <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -127,8 +127,8 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12">
-            <el-form-item label="仓库/库区" prop="place">
-              <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>
+            <el-form-item label="分类" prop="itemType">
+              <treeselect v-model="form.itemType" :options="deptOptions" :show-count="true" placeholder="请选择分类" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -145,10 +145,12 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-form-item label="备注" prop="remark">
+          <el-col :span="12">
+            <el-form-item label="备注" prop="remark">
               <el-input v-model="form.remark" placeholder="请输入备注" />
             </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
