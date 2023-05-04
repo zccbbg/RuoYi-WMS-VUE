@@ -13,7 +13,8 @@
         </div>
       </div>
     </el-card>
-    <el-card>
+    <el-empty description="暂无仓库" v-if="wmsWarehouseList.length == 0"></el-empty>
+    <el-card v-else>
       <el-tabs :tab-position="tabPosition" style="height: 600px;" @tab-click="handleTabClick" ref="leftRef">
         <el-tab-pane v-for="(it, index) in wmsWarehouseList" :label="it.warehouseName">
           <div class="content-wrapper">

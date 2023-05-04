@@ -1,65 +1,56 @@
-<template lang="pug">
-  .app-container
-    el-form.ry_form(
-      v-show="showSearch"
-      :inline="true"
-      label-width="100px"
-      :model="queryParams"
-      ref="queryForm"
-      size="medium"
-    )
-      el-form-item(label="物料" prop="itemId")
-        item-select(v-model="queryParams.itemId" )
-      el-form-item(label="仓库" prop="rackId")
-        wms-warehouse-cascader(v-model="queryParams.place")
-      el-form-item(label="库存" prop="quantity")
-        number-range(v-model="queryParams.quantityRange")
-      el-form-item.flex_one.tr
-        el-button(icon="el-icon-search" size="mini" type="primary" @click="handleQuery") 搜索
-        el-button(icon="el-icon-refresh" size="mini" @click="resetQuery") 重置
-    el-row.mb8(:gutter="10")
-      right-toolbar(:columns="columns" :showSearch.sync="showSearch" @queryTable="getList")
-    WmsTable(v-loading="loading" :data="wmsInventoryList" @selection-change="handleSelectionChange")
-      el-table-column(align="left" label="编号" prop="id" width="72")
-      el-table-column(align="left" label="物料")
-        template(v-slot="{ row }")
-          div 编号： {{row.itemId}}
-          div {{row.itemName}}
-          div {{row.itemNo}}
-      el-table-column(align="left" label="仓库/库区/货架")
-        template(v-slot="{ row }")
-          span(v-if="row.warehouseName") {{row.warehouseName}}
-          span(v-if="row.areaName") /{{row.areaName}}
-          span(v-if="row.rackName") /{{row.rackName}}
-      el-table-column(align="left" label="库存" prop="quantity")
-    pagination(
-      v-show="total>0"
-      :limit.sync="pageReq.size"
-      :page.sync="pageReq.page"
-      :total="total"
-      @pagination="getList"
-    )
-    // 添加或修改库存对话框
-    el-dialog(append-to-body :title="title" :visible.sync="open" width="50%")
-      el-form.dialog-form-two(
-        inline
-        label-width="108px"
-        :model="form"
-        ref="form"
-        :rules="rules"
-      )
-        el-form-item(label="物料ID" prop="itemId")
-          el-input(v-model="form.itemId" placeholder="请输入物料ID")
-        el-form-item(label="货架id" prop="rackId")
-          el-input(v-model="form.rackId" placeholder="请输入货架id")
-        el-form-item(label="库存" prop="quantity")
-          el-input(v-model="form.quantity" placeholder="请输入库存")
-        el-form-item(label="备注" prop="remark")
-          el-input(v-model="form.remark" placeholder="请输入备注")
-      .dialog-footer(slot="footer")
-        el-button(type="primary" @click="submitForm") 确 定
-        el-button(@click="cancel") 取 消
-</template>
+<template>
+  <div class="app-container">
+    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm" size="medium">
+      <el-form-item label="物料" prop="itemId">
+        <item-select v-model="queryParams.itemId"></item-select>
+      </el-form-item>
+      <el-form-item label="仓库" prop="rackId">
+        <wms-warehouse-cascader v-model="queryParams.place"></wms-warehouse-cascader>
+      </el-form-item>
+      <el-form-item label="库存" prop="quantity">
+        <number-range v-model="queryParams.quantityRange"></number-range>
+      </el-form-item>
+      <el-form-item class="flex_one tr">
+        <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <el-row class="mb8" :gutter="10">
+      <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+    <WmsTable v-loading="loading" :data="wmsInventoryList" @selection-change="handleSelectionChange">
+      <el-table-column align="left" label="物料编码" prop="itemNo">
+      </el-table-column>
+      <el-table-column align="left" label="物料名称" prop="itemName">
+      </el-table-column>
+      <el-table-column align="left" label="仓库/库区">
+        <template v-slot="{ row }"><span v-if="row.warehouseName">{{row.warehouseName}}</span><span v-if="row.areaName">/{{row.areaName}}</span></template>
+      </el-table-column>
+      <el-table-column align="left" label="库存" prop="quantity"></el-table-column>
+    </WmsTable>
+    <pagination v-show="total&gt;0" :limit.sync="pageReq.size" :page.sync="pageReq.page" :total="total" @pagination="getList"></pagination>
+    <!-- 添加或修改库存对话框-->
+    <el-dialog append-to-body="append-to-body" :title="title" :visible.sync="open" width="50%">
+      <el-form class="dialog-form-two" inline="inline" label-width="108px" :model="form" ref="form" :rules="rules">
+        <el-form-item label="物料ID" prop="itemId">
+          <el-input v-model="form.itemId" placeholder="请输入物料ID"></el-input>
+        </el-form-item>
+        <el-form-item label="货架id" prop="rackId">
+          <el-input v-model="form.rackId" placeholder="请输入货架id"></el-input>
+        </el-form-item>
+        <el-form-item label="库存" prop="quantity">
+          <el-input v-model="form.quantity" placeholder="请输入库存"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="dialog-footer" slot="footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </div></template>
 
 <script>
 import {
