@@ -1,334 +1,156 @@
 <template>
   <div class="app-container">
-    <el-form
-      :model="queryParams"
-      ref="queryForm"
-      :inline="true"
-      v-show="showSearch"
-      label-width="100px"
-      size="medium"
-      class="ry_form"
-    >
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+      class="ry_form">
       <el-form-item label="编号" prop="itemNo">
-        <el-input
-          v-model="queryParams.itemNo"
-          placeholder="请输入编号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.itemNo" placeholder="请输入编号" clearable size="small"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="名称" prop="itemName">
-        <el-input
-          v-model="queryParams.itemName"
-          placeholder="请输入名称"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.itemName" placeholder="请输入名称" clearable size="small"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="分类" prop="itemType">
-        <el-select
-          v-model="queryParams.itemType"
-          placeholder="请选择分类"
-          clearable
-          size="small"
-        >
-          <el-option
-            v-for="dict in dict.type.wms_item_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          ></el-option>
-        </el-select>
+        <treeselect v-model="queryParams.itemType" style="max-width: 180px" :options="deptOptions" :show-count="true"
+          placeholder="请选择分类" />
       </el-form-item>
       <el-form-item label="单位类别" prop="unit">
-        <el-input
-          v-model="queryParams.unit"
-          placeholder="请输入单位类别"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.unit" placeholder="请输入单位类别" clearable size="small"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="所属货架" prop="rackId">
-        <el-input
-          v-model="queryParams.rackId"
-          placeholder="请输入所属货架"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.rackId" placeholder="请输入所属货架" clearable size="small"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="所属库区" prop="areaId">
-        <el-input
-          v-model="queryParams.areaId"
-          placeholder="请输入所属库区"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.areaId" placeholder="请输入所属库区" clearable size="small"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="所属仓库" prop="warehouseId">
-        <el-input
-          v-model="queryParams.warehouseId"
-          placeholder="请输入所属仓库"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
+        <el-input v-model="queryParams.warehouseId" placeholder="请输入所属仓库" clearable size="small"
+          @keyup.enter.native="handleQuery" />
       </el-form-item>
       <template v-if="showMoreCondition">
         <el-form-item label="安全库存" prop="quantity">
-          <el-input
-            v-model="queryParams.quantity"
-            placeholder="请输入安全库存"
-            clearable
-            size="small"
-            @keyup.enter.native="handleQuery"
-          />
+          <el-input v-model="queryParams.quantity" placeholder="请输入安全库存" clearable size="small"
+            @keyup.enter.native="handleQuery" />
         </el-form-item>
         <el-form-item label="有效期" prop="expiryDate">
-          <el-date-picker
-            clearable
-            size="small"
-            v-model="queryParams.expiryDate"
-            type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss"
-            placeholder="选择有效期"
-          >
+          <el-date-picker clearable size="small" v-model="queryParams.expiryDate" type="datetime"
+            value-format="yyyy-MM-ddTHH:mm:ss" placeholder="选择有效期">
           </el-date-picker>
         </el-form-item>
       </template>
       <el-form-item class="flex_one tr">
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          size="mini"
-          @click="handleQuery"
-          >搜索</el-button
-        >
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery"
-          >重置</el-button
-        >
-        <el-button
-          :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-          size="mini"
-          @click="showMoreCondition = !showMoreCondition"
-          >{{ showMoreCondition ? "收起条件" : "展开条件" }}</el-button
-        >
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini"
+          @click="showMoreCondition = !showMoreCondition">{{ showMoreCondition ? "收起条件" : "展开条件" }}</el-button>
       </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['wms:item:add']"
-          >新增</el-button
-        >
+        <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
+          v-hasPermi="['wms:item:add']">新增</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:item:edit']"
-          >修改</el-button
-        >
+        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
+          v-hasPermi="['wms:item:edit']">修改</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:item:remove']"
-          >删除</el-button
-        >
+        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
+          v-hasPermi="['wms:item:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['wms:item:export']"
-          >导出</el-button
-        >
+        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
+          v-hasPermi="['wms:item:export']">导出</el-button>
       </el-col>
-      <right-toolbar
-        :showSearch.sync="showSearch"
-        @queryTable="getList"
-        :columns="columns"
-      ></right-toolbar>
+      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
-    <WmsTable
-      v-loading="loading"
-      :data="wmsItemList"
-      @selection-change="handleSelectionChange"
-    >
+    <WmsTable v-loading="loading" :data="wmsItemList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column
-        label="编号"
-        align="center"
-        prop="itemNo"
-        v-if="columns[0].visible"
-      />
-      <el-table-column
-        label="名称"
-        align="center"
-        prop="itemName"
-        v-if="columns[1].visible"
-      />
-      <el-table-column
-        label="分类"
-        align="center"
-        prop="itemTypeName"
-        v-if="columns[2].visible"
-      />
-      <el-table-column
-        label="单位类别"
-        align="center"
-        prop="unit"
-        v-if="columns[3].visible"
-      />
-      <el-table-column
-        label="所属仓库"
-        align="center"
-        prop="warehouseName"
-        v-if="columns[6].visible"
-      />
-      <el-table-column
-        label="所属库区"
-        align="center"
-        prop="areaName"
-        v-if="columns[5].visible"
-      />
-      <el-table-column
-        label="所属货架"
-        align="center"
-        prop="rackName"
-        v-if="columns[4].visible"
-      />
-      <el-table-column
-        label="安全库存"
-        align="center"
-        prop="quantity"
-        v-if="columns[7].visible"
-      />
-      <el-table-column
-        label="有效期"
-        align="center"
-        prop="expiryDate"
-        width="180"
-        v-if="columns[8].visible"
-      >
+      <el-table-column label="编号" align="center" prop="itemNo" v-if="columns[0].visible" />
+      <el-table-column label="名称" align="center" prop="itemName" v-if="columns[1].visible" />
+      <el-table-column label="分类" align="center" prop="itemTypeName" v-if="columns[2].visible" />
+      <el-table-column label="单位类别" align="center" prop="unit" v-if="columns[3].visible" />
+      <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[6].visible" />
+      <el-table-column label="所属库区" align="center" prop="areaName" v-if="columns[5].visible" />
+      <el-table-column label="所属货架" align="center" prop="rackName" v-if="columns[4].visible" />
+      <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible" />
+      <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.expiryDate, "") }}</span>
         </template>
       </el-table-column>
-      <el-table-column
-        label="备注"
-        align="center"
-        prop="remark"
-        v-if="columns[9].visible"
-      />
-      <el-table-column
-        label="操作"
-        align="center"
-        class-name="small-padding fixed-width"
-      >
+      <el-table-column label="备注" align="center" prop="remark" v-if="columns[9].visible" />
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click.stop="handleUpdate(scope.row)"
-            v-hasPermi="['wms:item:edit']"
-            >修改</el-button
-          >
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:item:remove']"
-            >删除</el-button
-          >
+          <el-button size="mini" type="text" icon="el-icon-edit" @click.stop="handleUpdate(scope.row)"
+            v-hasPermi="['wms:item:edit']">修改</el-button>
+          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+            v-hasPermi="['wms:item:remove']">删除</el-button>
         </template>
       </el-table-column>
     </WmsTable>
 
-    <pagination
-      v-show="total > 0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize"
+      @pagination="getList" />
 
     <!-- 添加或修改物料对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="50%" append-to-body>
-      <el-form
-        ref="form"
-        :model="form"
-        :rules="rules"
-        label-width="108px"
-        inline
-        class="dialog-form-two"
-      >
-        <el-form-item label="编号" prop="itemNo">
-          <el-input v-model="form.itemNo" placeholder="请输入编号" />
-        </el-form-item>
-        <el-form-item label="名称" prop="itemName">
-          <el-input v-model="form.itemName" placeholder="请输入名称" />
-        </el-form-item>
-        <el-form-item label="分类" prop="itemType">
-          <el-select v-model="form.itemType" placeholder="请选择分类">
-            <el-option
-              v-for="dict in dict.type.wms_item_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="单位类别" prop="unit">
-          <el-input v-model="form.unit" placeholder="请输入单位类别" />
-        </el-form-item>
-        <el-form-item label="仓库/库区/货架" prop="place">
-          <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>
-        </el-form-item>
-        <el-form-item label="安全库存" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入安全库存" />
-        </el-form-item>
-        <el-form-item label="有效期" prop="expiryDate">
-          <el-date-picker
-            clearable
-            size="small"
-            v-model="form.expiryDate"
-            type="datetime"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            placeholder="选择有效期"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
+      <el-form ref="form" :model="form" :rules="rules" label-width="108px" inline class="dialog-form-two">
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="编号" prop="itemNo">
+              <el-input v-model="form.itemNo" placeholder="请输入编号" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="名称" prop="itemName">
+              <el-input v-model="form.itemName" placeholder="请输入名称" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="分类" prop="itemType">
+              <treeselect v-model="form.itemType" :options="deptOptions" :show-count="true" placeholder="请选择分类" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单位类别" prop="unit">
+              <el-input v-model="form.unit" placeholder="请输入单位类别" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="仓库/库区" prop="place">
+              <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="安全库存" prop="quantity">
+              <el-input v-model="form.quantity" placeholder="请输入安全库存" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="有效期" prop="expiryDate">
+              <el-date-picker clearable size="small" v-model="form.expiryDate" type="datetime"
+                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择有效期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="form.remark" placeholder="请输入备注" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -348,17 +170,23 @@ import {
   exportWmsItem,
 } from "@/api/wms/item";
 import { mapGetters } from "vuex";
+import Treeselect from "@riophae/vue-treeselect";
+import { itemTypeTreeselect } from "@/api/wms/itemType";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "WmsItem",
+  components: { Treeselect },
   dicts: ["wms_item_type"],
   computed: {
-    ...mapGetters(['warehouseMap', 'warehouseList','areaList','areaMap','rackList','rackMap']),
+    ...mapGetters(['warehouseMap', 'warehouseList', 'areaList', 'areaMap', 'rackList', 'rackMap']),
   },
   data() {
     return {
       // 遮罩层
       loading: true,
+      // 部门树选项
+      deptOptions: [],
       // 导出遮罩层
       exportLoading: false,
       // 选中数组
@@ -422,6 +250,9 @@ export default {
   },
   created() {
     this.getList();
+    itemTypeTreeselect().then(response => {
+      this.deptOptions = response.data
+    });
   },
   methods: {
     /** 查询物料列表 */
@@ -513,10 +344,10 @@ export default {
     submitForm() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
-          if(this.form.place){
-            this.form.warehouseId=this.form.place[0]
-            this.form.areaId=this.form.place[1]
-            this.form.rackId=this.form.place[2]
+          if (this.form.place) {
+            this.form.warehouseId = this.form.place[0]
+            this.form.areaId = this.form.place[1]
+            this.form.rackId = this.form.place[2]
 
           }
           if (this.form.id != null) {
@@ -547,7 +378,7 @@ export default {
           this.getList();
           this.$modal.msgSuccess("删除成功");
         })
-        .catch(() => {});
+        .catch(() => { });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -562,7 +393,7 @@ export default {
           this.$download.download(response);
           this.exportLoading = false;
         })
-        .catch(() => {});
+        .catch(() => { });
     },
   },
 };
