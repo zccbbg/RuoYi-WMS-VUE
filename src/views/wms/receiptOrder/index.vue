@@ -31,7 +31,7 @@
         <el-button v-hasPermi="['wms:receiptOrder:add']" icon="el-icon-plus" plain="plain" size="mini" type="primary"
           @click="handleAdd()">创建入库单</el-button>
       </el-col>
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button v-hasPermi="['wms:receiptOrder:edit']" :disabled="single" icon="el-icon-edit" plain="plain" size="mini"
           type="success" @click="handleUpdate">修改</el-button>
       </el-col>
@@ -42,7 +42,7 @@
       <el-col :span="1.5">
         <el-button v-hasPermi="['wms:receiptOrder:export']" icon="el-icon-download" :loading="exportLoading" plain="plain"
           size="mini" type="warning" @click="handleExport">导出</el-button>
-      </el-col>
+      </el-col> -->
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">

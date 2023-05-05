@@ -16,6 +16,10 @@
       </el-form-item>
     </el-form>
     <el-row class="mb8" :gutter="10">
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
+          v-hasPermi="['wms:item:export']">导出</el-button>
+      </el-col>
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <WmsTable v-loading="loading" :data="wmsInventoryList" @selection-change="handleSelectionChange">

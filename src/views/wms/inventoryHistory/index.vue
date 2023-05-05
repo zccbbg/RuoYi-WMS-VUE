@@ -77,7 +77,7 @@
         template(v-slot="{ row }")
           span {{row.warehouseName}}
           span(v-if="row.areaName") /{{row.areaName}}
-          span(v-if="row.rackName") /{{row.rackName}}
+          //- span(v-if="row.rackName") /{{row.rackName}}
       el-table-column(
         v-if="columns[4].visible"
         align="center"
