@@ -10,7 +10,7 @@
         <DictRadio v-model="queryParams.transactionType" @change="handleQuery" size="small"
           :radioData="dict.type.wms_customer_transaction_type" :showAll="'all'" />
       </el-form-item>
-      <el-form-item label="统计范围" prop="Time">
+      <el-form-item label="创建时间" prop="Time">
         <el-date-picker v-model="queryParams.Time" type="datetimerange" :picker-options="pickerOptions"
           range-separator="至" size="small" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
           start-placeholder="开始日期" end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" align="right"
