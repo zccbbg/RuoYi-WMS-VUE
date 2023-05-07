@@ -2,38 +2,14 @@
   <div class="home-wrapper">
     <el-card style="margin: 20px 20px; font-size: 14px">
       <div slot="header"><span>工作台</span></div>
-      <div class="first"><img alt="" :src="avatar"
-          style="width: 50px; height: 50px; float:left; margin-right:10px;border-radius:50%" />
+      <div class="first">
+        <img alt="" :src="avatar" style="width: 50px; height: 50px; float:left; margin-right:10px;border-radius:50%" />
+        <p style="float:right;font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
+          心中若有帕拉梅拉，仓库就不会邋里邋遢！
+        </p>
         <p style="font-size:16px;margin-bottom:8px">{{ name }}，{{ hello }}</p>
         <p style="font-size:12px;color:rgb(185, 181, 189)">今天是：{{ nowTime }}</p>
       </div>
-      <!-- <div class="first">
-        <ul>
-          <li class="li" style="width: 33%">仓库
-            <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline"
-                slot="reference"></i></el-popover>
-          </li>
-          <li class="li" style="width: 33%">库区
-            <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline"
-                slot="reference"></i></el-popover>
-          </li>
-          <li class="li" style="width: 33%">货架
-            <el-popover class="ml5" content="功能开发中" placement="top" trigger="hover"><i class="el-icon-warning-outline"
-                slot="reference"></i></el-popover>
-          </li>
-        </ul>
-        <ul>
-          <li class="da" style="width: 33%">
-            <router-link to="/basic/warehouse">10</router-link>
-          </li>
-          <li class="da" style="width: 33%">
-            <router-link to="/basic/area">20</router-link>
-          </li>
-          <li class="da" style="width: 33%">
-            <router-link to="/basic/rack">30</router-link>
-          </li>
-        </ul>
-      </div> -->
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
       <el-col :span="12">
@@ -383,7 +359,7 @@ export default {
 
   .first {
     float: left;
-    width: 50%;
+    width: 100%;
     margin-bottom: 20px;
   }
 

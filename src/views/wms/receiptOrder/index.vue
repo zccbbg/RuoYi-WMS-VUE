@@ -11,11 +11,11 @@
           size="small" @change="handleQuery"></DictRadio>
       </el-form-item>
       <el-form-item label="入库单号" prop="receiptOrderNo">
-        <el-input v-model="queryParams.receiptOrderNo" clearable="clearable" placeholder="请输入入库单号" size="small"
+        <el-input v-model.trim="queryParams.receiptOrderNo" clearable="clearable" placeholder="请输入入库单号" size="small"
           @keyup.enter.native="handleQuery"></el-input>
       </el-form-item>
       <el-form-item label="订单号" prop="orderNo">
-        <el-input v-model="queryParams.orderNo" clearable="clearable" placeholder="请输入订单号" size="small"
+        <el-input v-model.trim="queryParams.orderNo" clearable="clearable" placeholder="请输入订单号" size="small"
           @keyup.enter.native="handleQuery"></el-input>
       </el-form-item>
       <el-form-item label="供应商" prop="supplierId">
