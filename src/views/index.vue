@@ -4,11 +4,11 @@
       <div slot="header"><span>工作台</span></div>
       <div class="first">
         <img alt="" :src="avatar" style="width: 50px; height: 50px; float:left; margin-right:10px;border-radius:50%" />
-        <p style="float:right;font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
-          心中若有帕拉梅拉，仓库就不会邋里邋遢！
-        </p>
         <p style="font-size:16px;margin-bottom:8px">{{ name }}，{{ hello }}</p>
-        <p style="font-size:12px;color:rgb(185, 181, 189)">今天是：{{ nowTime }}</p>
+        <p style="font-size:12px;color:rgb(185, 181, 189);width: 300px;">今天是：{{ nowTime }}</p>
+      </div>
+      <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
+          心中若有帕拉梅拉，仓库就不会邋里邋遢！
       </div>
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
@@ -359,7 +359,6 @@ export default {
 
   .first {
     float: left;
-    width: 100%;
     margin-bottom: 20px;
   }
 
