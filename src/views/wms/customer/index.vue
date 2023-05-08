@@ -3,36 +3,36 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
       class="ry_form">
       <el-form-item label="编号" prop="customerNo">
-        <el-input v-model="queryParams.customerNo" placeholder="请输入编号" clearable size="small"
+        <el-input v-model.trim="queryParams.customerNo" placeholder="请输入编号" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="名称" prop="customerName">
-        <el-input v-model="queryParams.customerName" placeholder="请输入名称" clearable size="small"
+        <el-input v-model.trim="queryParams.customerName" placeholder="请输入名称" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="地址" prop="address">
-        <el-input v-model="queryParams.address" placeholder="请输入地址" clearable size="small"
+        <el-input v-model.trim="queryParams.address" placeholder="请输入地址" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="手机号" prop="mobile">
-        <el-input v-model="queryParams.mobile" placeholder="请输入手机号" clearable size="small"
+        <el-input v-model.trim="queryParams.mobile" placeholder="请输入手机号" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="座机号" prop="tel">
-        <el-input v-model="queryParams.tel" placeholder="请输入座机号" clearable size="small"
+        <el-input v-model.trim="queryParams.tel" placeholder="请输入座机号" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="联系人" prop="customerPerson">
-        <el-input v-model="queryParams.customerPerson" placeholder="请输入联系人" clearable size="small"
+        <el-input v-model.trim="queryParams.customerPerson" placeholder="请输入联系人" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="级别" prop="customerLevel">
-        <el-input v-model="queryParams.customerLevel" placeholder="请输入级别" clearable size="small"
+        <el-input v-model.trim="queryParams.customerLevel" placeholder="请输入级别" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <template v-if="showMoreCondition">
         <el-form-item label="Email" prop="email">
-          <el-input v-model="queryParams.email" placeholder="请输入Email" clearable size="small"
+          <el-input v-model.trim="queryParams.email" placeholder="请输入Email" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
       </template>
