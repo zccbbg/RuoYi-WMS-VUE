@@ -8,6 +8,7 @@
               v-model="query.itemType"
               :options="deptOptions"
               :show-count="true"
+              clearable
               placeholder="请选择分类"
             />
           </div>
@@ -16,6 +17,7 @@
           <el-input
             class="w200"
             v-model="query.search"
+            clearable
             placeholder="编号、名称、ID"
           ></el-input>
         </el-form-item>
@@ -24,7 +26,6 @@
     </div>
     <div class="center">
       <div class="left flex-one">
-        <div class="statistic">{{ total }} 个商品</div>
         <div class="content">
           <table class="common-table" v-if="list.length !== 0">
             <tr>
@@ -65,18 +66,9 @@
         </div>
       </div>
     </div>
-    <div>
-      <el-pagination
-        :total="total"
-        :page-size="pageReq.size"
-        :current.sync="pageReq.page"
-        :pageSizeOpts="[10, 20, 50, 100]"
-        show-sizer="show-sizer"
-        show-total="show-total"
-        @on-change="handleChangePage"
-        @on-page-size-change="handleChangeSize"
-      ></el-pagination>
-    </div>
+    <pagination v-show="total > 0" :total="total" :page.sync="pageReq.page" :limit.sync="pageReq.size"
+                @pagination="loadAll"/>
+
   </div>
 </template>
 
@@ -168,17 +160,6 @@ export default {
       this.pageReq.page = 1;
       this.loadAll();
     },
-    handleChangePage(p) {
-      this.pageReq.page = p;
-      this.loadAll();
-    },
-    handleChangeSize(s) {
-      this.pageReq = {
-        page: 1,
-        size: s,
-      };
-      this.loadAll();
-    },
     getRightList() {
       this.moveRight();
       return this.rightList;
@@ -202,7 +183,6 @@ export default {
     align-items stretch
 
     .left, .right
-      border 1px solid $gray-2
 
       > div
         padding 12px

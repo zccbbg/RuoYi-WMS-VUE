@@ -74,10 +74,10 @@
       <template v-if="modalObj.component === 'add-item'">
         <item-select ref="item-select"  :data="this.form.details"></item-select>
       </template>
-      <template footer="footer">
+       <span slot="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
         <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
-      </template>
+      </span>
     </el-dialog>
   </div>
 </template>
