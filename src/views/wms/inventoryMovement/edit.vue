@@ -1,12 +1,14 @@
-<template lang="pug">
+<template>
   <div class="inventory-movement-edit-wrapper app-container">
     <div class="inventory-movement-content">
       <el-form label-width="108px" :model="form" ref="form" :rules="rules">
         <el-form-item label="移库单号" prop="inventoryMovementNo">
-          <el-input class="w200" v-model="form.inventoryMovementNo" placeholder="移库单号" disabled="disabled"></el-input>
+          <el-input class="w200" v-model="form.inventoryMovementNo" placeholder="移库单号"
+                    disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea" show-word-limit="show-word-limit"></el-input>
+          <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea"
+                    show-word-limit="show-word-limit"></el-input>
         </el-form-item>
       </el-form>
       <el-divider></el-divider>
@@ -28,11 +30,12 @@
             <th>操作</th>
           </tr>
           <tr v-for="(it, index) in form.details">
-            <td align="center">{{it.prod?it.prod.itemName:''}}</td>
-            <td align="center">{{it.prod?it.prod.itemNo:''}}</td>
-            <td align="center">{{it.prod?it.prod.itemType:''}}</td>
+            <td align="center">{{ it.prod ? it.prod.itemName : '' }}</td>
+            <td align="center">{{ it.prod ? it.prod.itemNo : '' }}</td>
+            <td align="center">{{ it.prod ? it.prod.itemType : '' }}</td>
             <td align="center">
-              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647"></el-input-number>
+              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1"
+                               :max="2147483647"></el-input-number>
             </td>
             <td align="center">
               <WmsWarehouseCascader v-model="it.sourcePlace" size="small"></WmsWarehouseCascader>
@@ -43,9 +46,9 @@
             <td align="center"><a class="red" @click="form.details.splice(index, 1)">删除</a></td>
           </tr>
         </table>
-        //- <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
+        <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
       </div>
-      <div class="tc mt16" >
+      <div class="tc mt16">
         <el-button type="primary" plain="plain" size="small" @click="showAddItem">添加物料</el-button>
       </div>
       <div class="tc mt16">
@@ -55,14 +58,15 @@
     </div>
     <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel">
       <template v-if="modalObj.component === 'add-item'">
-        <item-select ref="item-select"></item-select>
+        <item-select ref="item-select" :data="this.form.details"></item-select>
       </template>
       <template footer="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
         <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
       </template>
     </el-dialog>
-  </div></template>
+  </div>
+</template>
 
 <script>
 import {addOrUpdateWmsInventoryMovement, getWmsInventoryMovement} from '@/api/wms/inventoryMovement'
@@ -127,11 +131,11 @@ export default {
             delFlag: 0
           }
         })
-        if (details.filter(it=>!it.sourceWarehouseId|| !it.targetWarehouseId)?.length > 0){
+        if (details.filter(it => !it.sourceWarehouseId || !it.targetWarehouseId)?.length > 0) {
           this.$message.warning('请选择仓库、库区或货架')
           return;
         }
-        const arr = details.filter(it=>it.sourceRackId===it.targetRackId && it.sourceAreaId === it.targetAreaId && it.sourceWarehouseId === it.targetWarehouseId)
+        const arr = details.filter(it => it.sourceRackId === it.targetRackId && it.sourceAreaId === it.targetAreaId && it.sourceWarehouseId === it.targetWarehouseId)
         if (arr?.length > 0) {
           this.$message.warning('同一个物料不能选择相同的仓库、库区、货架')
           return;
@@ -189,6 +193,11 @@ export default {
       this.modalObj.show = false
     },
     showAddItem() {
+      try {
+        this.$refs['item-select'].initDetailsList(this.form.details)
+      } catch (err) {
+
+      }
       const ok = () => this.confirmSelectItem()
       const cancel = () => this.closeModal()
       this.modalObj = {

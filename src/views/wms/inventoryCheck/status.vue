@@ -67,15 +67,6 @@
         <!--        <el-button @click="submitForm" type="primary">保存</el-button>-->
       </div>
     </div>
-    <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel">
-      <template v-if="modalObj.component === 'add-item'">
-        <item-select ref="item-select"></item-select>
-      </template>
-      <template v-slot:footer>
-        <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
-        <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -97,18 +88,7 @@ export default {
         details: []
       },
       // 表单校验
-      rules: {},
-      modalObj: {
-        show: false,
-        title: '',
-        width: '50%',
-        component: null,
-        model: {},
-        ok: () => {
-        },
-        cancel: () => {
-        }
-      }
+      rules: {}
     }
   },
   computed: {
@@ -209,108 +189,6 @@ export default {
         details: []
       }
       this.resetForm('form')
-    },
-    /** 物料选择框 */
-    confirmSelectItem() {
-      const value = this.$refs['item-select'].getRightList()
-
-      // 当前选中物料ids
-      this.prodIds = value.map(it => it.id)
-
-      // 当前盘点仓库
-      const { place } = this.form
-
-      console.log(place, "place")
-      const [warehouseId, areaId, rackId] = place || [];
-      this.form.warehouseId = warehouseId
-      this.form.areaId = areaId
-      this.form.rackId = rackId
-
-      let hasInventoryIds = new Set()
-      //获取该仓库下物料ids的库存
-      const query = { warehouseId, areaId, rackId }
-      listWmsInventory(query, null).then(response => {
-        const { content, totalElements } = response
-        let wmsInventoryMap = content.filter(it => {
-          if (this.prodIds.indexOf(it.itemId) > -1) {
-            hasInventoryIds.add(it.itemId)
-            return true;
-          }
-          return false;
-        })
-
-
-        //无库存
-        this.form.details = value.filter(it => {
-          console.log(it, "value")
-          return !hasInventoryIds.has(it.id)
-        }).map(it => {
-          let place = [this.form.warehouseId]
-          if (this.form.areaId) {
-            place.push(this.form.areaId)
-          }
-          return {
-            isNew: true,
-            prod: {
-              itemName: it.itemName,
-              itemNo: it.itemNo,
-            },
-            itemId: it.id,
-            rackId: this.form.rackId,
-            areaId: this.form.areaId,
-            place: place,
-            warehouseId: this.form.warehouseId,
-            quantity: 0.00,
-            checkQuantity: 0.00,
-            receiptOrderStatus: 0,
-            delFlag: 0
-          }
-        })
-
-        //有库存
-        this.form.details.push(...
-          wmsInventoryMap.map(it => {
-            let place = [it.warehouseId]
-            if (it.areaId) {
-              place.push(it.areaId)
-            }
-            return {
-              isNew: false,
-              prod: {
-                itemName: it.itemName,
-                itemNo: it.itemNo,
-              },
-              itemId: it.itemId,
-              rackId: it.rackId,
-              areaId: it.areaId,
-              place: place,
-              warehouseId: it.warehouseId,
-              quantity: it.quantity,
-              checkQuantity: it.quantity,
-              receiptOrderStatus: 0,
-              delFlag: 0
-            }
-          })
-        )
-      })
-
-      this.closeModal()
-    },
-    closeModal() {
-      this.modalObj.show = false
-    },
-    showAddItem() {
-      const ok = () => this.confirmSelectItem()
-      const cancel = () => this.closeModal()
-      this.modalObj = {
-        show: true,
-        title: '添加物料',
-        width: '50%',
-        component: 'add-item',
-        model: {},
-        ok,
-        cancel
-      }
     }
   }
 }

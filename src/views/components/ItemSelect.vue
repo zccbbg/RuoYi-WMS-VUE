@@ -81,14 +81,15 @@
 </template>
 
 <script>
-import { listWmsItem } from "@/api/wms/item";
+import {listWmsItem} from "@/api/wms/item";
 import Treeselect from "@riophae/vue-treeselect";
-import { itemTypeTreeselect } from "@/api/wms/itemType";
+import {itemTypeTreeselect} from "@/api/wms/itemType";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
 export default {
   name: "ItemSelect",
-  components: { Treeselect },
+  components: {Treeselect},
+  props: ['data'],
   data() {
     return {
       //物料类别
@@ -104,33 +105,21 @@ export default {
         size: 10,
       },
       rightList: [],
+      rightListKeySet: new Set
     };
   },
   computed: {
     leftAllChecked: {
       get() {
         return this.editableList.length > 0 &&
-          this.editableList.every((it) => it.checked)
+        this.editableList.every((it) => it.checked)
           ? 1
           : this.editableList.some((it) => it.checked)
-          ? 2
-          : 0;
+            ? 2
+            : 0;
       },
       set(v) {
         this.editableList.forEach((it) => (it.checked = v));
-      },
-    },
-    rightAllChecked: {
-      get() {
-        return this.rightList.length > 0 &&
-          this.rightList.every((it) => it.checked)
-          ? 1
-          : this.rightList.some((it) => it.checked)
-          ? 2
-          : 0;
-      },
-      set(v) {
-        this.rightList.forEach((it) => (it.checked = v));
       },
     },
     editableList() {
@@ -138,25 +127,38 @@ export default {
     },
     leftCheckedList() {
       return this.list.filter((it) => it.checked);
-    },
-    rightListKeySet() {
-      const set = new Set();
-      this.rightList.forEach((it) => set.add(it.id));
-      return set;
-    },
+    }
+  },
+  watch: {
+    rightList: {
+      handler(newVal, oldVal) {
+        const set = new Set();
+        newVal.forEach((it) => set.add(it.id));
+        this.rightListKeySet = set;
+      },
+      deep: true
+    }
   },
   created() {
+    if (this.data) {
+      this.initDetailsList(this.data)
+    }
     this.loadAll();
     itemTypeTreeselect().then((response) => {
       this.deptOptions = response.data;
     });
   },
   methods: {
+    initDetailsList(list) {
+      this.rightList = list.map(it => {
+        return it.prod
+      })
+    },
     loadAll() {
-      const pageReq = { ...this.pageReq };
+      const pageReq = {...this.pageReq};
       pageReq.page -= 1;
       listWmsItem(this.query, pageReq).then((res) => {
-        const { content, totalElements } = res;
+        const {content, totalElements} = res;
         content.forEach((it) => (it.checked = false));
         this.list = content;
         this.total = totalElements;
@@ -183,16 +185,9 @@ export default {
     },
     moveRight() {
       for (let it of this.leftCheckedList) {
-        if (!this.rightListKeySet.has(it.goodsId)) {
+        if (!this.rightListKeySet.has(it.id)) {
           it.checked = false;
-          this.rightList.push({ ...it, checked: false });
-        }
-      }
-    },
-    moveLeft() {
-      for (let i = this.rightList.length - 1; i >= 0; i--) {
-        if (this.rightList[i].checked) {
-          this.rightList.splice(i, 1);
+          this.rightList.push({...it, checked: false});
         }
       }
     },

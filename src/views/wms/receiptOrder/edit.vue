@@ -72,7 +72,7 @@
     </div>
     <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel">
       <template v-if="modalObj.component === 'add-item'">
-        <item-select ref="item-select"></item-select>
+        <item-select ref="item-select" :data="this.form.details"></item-select>
       </template>
       <template footer="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
@@ -233,6 +233,11 @@ export default {
       this.modalObj.show = false
     },
     showAddItem() {
+      try {
+        this.$refs['item-select'].initDetailsList(this.form.details)
+      }catch (err){
+
+      }
       const ok = () => this.confirmSelectItem()
       const cancel = () => this.closeModal()
       this.modalObj = {
