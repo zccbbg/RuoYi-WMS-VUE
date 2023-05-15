@@ -30,6 +30,9 @@ https://github.com/zccbbg/wms-ruoyi
 - 演示地址：http://wms.ichengle.top
 - 陆陆续续收到一些打赏，为了更好的体验已用于演示服务器升级。谢谢各位小伙伴。
 
+## 若依技术专栏
+https://blog.csdn.net/qq_27575627/category_12005108.html
+
 ## 若依wms简介
 若依wms是一套基于若依的wms仓库管理系统，支持lodop和网页打印入库单、出库单。毫无保留给个人及企业免费使用。
 * 前端采用Vue、Element UI（ant design 正在开发中）。
