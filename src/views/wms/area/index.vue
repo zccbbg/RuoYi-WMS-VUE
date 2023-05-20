@@ -11,7 +11,7 @@
     >
       <el-form-item label="编号" prop="areaNo">
         <el-input
-          v-model="queryParams.areaNo"
+          v-model.trim="queryParams.areaNo"
           placeholder="请输入编号"
           clearable
           size="small"
@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item label="名称" prop="areaName">
         <el-input
-          v-model="queryParams.areaName"
+          v-model.trim="queryParams.areaName"
           placeholder="请输入名称"
           clearable
           size="small"
@@ -29,7 +29,7 @@
       </el-form-item>
       <el-form-item label="所属仓库" prop="warehouseId">
         <el-input
-          v-model="queryParams.warehouseId"
+          v-model.trim="queryParams.warehouseId"
           placeholder="请输入所属仓库"
           clearable
           size="small"
@@ -300,9 +300,9 @@ export default {
         this.wmsAreaList = content;
         this.total = totalElements;
         this.loading = false;
-       
+
       });
-      
+
     },
     // 取消按钮
     cancel() {
