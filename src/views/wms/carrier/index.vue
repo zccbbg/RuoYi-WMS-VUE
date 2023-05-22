@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
       <el-form-item label="编号" prop="carrierNo">
         <el-input
-          v-model="queryParams.carrierNo"
+          v-model.trim="queryParams.carrierNo"
           placeholder="请输入编号"
           clearable
           size="small"
@@ -12,7 +12,7 @@
       </el-form-item>
       <el-form-item label="名称" prop="carrierName">
         <el-input
-          v-model="queryParams.carrierName"
+          v-model.trim="queryParams.carrierName"
           placeholder="请输入名称"
           clearable
           size="small"
@@ -21,7 +21,7 @@
       </el-form-item>
       <el-form-item label="地址" prop="address">
         <el-input
-          v-model="queryParams.address"
+          v-model.trim="queryParams.address"
           placeholder="请输入地址"
           clearable
           size="small"
@@ -30,7 +30,7 @@
       </el-form-item>
       <el-form-item label="手机号" prop="mobile">
         <el-input
-          v-model="queryParams.mobile"
+          v-model.trim="queryParams.mobile"
           placeholder="请输入手机号"
           clearable
           size="small"
@@ -39,7 +39,7 @@
       </el-form-item>
       <el-form-item label="座机号" prop="tel">
         <el-input
-          v-model="queryParams.tel"
+          v-model.trim="queryParams.tel"
           placeholder="请输入座机号"
           clearable
           size="small"
@@ -48,7 +48,7 @@
       </el-form-item>
       <el-form-item label="联系人" prop="contact">
         <el-input
-          v-model="queryParams.contact"
+          v-model.trim="queryParams.contact"
           placeholder="请输入联系人"
           clearable
           size="small"
@@ -68,7 +68,7 @@
       <template v-if="showMoreCondition">
       <el-form-item label="Email" prop="email">
         <el-input
-          v-model="queryParams.email"
+          v-model.trim="queryParams.email"
           placeholder="请输入Email"
           clearable
           size="small"
@@ -160,7 +160,7 @@
         </template>
       </el-table-column>
     </WmsTable>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
