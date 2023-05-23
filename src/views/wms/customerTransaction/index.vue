@@ -3,7 +3,7 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
       class="ry_form">
       <el-form-item label="交易编号" prop="transactionCode">
-        <el-input v-model="queryParams.transactionCode" placeholder="请输入交易编号" clearable size="small"
+        <el-input v-model.trim="queryParams.transactionCode" placeholder="请输入交易编号" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="交易类型" prop="transactionType">
