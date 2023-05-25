@@ -4,7 +4,7 @@
              class="ry_form">
       <el-form-item label="出库单主表Id" prop="shipmentOrderId">
         <el-input
-          v-model="queryParams.shipmentOrderId"
+          v-model.trim="queryParams.shipmentOrderId"
           placeholder="请输入出库单主表Id"
           clearable
           size="small"
@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item label="快递单号" prop="trackingNo">
         <el-input
-          v-model="queryParams.trackingNo"
+          v-model.trim="queryParams.trackingNo"
           placeholder="请输入快递单号"
           clearable
           size="small"
