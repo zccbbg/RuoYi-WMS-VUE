@@ -72,7 +72,7 @@
       <div style="text-align: center">
         <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">wms</span>获取体验账号</span>
         <br>
-        <img src="@/assets/logo/datacall.jpg" width="160" height="160" style="margin-top: 10px">
+        <img src="@/assets/logo/gzh.jpg" width="160" height="160" style="margin-top: 10px">
       </div>
       <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="dialogConfirm">确定</el-button>
