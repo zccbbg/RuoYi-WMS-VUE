@@ -108,3 +108,11 @@ new Vue({
   store,
   render: h => h(App)
 })
+
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?8611b8753c9d6bb71fd882dc61e4adf2";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
