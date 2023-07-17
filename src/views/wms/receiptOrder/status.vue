@@ -175,7 +175,7 @@ export default {
       if (receiptOrderStatusArray.length == 0) {
         return 0
       }
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 5; i++) {
         if (receiptOrderStatusArray.every((item) => item == i)) {
           return i
         }
