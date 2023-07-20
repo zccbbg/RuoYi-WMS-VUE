@@ -8,7 +8,7 @@
         <p style="font-size:12px;color:rgb(185, 181, 189);width: 300px;">今天是：{{ nowTime }}</p>
       </div>
       <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
-          心中若有帕拉梅拉，仓库就不会邋里邋遢！
+          心中若有帕拉梅拉，仓库就不会邋里邋遢！库存管不好，赚钱两头少！
       </div>
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
