@@ -313,7 +313,8 @@ export default {
       this.duePayForm.form.supplierId = row.id
       this.duePayForm.form.transactionType = '22'
 
-    }, resetDueForm() {
+    },
+    resetDueForm() {
       this.duePayForm.form = {
         transactionCode: 'TS-' + randomId(),
         transactionAmount: 0.00,

@@ -64,7 +64,6 @@
       </div>
       <div class="tc mt16">
         <el-button @click="cancel" type="primary">返回</el-button>
-        <!--        <el-button @click="submitForm" type="primary">保存</el-button>-->
       </div>
     </div>
   </div>
@@ -73,8 +72,7 @@
 <script>
 import { randomId } from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
-import { listWmsInventory } from "@/api/wms/inventory";
-import { addOrUpdateWmsInventoryCheck, getWmsInventoryCheck } from "@/api/wms/inventoryCheck";
+import { getWmsInventoryCheck } from "@/api/wms/inventoryCheck";
 
 
 export default {
@@ -119,42 +117,6 @@ export default {
     /** 取消按钮 */
     cancel() {
       this.$tab.closeOpenPage({ path: '/inventoryCheck' })
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs['form'].validate(valid => {
-        if (!valid) {
-          return
-        }
-        const details = this.form.details.map(it => {
-          console.log(it.place)
-          if (it.place) {
-            it.warehouseId = it.place[0]
-            it.areaId = it.place[1]
-            it.rackId = it.place[2]
-          } else {
-            it.warehouseId = null
-            it.areaId = null
-            it.rackId = null
-          }
-          return {
-            itemId: it.itemId,
-            rackId: it.rackId,
-            areaId: it.areaId,
-            warehouseId: it.warehouseId,
-            quantity: it.quantity,
-            checkQuantity: it.checkQuantity,
-            delFlag: 0
-          }
-        })
-        const req = { ...this.form, details }
-        console.log(req, "submitForm")
-
-        addOrUpdateWmsInventoryCheck(req).then(response => {
-          this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
-          this.cancel();
-        })
-      })
     },
     /** 加载 盘点单详情 */
     loadDetail(id) {
