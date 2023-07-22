@@ -389,7 +389,7 @@ export default {
     },
     /* 新增 应付款 */
     handleEnter(row) {
-      this.duePayForm.title = '新增应付款'
+      this.duePayForm.title = '新增应收款'
       this.duePayForm.open = true
 
       this.resetDueForm();
