@@ -49,18 +49,6 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['wms:customer:add']">新增</el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
-        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['wms:customer:edit']">修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['wms:customer:remove']">删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
-          v-hasPermi="['wms:customer:export']">导出</el-button>
-      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
@@ -71,7 +59,7 @@
       <el-table-column label="应收款" align="center" class-name="small-padding fixed-width" v-if="columns[2].visible">
         <template slot-scope="scope">
           <p> {{ scope.row.receivableAmount }}</p>
-          <el-button size="mini" type="text" @click="handleEnter(scope.row)">+应付
+          <el-button size="mini" type="text" @click="handleEnter(scope.row)">+应收
           </el-button>
           <el-button size="mini" type="text" @click="handleExit(scope.row)">-结款
           </el-button>

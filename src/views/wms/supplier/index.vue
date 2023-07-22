@@ -74,7 +74,7 @@
 
         <template slot-scope="scope">
           <p> {{ scope.row.payableAmount }}</p>
-          <el-button size="mini" type="text" @click="handleEnter(scope.row)">+应收
+          <el-button size="mini" type="text" @click="handleEnter(scope.row)">+应付
           </el-button>
           <el-button size="mini" type="text" @click="handleExit(scope.row)">-结款
           </el-button>
