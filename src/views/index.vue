@@ -12,10 +12,6 @@
       </div>
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
-      <el-col :span="24" style="padding-bottom: 20px;height:600px">
-          <iframe src="//player.bilibili.com/player.html?aid=996527481&high_quality=1"
-                  height="100%" width=100% scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-      </el-col>
       <el-col :span="12">
         <el-card shadow="always" style="padding-bottom: 20px;">
           <div>
