@@ -45,7 +45,11 @@
           <dict-tag :options="dict.type.wms_supplier_transaction_type" :value="scope.row.transactionType" />
         </template>
       </el-table-column>
-      <el-table-column label="交易金额" align="center" prop="transactionAmount" v-if="columns[3].visible" />
+      <el-table-column label="交易金额" align="center" prop="transactionAmount" v-if="columns[3].visible">
+        <template slot-scope="scope">
+          <span style="color:red">{{scope.row.transactionType==11 ? "-":"+"}} {{scope.row.transactionAmount}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="上期余额" align="center" prop="previousBalance" v-if="columns[4].visible" />
       <el-table-column label="当前余额" align="center" prop="currentBalance" v-if="columns[5].visible" />
       <el-table-column label="入库单号" align="center" prop="receiptOrderId" v-if="columns[6].visible" />
@@ -231,6 +235,9 @@ export default {
     }
   },
   methods: {
+    cellStyle(row,column,rowIndex,columnIndex){//根据报警级别显示颜色
+      return 'color:red'
+    },
     getSupplierName(row) {
       return this.supplierMap.get(Number(row.supplierId))
     },

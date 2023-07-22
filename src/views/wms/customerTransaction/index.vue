@@ -23,53 +23,6 @@
       </el-form-item>
     </el-form>
 
-    <!-- <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['wms:wmsCustomerTransaction:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:wmsCustomerTransaction:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:wmsCustomerTransaction:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['wms:wmsCustomerTransaction:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-    </el-row> -->
-
     <WmsTable v-loading="loading" :data="wmsCustomerTransactionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="交易编号" align="center" prop="transactionCode" v-if="columns[0].visible" />
@@ -83,7 +36,11 @@
           <dict-tag :options="dict.type.wms_customer_transaction_type" :value="scope.row.transactionType" />
         </template>
       </el-table-column>
-      <el-table-column label="交易金额" align="center" prop="transactionAmount" v-if="columns[3].visible" />
+      <el-table-column label="交易金额" align="center" prop="transactionAmount" v-if="columns[3].visible" >
+        <template slot-scope="scope">
+          <span style="color:red">{{scope.row.transactionType==11 ? "-":"+"}} {{scope.row.transactionAmount}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="上期余额" align="center" prop="previousBalance" v-if="columns[4].visible" />
       <el-table-column label="当前余额" align="center" prop="currentBalance" v-if="columns[5].visible" />
       <el-table-column label="出库单号" align="center" prop="shipmentOrderId" v-if="columns[6].visible" />
