@@ -21,7 +21,7 @@ const getters = {
   opTypes: state => {
     const map = state.dict.dictTypeMap
     let res = [];
-    ['wms_receipt_type', 'wms_shipment_type', 'wms_movement_type'].forEach(it => {
+    ['wms_receipt_type', 'wms_shipment_type', 'wms_movement_type','wms_check_type'].forEach(it => {
       if (!map[it]) {
         return
       }
