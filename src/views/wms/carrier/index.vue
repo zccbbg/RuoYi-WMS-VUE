@@ -365,6 +365,7 @@ export default {
                             this.$modal.msgSuccess("修改成功");
                             this.open = false;
                             this.getList();
+                            this.$store.dispatch('wms/getCarrier')
                         });
                     }
                     else {
@@ -372,6 +373,7 @@ export default {
                             this.$modal.msgSuccess("新增成功");
                             this.open = false;
                             this.getList();
+                            this.$store.dispatch('wms/getCarrier')
                         });
                     }
                 }
@@ -384,6 +386,7 @@ export default {
                 return delWmsCarrier(ids);
             }).then(() => {
                 this.getList();
+                this.$store.dispatch('wms/getCarrier')
                 this.$modal.msgSuccess("删除成功");
             }).catch(() => { });
         },
