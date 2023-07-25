@@ -44,12 +44,6 @@
       right-toolbar(:columns="columns" :showSearch.sync="showSearch" @queryTable="getList")
     WmsTable(v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange")
       el-table-column(
-        v-if="columns[0].visible"
-        align="center"
-        label="操作id"
-        prop="formId"
-      )
-      el-table-column(
         v-if="columns[1].visible"
         align="center"
         label="操作类型"
@@ -83,6 +77,12 @@
         align="center"
         label="库存变化"
         prop="quantity"
+      )
+      el-table-column(
+        v-if="columns[4].visible"
+        align="center"
+        label="操作时间"
+        prop="createTime"
       )
       el-table-column(
         v-if="columns[5].visible"
