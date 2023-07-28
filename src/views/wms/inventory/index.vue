@@ -1,6 +1,11 @@
 <template>
   <div class="app-container">
-    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm" size="medium">
+    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
+             size="medium">
+      <el-form-item label="类型" prop="panelType">
+        <DictRadio v-model="queryParams.panelType" :radioData="dict.type.wms_inventory_panel_type" size="small"
+                   @change="handleQuery"></DictRadio>
+      </el-form-item>
       <el-form-item label="物料" prop="itemId">
         <item-select v-model="queryParams.itemId"></item-select>
       </el-form-item>
@@ -17,52 +22,32 @@
     </el-form>
     <el-row class="mb8" :gutter="10">
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
-          v-hasPermi="['wms:item:export']">导出</el-button>
+        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading"
+                   @click="handleExport"
+                   v-hasPermi="['wms:item:export']">导出
+        </el-button>
       </el-col>
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <WmsTable v-loading="loading" :data="wmsInventoryList" @selection-change="handleSelectionChange">
-      <el-table-column align="left" label="物料编码" prop="itemNo">
-      </el-table-column>
-      <el-table-column align="left" label="物料名称" prop="itemName">
-      </el-table-column>
-      <el-table-column align="left" label="仓库/库区">
-        <template v-slot="{ row }"><span v-if="row.warehouseName">{{row.warehouseName}}</span><span v-if="row.areaName">/{{row.areaName}}</span></template>
-      </el-table-column>
-      <el-table-column align="left" label="库存" prop="quantity"></el-table-column>
-    </WmsTable>
-    <pagination v-show="total&gt;0" :limit.sync="pageReq.size" :page.sync="pageReq.page" :total="total" @pagination="getList"></pagination>
-    <!-- 添加或修改库存对话框-->
-    <el-dialog append-to-body="append-to-body" :title="title" :visible.sync="open" width="50%">
-      <el-form class="dialog-form-two" inline="inline" label-width="108px" :model="form" ref="form" :rules="rules">
-        <el-form-item label="物料ID" prop="itemId">
-          <el-input v-model="form.itemId" placeholder="请输入物料ID"></el-input>
-        </el-form-item>
-        <el-form-item label="货架id" prop="rackId">
-          <el-input v-model="form.rackId" placeholder="请输入货架id"></el-input>
-        </el-form-item>
-        <el-form-item label="库存" prop="quantity">
-          <el-input v-model="form.quantity" placeholder="请输入库存"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"></el-input>
-        </el-form-item>
-      </el-form>
-      <div class="dialog-footer" slot="footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
-  </div></template>
+    <el-table v-loading="loading" :data="wmsInventoryList" :span-method="objectSpanMethod" border
+              @selection-change="handleSelectionChange">
+      <el-table-column
+        align="left"
+        v-for="(col, index) in columns"
+        :key="index"
+        :label="col.label"
+        :prop="col.prop"
+      ></el-table-column>
+    </el-table>
+    <pagination v-show="total&gt;0" :limit.sync="pageReq.size" :page.sync="pageReq.page" :total="total"
+                @pagination="getList"></pagination>
+
+  </div>
+</template>
 
 <script>
 import {
   listWmsInventory,
-  getWmsInventory,
-  delWmsInventory,
-  addWmsInventory,
-  updateWmsInventory,
   exportWmsInventory
 } from '@/api/wms/inventory'
 import NumberRange from '@/components/NumberRange'
@@ -70,9 +55,12 @@ import ItemSelect from '@/components/ItemSelect'
 
 export default {
   name: 'WmsInventory',
-  components: { ItemSelect, NumberRange },
+  components: {ItemSelect, NumberRange},
+  dicts: ['wms_inventory_panel_type'],
   data() {
     return {
+      mergeObj: {}, // 用来记录需要合并行的下标
+      mergeArr: ['warehouseName'], // 表格中的列名
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -89,15 +77,12 @@ export default {
       total: 0,
       // 库存表格数据
       wmsInventoryList: [],
-      // 弹出层标题
-      title: '',
-      // 是否显示弹出层
-      open: false,
       // 查询参数
       queryParams: {
         itemId: null,
         place: null,
-        quantityRange: null
+        quantityRange: null,
+        panelType: 5
       },
       pageReq: {
         page: 1,
@@ -105,41 +90,141 @@ export default {
       },
       // 表单参数
       form: {},
-      // 表单校验
-      rules: {},
-      columns: [
-        { key: 1, label: '物料ID', visible: true },
-        { key: 2, label: '货架id', visible: true },
-        { key: 3, label: '库存', visible: true },
-        { key: 4, label: '备注', visible: true }
-      ]
+      columns: [],
+      columnsNormal: [
+        {
+          label: '仓库/库区',
+          prop: 'warehouseName',
+          key: '1'
+        },
+        {
+          label: '物料类型',
+          prop: 'itemTypeName',
+          key: '2'
+        },
+        {
+          label: '物料编码',
+          prop: 'itemNo',
+          key: '3'
+        },
+        {
+          label: '物料名称',
+          prop: 'itemName',
+          key: '4'
+        },
+        {
+          label: '库存',
+          prop: 'quantity',
+          key: '5'
+        }
+      ],
+      columnsType: [
+        {
+          label: '物料类型',
+          prop: 'itemTypeName',
+          key: '2'
+        },
+        {
+          label: '物料编码',
+          prop: 'itemNo',
+          key: '3'
+        },
+        {
+          label: '物料名称',
+          prop: 'itemName',
+          key: '4'
+        },
+        {
+          label: '仓库/库区',
+          prop: 'warehouseName',
+          key: '1'
+        },
+        {
+          label: '库存',
+          prop: 'quantity',
+          key: '5'
+        }
+      ],
+      panelType: 5
     }
   },
   created() {
     this.getList()
+
   },
   methods: {
+    // objectSpanMethod方法
+    // 默认接受四个值 { 当前行的值, 当前列的值, 行的下标, 列的下标 }
+    objectSpanMethod({row, column, rowIndex, columnIndex}) {
+      // 判断列的属性
+      if (this.mergeArr.indexOf(column.property) !== -1) {
+        // 判断其值是不是为0
+        if (this.mergeObj[column.property][rowIndex]) {
+          return [this.mergeObj[column.property][rowIndex], 1]
+        } else {
+          // 如果为0则为需要合并的行
+          return [0, 0];
+        }
+      }
+    },
+    // getSpanArr方法
+    getSpanArr(data) {
+      this.mergeArr.forEach((key, index1) => {
+        let count = 0; // 用来记录需要合并行的起始位置
+        this.mergeObj[key] = []; // 记录每一列的合并信息
+        data.forEach((item, index) => {
+          // index == 0表示数据为第一行，直接 push 一个 1
+          if (index === 0) {
+            this.mergeObj[key].push(1);
+          } else {
+            // 判断当前行是否与上一行其值相等 如果相等 在 count 记录的位置其值 +1 表示当前行需要合并 并push 一个 0 作为占位
+            if (item[key] === data[index - 1][key]) {
+              this.mergeObj[key][count] += 1;
+              this.mergeObj[key].push(0);
+            } else {
+              // 如果当前行和上一行其值不相等
+              count = index; // 记录当前位置
+              this.mergeObj[key].push(1); // 重新push 一个 1
+            }
+          }
+        })
+      })
+    },
     /** 查询库存列表 */
     getList() {
       this.loading = true
-      const {place, quantityRange, itemId} = this.queryParams;
-      const [ warehouseId, areaId, rackId ] = place || [];
-      const [ quantityStart, quantityEnd ] = quantityRange || [];
-      const query = { warehouseId, areaId, rackId, itemId, quantityStart, quantityEnd }
-      const pageReq = { ...this.pageReq }
+      const {place, quantityRange, itemId, panelType} = this.queryParams;
+      this.panelType = panelType;
+      const [warehouseId, areaId, rackId] = place || [];
+      const [quantityStart, quantityEnd] = quantityRange || [];
+      const query = {warehouseId, areaId, rackId, itemId, quantityStart, quantityEnd, panelType}
+      const pageReq = {...this.pageReq}
       pageReq.page -= 1;
       listWmsInventory(query, pageReq).then(response => {
-        const { content, totalElements } = response
+        const {content, totalElements} = response
+
+        content.forEach(item => {
+          if (item.areaName) {
+            item.warehouseName = item.warehouseName + '/' + item.areaName
+          }
+        })
         this.wmsInventoryList = content
+        // 合并行
+        this.columns = this.columnsNormal
+        if (panelType == 5 || panelType == 10) {
+          this.mergeArr = ['warehouseName'] // 表格中的列名
+        } else if (panelType == 15) {
+          this.mergeArr = ['itemTypeName'] // 表格中的列名
+          this.columns = this.columnsType
+        } else {
+          this.mergeArr = [] // 表格中的列名
+        }
+        this.getSpanArr(this.wmsInventoryList);
         this.total = totalElements
         this.loading = false
       })
     },
-    // 取消按钮
-    cancel() {
-      this.open = false
-      this.reset()
-    },
+
     // 表单重置
     reset() {
       this.form = {
@@ -170,53 +255,6 @@ export default {
       this.ids = selection.map(item => item.id)
       this.single = selection.length !== 1
       this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset()
-      this.open = true
-      this.title = '添加库存'
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset()
-      const id = row.id || this.ids
-      getWmsInventory(id).then(response => {
-        this.form = response
-        this.open = true
-        this.title = '修改库存'
-      })
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs['form'].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateWmsInventory(this.form).then(response => {
-              this.$modal.msgSuccess('修改成功')
-              this.open = false
-              this.getList()
-            })
-          } else {
-            addWmsInventory(this.form).then(response => {
-              this.$modal.msgSuccess('新增成功')
-              this.open = false
-              this.getList()
-            })
-          }
-        }
-      })
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids
-      this.$modal.confirm('是否确认删除库存编号为"' + ids + '"的数据项？').then(function() {
-        return delWmsInventory(ids)
-      }).then(() => {
-        this.getList()
-        this.$modal.msgSuccess('删除成功')
-      }).catch(() => {
-      })
     },
     /** 导出按钮操作 */
     handleExport() {
