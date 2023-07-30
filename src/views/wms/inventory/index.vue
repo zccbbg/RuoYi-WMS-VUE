@@ -145,6 +145,65 @@ export default {
           key: '5'
         }
       ],
+      columnsArea: [
+        {
+          label: '仓库',
+          prop: 'warehouseName',
+          key: '1'
+        },
+        {
+          label: '库区',
+          prop: 'areaName',
+          key: '1'
+        },
+        {
+          label: '物料类型',
+          prop: 'itemTypeName',
+          key: '2'
+        },
+        {
+          label: '物料编码',
+          prop: 'itemNo',
+          key: '3'
+        },
+        {
+          label: '物料名称',
+          prop: 'itemName',
+          key: '4'
+        },
+        {
+          label: '库存',
+          prop: 'quantity',
+          key: '5'
+        }
+      ],
+      columnsByName: [
+        {
+          label: '物料名称',
+          prop: 'itemName',
+          key: '4'
+        },
+        {
+          label: '物料类型',
+          prop: 'itemTypeName',
+          key: '2'
+        },
+        {
+          label: '物料编码',
+          prop: 'itemNo',
+          key: '3'
+        },
+        {
+          label: '仓库/库区',
+          prop: 'warehouseName',
+          key: '1'
+        },
+        {
+          label: '库存',
+          prop: 'quantity',
+          key: '5'
+        }
+      ],
       panelType: 5
     }
   },
@@ -203,21 +262,45 @@ export default {
       listWmsInventory(query, pageReq).then(response => {
         const {content, totalElements} = response
 
-        content.forEach(item => {
-          if (item.areaName) {
-            item.warehouseName = item.warehouseName + '/' + item.areaName
-          }
-        })
         this.wmsInventoryList = content
+
+        if (panelType !=10) {
+          // 10 库区需要考虑库区是否为空
+
+          content.forEach(item => {
+            if (!item.warehouseName) {
+              item.warehouseName = "暂未分配仓库"
+            }
+            if (item.areaName) {
+              item.warehouseName = item.warehouseName + '/' + item.areaName
+            }
+          })
+        }
         // 合并行
         this.columns = this.columnsNormal
-        if (panelType == 5 || panelType == 10) {
-          this.mergeArr = ['warehouseName'] // 表格中的列名
+        if (panelType == 5 ) {
+          // 仓库
+          this.mergeArr = ['warehouseName']
+        }else if (panelType == 10){
+          // 库区
+          content.forEach(item => {
+            if (!item.warehouseName) {
+              item.warehouseName = "暂未分配仓库"
+            }
+            if (!item.areaName) {
+              item.areaName = "暂未分配库区"
+            }
+          })
+          this.mergeArr = ['warehouseName','areaName'] // 表格中的列名
+          this.columns = this.columnsArea
         } else if (panelType == 15) {
+          // 类型
           this.mergeArr = ['itemTypeName'] // 表格中的列名
           this.columns = this.columnsType
         } else {
-          this.mergeArr = [] // 表格中的列名
+          // 物料
+          this.mergeArr = ['itemName'] // 表格中的列名
+          this.columns = this.columnsByName
         }
         this.getSpanArr(this.wmsInventoryList);
         this.total = totalElements
