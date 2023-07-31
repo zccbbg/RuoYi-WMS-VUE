@@ -81,7 +81,7 @@ export default {
       queryParams: {
         itemId: null,
         place: null,
-        quantityRange: null,
+        quantityRange: [],
         panelType: 5
       },
       pageReq: {
@@ -295,11 +295,11 @@ export default {
           this.columns = this.columnsArea
         } else if (panelType == 15) {
           // 类型
-          this.mergeArr = ['itemTypeName'] // 表格中的列名
+          this.mergeArr = ['itemTypeName',"itemNo",'itemName'] // 表格中的列名
           this.columns = this.columnsType
         } else {
           // 物料
-          this.mergeArr = ['itemName'] // 表格中的列名
+          this.mergeArr = ['itemName','itemTypeName',"itemNo"] // 表格中的列名
           this.columns = this.columnsByName
         }
         this.getSpanArr(this.wmsInventoryList);
