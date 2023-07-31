@@ -29,7 +29,7 @@
       </el-col>
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
-    <component :is="currentComponent"  :table-data="wmsInventoryList"></component>
+    <component :is="currentComponent" v-loading="loading"  :table-data="wmsInventoryList"></component>
     <pagination v-show="total&gt;0" :limit.sync="pageReq.size" :page.sync="pageReq.page" :total="total"
                 @pagination="getList"></pagination>
 
@@ -92,7 +92,7 @@ export default {
   },
   computed: {
     currentComponent() {
-      let type = parseInt(this.queryParams.panelType)
+      let type = parseInt(this.panelType)
       switch (type) {
         case 5:
           return 'panel-by-warehouse';
@@ -177,6 +177,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.queryParams.pageNum = 1
+      this.pageReq.page = 1
       this.getList()
     },
     /** 重置按钮操作 */

@@ -13,15 +13,22 @@
             <span>编码：{{ row.itemNo }}</span>
           </el-col>
         </el-row>
-        <span>类型：{{ row.itemTypeName }}</span>
-        <el-popover
-          placement="top-start"
-          title="提示"
-          width="200"
-          trigger="hover"
-          content="该物料已经被逻辑删除。">
-          <i slot="reference" class="el-icon-question red"></i>
-        </el-popover>
+        <el-row>
+          <el-col :span="12">
+            <span>类型：{{ row.itemTypeName }}</span>
+          </el-col>
+          <el-col :span="12" v-if="row.itemDelFlag">
+            <el-popover
+              placement="top-start"
+              title="提示"
+              width="200"
+              trigger="hover"
+              content="该物料已经被逻辑删除。">
+              <a slot="reference" class="el-icon-question red" @click="deleteItem(row)">删除</a>
+            </el-popover>
+          </el-col>
+        </el-row>
+
       </template>
     </el-table-column>
     <el-table-column
@@ -50,6 +57,15 @@ export default {
     //   type: Boolean,
     //   default: false
     // }
+  },
+  methods: {
+    deleteItem(row) {
+      console.log('物理删除', row)
+      this.$message({
+        message: '该功能暂未开放',
+        type: 'warning'
+      });
+    }
   }
 }
 </script>
