@@ -15,18 +15,20 @@
           width="200"
           trigger="hover"
           content="该物料未分配仓库/库区。">
-          <a slot="reference" class="el-icon-question blue" @click="deleteItem(row)">分配</a>
+          <a slot="reference" class="el-icon-question blue" @click="allocationItem(row)">分配</a>
         </el-popover>
 
-        <el-popover
+        <el-popconfirm
           v-if="row.warehouseDelFlag"
           placement="top-start"
-          title="提示"
+          icon="el-icon-info"
+          icon-color="red"
           width="200"
           trigger="hover"
-          content="该仓库已经被逻辑删除。">
-          <a slot="reference" class="el-icon-question red" @click="deleteItem(row)">删除</a>
-        </el-popover>
+          @confirm="deleteItem(row)"
+          title="该仓库已经被逻辑删除,是否清除库存记录？">
+          <a slot="reference" class="el-icon-question red">删除</a>
+        </el-popconfirm>
       </template>
 
 
@@ -55,6 +57,7 @@
 
 <script>
 import MergeTable from "@/views/wms/inventory/component/MergeTable.vue";
+import {delWmsInventoryByWarehouse} from "@/api/wms/inventory";
 
 export default {
   name: 'PanelByWarehouse',
@@ -76,6 +79,15 @@ export default {
   },
   methods: {
     deleteItem(row) {
+      delWmsInventoryByWarehouse(row.warehouseId).then(res => {
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+        this.$emit('update', row)
+      })
+    },
+    allocationItem(row) {
       console.log('该物料未分配仓库/库区。', row)
       this.$message({
         message: '该功能暂未开放',

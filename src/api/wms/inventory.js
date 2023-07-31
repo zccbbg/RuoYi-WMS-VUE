@@ -52,6 +52,21 @@ export function delWmsInventory(id) {
     method: 'delete'
   })
 }
+// 删除库存
+export function delWmsInventoryByItem(id) {
+  return request({
+    url: '/wms/inventory/item/' + id,
+    method: 'delete'
+  })
+}
+
+// 删除库存
+export function delWmsInventoryByWarehouse(id) {
+  return request({
+    url: '/wms/inventory/warehouse/' + id,
+    method: 'delete'
+  })
+}
 
 // 导出库存
 export function exportWmsInventory(query) {

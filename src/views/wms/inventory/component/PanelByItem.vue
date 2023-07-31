@@ -18,14 +18,16 @@
             <span>类型：{{ row.itemTypeName }}</span>
           </el-col>
           <el-col :span="12" v-if="row.itemDelFlag">
-            <el-popover
+            <el-popconfirm
               placement="top-start"
-              title="提示"
+              icon="el-icon-info"
+              icon-color="red"
               width="200"
               trigger="hover"
-              content="该物料已经被逻辑删除。">
-              <a slot="reference" class="el-icon-question red" @click="deleteItem(row)">删除</a>
-            </el-popover>
+              @confirm="deleteItem(row)"
+              title="该物料已经被逻辑删除，是否清除库存记录？">
+              <a slot="reference" class="el-icon-question red" >删除</a>
+            </el-popconfirm>
           </el-col>
         </el-row>
 
@@ -44,6 +46,7 @@
 
 <script>
 import MergeTable from "@/views/wms/inventory/component/MergeTable.vue";
+import {delWmsInventoryByItem} from "@/api/wms/inventory";
 
 export default {
   name: 'PanelByItem',
@@ -60,11 +63,13 @@ export default {
   },
   methods: {
     deleteItem(row) {
-      console.log('物理删除', row)
-      this.$message({
-        message: '该功能暂未开放',
-        type: 'warning'
-      });
+      delWmsInventoryByItem(row.itemId).then(res => {
+        this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+        this.$emit('update', row)
+      })
     }
   }
 }
