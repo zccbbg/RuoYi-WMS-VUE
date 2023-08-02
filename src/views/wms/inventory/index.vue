@@ -98,10 +98,8 @@ export default {
           return 'panel-by-warehouse';
         case 10:
           return 'panel-by-area';
-        case 15:
-          return 'panel-by-item-type';
         case 20:
-          return 'panel-by-item';
+          return 'panel-by-item-type';
         default:
           return '';
       }
@@ -122,7 +120,7 @@ export default {
         const {content, totalElements} = response
         this.wmsInventoryList = content
 
-        if (panelType == 5 || panelType == 15) {
+        if (panelType == 5 || panelType == 20) {
           // 10 库区需要考虑库区是否为空
           content.forEach(item => {
             if (!item.warehouseName) {
@@ -143,16 +141,6 @@ export default {
             }
           })
 
-        } else {
-          // 物料
-          content.forEach(item => {
-            if (!item.warehouseName) {
-              item.warehouseName = "暂未分配仓库"
-            }
-            if (item.areaName) {
-              item.warehouseName = item.warehouseName + '/' + item.areaName
-            }
-          })
         }
         this.total = totalElements
         this.loading = false

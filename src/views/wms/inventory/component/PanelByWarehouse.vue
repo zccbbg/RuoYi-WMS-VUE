@@ -74,7 +74,7 @@ export default {
   },
   data() {
     return {
-      mergeArr: ['warehouseName'], // 表格中的列名
+      mergeArr: ['warehouseName','itemTypeName'], // 表格中的列名
     }
   },
   methods: {
