@@ -46,6 +46,7 @@ export default {
     },
     // getSpanArr方法
     getSpanArr(data) {
+      // 遍历需要合并的列名
       this.mergeArr.forEach((key, index1) => {
         let count = 0; // 用来记录需要合并行的起始位置
         this.mergeObj[key] = []; // 记录每一列的合并信息
@@ -54,18 +55,24 @@ export default {
           if (index === 0) {
             this.mergeObj[key].push(1);
           } else {
-            // 判断当前行是否与上一行其值相等 如果相等 在 count 记录的位置其值 +1 表示当前行需要合并 并push 一个 0 作为占位
-            if (item[key] === data[index - 1][key]) {
+            const pre_key = this.mergeArr[index1 - 1];
+            if (
+              (index1 === 0 && item[key] === data[index - 1][key]) ||
+              (index1 > 0 &&
+                item[key] === data[index - 1][key] &&
+                item[pre_key] === data[index - 1][pre_key])
+            ) {
+              // 判断当前行是否与上一行其值相等，如果相等在count记录的位置其值+1表示当前行需要合并，并push一个0作为占位
               this.mergeObj[key][count] += 1;
               this.mergeObj[key].push(0);
             } else {
               // 如果当前行和上一行其值不相等
               count = index; // 记录当前位置
-              this.mergeObj[key].push(1); // 重新push 一个 1
+              this.mergeObj[key].push(1); // 重新push一个1
             }
           }
-        })
-      })
+        });
+      });
     },
   }
 }

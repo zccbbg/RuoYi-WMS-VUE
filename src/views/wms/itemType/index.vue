@@ -31,42 +31,6 @@
         >新增
         </el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:itemType:edit']"
-        >修改
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="el-icon-delete"
-          size="mini"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:itemType:remove']"
-        >删除
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['wms:itemType:export']"
-        >导出
-        </el-button>
-      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
@@ -108,8 +72,8 @@
             icon="el-icon-plus"
             @click="handleAdd(scope.row)"
             v-hasPermi="['system:wmsItemType:add']"
-          >新增 -->
-          </el-button>
+          >新增
+          </el-button>-->
           <el-button
             size="mini"
             type="text"
@@ -220,7 +184,11 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {},
+      rules: {
+        typeName: [
+          {required: true, message: "请输入类型名称", trigger: "blur"},
+        ]
+      },
       columns: [
         {key: 1, label: "父物料类型id", visible: true},
         {key: 2, label: "祖级列表", visible: true},
