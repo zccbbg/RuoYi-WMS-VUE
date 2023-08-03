@@ -46,34 +46,36 @@ export default {
     },
     // getSpanArr方法
     getSpanArr(data) {
-      // 遍历需要合并的列名
       this.mergeArr.forEach((key, index1) => {
-        let count = 0; // 用来记录需要合并行的起始位置
-        this.mergeObj[key] = []; // 记录每一列的合并信息
+        let count = 0;
+        this.mergeObj[key] = [];
         data.forEach((item, index) => {
-          // index == 0表示数据为第一行，直接 push 一个 1
           if (index === 0) {
+            // 第一行始终为新组
             this.mergeObj[key].push(1);
           } else {
-            const pre_key = this.mergeArr[index1 - 1];
-            if (
-              (index1 === 0 && item[key] === data[index - 1][key]) ||
-              (index1 > 0 &&
-                item[key] === data[index - 1][key] &&
-                item[pre_key] === data[index - 1][pre_key])
-            ) {
-              // 判断当前行是否与上一行其值相等，如果相等在count记录的位置其值+1表示当前行需要合并，并push一个0作为占位
+            let valid = true;
+            // 逐步判断当前行的特定属性与前一行的对应属性是否相等
+            for (let i = 0; i <= index1; i++) {
+              const mergeKey = this.mergeArr[i];
+              if (item[mergeKey] !== data[index - 1][mergeKey]) {
+                valid = false;
+                break;
+              }
+            }
+            if (valid) {
+              // 所有属性值都相等，执行合并操作
               this.mergeObj[key][count] += 1;
               this.mergeObj[key].push(0);
             } else {
-              // 如果当前行和上一行其值不相等
-              count = index; // 记录当前位置
-              this.mergeObj[key].push(1); // 重新push一个1
+              // 任何一个属性不相等，不执行合并操作，创建新组
+              count = index;
+              this.mergeObj[key].push(1);
             }
           }
         });
       });
-    },
+    }
   }
 }
 </script>
