@@ -25,8 +25,8 @@
             <th>物料编号</th>
             <th>物料类型</th>
             <th>计划数量</th>
-            <th>源 仓库/库区/货架</th>
-            <th>目标 仓库/库区/货架</th>
+            <th>源 仓库/库区</th>
+            <th>目标 仓库/库区</th>
             <th>操作</th>
           </tr>
           <tr v-for="(it, index) in form.details">

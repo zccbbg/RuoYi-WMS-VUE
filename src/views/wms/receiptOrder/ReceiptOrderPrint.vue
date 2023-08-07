@@ -12,7 +12,7 @@
       th 物料编号
       th 物料类型
       th 数量
-      th 仓库/库区/货架
+      th 仓库/库区
     tr(v-for="it in row.details")
       td {{it.itemName || ''}}
       td {{it.itemNo || ''}}

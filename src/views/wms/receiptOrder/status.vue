@@ -30,7 +30,7 @@
         el-table-column(label="实际数量" align="center" width="150")
           template(slot-scope="scope")
             el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small" :disabled="scope.row.finish")
-        el-table-column(label="仓库/库区/货架" align="center" width="200")
+        el-table-column(label="仓库/库区" align="center" width="200")
           template(slot-scope="scope")
             WmsWarehouseCascader(v-model="scope.row.place" size="small" :disabled="scope.row.finish")
         el-table-column(label="入库状态" width="150")

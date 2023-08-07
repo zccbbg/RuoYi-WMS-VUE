@@ -94,7 +94,7 @@
                                :disabled="scope.row.finish"></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column label="仓库/库区/货架" align="center" width="200">
+          <el-table-column label="仓库/库区" align="center" width="200">
             <template slot-scope="scope">
               <WmsWarehouseCascader v-model="scope.row.place" size="small"
                                     :disabled="scope.row.finish"></WmsWarehouseCascader>

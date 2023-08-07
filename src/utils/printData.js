@@ -251,8 +251,8 @@ export const STOCK_OUT_TEMPLATE = {
       "value": "{ 数量 } ",
       "name": "planQuantity"
     }, {
-      "title": "仓库/库区/货架",
-      "value": "{ 仓库/库区/货架 } ",
+      "title": "仓库/库区",
+      "value": "{ 仓库/库区 } ",
       "name": "place"
     }],
     "columns": [{
@@ -272,8 +272,8 @@ export const STOCK_OUT_TEMPLATE = {
       "value": "{数量}",
       "name": "planQuantity"
     }, {
-      "title": "仓库/库区/货架",
-      "value": "{仓库/库区/货架}",
+      "title": "仓库/库区",
+      "value": "{仓库/库区}",
       "name": "place"
     }],
     "selectCol": ["itemName", "itemNo", "itemType", "planQuantity", "place"],
@@ -641,8 +641,8 @@ export const STOCK_IN_TEMPLATE = {
       "value": "{ 数量 } ",
       "name": "planQuantity"
     }, {
-      "title": "仓库/库区/货架",
-      "value": "{ 仓库/库区/货架 } ",
+      "title": "仓库/库区",
+      "value": "{ 仓库/库区 } ",
       "name": "place"
     }],
     "columns": [{
@@ -662,8 +662,8 @@ export const STOCK_IN_TEMPLATE = {
       "value": "{数量}",
       "name": "planQuantity"
     }, {
-      "title": "仓库/库区/货架",
-      "value": "{仓库/库区/货架}",
+      "title": "仓库/库区",
+      "value": "{仓库/库区}",
       "name": "place"
     }],
     "selectCol": ["itemName", "itemNo", "itemType", "planQuantity", "place"],
