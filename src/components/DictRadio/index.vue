@@ -8,14 +8,15 @@
       v-for="dict in dictList"
       :key="dict.value"
       :label="dict.value"
-      >{{ dict.label }}</el-radio-button
+    >{{ dict.label }}
+    </el-radio-button
     >
   </el-radio-group>
 </template>
 
 <script>
 export default {
-  props: ['radioData','size', 'value','showAll'],
+  props: ['radioData', 'size', 'value', 'showAll'],
   data() {
     return {
       // value:this.value
@@ -30,12 +31,12 @@ export default {
         this.$emit('input', v);
       }
     },
-    dictList(){
-      if(this.showAll === "all"){
+    dictList() {
+      if (this.showAll === "all") {
         let list = this.radioData;
-        list.splice(0, 0, {label:"全部"})
+        list.splice(0, 0, {label: "全部", value: null})
         return list
-      }else{
+      } else {
         return this.radioData
       }
     }
