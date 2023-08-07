@@ -8,7 +8,9 @@
         <el-form-item label="入库类型" prop="receiptOrderType">
           <el-radio-group v-model="form.receiptOrderType">
             <el-radio-button v-for="dict in dict.type.wms_receipt_type" :key="dict.value" :label="dict.value">{{
-              dict.label }}</el-radio-button>
+                dict.label
+              }}
+            </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="供应商" prop="supplierId">
@@ -22,7 +24,7 @@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea"
-            show-word-limit="show-word-limit"></el-input>
+                    show-word-limit="show-word-limit"></el-input>
         </el-form-item>
       </el-form>
       <el-divider></el-divider>
@@ -48,14 +50,16 @@
             <td align="center">{{ it.prod.itemNo }}</td>
             <td align="center">{{ it.prod.itemType }}</td>
             <td align="center">
-              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647"></el-input-number>
+              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1"
+                               :max="2147483647"></el-input-number>
             </td>
             <td align="center">
               <WmsWarehouseCascader v-model="it.place" size="small"></WmsWarehouseCascader>
+
             </td>
             <td align="center">
               <el-input-number v-model="it.money" :precision="2" @change="selectMoney" size="mini" :min="0"
-                label="请输入金额"></el-input-number>
+                               label="请输入金额"></el-input-number>
             </td>
             <td align="center"><a class="red" @click="form.details.splice(index, 1)">删除</a></td>
           </tr>
@@ -74,7 +78,7 @@
       <template v-if="modalObj.component === 'add-item'">
         <item-select ref="item-select" :data="this.form.details"></item-select>
       </template>
-       <span slot="footer">
+      <span slot="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
         <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
       </span>
@@ -83,13 +87,13 @@
 </template>
 
 <script>
-import { addOrUpdateWmsReceiptOrder, getWmsReceiptOrder } from '@/api/wms/receiptOrder'
-import { randomId } from '@/utils/RandomUtils'
+import {addOrUpdateWmsReceiptOrder, getWmsReceiptOrder} from '@/api/wms/receiptOrder'
+import {randomId} from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
 
 export default {
   name: 'WmsReceiptOrder',
-  components: { ItemSelect },
+  components: {ItemSelect},
   dicts: ['wms_receipt_type'],
   data() {
     return {
@@ -128,7 +132,7 @@ export default {
     }
   },
   created() {
-    const { id } = this.$route.query
+    const {id} = this.$route.query
     if (id) {
       this.loadDetail(id)
     } else {
@@ -148,7 +152,7 @@ export default {
       this.form.payableAmount = sum
     },
     cancel() {
-      this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
+      this.$tab.closeOpenPage({path: '/wms/receiptOrder'})
     },
     /** 提交按钮 */
     submitForm() {
@@ -179,7 +183,7 @@ export default {
             delFlag: 0
           }
         })
-        const req = { ...this.form, details }
+        const req = {...this.form, details}
         addOrUpdateWmsReceiptOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel();
@@ -188,9 +192,11 @@ export default {
     },
     loadDetail(id) {
       getWmsReceiptOrder(id).then(response => {
-        const { details, items } = response
+        const {details, items} = response
         const map = {};
-        (items || []).forEach(it => { map[it.id] = it });
+        (items || []).forEach(it => {
+          map[it.id] = it
+        });
         details && details.forEach(it => it.prod = map[it.itemId])
         this.form = {
           ...response,
@@ -235,7 +241,7 @@ export default {
     showAddItem() {
       try {
         this.$refs['item-select'].initDetailsList(this.form.details)
-      }catch (err){
+      } catch (err) {
 
       }
       const ok = () => this.confirmSelectItem()

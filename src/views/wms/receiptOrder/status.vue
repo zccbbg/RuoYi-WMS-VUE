@@ -1,55 +1,83 @@
-<template lang="pug">
-.receipt-order-status-wrapper.app-container(v-loading="loading")
-  .receipt-order-content
-    el-form(label-width="108px" :model="form" ref="form" :rules="rules")
-      el-form-item(label="入库单号" prop="receiptOrderNo") {{form.receiptOrderNo}}
-      el-form-item(label="入库状态" prop="receiptOrderNo") {{receiptStatusMap.get(form.receiptOrderStatus+'')}}
-      el-form-item(label="入库类型" prop="receiptOrderType") {{selectDictLabel(dict.type.wms_receipt_type, form.receiptOrderType)}}
-      el-form-item(label="供应商" prop="supplierId") {{supplierMap.get(form.supplierId)}}
-      el-form-item(label="订单号" prop="orderNo") {{form.orderNo}}
-      el-form-item(label="备注" prop="remark" ) {{form.remark}}
-    el-divider
-    .flex-center.mb8
-      .flex-one.large-tip.bolder-font 物料明细
-      .ops
-        el-button(
-          v-if="mergeDetailStatusArray.length === 1"
-          type="primary" plain size="small" @click="batch") 批量设置入库状态
-    el-dialog(title="请选择入库状态" :visible.sync="open" width="50%" append-to-body)
-      DictRadio(v-model="dialogStatus" :radioData="dialogStatusRange")
-      .dialog-footer(slot="footer")
-        el-button(type="primary" @click="dialogConfirm") 确 定
-        el-button(@click="cancelDialog") 取 消
-    .table
-      WmsTable(:data="form.details" @selection-change="handleSelectionChange")
-        el-table-column(type="selection" width="55" align="center")
-        el-table-column(label="物料名" align="center" prop="prod.itemName")
-        el-table-column(label="物料编号" align="center" prop="prod.itemNo")
-        el-table-column(label="物料类型" align="center" prop="prod.itemType")
-        el-table-column(label="计划数量" align="center" prop="planQuantity")
-        el-table-column(label="实际数量" align="center" width="150")
-          template(slot-scope="scope")
-            el-input-number(v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small" :disabled="scope.row.finish")
-        el-table-column(label="仓库/库区" align="center" width="200")
-          template(slot-scope="scope")
-            WmsWarehouseCascader(v-model="scope.row.place" size="small" :disabled="scope.row.finish")
-        el-table-column(label="入库状态" width="150")
-          template(slot-scope="{ row }")
-            DictSelect(v-model="row.receiptOrderStatus" :options="row.range" size="small" @change="setReceiptOrderStatus" :disabled="row.finish")
-      el-empty(v-if="!form.details || form.details.length === 0" :image-size="48")
-    .tc.mt16
-      el-button(@click="cancel") 取消
-      el-button(@click="submitForm" type="primary" :disabled="finish") 保存
+<template>
+  <div class="receipt-order-status-wrapper app-container" v-loading="loading">
+    <div class="receipt-order-content">
+      <el-form label-width="108px" :model="form" ref="form" :rules="rules">
+        <el-form-item label="入库单号" prop="receiptOrderNo">{{ form.receiptOrderNo }}</el-form-item>
+        <el-form-item label="入库状态" prop="receiptOrderNo">{{ receiptStatusMap.get(form.receiptOrderStatus + '') }}
+        </el-form-item>
+        <el-form-item label="入库类型" prop="receiptOrderType">
+          {{ selectDictLabel(dict.type.wms_receipt_type, form.receiptOrderType) }}
+        </el-form-item>
+        <el-form-item label="供应商" prop="supplierId">{{ supplierMap.get(form.supplierId) }}</el-form-item>
+        <el-form-item label="订单号" prop="orderNo">{{ form.orderNo }}</el-form-item>
+        <el-form-item label="备注" prop="remark">{{ form.remark }}</el-form-item>
+      </el-form>
+      <el-divider></el-divider>
+      <div class="flex-center mb8">
+        <div class="flex-one large-tip bolder-font">物料明细</div>
+        <div class="ops">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="batch">批量设置入库状态
+          </el-button>
+        </div>
+      </div>
+      <el-dialog title="请选择入库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
+        <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
+        <div class="dialog-footer" slot="footer">
+          <el-button type="primary" @click="dialogConfirm">确 定</el-button>
+          <el-button @click="cancelDialog">取 消</el-button>
+        </div>
+      </el-dialog>
+      <div class="table">
+        <el-form ref="form" :model="form" :show-message="false">
+          <WmsTable :data="form.details" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+            <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+            <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+            <el-table-column label="物料类型" align="center" prop="prod.itemType" class="mb20"></el-table-column>
+            <el-table-column label="计划数量" align="center" prop="planQuantity" class="mb20"></el-table-column>
+            <el-table-column label="实际数量" align="center" width="150">
+              <template slot-scope="scope" class="mb20">
+                <el-input-number v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small"
+                                 :disabled="scope.row.finish"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="仓库/库区" align="center" width="200">
+              <template slot-scope="scope">
+                <el-form-item :prop=" 'details.' + scope.$index + '.place' "
+                              :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
+                              style="margin-bottom: 0!important;">
+                  <WmsWarehouseCascader v-model="scope.row.place" size="small"
+                                        :disabled="scope.row.finish"></WmsWarehouseCascader>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="入库状态" width="150">
+              <template slot-scope="{ row }">
+                <DictSelect v-model="row.receiptOrderStatus" :options="row.range" size="small"
+                            @change="setReceiptOrderStatus" :disabled="row.finish"></DictSelect>
+              </template>
+            </el-table-column>
+          </WmsTable>
+        </el-form>
+        <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
+      </div>
+      <div class="tc mt16">
+        <el-button @click="cancel">取消</el-button>
+        <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { addOrUpdateWmsReceiptOrder, getWmsReceiptOrder } from '@/api/wms/receiptOrder'
+import {addOrUpdateWmsReceiptOrder, getWmsReceiptOrder} from '@/api/wms/receiptOrder'
 import ItemSelect from '@/views/components/ItemSelect'
-import { mapGetters } from 'vuex'
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'WmsReceiptOrder',
-  components: { ItemSelect },
+  components: {ItemSelect},
   dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
     ...mapGetters(['supplierMap']),
@@ -89,7 +117,7 @@ export default {
     }
   },
   created() {
-    const { id } = this.$route.query
+    const {id} = this.$route.query
     if (id) {
       this.loadDetail(id)
     } else {
@@ -127,12 +155,17 @@ export default {
       }
     },
     cancel() {
-      this.$tab.closeOpenPage({ path: '/wms/receiptOrder' })
+      this.$tab.closeOpenPage({path: '/wms/receiptOrder'})
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs['form'].validate(valid => {
+      this.$refs['form'].validate((valid, msg) => {
         if (!valid) {
+          this.$notify({
+            title: '警告',
+            message: "请完善表单信息",
+            type: 'warning'
+          });
           return
         }
         const details = this.form.details.map(it => {
@@ -157,7 +190,7 @@ export default {
             delFlag: 0
           }
         })
-        const req = { ...this.form, details }
+        const req = {...this.form, details}
         addOrUpdateWmsReceiptOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel()
@@ -198,7 +231,7 @@ export default {
     loadDetail(id) {
       this.loading = true
       getWmsReceiptOrder(id).then(response => {
-        const { details, items } = response
+        const {details, items} = response
         const map = {};
         (items || []).forEach(it => {
           map[it.id] = it
@@ -211,8 +244,8 @@ export default {
           it.range = this.getRange(it.receiptOrderStatus)
           it.finish = it.receiptOrderStatus === 3
         })
-        this.finish = details.filter(it=>!it.finish)?.length === 0
-        this.sourceDetails = details.map(it => ({ ...it }))
+        this.finish = details.filter(it => !it.finish)?.length === 0
+        this.sourceDetails = details.map(it => ({...it}))
         this.form = {
           ...response,
           details
@@ -224,7 +257,7 @@ export default {
     getRange(status) {
       const arr = this.dict.type.wms_receipt_status
       if (status === 4 || status === 3) {
-        return arr.filter(it => +it.value === status).map(it => ({ label: it.label, value: it.value }))
+        return arr.filter(it => +it.value === status).map(it => ({label: it.label, value: it.value}))
       }
       if (status === 2) {
         return arr.filter(it => +it.value >= status && +it.value !== 4).map(it => ({
@@ -232,7 +265,7 @@ export default {
           value: it.value
         }))
       }
-      return arr.filter(it => +it.value >= status).map(it => ({ label: it.label, value: it.value }))
+      return arr.filter(it => +it.value >= status).map(it => ({label: it.label, value: it.value}))
     }
   }
 }
