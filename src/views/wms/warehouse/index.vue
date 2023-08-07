@@ -16,7 +16,7 @@
     <el-empty description="暂无仓库" v-if="wmsWarehouseList.length == 0"></el-empty>
     <el-card v-else>
       <el-tabs :tab-position="tabPosition" style="height: 600px;" @tab-click="handleTabClick" ref="leftRef">
-        <el-tab-pane v-for="(it, index) in wmsWarehouseList" :label="it.warehouseName">
+        <el-tab-pane v-for="(it, index) in wmsWarehouseList" :label="it.warehouseName" :key="it.id">
           <div class="content-wrapper">
             <div class="clearfix">
               <div style="color:#409EFF;font-weight: bold;font-size: 15px;" class="content-margin left">基本信息</div>

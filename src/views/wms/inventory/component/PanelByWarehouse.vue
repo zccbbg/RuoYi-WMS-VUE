@@ -9,7 +9,7 @@
         <span>{{ row.warehouseName }}</span>
 
         <el-popover
-          v-if="!row.warehouseDelFlag"
+          v-if="!row.warehouseId"
           placement="top-start"
           title="提示"
           width="200"
@@ -19,7 +19,7 @@
         </el-popover>
 
         <el-popconfirm
-          v-if="row.warehouseDelFlag"
+          v-if="row.warehouseDelFlag == 1"
           placement="top-start"
           icon="el-icon-info"
           icon-color="red"
