@@ -82,6 +82,7 @@
         </div>
       </el-dialog>
       <div class="table">
+        <el-form ref="form" :model="form" :show-message="false">
         <WmsTable :data="form.details" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55" align="center"></el-table-column>
           <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
@@ -96,8 +97,12 @@
           </el-table-column>
           <el-table-column label="仓库/库区" align="center" width="200">
             <template slot-scope="scope">
+              <el-form-item :prop=" 'details.' + scope.$index + '.place' "
+                            :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
+                            style="margin-bottom: 0!important;">
               <WmsWarehouseCascader v-model="scope.row.place" size="small"
                                     :disabled="scope.row.finish"></WmsWarehouseCascader>
+              </el-form-item>
             </template>
           </el-table-column>
           <el-table-column label="出库状态" width="150">
@@ -107,6 +112,7 @@
             </template>
           </el-table-column>
         </WmsTable>
+        </el-form>
         <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
       </div>
       <div class="tc mt16">
@@ -287,6 +293,11 @@ export default {
     submitForm() {
       this.$refs['form'].validate(valid => {
         if (!valid) {
+          this.$notify({
+            title: '警告',
+            message: "请完善表单信息",
+            type: 'warning'
+          });
           return
         }
         const details = this.form.details.map(it => {

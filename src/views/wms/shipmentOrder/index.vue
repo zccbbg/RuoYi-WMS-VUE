@@ -1,17 +1,22 @@
 <template>
   <div class="app-container">
-    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm" size="medium">
+    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
+             size="medium">
       <el-form-item label="出库状态" prop="shipmentOrderStatus">
-        <DictRadio v-model="queryParams.shipmentOrderStatus" :radioData="dict.type.wms_shipment_status" :showAll="'all'" size="small" @change="handleQuery"></DictRadio>
+        <DictRadio v-model="queryParams.shipmentOrderStatus" :radioData="dict.type.wms_shipment_status" :showAll="'all'"
+                   size="small" @change="handleQuery"></DictRadio>
       </el-form-item>
       <el-form-item label="出库类型" prop="shipmentOrderType">
-        <DictRadio v-model="queryParams.shipmentOrderType" :radioData="dict.type.wms_shipment_type" :showAll="'all'" size="small" @change="handleQuery"></DictRadio>
+        <DictRadio v-model="queryParams.shipmentOrderType" :radioData="dict.type.wms_shipment_type" :showAll="'all'"
+                   size="small" @change="handleQuery"></DictRadio>
       </el-form-item>
       <el-form-item label="出库单号" prop="shipmentOrderNo">
-        <el-input v-model="queryParams.shipmentOrderNo" clearable="clearable" placeholder="请输入出库单号" size="small" @keyup.enter.native="handleQuery"></el-input>
+        <el-input v-model="queryParams.shipmentOrderNo" clearable="clearable" placeholder="请输入出库单号" size="small"
+                  @keyup.enter.native="handleQuery"></el-input>
       </el-form-item>
       <el-form-item label="订单号" prop="orderNo">
-        <el-input v-model="queryParams.orderNo" clearable="clearable" placeholder="请输入订单号" size="small" @keyup.enter.native="handleQuery"></el-input>
+        <el-input v-model="queryParams.orderNo" clearable="clearable" placeholder="请输入订单号" size="small"
+                  @keyup.enter.native="handleQuery"></el-input>
       </el-form-item>
       <el-form-item label="客户" prop="customerId">
         <WmsCustomerSelect v-model="queryParams.customerId" size="small"></WmsCustomerSelect>
@@ -23,23 +28,30 @@
     </el-form>
     <el-row class="mb8" :gutter="10">
       <el-col :span="1.5">
-        <el-button v-hasPermi="['wms:shipmentOrder:add']" icon="el-icon-plus" plain="plain" size="mini" type="primary" @click="handleAdd()">创建出库单</el-button>
+        <el-button v-hasPermi="['wms:shipmentOrder:add']" icon="el-icon-plus" plain="plain" size="mini" type="primary"
+                   @click="handleAdd()">创建出库单
+        </el-button>
       </el-col>
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <WmsTable v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55"></el-table-column>
-      <el-table-column v-if="columns[0].visible" align="center" label="出库单号" prop="shipmentOrderNo"></el-table-column>
+      <el-table-column v-if="columns[0].visible" align="center" label="出库单号"
+                       prop="shipmentOrderNo"></el-table-column>
       <el-table-column v-if="columns[1].visible" align="center" label="出库类型">
         <template slot-scope="scope">
-          <el-tag effect="plain" size="medium" :type="getShipmentOrderTypeTag(scope.row)">{{ getShipmentOrderType(scope.row) }}</el-tag>
+          <el-tag effect="plain" size="medium" :type="getShipmentOrderTypeTag(scope.row)">
+            {{ getShipmentOrderType(scope.row) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column v-if="columns[2].visible" align="center" :formatter="getCustomer" label="客户"></el-table-column>
       <el-table-column v-if="columns[3].visible" align="center" label="订单号" prop="orderNo"></el-table-column>
       <el-table-column v-if="columns[4].visible" align="center" label="出库状态">
         <template slot-scope="scope">
-          <el-tag effect="plain" size="medium" :type="getShipmentOrderStatusTag(scope.row)">{{ getShipmentOrderStatus(scope.row) }}</el-tag>
+          <el-tag effect="plain" size="medium" :type="getShipmentOrderStatusTag(scope.row)">
+            {{ getShipmentOrderStatus(scope.row) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column v-if="columns[5].visible" align="center" label="备注" prop="remark">
@@ -51,14 +63,21 @@
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
         <template v-slot="{ row }">
-          <el-button v-hasPermi="['wms:shipmentOrder:edit']" v-if="11 === row.shipmentOrderStatus" icon="el-icon-edit" size="mini" type="text" @click.stop="handleUpdate(row)">修改</el-button>
-          <el-button v-hasPermi="['wms:shipmentOrder:remove']" v-if="11 === row.shipmentOrderStatus" icon="el-icon-delete" size="mini" type="text" @click.stop="handleDelete(row)">删除</el-button>
-          <el-button v-hasPermi="['wms:shipmentOrder:status']" v-if="row.detailCount" icon="el-icon-truck" size="mini" type="text" @click.stop="handleStatus(row)">发货/出库</el-button>
+          <el-button v-hasPermi="['wms:shipmentOrder:edit']" v-if="11 === row.shipmentOrderStatus" icon="el-icon-edit"
+                     size="mini" type="text" @click.stop="handleUpdate(row)">修改
+          </el-button>
+          <el-button v-hasPermi="['wms:shipmentOrder:remove']" icon="el-icon-delete" size="mini" type="text"
+                     @click.stop="handleDelete(row)">删除
+          </el-button>
+          <el-button v-hasPermi="['wms:shipmentOrder:status']" v-if="row.detailCount" icon="el-icon-truck" size="mini"
+                     type="text" @click.stop="handleStatus(row)">发货/出库
+          </el-button>
           <el-button icon="el-icon-print" size="mini" type="text" @click.stop="printOut(row,true)">打印</el-button>
         </template>
       </el-table-column>
     </WmsTable>
-    <pagination v-show="total>0" :limit.sync="queryParams.pageSize" :page.sync="queryParams.pageNum" :total="total" @pagination="getList"></pagination>
+    <pagination v-show="total>0" :limit.sync="queryParams.pageSize" :page.sync="queryParams.pageNum" :total="total"
+                @pagination="getList"></pagination>
     <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width">
       <template v-if="modalObj.component === 'print-type'">
         <el-radio-group v-model="modalObj.form.value">
@@ -74,7 +93,8 @@
         <el-button @click="modalObj.ok" type="primary">确认</el-button>
       </template>
     </el-dialog>
-  </div></template>
+  </div>
+</template>
 
 <script>
 import {
@@ -83,13 +103,13 @@ import {
   exportWmsShipmentOrder,
   getWmsShipmentOrder
 } from '@/api/wms/shipmentOrder'
-import { mapGetters } from 'vuex'
-import { STOCK_OUT_TEMPLATE } from '@/utils/printData'
+import {mapGetters} from 'vuex'
+import {STOCK_OUT_TEMPLATE} from '@/utils/printData'
 import ShipmentOrderPrint from '@/views/wms/shipmentOrder/ShipmentOrderPrint'
 
 export default {
   name: 'wmsShipmentOrder',
-  components: { ShipmentOrderPrint },
+  components: {ShipmentOrderPrint},
   dicts: ['wms_shipment_type', 'wms_shipment_status'],
   computed: {
     ...mapGetters(['customerMap', 'warehouseMap', 'areaMap', 'rackMap']),
@@ -149,12 +169,12 @@ export default {
       // 表单校验
       rules: {},
       columns: [
-        { key: 1, label: '出库单号', visible: true },
-        { key: 2, label: '出库类型', visible: true },
-        { key: 3, label: '供应商', visible: true },
-        { key: 4, label: '订单号', visible: true },
-        { key: 5, label: '出库状态', visible: true },
-        { key: 6, label: '备注', visible: true }
+        {key: 1, label: '出库单号', visible: true},
+        {key: 2, label: '出库类型', visible: true},
+        {key: 3, label: '供应商', visible: true},
+        {key: 4, label: '订单号', visible: true},
+        {key: 5, label: '出库状态', visible: true},
+        {key: 6, label: '备注', visible: true}
       ]
     }
   },
@@ -196,11 +216,11 @@ export default {
     /** 查询出库单列表 */
     getList() {
       this.loading = true
-      const { pageNum, pageSize } = this.queryParams
-      const query = { ...this.queryParams, pageNum: undefined, pageSize: undefined }
-      const pageReq = { page: pageNum - 1, size: pageSize }
+      const {pageNum, pageSize} = this.queryParams
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined}
+      const pageReq = {page: pageNum - 1, size: pageSize}
       listWmsShipmentOrder(query, pageReq).then(response => {
-        const { content, totalElements } = response
+        const {content, totalElements} = response
         this.wmsShipmentOrderList = content
         this.total = totalElements
         this.loading = false
@@ -224,7 +244,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.$router.push({ path: '/wms/shipmentOrder/edit' })
+      this.$router.push({path: '/wms/shipmentOrder/edit'})
     },
     printOut(row, print) {
       this.modalObj = {
@@ -291,7 +311,7 @@ export default {
     getDetail(row) {
       //查询详情
       return getWmsShipmentOrder(row.id).then(response => {
-        const { details, items } = response
+        const {details, items} = response
         const map = {};
         (items || []).forEach(it => {
           map[it.id] = it
@@ -330,16 +350,16 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       const id = row.id || this.ids
-      this.$router.push({ path: '/wms/shipmentOrder/edit', query: { id } })
+      this.$router.push({path: '/wms/shipmentOrder/edit', query: {id}})
     },
     handleStatus(row) {
       const id = row.id || this.ids
-      this.$router.push({ path: '/wms/shipmentOrder/status', query: { id } })
+      this.$router.push({path: '/wms/shipmentOrder/status', query: {id}})
     },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids
-      this.$modal.confirm('是否确认删除出库单编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除出库单编号为"' + ids + '"的数据项？').then(function () {
         return delWmsShipmentOrder(ids)
       }).then(() => {
         this.getList()
@@ -363,21 +383,25 @@ export default {
 }
 </script>
 <style lang="stylus">
-.popperOptions[x-placement^=left] .popper__arrow::after{
+.popperOptions[x-placement^=left] .popper__arrow::after {
   border-left-color: #565D6B;
 }
-.popperOptions[x-placement^=right] .popper__arrow::after{
+
+.popperOptions[x-placement^=right] .popper__arrow::after {
   border-right-color: #565D6B;
 }
-.popperOptions[x-placement^=bottom] .popper__arrow::after{
+
+.popperOptions[x-placement^=bottom] .popper__arrow::after {
   border-bottom-color: #565D6B;
 }
-.popperOptions[x-placement^=top] .popper__arrow::after{
+
+.popperOptions[x-placement^=top] .popper__arrow::after {
   border-top-color: #565D6B;
 }
-.popperOptions{
-background-color: #565D6B;
-color: #FFFFFF;
-border: #565D6B;
+
+.popperOptions {
+  background-color: #565D6B;
+  color: #FFFFFF;
+  border: #565D6B;
 }
 </style>
