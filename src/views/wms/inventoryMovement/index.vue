@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
+    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+             class="ry_form">
       <el-form-item label="移库状态" prop="status">
         <DictRadio v-model="queryParams.status" @change="handleQuery" size="small"
                    :radioData="dict.type.wms_movement_status" :showAll="'all'"/>
@@ -28,13 +29,14 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['wms:inventoryMovement:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <WmsTable v-loading="loading" :data="wmsInventoryMovementList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="编号" align="center" prop="inventoryMovementNo" v-if="columns[0].visible"/>
       <el-table-column label="状态" align="center" prop="status" v-if="columns[1].visible">
         <template slot-scope="scope">
@@ -45,7 +47,7 @@
       </el-table-column>
       <el-table-column label="下单时间" align="center" prop="createTime" width="180" v-if="columns[2].visible">
         <template slot-scope="scope">
-            <span>{{ parseTime(scope.row.createTime, '')}}</span>
+          <span>{{ parseTime(scope.row.createTime, '') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible">
@@ -57,8 +59,8 @@
       </el-table-column>
       <el-table-column label="物料" align="center" prop="remark" v-if="columns[4].visible">
         <template slot-scope="scope">
-          <p>物料品种数量：{{scope.row.detailCount}}</p>
-          <p>物料总数量：{{scope.row.itemCount}}</p>
+          <p>物料品种数量：{{ scope.row.detailCount }}</p>
+          <p>物料总数量：{{ scope.row.itemCount }}</p>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -73,7 +75,6 @@
           >修改
           </el-button>
           <el-button
-            v-if="21 === row.status"
             size="mini"
             type="text"
             icon="el-icon-delete"
@@ -105,7 +106,14 @@
 </template>
 
 <script>
-import { listWmsInventoryMovement, getWmsInventoryMovement, delWmsInventoryMovement, addWmsInventoryMovement, updateWmsInventoryMovement, exportWmsInventoryMovement } from "@/api/wms/inventoryMovement";
+import {
+  listWmsInventoryMovement,
+  getWmsInventoryMovement,
+  delWmsInventoryMovement,
+  addWmsInventoryMovement,
+  updateWmsInventoryMovement,
+  exportWmsInventoryMovement
+} from "@/api/wms/inventoryMovement";
 import {mapGetters} from "vuex";
 
 export default {
@@ -151,14 +159,13 @@ export default {
       // 表单参数
       form: {},
       // 表单校验
-      rules: {
-      },
+      rules: {},
       columns: [
-            { key: 1, label: "编号", visible:  true  },
-            { key: 2, label: "状态", visible:  true  },
-            { key: 3, label: "下单时间", visible:  true  },
-            { key: 4, label: "备注", visible:  true  },
-            { key: 5, label: "物料", visible:  true  },
+        {key: 1, label: "编号", visible: true},
+        {key: 2, label: "状态", visible: true},
+        {key: 3, label: "下单时间", visible: true},
+        {key: 4, label: "备注", visible: true},
+        {key: 5, label: "物料", visible: true},
       ],
     };
   },
@@ -188,7 +195,7 @@ export default {
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWmsInventoryMovement(query, pageReq).then(response => {
-        const { content, totalElements } = response
+        const {content, totalElements} = response
         this.wmsInventoryMovementList = content;
         this.total = totalElements;
         this.loading = false;
@@ -207,7 +214,7 @@ export default {
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
+      this.single = selection.length !== 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
@@ -226,12 +233,13 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除库存移动编号为"' + ids + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除库存移动编号为"' + ids + '"的数据项？').then(function () {
         return delWmsInventoryMovement(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
+      }).catch(() => {
+      });
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -242,27 +250,32 @@ export default {
       }).then(response => {
         this.$download.download(response);
         this.exportLoading = false;
-      }).catch(() => {});
+      }).catch(() => {
+      });
     }
   }
 };
 </script>
 <style lang="stylus">
-.popperOptions[x-placement^=left] .popper__arrow::after{
+.popperOptions[x-placement^=left] .popper__arrow::after {
   border-left-color: #565D6B;
 }
-.popperOptions[x-placement^=right] .popper__arrow::after{
+
+.popperOptions[x-placement^=right] .popper__arrow::after {
   border-right-color: #565D6B;
 }
-.popperOptions[x-placement^=bottom] .popper__arrow::after{
+
+.popperOptions[x-placement^=bottom] .popper__arrow::after {
   border-bottom-color: #565D6B;
 }
-.popperOptions[x-placement^=top] .popper__arrow::after{
+
+.popperOptions[x-placement^=top] .popper__arrow::after {
   border-top-color: #565D6B;
 }
-.popperOptions{
-background-color: #565D6B;
-color: #FFFFFF;
-border: #565D6B;
+
+.popperOptions {
+  background-color: #565D6B;
+  color: #FFFFFF;
+  border: #565D6B;
 }
 </style>
