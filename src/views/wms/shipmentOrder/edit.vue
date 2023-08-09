@@ -8,7 +8,8 @@
         <el-form-item label="出库类型" prop="shipmentOrderType">
           <el-radio-group v-model="form.shipmentOrderType">
             <el-radio-button v-for="dict in dict.type.wms_shipment_type" :key="dict.value"
-              :label="dict.value">{{ dict.label }}</el-radio-button>
+                             :label="dict.value">{{ dict.label }}
+            </el-radio-button>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="顾客" prop="customerId">
@@ -22,7 +23,7 @@
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="备注...100个字符以内" rows="3" maxlength="100" type="textarea"
-            show-word-limit="show-word-limit"></el-input>
+                    show-word-limit="show-word-limit"></el-input>
         </el-form-item>
       </el-form>
       <el-divider></el-divider>
@@ -39,7 +40,9 @@
             <th>物料编号</th>
             <th>物料类型</th>
             <th>计划数量</th>
-            <th>仓库/库区</th>
+            <th>仓库/库区
+              <el-button type="text" size="small"  icon="el-icon-files" @click="onBatchSetInventory">批量</el-button>
+            </th>
             <th>金额</th>
             <th>操作</th>
           </tr>
@@ -48,14 +51,15 @@
             <td align="center">{{ it.prod.itemNo }}</td>
             <td align="center">{{ it.prod.itemType }}</td>
             <td align="center">
-              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1" :max="2147483647"></el-input-number>
+              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1"
+                               :max="2147483647"></el-input-number>
             </td>
             <td align="center">
               <WmsWarehouseCascader v-model="it.place" size="small"></WmsWarehouseCascader>
             </td>
             <td align="center">
               <el-input-number v-model="it.money" :precision="2" @change="selectMoney" size="mini" :min="0"
-                label="请输入金额"></el-input-number>
+                               label="请输入金额"></el-input-number>
             </td>
             <td align="center"><a class="red" @click="form.details.splice(index, 1)">删除</a></td>
           </tr>
@@ -72,27 +76,39 @@
     </div>
     <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel">
       <template v-if="modalObj.component === 'add-item'">
-        <item-select ref="item-select"  :data="this.form.details"></item-select>
+        <item-select ref="item-select" :data="this.form.details"></item-select>
       </template>
-       <span slot="footer">
+      <span slot="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
         <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
       </span>
     </el-dialog>
+    <BatchWarehouseDialog
+      :visible.sync="batchDialogVisible"
+      :form-data.sync="batchForm"
+      @confirmed="onBatchDialogFinished"
+    ></BatchWarehouseDialog>
   </div>
 </template>
 
 <script>
-import { addOrUpdateWmsShipmentOrder, getWmsShipmentOrder } from '@/api/wms/shipmentOrder'
-import { randomId } from '@/utils/RandomUtils'
+import {addOrUpdateWmsShipmentOrder, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
+import {randomId} from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 
 export default {
   name: 'WmsShipmentOrder',
-  components: { ItemSelect },
+  components: {BatchWarehouseDialog, ItemSelect},
   dicts: ['wms_shipment_type'],
   data() {
     return {
+      visible: false,
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchForm: {
+        place: []
+      },
       // 表单参数
       form: {
         details: []
@@ -126,7 +142,7 @@ export default {
     }
   },
   created() {
-    const { id } = this.$route.query
+    const {id} = this.$route.query
     if (id) {
       this.loadDetail(id)
     } else {
@@ -134,6 +150,22 @@ export default {
     }
   },
   methods: {
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory() {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      this.batchDialogVisible = true
+    },
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+      })
+    },
     /** 统计出库单金额 */
     selectMoney() {
       let sum = 0;
@@ -146,7 +178,7 @@ export default {
       this.form.receivableAmount = sum
     },
     cancel() {
-      this.$tab.closeOpenPage({ path: '/wms/shipmentOrder' })
+      this.$tab.closeOpenPage({path: '/wms/shipmentOrder'})
     },
     /** 提交按钮 */
     submitForm() {
@@ -177,7 +209,7 @@ export default {
             delFlag: 0
           }
         })
-        const req = { ...this.form, details }
+        const req = {...this.form, details}
         addOrUpdateWmsShipmentOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel();
@@ -186,7 +218,7 @@ export default {
     },
     loadDetail(id) {
       getWmsShipmentOrder(id).then(response => {
-        const { details, items } = response
+        const {details, items} = response
         const map = {};
         (items || []).forEach(it => {
           map[it.id] = it
@@ -235,7 +267,7 @@ export default {
     showAddItem() {
       try {
         this.$refs['item-select'].initDetailsList(this.form.details)
-      }catch (err){
+      } catch (err) {
 
       }
       const ok = () => this.confirmSelectItem()

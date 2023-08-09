@@ -88,14 +88,14 @@
           <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
           <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
           <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
-          <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
+          <el-table-column label="计划数量" align="center" prop="planQuantity" ></el-table-column>
           <el-table-column label="实际数量" align="center" width="150">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small"
                                :disabled="scope.row.finish"></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column label="仓库/库区" align="center" width="200">
+          <el-table-column label="仓库/库区" align="center" width="200" :render-header="renderHeader">
             <template slot-scope="scope">
               <el-form-item :prop=" 'details.' + scope.$index + '.place' "
                             :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
@@ -149,6 +149,11 @@
           <el-button @click="canceldeliveryForm">取 消</el-button>
         </div>
       </el-dialog>
+      <BatchWarehouseDialog
+        :visible.sync="batchDialogVisible"
+        :form-data.sync="batchForm"
+        @confirmed="onBatchDialogFinished"
+      ></BatchWarehouseDialog>
     </div>
   </div>
 </template>
@@ -159,10 +164,12 @@ import ItemSelect from '@/views/components/ItemSelect'
 import {mapGetters} from 'vuex'
 import WmsCarrier from "@/views/wms/carrier/index.vue";
 import {addWmsDelivery, updateWmsDelivery} from "@/api/wms/delivery";
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
+import {batchWarehouseRenderHeader} from "@/utils/wms";
 
 export default {
   name: 'WmsShipmentOrder',
-  components: {WmsCarrier, ItemSelect},
+  components: {BatchWarehouseDialog, WmsCarrier, ItemSelect},
   dicts: ['wms_shipment_type', 'wms_shipment_status'],
   computed: {
     ...mapGetters(['customerMap', 'carrierMap']),
@@ -184,6 +191,11 @@ export default {
   },
   data() {
     return {
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchForm: {
+        place: []
+      },
       open: false,
       // 遮罩层
       loading: true,
@@ -225,6 +237,23 @@ export default {
     }
   },
   methods: {
+    renderHeader: batchWarehouseRenderHeader,
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory() {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      this.batchDialogVisible = true
+    },
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+      })
+    },
     // 格式化承运商
     getCarrier(row, column) {
       return this.carrierMap.get(row.carrierId)

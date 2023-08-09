@@ -41,7 +41,9 @@
             <th>物料编号</th>
             <th>物料类型</th>
             <th>计划数量</th>
-            <th>仓库/库区</th>
+            <th>仓库/库区
+              <el-button type="text" size="small"  icon="el-icon-files" @click="onBatchSetInventory">批量</el-button>
+            </th>
             <th>金额</th>
             <th>操作</th>
           </tr>
@@ -83,6 +85,11 @@
         <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
       </span>
     </el-dialog>
+    <BatchWarehouseDialog
+      :visible.sync="batchDialogVisible"
+      :form-data.sync="batchForm"
+      @confirmed="onBatchDialogFinished"
+    ></BatchWarehouseDialog>
   </div>
 </template>
 
@@ -90,13 +97,19 @@
 import {addOrUpdateWmsReceiptOrder, getWmsReceiptOrder} from '@/api/wms/receiptOrder'
 import {randomId} from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 
 export default {
   name: 'WmsReceiptOrder',
-  components: {ItemSelect},
+  components: {BatchWarehouseDialog, ItemSelect},
   dicts: ['wms_receipt_type'],
   data() {
     return {
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchForm: {
+        place: []
+      },
       // 表单参数
       form: {
         details: [],
@@ -140,6 +153,22 @@ export default {
     }
   },
   methods: {
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory() {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      this.batchDialogVisible = true
+    },
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+      })
+    },
     /** 统计入库单金额 */
     selectMoney() {
       let sum = 0;

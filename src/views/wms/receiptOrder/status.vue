@@ -42,7 +42,7 @@
                                  :disabled="scope.row.finish"></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="仓库/库区" align="center" width="200">
+            <el-table-column label="仓库/库区" align="center" width="200" :render-header="renderHeader">
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.place' "
                               :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
@@ -67,6 +67,11 @@
         <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>
       </div>
     </div>
+    <BatchWarehouseDialog
+      :visible.sync="batchDialogVisible"
+      :form-data.sync="batchForm"
+      @confirmed="onBatchDialogFinished"
+    ></BatchWarehouseDialog>
   </div>
 </template>
 
@@ -74,10 +79,12 @@
 import {addOrUpdateWmsReceiptOrder, getWmsReceiptOrder} from '@/api/wms/receiptOrder'
 import ItemSelect from '@/views/components/ItemSelect'
 import {mapGetters} from 'vuex'
+import {batchWarehouseRenderHeader} from "@/utils/wms";
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 
 export default {
   name: 'WmsReceiptOrder',
-  components: {ItemSelect},
+  components: {BatchWarehouseDialog, ItemSelect},
   dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
     ...mapGetters(['supplierMap']),
@@ -99,6 +106,11 @@ export default {
   },
   data() {
     return {
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchForm: {
+        place: []
+      },
       open: false,
       // 遮罩层
       loading: true,
@@ -125,6 +137,23 @@ export default {
     }
   },
   methods: {
+    renderHeader: batchWarehouseRenderHeader,
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory() {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      this.batchDialogVisible = true
+    },
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+      })
+    },
     dialogConfirm() {
       if (!this.dialogStatus) {
         this.$modal.alert('请选择入库状态')
