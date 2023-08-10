@@ -41,7 +41,7 @@
             <th>物料类型</th>
             <th>计划数量</th>
             <th>仓库/库区
-              <el-button type="text" size="small"  icon="el-icon-files" @click="onBatchSetInventory">批量</el-button>
+              <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory">批量</el-button>
             </th>
             <th>金额</th>
             <th>操作</th>
@@ -103,7 +103,6 @@ export default {
   dicts: ['wms_shipment_type'],
   data() {
     return {
-      visible: false,
       // 批量设置仓库/库区
       batchDialogVisible: false,
       batchForm: {

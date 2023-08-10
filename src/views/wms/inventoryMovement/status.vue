@@ -37,6 +37,15 @@
               </template>
             </el-table-column>
             <el-table-column label="源 仓库/库区" align="center" width="200">
+
+              <template slot="header" slot-scope="scope">
+
+                源 仓库/库区
+                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory('sourcePlace')">
+                  批量
+                </el-button>
+              </template>
+
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.sourcePlace' "
                               :rules="[{ required: true, message: '请选择源 仓库/库区', trigger: 'change' }]"
@@ -47,6 +56,13 @@
               </template>
             </el-table-column>
             <el-table-column label="目标 仓库/库区" align="center" width="200">
+
+              <template slot="header" slot-scope="scope">
+                目标 仓库/库区
+                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory('targetPlace')">
+                  批量
+                </el-button>
+              </template>
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.targetPlace' "
                               :rules="[{ required: true, message: '请选择目标 仓库/库区', trigger: 'change' }]"
@@ -71,16 +87,23 @@
         <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>
       </div>
     </div>
+    <BatchWarehouseDialog
+      :visible.sync="batchDialogVisible"
+      :form-data.sync="batchForm"
+      @confirmed="onBatchDialogFinished"
+    ></BatchWarehouseDialog>
   </div>
 </template>
 
 <script>
 import {addOrUpdateWmsInventoryMovement, getWmsInventoryMovement} from '@/api/wms/inventoryMovement'
 import ItemSelect from '@/views/components/ItemSelect'
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
+import {batchWarehouseRenderHeader} from "@/utils/wms";
 
 export default {
   name: 'WmsInventoryMovement',
-  components: {ItemSelect},
+  components: {BatchWarehouseDialog, ItemSelect},
   dicts: ['wms_movement_status'],
   computed: {
     statusMap() {
@@ -101,6 +124,12 @@ export default {
   },
   data() {
     return {
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchDialogField: '',
+      batchForm: {
+        place: []
+      },
       open: false,
       // 遮罩层
       loading: true,
@@ -127,6 +156,23 @@ export default {
     }
   },
   methods: {
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory(field) {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      this.batchDialogVisible = true
+      this.batchDialogField = field
+    },
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        it[this.batchDialogField] = [warehouseId, areaId, rackId].filter(Boolean)
+      })
+    },
     dialogConfirm() {
       if (!this.dialogStatus) {
         this.$modal.alert('请选择移库状态')

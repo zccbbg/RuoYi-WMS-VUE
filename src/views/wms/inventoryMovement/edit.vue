@@ -25,8 +25,16 @@
             <th>物料编号</th>
             <th>物料类型</th>
             <th>计划数量</th>
-            <th>源 仓库/库区</th>
-            <th>目标 仓库/库区</th>
+            <th>源 仓库/库区
+              <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory('sourcePlace')">
+                批量
+              </el-button>
+            </th>
+            <th>目标 仓库/库区
+              <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory('targetPlace')">
+                批量
+              </el-button>
+            </th>
             <th>操作</th>
           </tr>
           <tr v-for="(it, index) in form.details">
@@ -60,11 +68,16 @@
       <template v-if="modalObj.component === 'add-item'">
         <item-select ref="item-select" :data="this.form.details"></item-select>
       </template>
-       <span slot="footer">
+      <span slot="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
         <el-button v-if="modalObj.ok" type="primary" @click="modalObj.ok">确认</el-button>
       </span>
     </el-dialog>
+    <BatchWarehouseDialog
+      :visible.sync="batchDialogVisible"
+      :form-data.sync="batchForm"
+      @confirmed="onBatchDialogFinished"
+    ></BatchWarehouseDialog>
   </div>
 </template>
 
@@ -72,12 +85,19 @@
 import {addOrUpdateWmsInventoryMovement, getWmsInventoryMovement} from '@/api/wms/inventoryMovement'
 import {randomId} from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 
 export default {
   name: 'WmsMovementOrder',
-  components: {ItemSelect},
+  components: {BatchWarehouseDialog, ItemSelect},
   data() {
     return {
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchDialogField: '',
+      batchForm: {
+        place: []
+      },
       // 表单参数
       form: {
         details: []
@@ -106,6 +126,23 @@ export default {
     }
   },
   methods: {
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory(field) {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      this.batchDialogVisible = true
+      this.batchDialogField = field
+    },
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        it[this.batchDialogField] = [warehouseId, areaId, rackId].filter(Boolean)
+      })
+    },
     cancel() {
       this.$tab.closeOpenPage({path: '/wms/inventoryMovement'})
     },
