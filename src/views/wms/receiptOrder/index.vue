@@ -66,7 +66,8 @@
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
         <template v-slot="{ row }">
-          <el-button v-hasPermi="['wms:receiptOrder:edit']" v-if="0 === row.receiptOrderStatus" icon="el-icon-edit"
+          <el-button v-hasPermi="['wms:receiptOrder:edit']"
+                     v-if="ReceiptOrderConstant.Status.NOT_IN === row.receiptOrderStatus" icon="el-icon-edit"
                      size="mini" type="text" @click.stop="handleUpdate(row)">修改
           </el-button>
           <el-button v-hasPermi="['wms:receiptOrder:remove']" icon="el-icon-delete"
@@ -109,12 +110,16 @@ import {
 import {mapGetters} from 'vuex'
 import {STOCK_IN_TEMPLATE} from '@/utils/printData'
 import ReceiptOrderPrint from '@/views/wms/receiptOrder/ReceiptOrderPrint'
+import {ReceiptOrderConstant} from "@/constant/ReceiptOrderConstant.ts";
 
 export default {
   name: 'WmsReceiptOrder',
   components: {ReceiptOrderPrint},
   dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
+    ReceiptOrderConstant() {
+      return ReceiptOrderConstant
+    },
     ...mapGetters(['supplierMap', 'warehouseMap', 'areaMap', 'rackMap']),
     receiptTypeMap() {
       let obj = this.dict.type.wms_receipt_type.map(item => [item.value, item.label])

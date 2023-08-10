@@ -42,7 +42,13 @@
                                  :disabled="scope.row.finish"></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="仓库/库区" align="center" width="200" :render-header="renderHeader">
+            <el-table-column label="仓库/库区" align="center" width="200">
+              <template v-slot:header="scope" v-if="form.receiptOrderStatus === ReceiptOrderConstant.Status.NOT_IN">
+                仓库/库区
+                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory">
+                  批量
+                </el-button>
+              </template>
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.place' "
                               :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
@@ -79,14 +85,17 @@
 import {addOrUpdateWmsReceiptOrder, getWmsReceiptOrder} from '@/api/wms/receiptOrder'
 import ItemSelect from '@/views/components/ItemSelect'
 import {mapGetters} from 'vuex'
-import {batchWarehouseRenderHeader} from "@/utils/wms";
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
+import {ReceiptOrderConstant} from "@/constant/ReceiptOrderConstant.ts";
 
 export default {
   name: 'WmsReceiptOrder',
   components: {BatchWarehouseDialog, ItemSelect},
   dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
+    ReceiptOrderConstant() {
+      return ReceiptOrderConstant
+    },
     ...mapGetters(['supplierMap']),
     receiptStatusMap() {
       let obj = this.dict.type.wms_receipt_status.map(item => [item.value, item.label])
@@ -137,7 +146,6 @@ export default {
     }
   },
   methods: {
-    renderHeader: batchWarehouseRenderHeader,
     /** 批量设置仓库/库区 */
     onBatchSetInventory() {
       const {details} = this.form

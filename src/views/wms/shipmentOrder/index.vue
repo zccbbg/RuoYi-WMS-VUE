@@ -63,7 +63,8 @@
       </el-table-column>
       <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
         <template v-slot="{ row }">
-          <el-button v-hasPermi="['wms:shipmentOrder:edit']" v-if="11 === row.shipmentOrderStatus" icon="el-icon-edit"
+          <el-button v-hasPermi="['wms:shipmentOrder:edit']"
+                     v-if="ShipmentOrderConstant.Status.NOT_IN === row.shipmentOrderStatus" icon="el-icon-edit"
                      size="mini" type="text" @click.stop="handleUpdate(row)">修改
           </el-button>
           <el-button v-hasPermi="['wms:shipmentOrder:remove']" icon="el-icon-delete" size="mini" type="text"
@@ -106,12 +107,16 @@ import {
 import {mapGetters} from 'vuex'
 import {STOCK_OUT_TEMPLATE} from '@/utils/printData'
 import ShipmentOrderPrint from '@/views/wms/shipmentOrder/ShipmentOrderPrint'
+import {ShipmentOrderConstant} from '@/constant/ShipmentOrderConstant.ts'
 
 export default {
   name: 'wmsShipmentOrder',
   components: {ShipmentOrderPrint},
   dicts: ['wms_shipment_type', 'wms_shipment_status'],
   computed: {
+    ShipmentOrderConstant() {
+      return ShipmentOrderConstant
+    },
     ...mapGetters(['customerMap', 'warehouseMap', 'areaMap', 'rackMap']),
     shipmentTypeMap() {
       let obj = this.dict.type.wms_shipment_type.map(item => [item.value, item.label])
@@ -184,23 +189,23 @@ export default {
   methods: {
     getShipmentOrderTypeTag(row) {
       switch (row.shipmentOrderType) {
-        case 1:
+        case ShipmentOrderConstant.Type.SALE:
           return 'success'
-        case 2:
+        case ShipmentOrderConstant.Type.OUTSOURCING:
           return 'warning'
-        case 3:
+        case ShipmentOrderConstant.Type.TRANSFER:
           return 'danger'
       }
     },
     getShipmentOrderStatusTag(row) {
       switch (row.shipmentOrderStatus) {
-        case 11:
+        case ShipmentOrderConstant.Status.NOT_IN:
           return 'info'
-        case 12:
+        case ShipmentOrderConstant.Status.PART_IN:
           return 'warning'
-        case 14:
+        case ShipmentOrderConstant.Status.DROP:
           return 'danger'
-        case 13:
+        case ShipmentOrderConstant.Status.ALL_IN:
           return 'success'
       }
     },

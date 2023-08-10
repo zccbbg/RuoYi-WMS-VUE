@@ -83,35 +83,41 @@
       </el-dialog>
       <div class="table">
         <el-form ref="form" :model="form" :show-message="false">
-        <WmsTable :data="form.details" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
-          <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
-          <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
-          <el-table-column label="计划数量" align="center" prop="planQuantity" ></el-table-column>
-          <el-table-column label="实际数量" align="center" width="150">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small"
-                               :disabled="scope.row.finish"></el-input-number>
-            </template>
-          </el-table-column>
-          <el-table-column label="仓库/库区" align="center" width="200" :render-header="renderHeader">
-            <template slot-scope="scope">
-              <el-form-item :prop=" 'details.' + scope.$index + '.place' "
-                            :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
-                            style="margin-bottom: 0!important;">
-              <WmsWarehouseCascader v-model="scope.row.place" size="small"
-                                    :disabled="scope.row.finish"></WmsWarehouseCascader>
-              </el-form-item>
-            </template>
-          </el-table-column>
-          <el-table-column label="出库状态" width="150">
-            <template slot-scope="{ row }">
-              <DictSelect v-model="row.shipmentOrderStatus" :options="row.range" size="small"
-                          :disabled="row.finish"></DictSelect>
-            </template>
-          </el-table-column>
-        </WmsTable>
+          <WmsTable :data="form.details" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+            <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+            <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+            <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+            <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
+            <el-table-column label="实际数量" align="center" width="150">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small"
+                                 :disabled="scope.row.finish"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="仓库/库区" align="center" width="200">
+              <template v-slot:header="scope" v-if="form.shipmentOrderStatus === ShipmentOrderConstant.Status.NOT_IN">
+                仓库/库区
+                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory">
+                  批量
+                </el-button>
+              </template>
+              <template slot-scope="scope">
+                <el-form-item :prop=" 'details.' + scope.$index + '.place' "
+                              :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
+                              style="margin-bottom: 0!important;">
+                  <WmsWarehouseCascader v-model="scope.row.place" size="small"
+                                        :disabled="scope.row.finish"></WmsWarehouseCascader>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="出库状态" width="150">
+              <template slot-scope="{ row }">
+                <DictSelect v-model="row.shipmentOrderStatus" :options="row.range" size="small"
+                            :disabled="row.finish"></DictSelect>
+              </template>
+            </el-table-column>
+          </WmsTable>
         </el-form>
         <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty>
       </div>
@@ -165,13 +171,16 @@ import {mapGetters} from 'vuex'
 import WmsCarrier from "@/views/wms/carrier/index.vue";
 import {addWmsDelivery, updateWmsDelivery} from "@/api/wms/delivery";
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
-import {batchWarehouseRenderHeader} from "@/utils/wms";
+import {ShipmentOrderConstant} from "@/constant/ShipmentOrderConstant.ts";
 
 export default {
   name: 'WmsShipmentOrder',
   components: {BatchWarehouseDialog, WmsCarrier, ItemSelect},
   dicts: ['wms_shipment_type', 'wms_shipment_status'],
   computed: {
+    ShipmentOrderConstant() {
+      return ShipmentOrderConstant
+    },
     ...mapGetters(['customerMap', 'carrierMap']),
     shipmentStatusMap() {
       let obj = this.dict.type.wms_shipment_status.map(item => [item.value, item.label])
@@ -237,7 +246,6 @@ export default {
     }
   },
   methods: {
-    renderHeader: batchWarehouseRenderHeader,
     /** 批量设置仓库/库区 */
     onBatchSetInventory() {
       const {details} = this.form

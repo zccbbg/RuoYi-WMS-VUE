@@ -99,7 +99,6 @@
 import {addOrUpdateWmsInventoryMovement, getWmsInventoryMovement} from '@/api/wms/inventoryMovement'
 import ItemSelect from '@/views/components/ItemSelect'
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
-import {batchWarehouseRenderHeader} from "@/utils/wms";
 
 export default {
   name: 'WmsInventoryMovement',
