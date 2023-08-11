@@ -60,3 +60,11 @@ export function exportWmsShipmentOrder(query) {
     params: query
   })
 }
+
+// 单个订单分配仓库
+export function allocatedInventory(id) {
+  return request({
+    url: '/wms/shipmentOrder/allocated/' + id,
+    method: 'post'
+  })
+}

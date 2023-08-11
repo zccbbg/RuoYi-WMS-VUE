@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible="visible" width="500px" title="批量设置仓库">
+  <el-dialog :visible="visible" width="500px" title="批量设置仓库" @close="handleCancel">
     <el-form :model="form" ref="form">
       <el-form-item label="仓库/库区" prop="place" :rules="rules">
         <WmsWarehouseCascader v-model="form.place" size="small"></WmsWarehouseCascader>

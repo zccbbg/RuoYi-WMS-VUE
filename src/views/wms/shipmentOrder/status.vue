@@ -69,9 +69,13 @@
       <div class="flex-center mb8" style="margin-top: 8px">
         <div class="flex-one large-tip bolder-font">物料明细</div>
         <div class="ops">
+          <el-button size="small" icon="el-icon-files" type="success" plain="plain" @click="dialogFormVisible = true">
+            分配仓库/库区
+          </el-button>
           <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
                      @click="batch">批量设置出库状态
           </el-button>
+
         </div>
       </div>
       <el-dialog title="请选择出库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
@@ -160,12 +164,29 @@
         :form-data.sync="batchForm"
         @confirmed="onBatchDialogFinished"
       ></BatchWarehouseDialog>
+      <el-dialog title="自动分配仓库/库区" :visible.sync="dialogFormVisible" width="400px">
+        <el-form :model="dialogForm">
+          <el-form-item label="分配策略" label-width="98px">
+            <el-select v-model="dialogForm.region" placeholder="请选择分配策略">
+              <el-option label="先入先出(FIFO)" value="shanghai"></el-option>
+              <el-option label="先过期先出" value="5"></el-option>
+              <el-option label="库存量大的库位优先" value="4"></el-option>
+              <el-option label="库存量小的库位优先" value="3"></el-option>
+              <el-option label="适量库存优先" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="allocated()">确 定</el-button>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
-import {addOrUpdateWmsShipmentOrder, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
+import {addOrUpdateWmsShipmentOrder, allocatedInventory, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
 import ItemSelect from '@/views/components/ItemSelect'
 import {mapGetters} from 'vuex'
 import WmsCarrier from "@/views/wms/carrier/index.vue";
@@ -200,6 +221,11 @@ export default {
   },
   data() {
     return {
+      // 分配仓库
+      dialogFormVisible: false,
+      dialogForm: {
+        date1: '',
+      },
       // 批量设置仓库/库区
       batchDialogVisible: false,
       batchForm: {
@@ -246,6 +272,13 @@ export default {
     }
   },
   methods: {
+    allocated() {
+      allocatedInventory(this.shipmentOrderId).then(response => {
+        this.$modal.msgSuccess("分配成功");
+        this.dialogFormVisible = false;
+        this.loadDetail(this.shipmentOrderId)
+      });
+    },
     /** 批量设置仓库/库区 */
     onBatchSetInventory() {
       const {details} = this.form
