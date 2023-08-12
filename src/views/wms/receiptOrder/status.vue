@@ -13,14 +13,23 @@
         <el-form-item label="备注" prop="remark">{{ form.remark }}</el-form-item>
       </el-form>
       <el-divider></el-divider>
-      <div class="flex-center mb8">
-        <div class="flex-one large-tip bolder-font">物料明细</div>
-        <div class="ops">
-          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
-                     @click="batch">批量设置入库状态
+      <el-row class="mb8 mt10" :gutter="10">
+        <el-col :span="1.5">
+          <div class="flex-one large-tip bolder-font">物料明细</div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button size="small" type="success" plain="plain" icon="el-icon-files" @click="onBatchSetInventory">
+            批量设置仓库/库区
           </el-button>
-        </div>
-      </div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="batch">批量设置出库状态
+          </el-button>
+        </el-col>
+
+      </el-row>
+
       <el-dialog title="请选择入库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
         <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
         <div class="dialog-footer" slot="footer">
@@ -43,12 +52,6 @@
               </template>
             </el-table-column>
             <el-table-column label="仓库/库区" align="center" width="200">
-              <template v-slot:header="scope" v-if="form.receiptOrderStatus === ReceiptOrderConstant.Status.NOT_IN">
-                仓库/库区
-                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory">
-                  批量
-                </el-button>
-              </template>
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.place' "
                               :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
@@ -155,11 +158,15 @@ export default {
       }
       this.batchDialogVisible = true
     },
+    /** 批量设置仓库/库区 完成事件 */
     onBatchDialogFinished() {
       this.batchDialogVisible = false
       const [warehouseId, areaId, rackId] = this.batchForm.place || []
       this.form.details.forEach(it => {
-        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        // 仅更新已选中
+        if (this.ids.includes(it.id)) {
+          it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        }
       })
     },
     dialogConfirm() {

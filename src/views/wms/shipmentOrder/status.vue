@@ -66,18 +66,29 @@
           <el-table-column label="备注" align="center" prop="remark" v-if="columns[4].visible"/>
         </WmsTable>
       </div>
-      <div class="flex-center mb8" style="margin-top: 8px">
-        <div class="flex-one large-tip bolder-font">物料明细</div>
-        <div class="ops">
-          <el-button size="small" icon="el-icon-files" type="success" plain="plain" @click="dialogFormVisible = true">
-            分配仓库/库区
+      <el-row class="mb8 mt10" :gutter="10">
+        <el-col :span="1.5">
+          <div class="flex-one large-tip bolder-font">物料明细</div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button size="small" type="success" plain="plain" icon="el-icon-files" @click="onBatchSetInventory">
+            批量设置仓库/库区
           </el-button>
+        </el-col>
+        <el-col :span="1.5">
           <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
                      @click="batch">批量设置出库状态
           </el-button>
+        </el-col>
 
-        </div>
-      </div>
+        <el-col :span="1.5">
+          <el-button size="small" icon="el-icon-check" type="warning" plain="plain" @click="dialogFormVisible = true">
+            分配仓库/库区
+          </el-button>
+        </el-col>
+
+      </el-row>
+
       <el-dialog title="请选择出库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
         <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
         <div class="dialog-footer" slot="footer">
@@ -88,7 +99,8 @@
       <div class="table">
         <el-form ref="form" :model="form" :show-message="false">
           <WmsTable :data="form.details" @selection-change="handleSelectionChange">
-            <el-table-column type="selection" width="55" align="center"></el-table-column>
+            <el-table-column type="selection" width="55" align="center"
+                             :selectable="(row)=>!row.finish"></el-table-column>
             <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
             <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
             <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
@@ -100,12 +112,6 @@
               </template>
             </el-table-column>
             <el-table-column label="仓库/库区" align="center" width="200">
-              <template v-slot:header="scope" v-if="form.shipmentOrderStatus === ShipmentOrderConstant.Status.NOT_IN">
-                仓库/库区
-                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory">
-                  批量
-                </el-button>
-              </template>
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.place' "
                               :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
@@ -272,6 +278,7 @@ export default {
     }
   },
   methods: {
+    /** 自动分配 仓库/库区 */
     allocated() {
       allocatedInventory(this.shipmentOrderId).then(response => {
         this.$modal.msgSuccess("分配成功");
@@ -288,11 +295,15 @@ export default {
       }
       this.batchDialogVisible = true
     },
+    /** 批量设置仓库/库区 完成事件 */
     onBatchDialogFinished() {
       this.batchDialogVisible = false
       const [warehouseId, areaId, rackId] = this.batchForm.place || []
       this.form.details.forEach(it => {
-        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        // 仅更新已选中
+        if (this.ids.includes(it.id)) {
+          it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        }
       })
     },
     // 格式化承运商
