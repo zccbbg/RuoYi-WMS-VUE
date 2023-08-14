@@ -71,7 +71,8 @@
           <div class="flex-one large-tip bolder-font">物料明细</div>
         </el-col>
         <el-col :span="1.5">
-          <el-button size="small" type="success" plain="plain" icon="el-icon-files" @click="onBatchSetInventory">
+          <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
+                     @click="onBatchSetInventory">
             批量设置仓库/库区
           </el-button>
         </el-col>

@@ -7,14 +7,28 @@
         <el-form-item label="备注" prop="remark">{{ form.remark }}</el-form-item>
       </el-form>
       <el-divider></el-divider>
-      <div class="flex-center mb8">
-        <div class="flex-one large-tip bolder-font">物料明细</div>
-        <div class="ops">
-          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
-                     @click="batch">批量设置移库状态
+      <el-row class="mb8 mt10" :gutter="10">
+        <el-col :span="1.5">
+          <div class="flex-one large-tip bolder-font">物料明细</div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location" @click="onBatchSetInventory('sourcePlace')">
+            设置源仓库
           </el-button>
-        </div>
-      </div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="batch">批量设置出库状态
+          </el-button>
+        </el-col>
+
+        <el-col :span="1.5">
+          <el-button size="small" icon="el-icon-aim" type="warning" plain="plain" @click="onBatchSetInventory('targetPlace')">
+            设置目标仓库
+          </el-button>
+        </el-col>
+
+      </el-row>
       <el-dialog title="请选择移库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
         <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
         <div class="dialog-footer" slot="footer">
@@ -38,14 +52,6 @@
             </el-table-column>
             <el-table-column label="源 仓库/库区" align="center" width="200">
 
-              <template slot="header" slot-scope="scope">
-
-                源 仓库/库区
-                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory('sourcePlace')">
-                  批量
-                </el-button>
-              </template>
-
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.sourcePlace' "
                               :rules="[{ required: true, message: '请选择源 仓库/库区', trigger: 'change' }]"
@@ -57,12 +63,6 @@
             </el-table-column>
             <el-table-column label="目标 仓库/库区" align="center" width="200">
 
-              <template slot="header" slot-scope="scope">
-                目标 仓库/库区
-                <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory('targetPlace')">
-                  批量
-                </el-button>
-              </template>
               <template slot-scope="scope">
                 <el-form-item :prop=" 'details.' + scope.$index + '.targetPlace' "
                               :rules="[{ required: true, message: '请选择目标 仓库/库区', trigger: 'change' }]"
