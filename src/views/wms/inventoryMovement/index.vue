@@ -29,7 +29,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['wms:inventoryMovement:add']"
-        >新增
+        >创建移库单
         </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -108,10 +108,7 @@
 <script>
 import {
   listWmsInventoryMovement,
-  getWmsInventoryMovement,
   delWmsInventoryMovement,
-  addWmsInventoryMovement,
-  updateWmsInventoryMovement,
   exportWmsInventoryMovement
 } from "@/api/wms/inventoryMovement";
 import {mapGetters} from "vuex";
