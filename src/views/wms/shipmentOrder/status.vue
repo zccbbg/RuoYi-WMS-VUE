@@ -294,6 +294,11 @@ export default {
         this.$modal.msgError('请先添加物料')
         return
       }
+      // 未选中
+      if (!this.ids.length) {
+        this.$modal.msgError('请先选择物料')
+        return
+      }
       this.batchDialogVisible = true
     },
     /** 批量设置仓库/库区 完成事件 */

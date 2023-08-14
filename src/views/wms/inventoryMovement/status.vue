@@ -12,7 +12,8 @@
           <div class="flex-one large-tip bolder-font">物料明细</div>
         </el-col>
         <el-col :span="1.5">
-          <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location" @click="onBatchSetInventory('sourcePlace')">
+          <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
+                     @click="onBatchSetInventory('sourcePlace')">
             设置源仓库
           </el-button>
         </el-col>
@@ -23,7 +24,8 @@
         </el-col>
 
         <el-col :span="1.5">
-          <el-button size="small" icon="el-icon-aim" type="warning" plain="plain" @click="onBatchSetInventory('targetPlace')">
+          <el-button size="small" icon="el-icon-aim" type="warning" plain="plain"
+                     @click="onBatchSetInventory('targetPlace')">
             设置目标仓库
           </el-button>
         </el-col>
@@ -162,6 +164,11 @@ export default {
         this.$modal.msgError('请先添加物料')
         return
       }
+      // 未选中
+      if (!this.ids.length) {
+        this.$modal.msgError('请先选择物料')
+        return
+      }
       this.batchDialogVisible = true
       this.batchDialogField = field
     },
@@ -169,7 +176,10 @@ export default {
       this.batchDialogVisible = false
       const [warehouseId, areaId, rackId] = this.batchForm.place || []
       this.form.details.forEach(it => {
-        it[this.batchDialogField] = [warehouseId, areaId, rackId].filter(Boolean)
+        // 仅更新已选中
+        if (this.ids.includes(it.id)) {
+          it[this.batchDialogField] = [warehouseId, areaId, rackId].filter(Boolean)
+        }
       })
     },
     dialogConfirm() {
