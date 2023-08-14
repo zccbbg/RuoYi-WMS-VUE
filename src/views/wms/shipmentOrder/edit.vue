@@ -28,42 +28,52 @@
       </el-form>
       <el-divider></el-divider>
       <div class="flex-center mb8">
-        <div class="flex-one large-tip bolder-font">物料明细</div>
+        <div class="flex-one large-tip bolder-font">
+          <el-row class="mb8 mt10" :gutter="10">
+            <el-col :span="1.5">
+              <div class="flex-one large-tip bolder-font">物料明细</div>
+            </el-col>
+            <el-col :span="1.5">
+              <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
+                         @click="onBatchSetInventory">
+                批量设置仓库/库区
+              </el-button>
+            </el-col>
+          </el-row>
+        </div>
         <div class="ops">
           <el-button type="primary" plain="plain" size="small" @click="showAddItem">添加物料</el-button>
         </div>
       </div>
       <div class="table">
-        <table class="common-table">
-          <tr>
-            <th>物料名</th>
-            <th>物料编号</th>
-            <th>物料类型</th>
-            <th>计划数量</th>
-            <th>仓库/库区
-              <el-button type="text" size="small" icon="el-icon-files" @click="onBatchSetInventory">批量</el-button>
-            </th>
-            <th>金额</th>
-            <th>操作</th>
-          </tr>
-          <tr v-for="(it, index) in form.details">
-            <td align="center">{{ it.prod.itemName }}</td>
-            <td align="center">{{ it.prod.itemNo }}</td>
-            <td align="center">{{ it.prod.itemType }}</td>
-            <td align="center">
-              <el-input-number v-model="it.planQuantity" placeholder="计划数量" :min="1"
+        <WmsTable :data="form.details" @selection-change="handleSelectionChange"> 、
+          <el-table-column type="selection" width="55" align="center"></el-table-column>
+          <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+          <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+          <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+          <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" size="mini" :min="1"
                                :max="2147483647"></el-input-number>
-            </td>
-            <td align="center">
-              <WmsWarehouseCascader v-model="it.place" size="small"></WmsWarehouseCascader>
-            </td>
-            <td align="center">
-              <el-input-number v-model="it.money" :precision="2" @change="selectMoney" size="mini" :min="0"
+            </template>
+          </el-table-column>
+          <el-table-column label="仓库/库区" align="center">
+            <template slot-scope="scope">
+              <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
+            </template>
+          </el-table-column>
+          <el-table-column label="金额" align="center" width="150">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="mini" :min="0"
                                label="请输入金额"></el-input-number>
-            </td>
-            <td align="center"><a class="red" @click="form.details.splice(index, 1)">删除</a></td>
-          </tr>
-        </table>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <a class="red" @click="form.details.splice(scope.$index, 1)">删除</a>
+            </template>
+          </el-table-column>
+        </WmsTable>
         <!-- <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty> -->
       </div>
       <div class="tc mt16">
@@ -103,6 +113,9 @@ export default {
   dicts: ['wms_shipment_type'],
   data() {
     return {
+      ids: [],
+      // 非多个禁用
+      multiple: true,
       // 批量设置仓库/库区
       batchDialogVisible: false,
       batchForm: {
@@ -149,6 +162,11 @@ export default {
     }
   },
   methods: {
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.multiple = !selection.length
+    },
     /** 批量设置仓库/库区 */
     onBatchSetInventory() {
       const {details} = this.form
@@ -167,7 +185,10 @@ export default {
       this.batchDialogVisible = false
       const [warehouseId, areaId, rackId] = this.batchForm.place || []
       this.form.details.forEach(it => {
-        it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        // 仅更新已选中
+        if (this.ids.includes(it.id)) {
+          it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        }
       })
     },
     /** 统计出库单金额 */
@@ -256,9 +277,11 @@ export default {
       const value = this.$refs['item-select'].getRightList()
       this.form.details = value.map(it => {
         return {
+          id: it.id,
           prod: it,
           planQuantity: null,
           realQuantity: null,
+          place: [],
           shipmentOrderStatus: 11,
           delFlag: 0
         }
