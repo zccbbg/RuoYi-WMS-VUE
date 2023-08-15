@@ -411,6 +411,9 @@ export default {
         })
         const req = {...this.form, details}
         addOrUpdateWmsShipmentOrder(req).then(response => {
+          if (response.code == 398) {
+            return
+          }
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel()
         })

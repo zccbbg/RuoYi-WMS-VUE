@@ -6,6 +6,7 @@ import errorCode from '@/utils/errorCode'
 import {tansParams, blobValidate} from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
 import {saveAs} from 'file-saver'
+import InsufficientStockAlert from "@/utils/wms";
 
 let downloadLoadingInstance;
 // 是否显示重新登录
@@ -99,6 +100,10 @@ service.interceptors.response.use(res => {
         type: 'error'
       })
       return Promise.reject(new Error(msg))
+    } else if (code === 398) {
+      // 库存不足
+      InsufficientStockAlert(res.data)
+      return Promise.reject('error')
     } else if (code === 399) {
       // throw new ServiceException("xx", HttpStatus.CONFIRMATION);
       // 需要用户确认的错误
