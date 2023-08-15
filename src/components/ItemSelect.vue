@@ -1,26 +1,17 @@
-<template lang="pug">
-  .item-select-wrapper
-    el-select(
-      v-model="value1"
-      filterable
-      remote
-      clearable
-      :remote-method="doSearch"
-      :loading="loading"
-      :size="size"
-      )
-      el-option(
-        v-for="item in options"
-        :key="item.id"
-        :label="item.itemName"
-        :value="item.id"
-      )
-        div {{item.itemName}}
-        .info {{item.itemNo}}
+<template>
+  <div class="item-select-wrapper">
+    <el-select v-model="value1" filterable="filterable" remote="remote" clearable="clearable" :remote-method="doSearch"
+               :loading="loading" :size="size">
+      <el-option v-for="item in options" :key="item.id" :label="item.itemName" :value="item.id">
+        <div>{{ item.itemName }}</div>
+        <div class="info">{{ item.itemNo }}</div>
+      </el-option>
+    </el-select>
+  </div>
 </template>
 
 <script>
-import { listWmsItem } from '@/api/wms/item'
+import {listWmsItem} from '@/api/wms/item'
 
 export default {
   name: 'ItemSelect',
@@ -56,7 +47,7 @@ export default {
   methods: {
     doSearch(search) {
       listWmsItem({search}, {page: 0, size: 20}).then(res => {
-        const { content, totalElements } = res
+        const {content, totalElements} = res
         this.options = content
       })
     }
