@@ -364,7 +364,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids
-      this.$modal.confirm('是否确认删除出库单编号为"' + ids + '"的数据项？').then(function () {
+      const shipmentOrderNo = row.shipmentOrderNo
+      this.$modal.confirm('是否确认删除出库单编号为"' + shipmentOrderNo + '"的数据项？').then(function () {
         return delWmsShipmentOrder(ids)
       }).then(() => {
         this.getList()

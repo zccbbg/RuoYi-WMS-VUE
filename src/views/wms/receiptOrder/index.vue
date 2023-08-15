@@ -265,7 +265,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids
-      this.$modal.confirm('是否确认删除入库单编号为"' + ids + '"的数据项？').then(function () {
+      const receiptOrderNo = row.receiptOrderNo
+      this.$modal.confirm('是否确认删除入库单编号为"' + receiptOrderNo + '"的数据项？').then(function () {
         return delWmsReceiptOrder(ids)
       }).then(() => {
         this.getList()
