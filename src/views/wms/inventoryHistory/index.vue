@@ -1,132 +1,76 @@
-<template lang="pug">
-  .app-container
-    el-form.ry_form(
-      v-show="showSearch"
-      :inline="true"
-      label-width="100px"
-      :model="queryParams"
-      ref="queryForm"
-      size="medium"
-    )
-      el-form-item(label="操作类型" prop="formType")
-        in-out-type-select(v-model="queryParams.formType" size="small")
-      el-form-item(label="物料" prop="itemId")
-        item-select(
-          v-model="queryParams.itemId"
-          clearable
-          placeholder="请输入物料ID"
-          size="small"
-        )
-      el-form-item(label="仓库" prop="rackId")
-        wms-warehouse-cascader(
-          v-model="queryParams.warehouseArr"
-          size="small"
-        )
-      el-form-item.flex_one.tr
-        el-button(
-          icon="el-icon-search"
-          size="mini"
-          type="primary"
-          @click="handleQuery"
-        ) 搜索
-        el-button(icon="el-icon-refresh" size="mini" @click="resetQuery") 重置
-    el-row.mb8(:gutter="10")
-      el-col(:span="1.5")
-        el-button(
-          v-hasPermi="['wms:inventoryHistory:export']"
-          icon="el-icon-download"
-          :loading="exportLoading"
-          plain
-          size="mini"
-          type="warning"
-          @click="handleExport"
-        ) 导出
-      right-toolbar(:columns="columns" :showSearch.sync="showSearch" @queryTable="getList")
-    WmsTable(v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange")
-      el-table-column(
-        v-if="columns[1].visible"
-        align="center"
-        label="操作类型"
-        prop="formType"
-      )
-        template(v-slot="{ row }")
-          span {{row.formType ? opTypeMap[row.formType] : row.formType }}
-      el-table-column(
-        v-if="columns[2].visible"
-        align="center"
-        label="物料名称"
-        prop="itemName"
-      )
-      el-table-column(
-        align="center"
-        label="物料编号"
-        prop="itemNo"
-      )
-      el-table-column(
-        v-if="columns[3].visible"
-        align="center"
-        label="仓库"
-        prop="rackId"
-      )
-        template(v-slot="{ row }")
-          span {{row.warehouseName}}
-          span(v-if="row.areaName") /{{row.areaName}}
-          //- span(v-if="row.rackName") /{{row.rackName}}
-      el-table-column(
-        v-if="columns[4].visible"
-        align="center"
-        label="库存变化"
-        prop="quantity"
-      )
-      el-table-column(
-        v-if="columns[4].visible"
-        align="center"
-        label="操作时间"
-        prop="createTime"
-      )
-      el-table-column(
-        v-if="columns[5].visible"
-        align="center"
-        label="备注"
-        prop="remark"
-      )
-    pagination(
-      v-show="total>0"
-      :limit.sync="queryParams.pageSize"
-      :page.sync="queryParams.pageNum"
-      :total="total"
-      @pagination="getList"
-    )
-    // 添加或修改库存记录对话框
-    el-dialog(
-      append-to-body
-      :title="title"
-      :visible.sync="open"
-      width="50%"
-    )
-      el-form.dialog-form-two(
-        inline
-        label-width="108px"
-        :model="form"
-        ref="form"
-        :rules="rules"
-      )
-        el-form-item(label="操作id" prop="formId")
-          el-input(v-model="form.formId" placeholder="请输入操作id")
-        el-form-item(label="操作类型" prop="formType")
-          el-select(v-model="form.formType" placeholder="请选择操作类型")
-            el-option(label="请选择字典生成" value="")
-        el-form-item(label="物料ID" prop="itemId")
-          el-input(v-model="form.itemId" placeholder="请输入物料ID")
-        el-form-item(label="货架id" prop="rackId")
-          el-input(v-model="form.rackId" placeholder="请输入货架id")
-        el-form-item(label="库存变化" prop="quantity")
-          el-input(v-model="form.quantity" placeholder="请输入库存变化")
-        el-form-item(label="备注" prop="remark")
-          el-input(v-model="form.remark" placeholder="请输入备注")
-      .dialog-footer(slot="footer")
-        el-button(type="primary" @click="submitForm") 确 定
-        el-button(@click="cancel") 取 消
+<template>
+  <div class="app-container">
+    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
+             size="medium">
+      <el-form-item label="操作类型" prop="formType">
+        <in-out-type-select v-model="queryParams.formType" size="small"></in-out-type-select>
+      </el-form-item>
+      <el-form-item label="物料" prop="itemId">
+        <item-select v-model="queryParams.itemId" clearable="clearable" placeholder="请输入物料ID"
+                     size="small"></item-select>
+      </el-form-item>
+      <el-form-item label="仓库" prop="rackId">
+        <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small"></wms-warehouse-cascader>
+      </el-form-item>
+      <el-form-item class="flex_one tr">
+        <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <el-row class="mb8" :gutter="10">
+      <el-col :span="1.5">
+        <el-button v-hasPermi="['wms:inventoryHistory:export']" icon="el-icon-download" :loading="exportLoading"
+                   plain="plain" size="mini" type="warning" @click="handleExport">导出
+        </el-button>
+      </el-col>
+      <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+    <WmsTable v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange">
+      <el-table-column v-if="columns[1].visible" align="center" label="操作类型" prop="formType">
+        <template v-slot="{ row }"><span>{{ row.formType ? opTypeMap[row.formType] : row.formType }}</span></template>
+      </el-table-column>
+      <el-table-column v-if="columns[2].visible" align="center" label="物料名称" prop="itemName"></el-table-column>
+      <el-table-column align="center" label="物料编号" prop="itemNo"></el-table-column>
+      <el-table-column v-if="columns[3].visible" align="center" label="仓库" prop="rackId">
+        <template v-slot="{ row }"><span>{{ row.warehouseName }}</span><span
+          v-if="row.areaName">/{{ row.areaName }}</span></template>
+      </el-table-column>
+      <el-table-column v-if="columns[4].visible" align="center" label="库存变化" prop="quantity"></el-table-column>
+      <el-table-column v-if="columns[4].visible" align="center" label="操作时间" prop="createTime"></el-table-column>
+      <el-table-column v-if="columns[5].visible" align="center" label="备注" prop="remark"></el-table-column>
+    </WmsTable>
+    <pagination v-show="total&gt;0" :limit.sync="queryParams.pageSize" :page.sync="queryParams.pageNum" :total="total"
+                @pagination="getList"></pagination>
+    <!-- 添加或修改库存记录对话框-->
+    <el-dialog append-to-body="append-to-body" :title="title" :visible.sync="open" width="50%">
+      <el-form class="dialog-form-two" inline="inline" label-width="108px" :model="form" ref="form" :rules="rules">
+        <el-form-item label="操作id" prop="formId">
+          <el-input v-model="form.formId" placeholder="请输入操作id"></el-input>
+        </el-form-item>
+        <el-form-item label="操作类型" prop="formType">
+          <el-select v-model="form.formType" placeholder="请选择操作类型">
+            <el-option label="请选择字典生成" value=""></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="物料ID" prop="itemId">
+          <el-input v-model="form.itemId" placeholder="请输入物料ID"></el-input>
+        </el-form-item>
+        <el-form-item label="货架id" prop="rackId">
+          <el-input v-model="form.rackId" placeholder="请输入货架id"></el-input>
+        </el-form-item>
+        <el-form-item label="库存变化" prop="quantity">
+          <el-input v-model="form.quantity" placeholder="请输入库存变化"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="dialog-footer" slot="footer">
+        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button @click="cancel">取 消</el-button>
+      </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
