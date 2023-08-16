@@ -1,0 +1,411 @@
+<template>
+  <div class="shipment-order-status-wrapper app-container" v-loading="loading">
+    <div class="shipment-order-content">
+      <el-row class="mb8 mt10" :gutter="10">
+        <el-col :span="1.5">
+          <div class="flex-one large-tip bolder-font">物料明细</div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="batch">批量设置出库状态
+          </el-button>
+        </el-col>
+
+        <el-col :span="1.5">
+          <el-button size="small" icon="el-icon-check" type="warning" plain="plain" @click="dialogFormVisible = true">
+            分配仓库/库区
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button size="small"  type="danger" plain="plain" @click="dialogFormVisible = true">
+            取消分配
+          </el-button>
+        </el-col>
+      </el-row>
+
+      <el-dialog title="请选择出库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
+        <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
+        <div class="dialog-footer" slot="footer">
+          <el-button type="primary" @click="dialogConfirm">确 定</el-button>
+          <el-button @click="cancelDialog">取 消</el-button>
+        </div>
+      </el-dialog>
+
+      <WmsTable :data="form.details" @selection-change="handleSelectionChange">
+        <el-table-column label="出库单" align="center" width="200" prop="orderNo"/>
+        <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+        <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+        <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+        <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
+
+      </WmsTable>
+
+
+      <!--      <div class="tc mt16">-->
+      <!--        <el-button @click="cancel">取消</el-button>-->
+      <!--        <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>-->
+      <!--      </div>-->
+
+      <el-row class="mb8 mt10" :gutter="10">
+        <el-col :span="1.5">
+          <div class="flex-one large-tip bolder-font">拣货单明细</div>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
+                     @click="onBatchSetInventory">
+            批量设置仓库/库区
+          </el-button>
+        </el-col>
+      </el-row>
+      <WmsTable :data="form.allocationDetails" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"
+                         :selectable="(row)=>!row.finish"></el-table-column>
+        <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+        <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+        <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+        <el-table-column label="数量" align="center" prop="planQuantity"></el-table-column>
+        <el-table-column label="实际数量" align="center" width="150">
+          <template slot-scope="scope">
+            <el-input-number v-model="scope.row.realQuantity" :min="1" :max="2147483647" size="small"
+                             :disabled="scope.row.finish"></el-input-number>
+          </template>
+        </el-table-column>
+        <el-table-column label="仓库/库区" align="center" width="200">
+          <template slot-scope="scope">
+            <WmsWarehouseCascader v-model="scope.row.place" size="small"
+                                  :disabled="scope.row.finish"></WmsWarehouseCascader>
+          </template>
+        </el-table-column>
+      </WmsTable>
+      <BatchWarehouseDialog
+        :visible.sync="batchDialogVisible"
+        :form-data.sync="batchForm"
+        @confirmed="onBatchDialogFinished"
+      ></BatchWarehouseDialog>
+      <el-dialog title="自动分配仓库/库区" :visible.sync="dialogFormVisible" width="400px">
+        <el-form :model="dialogForm">
+          <el-form-item label="分配策略" label-width="98px">
+            <el-select v-model="dialogForm.region" placeholder="请选择分配策略">
+              <el-option label="先入先出(FIFO)" value="shanghai"></el-option>
+              <el-option label="先过期先出" value="5"></el-option>
+              <el-option label="库存量大的库位优先" value="4"></el-option>
+              <el-option label="库存量小的库位优先" value="3"></el-option>
+              <el-option label="适量库存优先" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="allocated()">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+  </div>
+</template>
+
+<script>
+import {addOrUpdateWmsShipmentOrder, allocatedInventory, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
+import ItemSelect from '@/views/components/ItemSelect'
+import {mapGetters} from 'vuex'
+import WmsCarrier from "@/views/wms/carrier/index.vue";
+import {addWmsDelivery, updateWmsDelivery} from "@/api/wms/delivery";
+import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
+import {ShipmentOrderConstant} from "@/constant/ShipmentOrderConstant.ts";
+import {getWave, waveAllocatedInventory} from "@/api/wms/wave";
+
+export default {
+  name: 'WmsShipmentOrder',
+  components: {BatchWarehouseDialog, WmsCarrier, ItemSelect},
+  dicts: ['wms_shipment_type', 'wms_shipment_status'],
+  computed: {
+    ShipmentOrderConstant() {
+      return ShipmentOrderConstant
+    },
+    ...mapGetters(['customerMap', 'carrierMap']),
+    shipmentStatusMap() {
+      let obj = this.dict.type.wms_shipment_status.map(item => [item.value, item.label])
+      let map = new Map(obj)
+      return map
+    },
+    mergeDetailStatusArray() {
+      const arr = this.sourceDetails || []
+      return [...new Set(arr.filter(it => it.shipmentOrderStatus !== null).map(it => it.shipmentOrderStatus))]
+    },
+    dialogStatusRange() {
+      if (this.mergeDetailStatusArray.length !== 1) {
+        return []
+      }
+      return this.getRange(this.mergeDetailStatusArray[0])
+    }
+  },
+  data() {
+    return {
+      // 分配仓库
+      dialogFormVisible: false,
+      dialogForm: {
+        region: '3',
+      },
+      // 批量设置仓库/库区
+      batchDialogVisible: false,
+      batchForm: {
+        place: []
+      },
+      open: false,
+      // 遮罩层
+      loading: true,
+      ids: [],
+      // 表单参数
+      form: {
+        details: []
+      },
+      sourceDetails: [],
+      // 表单校验
+      rules: {},
+      dialogStatus: null,
+      // 非多个禁用
+      multiple: true,
+      finish: false,
+      // 物流管理
+      deliveryTitle: '',
+      shipmentOrderId: null,
+      deliveryOpen: false,
+      deliveryForm: {},
+      // 发货记录表格数据
+      wmsDeliveryList: [],
+      columns: [
+        {key: 1, label: "出库单主表Id", visible: false},
+        {key: 2, label: "承运商Id", visible: true},
+        {key: 3, label: "发货日期", visible: true},
+        {key: 4, label: "快递单号", visible: true},
+        {key: 5, label: "备注", visible: true},
+      ],
+    }
+  },
+  created() {
+    console.log(this.$route.query, "this.$route.query")
+    const {id} = this.$route.query
+    if (id) {
+      this.shipmentOrderId = id
+      this.loadDetail(id)
+    } else {
+      this.cancel()
+    }
+  },
+  methods: {
+    /** 自动分配 仓库/库区 */
+    allocated() {
+      waveAllocatedInventory(this.shipmentOrderId).then(response => {
+        this.$modal.msgSuccess("分配成功");
+        this.dialogFormVisible = false;
+        const {details, items, allocationDetails} = response
+        const map = {};
+        (items || []).forEach(it => {
+          map[it.id] = it
+        })
+        details && details.forEach(it => {
+          it.prod = map[it.itemId]
+          if ((!it.place || it.place.length === 0) && it.prod) {
+            it.place = it.prod.place;
+          }
+          it.range = this.getRange(it.shipmentOrderStatus)
+          it.finish = it.shipmentOrderStatus === 13
+        })
+        allocationDetails && allocationDetails.forEach(it => {
+          it.prod = map[it.itemId]
+          if ((!it.place || it.place.length === 0) && it.prod) {
+            it.place = it.prod.place;
+          }
+          it.range = this.getRange(it.shipmentOrderStatus)
+          it.finish = it.shipmentOrderStatus === 13
+        })
+        this.sourceDetails = details.map(it => ({...it}))
+        this.finish = details.filter(it => !it.finish)?.length === 0
+        this.form = {
+          ...response,
+          details,
+          allocationDetails
+        }
+        // this.loadDetail(this.shipmentOrderId)
+      });
+    },
+    /** 批量设置仓库/库区 */
+    onBatchSetInventory() {
+      const {details} = this.form
+      if (!details || details.length === 0) {
+        this.$modal.msgError('请先添加物料')
+        return
+      }
+      // 未选中
+      if (!this.ids.length) {
+        this.$modal.msgError('请先选择物料')
+        return
+      }
+      this.batchDialogVisible = true
+    },
+    /** 批量设置仓库/库区 完成事件 */
+    onBatchDialogFinished() {
+      this.batchDialogVisible = false
+      const [warehouseId, areaId, rackId] = this.batchForm.place || []
+      this.form.details.forEach(it => {
+        // 仅更新已选中
+        if (this.ids.includes(it.id)) {
+          it.place = [warehouseId, areaId, rackId].filter(Boolean)
+        }
+      })
+    },
+    // 格式化承运商
+    getCarrier(row, column) {
+      return this.carrierMap.get(row.carrierId)
+    },
+    // 新增物流对话框，提交按钮
+    submitdeliveryForm() {
+      this.$refs["deliveryForm"].validate(valid => {
+        if (valid) {
+          if (this.deliveryForm.id != null) {
+            updateWmsDelivery(this.deliveryForm).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.deliveryOpen = false;
+              this.loadDetail(this.shipmentOrderId)
+            });
+          } else {
+            addWmsDelivery(this.deliveryForm).then(response => {
+              this.$modal.msgSuccess("新增成功");
+              this.deliveryOpen = false;
+              this.loadDetail(this.shipmentOrderId)
+            });
+          }
+        }
+      });
+    },// 新增物流对话框，取消按钮
+    canceldeliveryForm() {
+      this.deliveryOpen = false
+    },
+    // 新增物流信息
+    deliveryAdd() {
+      this.deliveryTitle = "新增物流信息"
+      this.deliveryOpen = true
+      this.deliveryForm.shipmentOrderId = this.shipmentOrderId
+    },
+    dialogConfirm() {
+      if (!this.dialogStatus) {
+        this.$modal.alert('请选择出库状态')
+        return
+      }
+      this.form.details.forEach(detail => {
+        if (this.ids.includes(detail.id)) {
+          detail.shipmentOrderStatus = this.dialogStatus
+        }
+      })
+      this.cancelDialog()
+    },
+    cancelDialog() {
+      this.open = false
+      this.dialogStatus = null
+    },
+    // 多选框选中数据
+    handleSelectionChange(selection) {
+      this.ids = selection.map(item => item.id)
+      this.multiple = !selection.length
+    },
+    batch() {
+      if (this.multiple) {
+        this.$modal.alert('请先选择物料')
+      } else {
+        this.open = true
+      }
+    },
+    cancel() {
+      this.$tab.closeOpenPage({path: '/wms/shipmentOrder'})
+    },
+    /** 提交按钮 */
+    submitForm() {
+      this.$refs['form'].validate(valid => {
+        if (!valid) {
+          this.$notify({
+            title: '警告',
+            message: "请完善表单信息",
+            type: 'warning'
+          });
+          return
+        }
+        const details = this.form.details.map(it => {
+          if (it.place) {
+            it.prod.warehouseId = it.place[0]
+            it.prod.areaId = it.place[1]
+            it.prod.rackId = it.place[2]
+          } else {
+            it.prod.warehouseId = null
+            it.prod.areaId = null
+            it.prod.rackId = null
+          }
+          return {
+            id: it.id,
+            itemId: it.prod.id,
+            rackId: it.prod.rackId,
+            areaId: it.prod.areaId,
+            warehouseId: it.prod.warehouseId,
+            planQuantity: it.planQuantity,
+            realQuantity: it.realQuantity,
+            shipmentOrderStatus: it.shipmentOrderStatus,
+            delFlag: 0
+          }
+        })
+        const req = {...this.form, details}
+        addOrUpdateWmsShipmentOrder(req).then(response => {
+          if (response.code == 398) {
+            return
+          }
+          this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
+          this.cancel()
+        })
+      })
+    },
+    loadDetail(id) {
+      this.loading = true
+      getWave(id).then(response => {
+        const {details, items} = response
+        const map = {};
+        (items || []).forEach(it => {
+          map[it.id] = it
+        })
+        details && details.forEach(it => {
+          it.prod = map[it.itemId]
+          if ((!it.place || it.place.length === 0) && it.prod) {
+            it.place = it.prod.place;
+          }
+          it.range = this.getRange(it.shipmentOrderStatus)
+          it.finish = it.shipmentOrderStatus === 13
+        })
+        this.sourceDetails = details.map(it => ({...it}))
+        this.finish = details.filter(it => !it.finish)?.length === 0
+        this.form = {
+          ...response,
+          details
+        }
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    getRange(status) {
+      const arr = this.dict.type.wms_shipment_status
+      if (status === 4 || status === 3) {
+        return arr.filter(it => +it.value === status).map(it => ({label: it.label, value: it.value}))
+      }
+      if (status === 2) {
+        return arr.filter(it => +it.value >= status && +it.value !== 4).map(it => ({
+          label: it.label,
+          value: it.value
+        }))
+      }
+      return arr.filter(it => +it.value >= status).map(it => ({label: it.label, value: it.value}))
+    }
+  }
+}
+</script>
+<style lang="stylus">
+.shipment-order-status-wrapper
+  .shipment-order-content
+    width 70%
+    min-width 900px
+    margin 0 auto
+</style>

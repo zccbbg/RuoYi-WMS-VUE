@@ -1,11 +1,105 @@
 <template>
-  <div class="app-container">
-    <el-tabs v-model="activeName" >
-      <el-tab-pane label="订单管理" name="first"></el-tab-pane>
-      <el-tab-pane label="波次作业" name="second"></el-tab-pane>
-    </el-tabs>
-    <Dashborad v-if="activeName == 'first'"></Dashborad>
-    <wave v-if="activeName == 'second'"></wave>
+  <div class="">
+    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
+             size="medium">
+      <el-form-item label="出库状态" prop="shipmentOrderStatus">
+        <DictRadio v-model="queryParams.shipmentOrderStatus" :radioData="dict.type.wms_shipment_status" :showAll="'all'"
+                   size="small" @change="handleQuery"></DictRadio>
+      </el-form-item>
+      <el-form-item label="出库类型" prop="shipmentOrderType">
+        <DictRadio v-model="queryParams.shipmentOrderType" :radioData="dict.type.wms_shipment_type" :showAll="'all'"
+                   size="small" @change="handleQuery"></DictRadio>
+      </el-form-item>
+      <el-form-item label="出库单号" prop="shipmentOrderNo">
+        <el-input v-model="queryParams.shipmentOrderNo" clearable="clearable" placeholder="请输入出库单号" size="small"
+                  @keyup.enter.native="handleQuery"></el-input>
+      </el-form-item>
+      <el-form-item label="订单号" prop="orderNo">
+        <el-input v-model="queryParams.orderNo" clearable="clearable" placeholder="请输入订单号" size="small"
+                  @keyup.enter.native="handleQuery"></el-input>
+      </el-form-item>
+      <el-form-item label="客户" prop="customerId">
+        <WmsCustomerSelect v-model="queryParams.customerId" size="small"></WmsCustomerSelect>
+      </el-form-item>
+      <el-form-item class="flex_one tr">
+        <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+    <el-row class="mb8" :gutter="10">
+      <el-col :span="1.5">
+        <el-button v-hasPermi="['wms:shipmentOrder:add']" icon="el-icon-plus" plain="plain" size="mini" type="primary"
+                   @click="handleAdd()">创建出库单
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button icon="el-icon-check" size="mini" type="warning" :disabled="!waveAble"
+                   @click="handleWave()">波次作业
+        </el-button>
+      </el-col>
+      <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+    </el-row>
+    <WmsTable v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
+      <el-table-column align="center" type="selection" width="55"></el-table-column>
+      <el-table-column v-if="columns[0].visible" align="center" label="出库单号"
+                       prop="shipmentOrderNo"></el-table-column>
+      <el-table-column v-if="columns[1].visible" align="center" label="出库类型">
+        <template slot-scope="scope">
+          <el-tag effect="plain" size="medium" :type="getShipmentOrderTypeTag(scope.row)">
+            {{ getShipmentOrderType(scope.row) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="columns[2].visible" align="center" :formatter="getCustomer" label="客户"></el-table-column>
+      <el-table-column v-if="columns[3].visible" align="center" label="订单号" prop="orderNo"></el-table-column>
+      <el-table-column v-if="columns[4].visible" align="center" label="出库状态">
+        <template slot-scope="scope">
+          <el-tag effect="plain" size="medium" :type="getShipmentOrderStatusTag(scope.row)">
+            {{ getShipmentOrderStatus(scope.row) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="columns[5].visible" align="center" label="波次号" prop="waveNo"></el-table-column>
+      <el-table-column v-if="columns[5].visible" align="center" label="备注" prop="remark">
+        <template v-slot="{ row }">
+          <el-popover placement="left" width="300" trigger="hover" :content="row.remark" popper-class="popperOptions">
+            <p class="showOverTooltip" slot="reference">{{ row.remark }}</p>
+          </el-popover>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
+        <template v-slot="{ row }">
+          <el-button v-hasPermi="['wms:shipmentOrder:edit']"
+                     v-if="ShipmentOrderConstant.Status.NOT_IN === row.shipmentOrderStatus" icon="el-icon-edit"
+                     size="mini" type="text" @click.stop="handleUpdate(row)">修改
+          </el-button>
+          <el-button v-hasPermi="['wms:shipmentOrder:remove']" icon="el-icon-delete" size="mini" type="text"
+                     @click.stop="handleDelete(row)">删除
+          </el-button>
+          <el-button v-hasPermi="['wms:shipmentOrder:status']" v-if="row.detailCount" icon="el-icon-truck" size="mini"
+                     type="text" @click.stop="handleStatus(row)">发货/出库
+          </el-button>
+          <el-button icon="el-icon-print" size="mini" type="text" @click.stop="printOut(row,true)">打印</el-button>
+        </template>
+      </el-table-column>
+    </WmsTable>
+    <pagination v-show="total>0" :limit.sync="queryParams.pageSize" :page.sync="queryParams.pageNum" :total="total"
+                @pagination="getList"></pagination>
+    <el-dialog :visible.sync="modalObj.show" :title="modalObj.title" :width="modalObj.width">
+      <template v-if="modalObj.component === 'print-type'">
+        <el-radio-group v-model="modalObj.form.value">
+          <el-radio :label="1">lodop打印</el-radio>
+          <el-radio :label="2">浏览器打印</el-radio>
+        </el-radio-group>
+      </template>
+      <template v-if="modalObj.form.value === 2 || modalObj.component === 'window-print-preview'">
+        <shipment-order-print :row="modalObj.form.row" ref="receiptOrderPrintRef"></shipment-order-print>
+      </template>
+      <template slot="footer" class="dialog-footer">
+        <el-button @click="modalObj.cancel">取消</el-button>
+        <el-button @click="modalObj.ok" type="primary">确认</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -18,14 +112,13 @@ import {
 } from '@/api/wms/shipmentOrder'
 import {mapGetters} from 'vuex'
 import {STOCK_OUT_TEMPLATE} from '@/utils/printData'
+import ShipmentOrderPrint from '@/views/wms/shipmentOrder/ShipmentOrderPrint'
 import {ShipmentOrderConstant} from '@/constant/ShipmentOrderConstant.ts'
 import {addWave} from "@/api/wms/wave";
-import Dashborad from "@/views/wms/shipmentOrder/dashborad.vue";
-import wave from "@/views/wms/wave/index.vue";
 
 export default {
   name: 'wmsShipmentOrder',
-  components: {Dashborad,wave},
+  components: {ShipmentOrderPrint},
   dicts: ['wms_shipment_type', 'wms_shipment_status'],
   computed: {
     ShipmentOrderConstant() {
@@ -45,7 +138,6 @@ export default {
   },
   data() {
     return {
-      activeName: 'first',
       modalObj: {
         show: false,
         title: '选择打印方式',
@@ -101,11 +193,11 @@ export default {
     }
   },
   created() {
-    // this.getList()
+    this.getList()
   },
   methods: {
     handleWave() {
-      addWave({ids: this.ids}).then(res => {
+      addWave({ids:this.ids}).then(res => {
         this.getList()
       })
     },
