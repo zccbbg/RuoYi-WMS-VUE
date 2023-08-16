@@ -82,7 +82,7 @@
     </WmsTable>
     <pagination v-show="total > 0" :limit.sync="queryParams.pageSize" :page.sync="queryParams.pageNum" :total="total"
                 @pagination=" getList "></pagination>
-    <el-dialog :visible=" modalObj.show " :title=" modalObj.title " :width=" modalObj.width ">
+    <el-dialog :visible.sync=" modalObj.show " :title=" modalObj.title " :width=" modalObj.width ">
       <template v-if=" modalObj.component === 'print-type' ">
         <el-radio-group v-model=" modalObj.form.value ">
           <el-radio :label=" 1 ">lodop打印</el-radio>
