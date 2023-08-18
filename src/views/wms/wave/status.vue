@@ -3,23 +3,7 @@
     <div class="shipment-order-content">
       <el-row class="mb8 mt10" :gutter="10">
         <el-col :span="1.5">
-          <div class="flex-one large-tip bolder-font">物料明细</div>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
-                     @click="batch">批量设置出库状态
-          </el-button>
-        </el-col>
-
-        <el-col :span="1.5">
-          <el-button size="small" icon="el-icon-check" type="warning" plain="plain" @click="dialogFormVisible = true">
-            分配仓库/库区
-          </el-button>
-        </el-col>
-        <el-col :span="1.5">
-          <el-button size="small"  type="danger" plain="plain" @click="dialogFormVisible = true">
-            取消分配
-          </el-button>
+          <div class="flex-one large-tip bolder-font">出库单明细</div>
         </el-col>
       </el-row>
 
@@ -35,20 +19,24 @@
         <el-table-column label="出库单" align="center" width="200" prop="orderNo"/>
         <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
         <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
-        <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
         <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
 
       </WmsTable>
 
-
-      <!--      <div class="tc mt16">-->
-      <!--        <el-button @click="cancel">取消</el-button>-->
-      <!--        <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>-->
-      <!--      </div>-->
-
       <el-row class="mb8 mt10" :gutter="10">
         <el-col :span="1.5">
           <div class="flex-one large-tip bolder-font">拣货单明细</div>
+        </el-col>
+
+        <el-col :span="1.5">
+          <el-button size="small" icon="el-icon-check" type="warning" plain="plain" @click="dialogFormVisible = true">
+            分配仓库/库区
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button size="small" type="danger" plain="plain" @click="dialogFormVisible = true">
+            取消分配
+          </el-button>
         </el-col>
         <el-col :span="1.5">
           <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
@@ -56,13 +44,18 @@
             批量设置仓库/库区
           </el-button>
         </el-col>
+        <el-col :span="1.5">
+          <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
+                     @click="batch">批量设置出库状态
+          </el-button>
+        </el-col>
       </el-row>
       <WmsTable :data="form.allocationDetails" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"
                          :selectable="(row)=>!row.finish"></el-table-column>
+        <el-table-column label="出库单" align="center" width="200" prop="orderNo"/>
         <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
         <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
-        <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
         <el-table-column label="数量" align="center" prop="planQuantity"></el-table-column>
         <el-table-column label="实际数量" align="center" width="150">
           <template slot-scope="scope">
@@ -76,7 +69,17 @@
                                   :disabled="scope.row.finish"></WmsWarehouseCascader>
           </template>
         </el-table-column>
+        <el-table-column label="出库状态" width="150">
+          <template slot-scope="{ row }">
+            <DictSelect v-model="row.shipmentOrderStatus" :options="row.range" size="small"
+                        :disabled="row.finish"></DictSelect>
+          </template>
+        </el-table-column>
       </WmsTable>
+      <div class="tc mt16">
+        <el-button @click="cancel">取消</el-button>
+        <el-button @click="submitForm" type="primary" :disabled="finish">保存</el-button>
+      </div>
       <BatchWarehouseDialog
         :visible.sync="batchDialogVisible"
         :form-data.sync="batchForm"
@@ -84,13 +87,14 @@
       ></BatchWarehouseDialog>
       <el-dialog title="自动分配仓库/库区" :visible.sync="dialogFormVisible" width="400px">
         <el-form :model="dialogForm">
-          <el-form-item label="分配策略" label-width="98px">
+          <el-form-item label="分配策略" label-width="98px"
+                        :rules="[{ required: true, message: '请选择分配策略', trigger: 'change' }]">
             <el-select v-model="dialogForm.region" placeholder="请选择分配策略">
-              <el-option label="先入先出(FIFO)" value="shanghai"></el-option>
-              <el-option label="先过期先出" value="5"></el-option>
-              <el-option label="库存量大的库位优先" value="4"></el-option>
               <el-option label="库存量小的库位优先" value="3"></el-option>
-              <el-option label="适量库存优先" value="2"></el-option>
+              <el-option label="库存量大的库位优先" value="4"></el-option>
+              <el-option label="先入先出(FIFO)" value="shanghai" disabled></el-option>
+              <el-option label="先过期先出" value="5" disabled></el-option>
+              <el-option label="适量库存优先" value="2" disabled></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -111,7 +115,7 @@ import WmsCarrier from "@/views/wms/carrier/index.vue";
 import {addWmsDelivery, updateWmsDelivery} from "@/api/wms/delivery";
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 import {ShipmentOrderConstant} from "@/constant/ShipmentOrderConstant.ts";
-import {getWave, waveAllocatedInventory} from "@/api/wms/wave";
+import {confirmWave, getWave, waveAllocatedInventory} from "@/api/wms/wave";
 
 export default {
   name: 'WmsShipmentOrder',
@@ -218,8 +222,8 @@ export default {
           it.range = this.getRange(it.shipmentOrderStatus)
           it.finish = it.shipmentOrderStatus === 13
         })
-        this.sourceDetails = details.map(it => ({...it}))
-        this.finish = details.filter(it => !it.finish)?.length === 0
+        this.sourceDetails = allocationDetails.map(it => ({...it}))
+        this.finish = allocationDetails.filter(it => !it.finish)?.length === 0
         this.form = {
           ...response,
           details,
@@ -291,7 +295,7 @@ export default {
         this.$modal.alert('请选择出库状态')
         return
       }
-      this.form.details.forEach(detail => {
+      this.form.allocationDetails.forEach(detail => {
         if (this.ids.includes(detail.id)) {
           detail.shipmentOrderStatus = this.dialogStatus
         }
@@ -319,46 +323,38 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-      this.$refs['form'].validate(valid => {
-        if (!valid) {
-          this.$notify({
-            title: '警告',
-            message: "请完善表单信息",
-            type: 'warning'
-          });
+
+      const details = this.form.allocationDetails.map(it => {
+        if (it.place) {
+          it.prod.warehouseId = it.place[0]
+          it.prod.areaId = it.place[1]
+          it.prod.rackId = it.place[2]
+        } else {
+          it.prod.warehouseId = null
+          it.prod.areaId = null
+          it.prod.rackId = null
+        }
+        return {
+          id: it.id,
+          itemId: it.prod.id,
+          rackId: it.prod.rackId,
+          areaId: it.prod.areaId,
+          warehouseId: it.prod.warehouseId,
+          planQuantity: it.planQuantity,
+          realQuantity: it.realQuantity,
+          shipmentOrderStatus: it.shipmentOrderStatus,
+          delFlag: 0
+        }
+      })
+      const req = {...this.form, details}
+      confirmWave(req).then(response => {
+        if (response.code == 398) {
           return
         }
-        const details = this.form.details.map(it => {
-          if (it.place) {
-            it.prod.warehouseId = it.place[0]
-            it.prod.areaId = it.place[1]
-            it.prod.rackId = it.place[2]
-          } else {
-            it.prod.warehouseId = null
-            it.prod.areaId = null
-            it.prod.rackId = null
-          }
-          return {
-            id: it.id,
-            itemId: it.prod.id,
-            rackId: it.prod.rackId,
-            areaId: it.prod.areaId,
-            warehouseId: it.prod.warehouseId,
-            planQuantity: it.planQuantity,
-            realQuantity: it.realQuantity,
-            shipmentOrderStatus: it.shipmentOrderStatus,
-            delFlag: 0
-          }
-        })
-        const req = {...this.form, details}
-        addOrUpdateWmsShipmentOrder(req).then(response => {
-          if (response.code == 398) {
-            return
-          }
-          this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
-          this.cancel()
-        })
+        this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
+        this.cancel()
       })
+
     },
     loadDetail(id) {
       this.loading = true

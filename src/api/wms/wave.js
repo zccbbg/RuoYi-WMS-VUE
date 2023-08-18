@@ -60,3 +60,11 @@ export function waveAllocatedInventory(id) {
     method: 'post'
   })
 }
+// 应用波次作业的仓库
+export function confirmWave(data) {
+  return request({
+    url: '/wms/wave/confirmWave' ,
+    method: 'post',
+    data: data
+  })
+}
