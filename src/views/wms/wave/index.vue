@@ -96,7 +96,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['wms:Wave:remove']"
-          >删除</el-button>
+          >取消波次</el-button>
         </template>
       </el-table-column>
     </WmsTable>
@@ -280,7 +280,8 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除波次编号为"' + ids + '"的数据项？').then(function() {
+      const waveNo = row.waveNo;
+      this.$modal.confirm('是否确认删除波次编号为"' + waveNo + '"的数据项？').then(function() {
         return delWave(ids);
       }).then(() => {
         this.getList();
