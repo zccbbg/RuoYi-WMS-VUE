@@ -68,3 +68,10 @@ export function confirmWave(data) {
     data: data
   })
 }
+// 取消波次作业
+export function cancelAllocatedInventory(id) {
+  return request({
+    url: '/wms/wave/cancelAllocatedInventory/'+ id ,
+    method: 'post'
+  })
+}

@@ -113,7 +113,7 @@ import {mapGetters} from 'vuex'
 import WmsCarrier from "@/views/wms/carrier/index.vue";
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 import {ShipmentOrderConstant} from "@/constant/ShipmentOrderConstant.ts";
-import {confirmWave, getWave, waveAllocatedInventory} from "@/api/wms/wave";
+import {cancelAllocatedInventory, confirmWave, getWave, waveAllocatedInventory} from "@/api/wms/wave";
 
 export default {
   name: 'WmsShipmentOrder',
@@ -169,7 +169,7 @@ export default {
       finish: false,
       // 物流管理
       deliveryTitle: '',
-      shipmentOrderId: null,
+      waveOrderId: null,
       columns: [
         {key: 1, label: "出库单主表Id", visible: false},
         {key: 2, label: "承运商Id", visible: true},
@@ -183,7 +183,7 @@ export default {
     // console.log(this.$route.query, "this.$route.query")
     const {id} = this.$route.query
     if (id) {
-      this.shipmentOrderId = id
+      this.waveOrderId = id
       this.loadDetail(id)
     } else {
       this.cancel()
@@ -192,12 +192,14 @@ export default {
   methods: {
     /** 取消分配 */
     onCancelInventory(){
-      //该功能待完善
-      this.$modal.msgWarning('该功能待完善')
+      cancelAllocatedInventory(this.waveOrderId).then(res=>{
+        this.$modal.msgSuccess(res ? '修改成功' : '修改失败')
+        this.cancel()
+      })
     },
     /** 自动分配 仓库/库区 */
     allocated() {
-      waveAllocatedInventory(this.shipmentOrderId).then(response => {
+      waveAllocatedInventory(this.waveOrderId).then(response => {
         this.$modal.msgSuccess("分配成功");
         this.dialogFormVisible = false;
         const {details, items, allocationDetails} = response
