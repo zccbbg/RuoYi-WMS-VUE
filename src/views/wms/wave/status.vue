@@ -34,7 +34,7 @@
           </el-button>
         </el-col>
         <el-col :span="1.5">
-          <el-button size="small" type="danger" plain="plain" @click="dialogFormVisible = true">
+          <el-button size="small" type="danger" plain="plain" @click="onCancelInventory">
             取消分配
           </el-button>
         </el-col>
@@ -108,11 +108,9 @@
 </template>
 
 <script>
-import {addOrUpdateWmsShipmentOrder, allocatedInventory, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
 import ItemSelect from '@/views/components/ItemSelect'
 import {mapGetters} from 'vuex'
 import WmsCarrier from "@/views/wms/carrier/index.vue";
-import {addWmsDelivery, updateWmsDelivery} from "@/api/wms/delivery";
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 import {ShipmentOrderConstant} from "@/constant/ShipmentOrderConstant.ts";
 import {confirmWave, getWave, waveAllocatedInventory} from "@/api/wms/wave";
@@ -172,10 +170,6 @@ export default {
       // 物流管理
       deliveryTitle: '',
       shipmentOrderId: null,
-      deliveryOpen: false,
-      deliveryForm: {},
-      // 发货记录表格数据
-      wmsDeliveryList: [],
       columns: [
         {key: 1, label: "出库单主表Id", visible: false},
         {key: 2, label: "承运商Id", visible: true},
@@ -186,7 +180,7 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.query, "this.$route.query")
+    // console.log(this.$route.query, "this.$route.query")
     const {id} = this.$route.query
     if (id) {
       this.shipmentOrderId = id
@@ -196,6 +190,11 @@ export default {
     }
   },
   methods: {
+    /** 取消分配 */
+    onCancelInventory(){
+      //该功能待完善
+      this.$modal.msgWarning('该功能待完善')
+    },
     /** 自动分配 仓库/库区 */
     allocated() {
       waveAllocatedInventory(this.shipmentOrderId).then(response => {
@@ -214,7 +213,9 @@ export default {
           it.range = this.getRange(it.shipmentOrderStatus)
           it.finish = it.shipmentOrderStatus === 13
         })
+        let count = 1;
         allocationDetails && allocationDetails.forEach(it => {
+          it.id = count++;
           it.prod = map[it.itemId]
           if ((!it.place || it.place.length === 0) && it.prod) {
             it.place = it.prod.place;
@@ -234,8 +235,8 @@ export default {
     },
     /** 批量设置仓库/库区 */
     onBatchSetInventory() {
-      const {details} = this.form
-      if (!details || details.length === 0) {
+      const {allocationDetails} = this.form
+      if (!allocationDetails || allocationDetails.length === 0) {
         this.$modal.msgError('请先添加物料')
         return
       }
@@ -250,7 +251,7 @@ export default {
     onBatchDialogFinished() {
       this.batchDialogVisible = false
       const [warehouseId, areaId, rackId] = this.batchForm.place || []
-      this.form.details.forEach(it => {
+      this.form.allocationDetails.forEach(it => {
         // 仅更新已选中
         if (this.ids.includes(it.id)) {
           it.place = [warehouseId, areaId, rackId].filter(Boolean)
@@ -260,35 +261,6 @@ export default {
     // 格式化承运商
     getCarrier(row, column) {
       return this.carrierMap.get(row.carrierId)
-    },
-    // 新增物流对话框，提交按钮
-    submitdeliveryForm() {
-      this.$refs["deliveryForm"].validate(valid => {
-        if (valid) {
-          if (this.deliveryForm.id != null) {
-            updateWmsDelivery(this.deliveryForm).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.deliveryOpen = false;
-              this.loadDetail(this.shipmentOrderId)
-            });
-          } else {
-            addWmsDelivery(this.deliveryForm).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.deliveryOpen = false;
-              this.loadDetail(this.shipmentOrderId)
-            });
-          }
-        }
-      });
-    },// 新增物流对话框，取消按钮
-    canceldeliveryForm() {
-      this.deliveryOpen = false
-    },
-    // 新增物流信息
-    deliveryAdd() {
-      this.deliveryTitle = "新增物流信息"
-      this.deliveryOpen = true
-      this.deliveryForm.shipmentOrderId = this.shipmentOrderId
     },
     dialogConfirm() {
       if (!this.dialogStatus) {
