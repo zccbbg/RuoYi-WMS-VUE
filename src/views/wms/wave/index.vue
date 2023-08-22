@@ -29,7 +29,7 @@
 <!--          icon="el-icon-plus"-->
 <!--          size="mini"-->
 <!--          @click="handleAdd"-->
-<!--          v-hasPermi="['wms:Wave:add']"-->
+<!--          v-hasPermi="['wms:wave:add']"-->
 <!--        >新增</el-button>-->
 <!--      </el-col>-->
 <!--      <el-col :span="1.5">-->
@@ -40,7 +40,7 @@
 <!--          size="mini"-->
 <!--          :disabled="single"-->
 <!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['wms:Wave:edit']"-->
+<!--          v-hasPermi="['wms:wave:edit']"-->
 <!--        >修改</el-button>-->
 <!--      </el-col>-->
 <!--      <el-col :span="1.5">-->
@@ -51,7 +51,7 @@
 <!--          size="mini"-->
 <!--          :disabled="multiple"-->
 <!--          @click="handleDelete"-->
-<!--          v-hasPermi="['wms:Wave:remove']"-->
+<!--          v-hasPermi="['wms:wave:remove']"-->
 <!--        >删除</el-button>-->
 <!--      </el-col>-->
 <!--      <el-col :span="1.5">-->
@@ -62,7 +62,7 @@
 <!--          size="mini"-->
 <!--          :loading="exportLoading"-->
 <!--          @click="handleExport"-->
-<!--          v-hasPermi="['wms:Wave:export']"-->
+<!--          v-hasPermi="['wms:wave:export']"-->
 <!--        >导出</el-button>-->
 <!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
@@ -81,21 +81,21 @@
 <!--            type="text"-->
 <!--            icon="el-icon-edit"-->
 <!--            @click="handleUpdate(scope.row)"-->
-<!--            v-hasPermi="['wms:Wave:edit']"-->
+<!--            v-hasPermi="['wms:wave:edit']"-->
 <!--          >修改</el-button>-->
           <el-button
             size="mini"
             type="text"
             icon="el-icon-edit"
             @click="handleAllocation(scope.row)"
-            v-hasPermi="['wms:Wave:edit']"
+            v-hasPermi="['wms:wave:edit']"
           >分配库存</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:Wave:remove']"
+            v-hasPermi="['wms:wave:remove']"
           >取消波次</el-button>
         </template>
       </el-table-column>

@@ -4,8 +4,8 @@
       <el-tab-pane label="订单管理" name="first"></el-tab-pane>
       <el-tab-pane label="波次作业" name="second"></el-tab-pane>
     </el-tabs>
-    <Dashborad v-if="activeName == 'first'"></Dashborad>
-    <wave v-if="activeName == 'second'"></wave>
+    <Dashborad v-if="activeName == 'first'" @switchTab="activeName = 'second'"></Dashborad>
+    <wave v-if="activeName == 'second'" ></wave>
   </div>
 </template>
 

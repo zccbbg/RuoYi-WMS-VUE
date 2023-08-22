@@ -198,6 +198,7 @@ export default {
   methods: {
     handleWave() {
       addWave({ids:this.ids}).then(res => {
+        this.$emit('switchTab',{} )
         this.getList()
       })
     },
