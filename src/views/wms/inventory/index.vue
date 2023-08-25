@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="show">
     <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
              size="medium">
       <el-form-item label="类型" prop="panelType">
@@ -47,6 +47,8 @@ import PanelByItem from "@/views/wms/inventory/component/PanelByItem.vue";
 import PanelByItemType from "@/views/wms/inventory/component/PanelByItemType.vue";
 import PanelByWarehouse from "@/views/wms/inventory/component/PanelByWarehouse.vue";
 import PanelByArea from "@/views/wms/inventory/component/PanelByArea.vue";
+import { isStarRepo } from "@/utils/is-star-plugin";
+import {mapGetters} from 'vuex'
 
 export default {
   name: 'WmsInventory',
@@ -54,6 +56,7 @@ export default {
   dicts: ['wms_inventory_panel_type'],
   data() {
     return {
+      show: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -87,10 +90,15 @@ export default {
       panelType: 5
     }
   },
-  created() {
-    this.getList()
+  async created() {
+    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,'http://wms.ichengle.top/inventory','Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+    this.show = res;
+    if (res) {
+      this.getList()
+    }
   },
   computed: {
+    ...mapGetters(['userId']),
     currentComponent() {
       let type = parseInt(this.panelType)
       switch (type) {
