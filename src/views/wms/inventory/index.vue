@@ -91,7 +91,6 @@ export default {
     }
   },
   async created() {
-    // const res = await isStarRepo('zccbbg','RuoYi-Mall',this.userId,location.href,'ruoyi-mall-商城','https://gitee.com/zccbbg/RuoYi-Mall')
     const res = await isStarRepo('zccbbg','RuoYi-Mall',this.userId,'http://wms.ichengle.top/inventory','ruoyi-mall-商城','https://gitee.com/zccbbg/RuoYi-Mall')
     this.show = res;
     if (res) {
