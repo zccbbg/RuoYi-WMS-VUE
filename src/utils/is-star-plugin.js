@@ -7,7 +7,7 @@ const client_id = '9addfce3712d04898b5a3dbb223db38b8d6495d2e66d07e3c0af71a708ee3
 const client_secret = '1f73096ce60406eba8fb297a16245eadf2777540abdf531266b406b2479e25fe'
 
 // 检查成功后，多少天不再检查
-const allowDisparity = 1000 * 60 * 60 * 24 * 30
+const allowDisparity = 1000 * 60 * 60 * 24 * 7
 
 /**
  * 判断当前是否已 star

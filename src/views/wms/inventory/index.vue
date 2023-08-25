@@ -91,7 +91,7 @@ export default {
     }
   },
   async created() {
-    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,'http://wms.ichengle.top/inventory','Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+    const res = await isStarRepo('zccbbg','RuoYi-Mall',this.userId,'http://wms.ichengle.top/inventory','ruoyi-mall-商城','https://gitee.com/zccbbg/RuoYi-Mall')
     this.show = res;
     if (res) {
       this.getList()

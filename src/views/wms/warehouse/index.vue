@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="show">
     <el-card style="margin-bottom: 12px;">
       <div class="clearfix" style="margin-top: 10px;">
         <div style="width: 200px;margin-bottom: 10px;" class="left">
@@ -148,11 +148,13 @@ import {
   updateWmsArea,
   exportWmsArea,
 } from "@/api/wms/area";
+import { isStarRepo } from '@/utils/is-star-plugin'
 export default {
   name: "WmsWarehouse",
 
   data() {
     return {
+      show: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -233,9 +235,12 @@ export default {
   computed: {
     ...mapGetters(["warehouseList", "warehouseMap", "areaList", "areaMap", "rackList", "rackMap"])
   },
-  created() {
-    this.getList();
-    // this.loadAreas();
+  async created() {
+    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,'http://wms.ichengle.top/warehouse','Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+    this.show = res;
+    if (res) {
+      this.getList()
+    }
   },
   methods: {
     /** 查询仓库列表 */
