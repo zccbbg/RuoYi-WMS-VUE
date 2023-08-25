@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="show">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
              class="ry_form">
       <el-form-item label="库存盘点单号" prop="inventoryCheckNo">
@@ -139,12 +139,18 @@ import {
   updateWmsInventoryCheck
 } from "@/api/wms/inventoryCheck";
 import {randomId} from "@/utils/RandomUtils";
+import { mapGetters } from 'vuex'
+import { isStarRepo } from '@/utils/is-star-plugin'
 
 export default {
   name: "WmsInventoryCheck",
   dicts: ["wms_check_status"],
+  computed: {
+    ...mapGetters(['userId']),
+  },
   data() {
     return {
+      show: false,
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -200,8 +206,12 @@ export default {
       showMoreCondition: false
     };
   },
-  created() {
-    this.getList();
+  async created() {
+    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,location.href,'Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+    this.show = res;
+    if (res) {
+      this.getList()
+    }
   },
   methods: {
     /** 查询库存盘点单据列表 */

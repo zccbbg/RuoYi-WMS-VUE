@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" v-if="show">
     <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
              size="medium">
       <el-form-item label="入库状态" prop="receiptOrderStatus">
@@ -111,6 +111,7 @@ import {mapGetters} from 'vuex'
 import {STOCK_IN_TEMPLATE} from '@/utils/printData'
 import ReceiptOrderPrint from '@/views/wms/receiptOrder/ReceiptOrderPrint'
 import {ReceiptOrderConstant} from "@/constant/ReceiptOrderConstant.ts";
+import { isStarRepo } from '@/utils/is-star-plugin'
 
 export default {
   name: 'WmsReceiptOrder',
@@ -120,7 +121,7 @@ export default {
     ReceiptOrderConstant() {
       return ReceiptOrderConstant
     },
-    ...mapGetters(['supplierMap', 'warehouseMap', 'areaMap', 'rackMap']),
+    ...mapGetters(['supplierMap', 'warehouseMap', 'areaMap', 'rackMap','userId']),
     receiptTypeMap() {
       let obj = this.dict.type.wms_receipt_type.map(item => [item.value, item.label])
       let map = new Map(obj)
@@ -134,6 +135,7 @@ export default {
   },
   data() {
     return {
+      show: false,
       modalObj: {
         title: '选择打印方式',
         width: '520px',
@@ -185,8 +187,12 @@ export default {
       ]
     }
   },
-  created() {
-    this.getList()
+  async created() {
+    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,location.href,'Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+    this.show = res;
+    if (res) {
+      this.getList()
+    }
   },
   methods: {
     getReceiptOrderTypeTag(row) {

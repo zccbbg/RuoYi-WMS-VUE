@@ -233,10 +233,10 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["warehouseList", "warehouseMap", "areaList", "areaMap", "rackList", "rackMap"])
+    ...mapGetters(["warehouseList", "warehouseMap", "areaList", "areaMap", "rackList", "rackMap","userId"])
   },
   async created() {
-    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,'http://wms.ichengle.top/warehouse','Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,location.href,'Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
     this.show = res;
     if (res) {
       this.getList()
