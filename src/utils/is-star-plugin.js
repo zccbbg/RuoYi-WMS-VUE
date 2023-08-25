@@ -19,6 +19,11 @@ const allowDisparity = 1000 * 60 * 60 * 24 * 7
  * @param productLink 开源链接
  */
 export function isStarRepo(owner, repo, userId, redirectUrl,productName,productLink) {
+  const judge = process.env.VUE_APP_JUDGE_STAR
+  console.log(judge)
+  if (!judge || judge == 0) {
+    return true;
+  }
   const key = userId + '_' + owner + '_' + repo
   // 判断是否近期已经判断过了
   try {
