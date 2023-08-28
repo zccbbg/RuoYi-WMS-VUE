@@ -175,11 +175,11 @@
         <el-form :model="dialogForm">
           <el-form-item label="分配策略" label-width="98px">
             <el-select v-model="dialogForm.region" placeholder="请选择分配策略">
-              <el-option label="先入先出(FIFO)" value="shanghai"></el-option>
-              <el-option label="先过期先出" value="5"></el-option>
-              <el-option label="库存量大的库位优先" value="4"></el-option>
-              <el-option label="库存量小的库位优先" value="3"></el-option>
-              <el-option label="适量库存优先" value="2"></el-option>
+              <el-option label="库存量小的库位优先" :value="1"></el-option>
+              <el-option label="库存量大的库位优先" :value="2"></el-option>
+              <el-option label="先入先出(FIFO)" :value="3" disabled></el-option>
+              <el-option label="先过期先出" :value="4" disabled></el-option>
+              <el-option label="适量库存优先" :value="5" disabled></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -281,7 +281,7 @@ export default {
   methods: {
     /** 自动分配 仓库/库区 */
     allocated() {
-      allocatedInventory(this.shipmentOrderId).then(response => {
+      allocatedInventory({id:this.shipmentOrderId,type:this.dialogForm.region}).then(response => {
         this.$modal.msgSuccess("分配成功");
         this.dialogFormVisible = false;
         this.loadDetail(this.shipmentOrderId)

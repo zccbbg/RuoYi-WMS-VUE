@@ -22,8 +22,13 @@
         <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
 
       </WmsTable>
-
-      <el-row class="mb8 mt10" :gutter="10">
+      <el-row class="mb8 mt20" :gutter="10">
+        <el-col>
+          <div class="flex-one large-tip bolder-font">备注</div>
+          <el-input class="mt10" type="textarea" />
+        </el-col>
+      </el-row>
+      <el-row class="mb8 mt20" :gutter="10">
         <el-col :span="1.5">
           <div class="flex-one large-tip bolder-font">拣货单明细</div>
         </el-col>
@@ -90,11 +95,11 @@
           <el-form-item label="分配策略" label-width="98px"
                         :rules="[{ required: true, message: '请选择分配策略', trigger: 'change' }]">
             <el-select v-model="dialogForm.region" placeholder="请选择分配策略">
-              <el-option label="库存量小的库位优先" value="3"></el-option>
-              <el-option label="库存量大的库位优先" value="4"></el-option>
-              <el-option label="先入先出(FIFO)" value="shanghai" disabled></el-option>
-              <el-option label="先过期先出" value="5" disabled></el-option>
-              <el-option label="适量库存优先" value="2" disabled></el-option>
+              <el-option label="库存量小的库位优先" :value="1"></el-option>
+              <el-option label="库存量大的库位优先" :value="2"></el-option>
+              <el-option label="先入先出(FIFO)" :value="3" disabled></el-option>
+              <el-option label="先过期先出" :value="4" disabled></el-option>
+              <el-option label="适量库存优先" :value="5" disabled></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -145,7 +150,7 @@ export default {
       // 分配仓库
       dialogFormVisible: false,
       dialogForm: {
-        region: '3',
+        region: 1,
       },
       // 批量设置仓库/库区
       batchDialogVisible: false,
@@ -199,7 +204,7 @@ export default {
     },
     /** 自动分配 仓库/库区 */
     allocated() {
-      waveAllocatedInventory(this.waveOrderId).then(response => {
+      waveAllocatedInventory({id:this.waveOrderId,type:this.dialogForm.region}).then(response => {
         this.$modal.msgSuccess("分配成功");
         this.dialogFormVisible = false;
         const {details, items, allocationDetails} = response
@@ -325,7 +330,7 @@ export default {
         if (response.code == 398) {
           return
         }
-        this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
+        this.$modal.msgSuccess('保存成功')
         this.cancel()
       })
 
@@ -350,7 +355,8 @@ export default {
         this.finish = details.filter(it => !it.finish)?.length === 0
         this.form = {
           ...response,
-          details
+          details,
+          allocationDetails: details
         }
       }).finally(() => {
         this.loading = false

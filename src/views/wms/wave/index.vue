@@ -11,9 +11,13 @@
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable size="small">
-              <el-option label="请选择字典生成" value="" />
-        </el-select>
+        <DictRadio
+          v-model="queryParams.status"
+          @change="handleQuery"
+          size="small"
+          :radioData="dict.type.wms_wave_status"
+          :showAll="'all'"
+        />
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -22,56 +26,17 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="primary"-->
-<!--          plain-->
-<!--          icon="el-icon-plus"-->
-<!--          size="mini"-->
-<!--          @click="handleAdd"-->
-<!--          v-hasPermi="['wms:wave:add']"-->
-<!--        >新增</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="success"-->
-<!--          plain-->
-<!--          icon="el-icon-edit"-->
-<!--          size="mini"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['wms:wave:edit']"-->
-<!--        >修改</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="danger"-->
-<!--          plain-->
-<!--          icon="el-icon-delete"-->
-<!--          size="mini"-->
-<!--          :disabled="multiple"-->
-<!--          @click="handleDelete"-->
-<!--          v-hasPermi="['wms:wave:remove']"-->
-<!--        >删除</el-button>-->
-<!--      </el-col>-->
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="warning"-->
-<!--          plain-->
-<!--          icon="el-icon-download"-->
-<!--          size="mini"-->
-<!--          :loading="exportLoading"-->
-<!--          @click="handleExport"-->
-<!--          v-hasPermi="['wms:wave:export']"-->
-<!--        >导出</el-button>-->
-<!--      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
     </el-row>
 
     <WmsTable v-loading="loading" :data="WaveList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="波次号" align="center" prop="waveNo" v-if="columns[0].visible"/>
-      <el-table-column label="状态" align="center" prop="status" v-if="columns[1].visible"/>
+      <el-table-column label="状态" align="center" prop="status" v-if="columns[1].visible">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.wms_wave_status" :value="scope.row.status"/>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[1].visible"/>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[2].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -137,6 +102,7 @@ import { listWave, getWave, delWave, addWave, updateWave, exportWave } from "@/a
 
 export default {
   name: "Wave",
+  dicts: ["wms_wave_status"],
   data() {
     return {
       // 遮罩层

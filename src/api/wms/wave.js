@@ -54,10 +54,11 @@ export function exportWave(query) {
 }
 
 // 波次单分配仓库
-export function waveAllocatedInventory(id) {
+export function waveAllocatedInventory(params) {
   return request({
-    url: '/wms/wave/allocated/' + id,
-    method: 'post'
+    url: '/wms/wave/allocated/',
+    method: 'post',
+    params
   })
 }
 // 应用波次作业的仓库
