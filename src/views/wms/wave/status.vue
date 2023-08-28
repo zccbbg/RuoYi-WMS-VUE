@@ -25,7 +25,7 @@
       <el-row class="mb8 mt20" :gutter="10">
         <el-col>
           <div class="flex-one large-tip bolder-font">备注</div>
-          <el-input class="mt10" type="textarea" />
+          <el-input class="mt10" type="textarea" v-model="form.remark"/>
         </el-col>
       </el-row>
       <el-row class="mb8 mt20" :gutter="10">
@@ -325,7 +325,7 @@ export default {
           delFlag: 0
         }
       })
-      const req = {...this.form, details}
+      const req = {...this.form, details,id:this.waveOrderId,remark:this.form.remark}
       confirmWave(req).then(response => {
         if (response.code == 398) {
           return
