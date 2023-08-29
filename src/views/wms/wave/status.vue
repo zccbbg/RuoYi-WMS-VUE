@@ -302,30 +302,10 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
-
-      const details = this.form.allocationDetails.map(it => {
-        if (it.place) {
-          it.prod.warehouseId = it.place[0]
-          it.prod.areaId = it.place[1]
-          it.prod.rackId = it.place[2]
-        } else {
-          it.prod.warehouseId = null
-          it.prod.areaId = null
-          it.prod.rackId = null
-        }
-        return {
-          id: it.id,
-          itemId: it.prod.id,
-          rackId: it.prod.rackId,
-          areaId: it.prod.areaId,
-          warehouseId: it.prod.warehouseId,
-          planQuantity: it.planQuantity,
-          realQuantity: it.realQuantity,
-          shipmentOrderStatus: it.shipmentOrderStatus,
-          delFlag: 0
-        }
+      this.form.allocationDetails.forEach(it=>{
+        it.delFlag = 0;
       })
-      const req = {...this.form, details,id:this.waveOrderId,remark:this.form.remark}
+      const req = {...this.form,id:this.waveOrderId,remark:this.form.remark}
       confirmWave(req).then(response => {
         if (response.code == 398) {
           return
