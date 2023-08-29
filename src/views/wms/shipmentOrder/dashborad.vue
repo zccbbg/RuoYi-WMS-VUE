@@ -74,9 +74,9 @@
                      size="mini" type="text" @click.stop="handleUpdate(row)">修改
           </el-button>
           <el-button v-hasPermi="['wms:shipmentOrder:remove']" icon="el-icon-delete" size="mini" type="text"
-                     v-if="!row.waveNo" @click.stop="handleDelete(row)">删除
+                     v-if="!row.waveNo && row.shipmentOrderStatus !== ShipmentOrderConstant.Status.ALL_IN" @click.stop="handleDelete(row)">删除
           </el-button>
-          <el-button v-hasPermi="['wms:shipmentOrder:status']" v-if="row.detailCount && !row.waveNo" icon="el-icon-truck" size="mini"
+          <el-button v-hasPermi="['wms:shipmentOrder:status']" v-if="row.detailCount && !row.waveNo && row.shipmentOrderStatus !== ShipmentOrderConstant.Status.ALL_IN" icon="el-icon-truck" size="mini"
                      type="text" @click.stop="handleStatus(row)">发货/出库
           </el-button>
           <el-button icon="el-icon-print" size="mini" type="text" @click.stop="printOut(row,true)">打印</el-button>
