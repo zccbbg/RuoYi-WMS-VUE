@@ -54,7 +54,7 @@
           <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
           <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
             <template slot-scope="scope">
-              <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" :min="1" size="small"
+              <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" :min="1" size="small" @change="selectMoney"
                                :max="2147483647"></el-input-number>
             </template>
           </el-table-column>
@@ -198,8 +198,8 @@ export default {
     selectMoney() {
       let sum = 0;
       this.form.details.map(item => {
-        if (!isNaN(parseFloat(item.money))) {
-          sum += item.money
+        if (!isNaN(parseFloat(item.money)) && !isNaN(parseInt(item.planQuantity))) {
+          sum += item.money * item.planQuantity
         }
         return item.money
       })
