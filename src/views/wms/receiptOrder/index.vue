@@ -390,7 +390,8 @@ export default {
           receiptType: this.receiptTypeMap.get(row.receiptOrderType + ''),
           createTime: row.createTime,
           details: detailList,
-          totalCount
+          totalCount,
+          createByName: row.createByName
         }
       })
     }

@@ -364,7 +364,8 @@ export default {
           shipmentType: this.shipmentTypeMap.get(row.shipmentOrderType + ''),
           createTime: row.createTime,
           details: detailList,
-          totalCount
+          totalCount,
+          createByName: row.createByName
         }
       })
     },

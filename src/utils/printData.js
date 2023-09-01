@@ -102,6 +102,30 @@ export const STOCK_OUT_TEMPLATE = {
       "ItemType": 1
     },
     "uuid": "317ae87dea"
+  },{
+    "type": "braid-txt",
+    "isEdit": 1,
+    "dragable": true,
+    "resizable": true,
+    "width": 110,
+    "height": 20,
+    "left": 26,
+    "top": 94,
+    "title": "自定义文本",
+    "value": "出库人：",
+    "defaultValue": "自定义文本",
+    "name": "",
+    "style": {
+      "zIndex": 0,
+      "FontSize": 9,
+      "FontColor": "#  000000",
+      "Bold": false,
+      "Italic": false,
+      "Underline": false,
+      "Alignment": "left",
+      "ItemType": 1
+    },
+    "uuid": "317ae87d2a"
   }, {
     "type": "braid-txt",
     "isEdit": 1,
@@ -187,6 +211,30 @@ export const STOCK_OUT_TEMPLATE = {
     "value": "{ 出库类型 } ",
     "defaultValue": "销售出库",
     "name": "shipmentType",
+    "style": {
+      "zIndex": 0,
+      "FontSize": 9,
+      "FontColor": "#  000000",
+      "Bold": false,
+      "Italic": false,
+      "Underline": false,
+      "Alignment": "left",
+      "ItemType": 1
+    },
+    "uuid": "4be08abbb3"
+  },{
+    "type": "braid-txt",
+    "isEdit": 1,
+    "dragable": true,
+    "resizable": true,
+    "width": 257,
+    "height": 20,
+    "left": 80,
+    "top": 94,
+    "title": "出库人",
+    "value": "{ 出库人 } ",
+    "defaultValue": "",
+    "name": "createByName",
     "style": {
       "zIndex": 0,
       "FontSize": 9,
@@ -296,7 +344,7 @@ export const STOCK_OUT_TEMPLATE = {
     "width": 110,
     "height": 20,
     "left": 435,
-    "top": 382,
+    "top": 430,
     "title": "自定义文本",
     "value": "合计数量：",
     "defaultValue": "自定义文本",
@@ -344,7 +392,7 @@ export const STOCK_OUT_TEMPLATE = {
     "width": 180,
     "height": 20,
     "left": 492,
-    "top": 382,
+    "top": 430,
     "title": "合计数量",
     "value": "{合计数量}",
     "defaultValue": "123.00",
@@ -516,6 +564,30 @@ export const STOCK_IN_TEMPLATE = {
       "ItemType": 1
     },
     "uuid": "d8cf0f23b0"
+  },{
+    "type": "braid-txt",
+    "isEdit": 1,
+    "dragable": true,
+    "resizable": true,
+    "width": 110,
+    "height": 20,
+    "left": 26,
+    "top": 94,
+    "title": "自定义文本",
+    "value": "入库人：",
+    "defaultValue": "自定义文本",
+    "name": "",
+    "style": {
+      "zIndex": 0,
+      "FontSize": 9,
+      "FontColor": "#  000000",
+      "Bold": false,
+      "Italic": false,
+      "Underline": false,
+      "Alignment": "left",
+      "ItemType": 1
+    },
+    "uuid": "d8cf0f23b0"
   }, {
     "type": "braid-txt",
     "isEdit": 1,
@@ -577,6 +649,30 @@ export const STOCK_IN_TEMPLATE = {
     "value": "{ 入库类型 } ",
     "defaultValue": "销售出库",
     "name": "receiptType",
+    "style": {
+      "zIndex": 0,
+      "FontSize": 9,
+      "FontColor": "#  000000",
+      "Bold": false,
+      "Italic": false,
+      "Underline": false,
+      "Alignment": "left",
+      "ItemType": 1
+    },
+    "uuid": "4be08abbb3"
+  },{
+    "type": "braid-txt",
+    "isEdit": 1,
+    "dragable": true,
+    "resizable": true,
+    "width": 257,
+    "height": 20,
+    "left": 80,
+    "top": 94,
+    "title": "入库人",
+    "value": "{ 入库人 } ",
+    "defaultValue": "",
+    "name": "createByName",
     "style": {
       "zIndex": 0,
       "FontSize": 9,
@@ -686,7 +782,7 @@ export const STOCK_IN_TEMPLATE = {
     "width": 110,
     "height": 20,
     "left": 435,
-    "top": 382,
+    "top": 430,
     "title": "自定义文本",
     "value": "合计数量：",
     "defaultValue": "自定义文本",
@@ -734,7 +830,7 @@ export const STOCK_IN_TEMPLATE = {
     "width": 180,
     "height": 20,
     "left": 492,
-    "top": 382,
+    "top": 430,
     "title": "合计数量",
     "value": "{合计数量}",
     "defaultValue": "123.00",

@@ -6,6 +6,7 @@
       <div class="col1">订单号: {{ row.orderNo }}</div>
       <div class="col1">入库类型: {{ row.receiptType }}</div>
       <div class="col1">日期: {{ row.createTime }}</div>
+      <div class="col1">入库人: {{ row.createByName }}</div>
     </div>
     <table class="common-table">
       <tr>
