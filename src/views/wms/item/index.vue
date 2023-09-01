@@ -74,6 +74,9 @@
       <el-table-column label="编号" align="center" prop="itemNo" v-if="columns[0].visible" />
       <el-table-column label="名称" align="center" prop="itemName" v-if="columns[1].visible" />
       <el-table-column label="分类" align="center" prop="itemTypeName" v-if="columns[2].visible" />
+      <el-table-column label="规格" align="center" prop="specification" />
+      <el-table-column label="单价" align="center" prop="unitPrice" />
+      <el-table-column label="批次" align="center" prop="batch" />
       <el-table-column label="单位类别" align="center" prop="unit" v-if="columns[3].visible" />
       <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[6].visible" />
       <el-table-column label="所属库区" align="center" prop="areaName" v-if="columns[5].visible" />
@@ -82,6 +85,11 @@
       <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.expiryDate, "") }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="生产日期" align="center" prop="productionDate" width="180" >
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.productionDate, "{y}:{m}:{d}") }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[9].visible" />
@@ -127,6 +135,18 @@
         </el-row>
         <el-row :gutter="24">
           <el-col :span="12">
+            <el-form-item label="规格" prop="specification">
+              <el-input v-model="form.specification" placeholder="请输入规格" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单价" prop="unitPrice">
+              <el-input-number v-model="form.unitPrice" :precision="2" :step="1" :min="0"></el-input-number>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="12">
             <el-form-item label="分类" prop="itemType">
               <treeselect v-model="form.itemType" :options="deptOptions" :show-count="true" placeholder="请选择分类" />
             </el-form-item>
@@ -134,6 +154,20 @@
           <el-col :span="12">
             <el-form-item label="安全库存" prop="quantity">
               <el-input v-model="form.quantity" placeholder="请输入安全库存" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="24">
+          <el-col :span="12">
+            <el-form-item label="生产日期" prop="productionDate">
+              <el-date-picker clearable size="small" v-model="form.productionDate" type="date"
+                              value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择生产日期">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="批次" prop="batch">
+              <el-input v-model="form.batch" placeholder="请输入批次" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -304,6 +338,10 @@ export default {
         createTime: null,
         updateBy: null,
         updateTime: null,
+        specification: null,
+        unitPrice: null,
+        batch: null,
+        productionDate: null
       };
       this.resetForm("form");
     },
