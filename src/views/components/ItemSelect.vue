@@ -39,6 +39,14 @@
               </th>
               <th>物料名称</th>
               <th>物料编号</th>
+              <th>分类</th>
+              <th>规格</th>
+              <th>单价</th>
+              <th>批次</th>
+              <th>单位</th>
+              <th>安全库存</th>
+              <th>有效期</th>
+              <th>生产日期</th>
             </tr>
 
             <tr v-for="p in list" :key="p.id">
@@ -58,6 +66,46 @@
               <td>
                 <div class="text-center">
                   {{ p.itemNo }}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{ p.itemTypeName }}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{ p.specification }}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{ p.unitPrice }}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{ p.batch }}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{ p.unit }}
+                </div>
+              </td>
+              <td>
+                <div class="text-center">
+                  {{ p.quantity }}
+                </div>
+              </td>
+              <td width="90">
+                <div class="text-center">
+                  {{ parseTime(p.expiryDate, '') }}
+                </div>
+              </td>
+              <td width="90">
+                <div class="text-center">
+                  {{ parseTime(p.productionDate, '{y}:{m}:{d}') }}
                 </div>
               </td>
             </tr>
