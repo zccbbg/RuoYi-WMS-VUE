@@ -52,21 +52,26 @@
           <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
           <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
           <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+          <el-table-column label="仓库/库区" align="center" width="200">
+            <template slot-scope="scope">
+              <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
+            </template>
+          </el-table-column>
           <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" :min="1" size="small" @change="selectMoney"
                                :max="2147483647"></el-input-number>
             </template>
           </el-table-column>
-          <el-table-column label="仓库/库区" align="center" width="200">
-            <template slot-scope="scope">
-              <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
-            </template>
-          </el-table-column>
-          <el-table-column label="金额" align="center" width="150">
+          <el-table-column label="单价" align="center" width="150">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="small"
-                               :min="0" label="请输入金额"></el-input-number>
+                               :min="0" label="请输入单价"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="总价" align="center" width="150">
+            <template slot-scope="scope">
+              <div>{{ (scope.row.planQuantity && scope.row.money) ? scope.row.planQuantity * scope.row.money : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
@@ -282,7 +287,7 @@ export default {
         return {
           id: it.id,
           prod: it,
-          money: it.unitPrice,
+          money: it.unitPrice ? it.unitPrice : undefined,
           planQuantity: null,
           realQuantity: null,
           place: [],
