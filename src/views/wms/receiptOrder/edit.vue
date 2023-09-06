@@ -282,7 +282,7 @@ export default {
         return {
           id: it.id,
           prod: it,
-          money: it.unitPrice ? it.unitPrice : 0,
+          money: it.unitPrice,
           planQuantity: null,
           realQuantity: null,
           place: [],
