@@ -3,11 +3,11 @@
     <div class="shipment-order-content">
       <el-row class="mb8 mt10" :gutter="10">
         <el-col :span="1.5">
-          <div class="flex-one large-tip bolder-font">出库单明细</div>
+          <div class="flex-one large-tip bolder-font">入库单明细</div>
         </el-col>
       </el-row>
 
-      <el-dialog title="请选择出库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
+      <el-dialog title="请选择入库状态" :visible.sync="open" width="50%" append-to-body="append-to-body">
         <DictRadio v-model="dialogStatus" :radioData="dialogStatusRange"></DictRadio>
         <div class="dialog-footer" slot="footer">
           <el-button type="primary" @click="dialogConfirm">确 定</el-button>
@@ -16,7 +16,7 @@
       </el-dialog>
 
       <WmsTable :data="form.details" @selection-change="handleSelectionChange">
-        <el-table-column label="出库单" align="center" width="200" prop="orderNo"/>
+        <el-table-column label="入库单" align="center" width="200" prop="orderNo"/>
         <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
         <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
         <el-table-column label="计划数量" align="center" prop="planQuantity"></el-table-column>
@@ -29,11 +29,7 @@
         </el-col>
       </el-row>
       <el-row class="mb8 mt20" :gutter="10">
-        <el-col :span="1.5">
-          <div class="flex-one large-tip bolder-font">拣货单明细</div>
-        </el-col>
-
-        <el-col :span="1.5">
+        <el-col :span="1.5" v-if="form.status === '1'" >
           <el-button size="small" icon="el-icon-check" type="warning" plain="plain" @click="dialogFormVisible = true">
             分配仓库/库区
           </el-button>
@@ -43,22 +39,22 @@
 <!--            取消分配-->
 <!--          </el-button>-->
 <!--        </el-col>-->
-        <el-col :span="1.5">
+        <el-col :span="1.5" >
           <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
                      @click="onBatchSetInventory">
             批量设置仓库/库区
           </el-button>
         </el-col>
-        <el-col :span="1.5">
+        <el-col :span="1.5" >
           <el-button v-if="mergeDetailStatusArray.length === 1" type="primary" plain="plain" size="small"
-                     @click="batch">批量设置出库状态
+                     @click="batch">批量设置入库状态
           </el-button>
         </el-col>
       </el-row>
       <WmsTable :data="form.allocationDetails" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center"
                          :selectable="(row)=>!row.finish"></el-table-column>
-        <el-table-column label="出库单" align="center" width="200" prop="orderNo"/>
+        <el-table-column label="入库单" align="center" width="200" prop="orderNo"/>
         <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
         <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
         <el-table-column label="数量" align="center" prop="planQuantity"></el-table-column>
@@ -74,9 +70,9 @@
                                   :disabled="scope.row.finish"></WmsWarehouseCascader>
           </template>
         </el-table-column>
-        <el-table-column label="出库状态" width="150">
+        <el-table-column label="入库状态" width="150">
           <template slot-scope="{ row }">
-            <DictSelect v-model="row.shipmentOrderStatus" :options="row.range" size="small"
+            <DictSelect v-model="row.receiptOrderStatus" :options="row.range" size="small"
                         :disabled="row.finish"></DictSelect>
           </template>
         </el-table-column>
@@ -97,9 +93,6 @@
             <el-select v-model="dialogForm.region" placeholder="请选择分配策略">
               <el-option label="库存量小的库位优先" :value="1"></el-option>
               <el-option label="库存量大的库位优先" :value="2"></el-option>
-              <el-option label="先入先出(FIFO)" :value="3" disabled></el-option>
-              <el-option label="先过期先出" :value="4" disabled></el-option>
-              <el-option label="适量库存优先" :value="5" disabled></el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -118,25 +111,24 @@ import {mapGetters} from 'vuex'
 import WmsCarrier from "@/views/wms/carrier/index.vue";
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 import {ShipmentOrderConstant} from "@/constant/ShipmentOrderConstant.ts";
-import {cancelAllocatedInventory, confirmWave, getWave, waveAllocatedInventory} from "@/api/wms/wave";
+import {cancelAllocatedInventoryForReceipt, confirmWaveForReceipt, getReceiptWave, waveAllocatedInventoryForReceipt} from "@/api/wms/wave";
 
 export default {
-  name: 'WmsShipmentOrder',
   components: {BatchWarehouseDialog, WmsCarrier, ItemSelect},
-  dicts: ['wms_shipment_type', 'wms_shipment_status'],
+  dicts: ['wms_receipt_type', 'wms_receipt_status'],
   computed: {
     ShipmentOrderConstant() {
       return ShipmentOrderConstant
     },
     ...mapGetters(['customerMap', 'carrierMap']),
     shipmentStatusMap() {
-      let obj = this.dict.type.wms_shipment_status.map(item => [item.value, item.label])
+      let obj = this.dict.type.wms_receipt_status.map(item => [item.value, item.label])
       let map = new Map(obj)
       return map
     },
     mergeDetailStatusArray() {
       const arr = this.sourceDetails || []
-      return [...new Set(arr.filter(it => it.shipmentOrderStatus !== null).map(it => it.shipmentOrderStatus))]
+      return [...new Set(arr.filter(it => it.receiptOrderStatus !== null).map(it => it.receiptOrderStatus))]
     },
     dialogStatusRange() {
       if (this.mergeDetailStatusArray.length !== 1) {
@@ -197,14 +189,14 @@ export default {
   methods: {
     /** 取消分配 */
     onCancelInventory(){
-      cancelAllocatedInventory(this.waveOrderId).then(res=>{
+      cancelAllocatedInventoryForReceipt(this.waveOrderId).then(res=>{
         this.$modal.msgSuccess(res ? '修改成功' : '修改失败')
         this.cancel()
       })
     },
     /** 自动分配 仓库/库区 */
     allocated() {
-      waveAllocatedInventory({id:this.waveOrderId,type:this.dialogForm.region}).then(response => {
+      waveAllocatedInventoryForReceipt({id:this.waveOrderId,type:this.dialogForm.region}).then(response => {
         this.$modal.msgSuccess("分配成功");
         this.dialogFormVisible = false;
         const {details, items, allocationDetails} = response
@@ -217,8 +209,8 @@ export default {
           if ((!it.place || it.place.length === 0) && it.prod) {
             it.place = it.prod.place;
           }
-          it.range = this.getRange(it.shipmentOrderStatus)
-          it.finish = it.shipmentOrderStatus === 13
+          it.range = this.getRange(it.receiptOrderStatus)
+          it.finish = it.receiptOrderStatus === 3
         })
         let count = 1;
         allocationDetails && allocationDetails.forEach(it => {
@@ -227,8 +219,8 @@ export default {
           if ((!it.place || it.place.length === 0) && it.prod) {
             it.place = it.prod.place;
           }
-          it.range = this.getRange(it.shipmentOrderStatus)
-          it.finish = it.shipmentOrderStatus === 13
+          it.range = this.getRange(it.receiptOrderStatus)
+          it.finish = it.receiptOrderStatus === 3
         })
         this.sourceDetails = allocationDetails.map(it => ({...it}))
         this.finish = allocationDetails.filter(it => !it.finish)?.length === 0
@@ -276,7 +268,7 @@ export default {
       }
       this.form.allocationDetails.forEach(detail => {
         if (this.ids.includes(detail.id)) {
-          detail.shipmentOrderStatus = this.dialogStatus
+          detail.receiptOrderStatus = this.dialogStatus
         }
       })
       this.cancelDialog()
@@ -298,7 +290,7 @@ export default {
       }
     },
     cancel() {
-      this.$tab.closeOpenPage({path: '/wms/shipmentOrder'})
+      this.$tab.closeOpenPage({path: '/wms/receiptOrder'})
     },
     /** 提交按钮 */
     submitForm() {
@@ -315,7 +307,7 @@ export default {
         it.delFlag = 0;
       })
       const req = {...this.form,id:this.waveOrderId,remark:this.form.remark}
-      confirmWave(req).then(response => {
+      confirmWaveForReceipt(req).then(response => {
         if (response.code == 398) {
           return
         }
@@ -326,7 +318,7 @@ export default {
     },
     loadDetail(id) {
       this.loading = true
-      getWave(id).then(response => {
+      getReceiptWave(id).then(response => {
         const {details, items} = response
         const map = {};
         (items || []).forEach(it => {
@@ -337,9 +329,10 @@ export default {
           if ((!it.place || it.place.length === 0) && it.prod) {
             it.place = it.prod.place;
           }
-          it.range = this.getRange(it.shipmentOrderStatus)
-          it.finish = it.shipmentOrderStatus === 13
+          it.range = this.getRange(it.receiptOrderStatus)
+          it.finish = it.receiptOrderStatus === 3
         })
+        console.log(details)
         this.sourceDetails = details.map(it => ({...it}))
         this.finish = details.filter(it => !it.finish)?.length === 0
         this.form = {
@@ -352,7 +345,7 @@ export default {
       })
     },
     getRange(status) {
-      const arr = this.dict.type.wms_shipment_status
+      const arr = this.dict.type.wms_receipt_status
       if (status === 4 || status === 3) {
         return arr.filter(it => +it.value === status).map(it => ({label: it.label, value: it.value}))
       }

@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium" class="ry_form">
-      <el-form-item label="波次号" prop="waveNo">
+      <el-form-item label="批次" prop="waveNo">
         <el-input
           v-model.trim="queryParams.waveNo"
-          placeholder="请输入波次号"
+          placeholder="请输入批次号"
           clearable
           size="small"
           @keyup.enter.native="handleQuery"
@@ -31,7 +31,7 @@
 
     <WmsTable v-loading="loading" :data="WaveList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="波次号" align="center" prop="waveNo" v-if="columns[0].visible"/>
+      <el-table-column label="批次号" align="center" prop="waveNo" v-if="columns[0].visible"/>
       <el-table-column label="状态" align="center" prop="status" v-if="columns[1].visible">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.wms_wave_status" :value="scope.row.status"/>
@@ -41,13 +41,6 @@
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[2].visible"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-<!--          <el-button-->
-<!--            size="mini"-->
-<!--            type="text"-->
-<!--            icon="el-icon-edit"-->
-<!--            @click="handleUpdate(scope.row)"-->
-<!--            v-hasPermi="['wms:wave:edit']"-->
-<!--          >修改</el-button>-->
           <el-button
             size="mini"
             type="text"
@@ -62,7 +55,7 @@
             v-if="scope.row.status == 1"
             @click="handleDelete(scope.row)"
             v-hasPermi="['wms:wave:remove']"
-          >取消波次</el-button>
+          >取消</el-button>
         </template>
       </el-table-column>
     </WmsTable>
@@ -78,10 +71,9 @@
 </template>
 
 <script>
-import { listWave, getWave, delWave, addWave, updateWave, exportWave } from "@/api/wms/wave";
+import { listWave, delWaveForReceipt } from '@/api/wms/wave'
 
 export default {
-  name: "Wave",
   dicts: ["wms_wave_status"],
   data() {
     return {
@@ -117,11 +109,11 @@ export default {
       // 表单校验
       rules: {
         waveNo: [
-          { required: true, message: "波次号不能为空", trigger: "blur" }
+          { required: true, message: "批次号不能为空", trigger: "blur" }
         ],
       },
       columns: [
-            { key: 1, label: "波次号", visible:  true  },
+            { key: 1, label: "批次号", visible:  true  },
             { key: 2, label: "状态", visible:  true  },
             { key: 3, label: "备注", visible:  true  },
                              ],
@@ -133,7 +125,7 @@ export default {
   methods: {
     handleAllocation(row){
       this.$router.push({
-        path: "/wms/wave/status",
+        path: "/wms/wave/receipt/status",
         query: {
           id: row.id
         }
@@ -143,7 +135,7 @@ export default {
     getList() {
       this.loading = true;
       const {pageNum, pageSize} = this.queryParams;
-      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined, type: 2};
+      const query = {...this.queryParams, pageNum: undefined, pageSize: undefined, type: 1};
       const pageReq = {page: pageNum - 1, size: pageSize};
       listWave(query, pageReq).then(response => {
         const { content, totalElements } = response
@@ -187,64 +179,17 @@ export default {
       this.single = selection.length!==1
       this.multiple = !selection.length
     },
-    /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加波次";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getWave(id).then(response => {
-        this.form = response;
-        this.open = true;
-        this.title = "修改波次";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateWave(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addWave(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.id || this.ids;
       const waveNo = row.waveNo;
-      this.$modal.confirm('是否确认删除波次编号为"' + waveNo + '"的数据项？').then(function() {
-        return delWave(ids);
+      this.$modal.confirm('是否确认删除批次号为"' + waveNo + '"的数据项？').then(function() {
+        return delWaveForReceipt(ids);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
       }).catch(() => {});
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams;
-      this.$modal.confirm('是否确认导出所有波次数据项？').then(() => {
-        this.exportLoading = true;
-        return exportWave(queryParams);
-      }).then(response => {
-        this.$download.download(response);
-        this.exportLoading = false;
-      }).catch(() => {});
-    }
   }
 };
 </script>
