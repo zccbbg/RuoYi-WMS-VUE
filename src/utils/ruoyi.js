@@ -1,4 +1,4 @@
-
+import moment from "moment";
 
 /**
  * 通用js方法封装处理
@@ -64,6 +64,19 @@ export function addDateRange(params, dateRange, propName) {
   } else {
     search.params['begin' + propName] = dateRange[0];
     search.params['end' + propName] = dateRange[1];
+  }
+  return search;
+}
+
+export function addDateRange2(params, dateRange, addDay=true) {
+  let search = params;
+  dateRange = Array.isArray(dateRange) ? dateRange : [];
+  if (addDay) {
+    search['beginTime'] = dateRange[0];
+    search['endTime'] = moment(dateRange[1]).add(1,"days").format('yyyy-MM-DD');
+  } else {
+    search['beginTime'] = dateRange[0];
+    search['endTime'] = dateRange[1];
   }
   return search;
 }

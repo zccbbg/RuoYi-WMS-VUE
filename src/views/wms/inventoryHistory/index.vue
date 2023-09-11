@@ -16,6 +16,20 @@
         <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
+      <el-form-item label="操作时间">
+        <el-date-picker
+          v-model="dateRange"
+          style="width: 240px"
+          value-format="yyyy-MM-dd"
+          type="daterange"
+          :clearable="false"
+          :picker-options='pickerOptions'
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          clearable
+        ></el-date-picker>
+      </el-form-item>
     </el-form>
     <el-row class="mb8" :gutter="10">
       <el-col :span="1.5">
@@ -78,12 +92,17 @@ import { listWmsInventoryHistory, getWmsInventoryHistory, delWmsInventoryHistory
 import ItemSelect from '@/components/ItemSelect'
 import InOutTypeSelect from '@/components/InOutTypeSelect'
 import { mapGetters } from 'vuex'
+import dateUtil from "@/utils/DateUtil";
 
 export default {
   name: "WmsInventoryHistory",
   components: { InOutTypeSelect, ItemSelect },
   data() {
     return {
+      dateRange: [],
+      pickerOptions: {
+        shortcuts: dateUtil.getTimeShort()
+      },
       // 遮罩层
       loading: true,
       // 导出遮罩层
@@ -143,7 +162,7 @@ export default {
       const [warehouseId, areaId, rackId] = warehouseArr || [];
       const query = {...this.queryParams, pageNum: undefined, pageSize: undefined, warehouseId, areaId, rackId};
       const pageReq = {page: pageNum - 1, size: pageSize};
-      listWmsInventoryHistory(query, pageReq).then(response => {
+      listWmsInventoryHistory({...this.addDateRange2(query, this.dateRange)}, pageReq).then(response => {
         const { content, totalElements } = response
         this.wmsInventoryHistoryList = content;
         this.total = totalElements;
