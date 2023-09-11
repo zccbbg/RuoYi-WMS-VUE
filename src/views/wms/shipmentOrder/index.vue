@@ -260,7 +260,9 @@ export default {
             itemNo: prod.itemNo,
             itemType: prod.itemType,
             planQuantity: it.planQuantity,
-            place
+            place,
+            money: it.money,
+            item: it.item
           })
         })
         return {
@@ -271,7 +273,8 @@ export default {
           shipmentType: this.shipmentTypeMap.get(row.shipmentOrderType + ''),
           createTime: row.createTime,
           details: detailList,
-          totalCount
+          totalCount,
+          receivableAmount: row.receivableAmount
         }
       })
     },

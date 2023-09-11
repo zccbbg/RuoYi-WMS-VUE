@@ -353,7 +353,9 @@ export default {
             itemNo: prod.itemNo,
             itemType: prod.itemType,
             planQuantity: it.planQuantity,
-            place
+            place,
+            money: it.money,
+            item: it.item
           })
         })
         return {
@@ -365,7 +367,8 @@ export default {
           createTime: row.createTime,
           details: detailList,
           totalCount,
-          createByName: row.createByName
+          createByName: row.createByName,
+          receivableAmount: response.receivableAmount
         }
       })
     },

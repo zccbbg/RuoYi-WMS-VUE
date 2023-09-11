@@ -317,7 +317,7 @@ export default {
     },
     windowPrintOut(row, print) {
       this.getOrderDetail(row).then(res => {
-        console.log(res)
+        console.log('res:', res)
         if (print) {
           this.modalObj.form.row = res
           this.$nextTick(() => {
@@ -379,7 +379,9 @@ export default {
             itemNo: prod.itemNo,
             itemType: prod.itemType,
             planQuantity: it.planQuantity,
-            place
+            place,
+            money: it.money,
+            item: it.item
           })
         })
         return {
@@ -390,6 +392,7 @@ export default {
           receiptType: this.receiptTypeMap.get(row.receiptOrderType + ''),
           createTime: row.createTime,
           details: detailList,
+          payableAmount: row.payableAmount,
           totalCount,
           createByName: row.createByName
         }
