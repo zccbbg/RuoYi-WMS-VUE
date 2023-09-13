@@ -287,7 +287,7 @@ export default {
         return {
           id: it.id,
           prod: it,
-          money: it.unitPrice ? it.unitPrice : undefined,
+          money: it.unitPrice ? it.unitPrice : (it.unitPrice == 0 ? 0 : undefined),
           planQuantity: null,
           realQuantity: null,
           place: [],
