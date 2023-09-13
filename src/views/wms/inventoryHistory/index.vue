@@ -12,10 +12,6 @@
       <el-form-item label="仓库" prop="rackId">
         <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small"></wms-warehouse-cascader>
       </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
       <el-form-item label="操作时间">
         <el-date-picker
           v-model="dateRange"
@@ -28,7 +24,12 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           clearable
+          size="small"
         ></el-date-picker>
+      </el-form-item>
+      <el-form-item class="flex_one tr">
+        <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
+        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-row class="mb8" :gutter="10">
