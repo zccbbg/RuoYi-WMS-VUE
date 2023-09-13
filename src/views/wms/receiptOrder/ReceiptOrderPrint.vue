@@ -54,9 +54,8 @@
       </tr>
       <tr>
         <td colspan="3" align="center">合计：</td>
-        <td align="center">{{ row.totalCount }}</td>
-        <td align="center"></td>
-        <td colspan="2" align="center">{{ row.payableAmount }}元</td>
+        <td align="center">{{ digitalToChinese(row.payableAmount) }}</td>
+        <td align="center">{{ row.payableAmount }}元</td>
       </tr>
     </table>
 <!--    <div class="foot">-->
@@ -67,9 +66,13 @@
 
 <script>
 
+
+import {digitalToChinese} from "@/utils/money";
+
 export default {
   props: ['row'],
   methods: {
+    digitalToChinese,
     start() {
       this.$print(this.$refs.receiptOrderPrintRef, {}, 'A4')
     },
