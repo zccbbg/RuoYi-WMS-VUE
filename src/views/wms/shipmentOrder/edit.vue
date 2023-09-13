@@ -51,21 +51,26 @@
           <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
           <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
           <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
-          <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" size="mini" :min="1"
-                               :max="2147483647"></el-input-number>
-            </template>
-          </el-table-column>
-          <el-table-column label="仓库/库区" align="center">
+          <el-table-column label="仓库/库区" align="center" width="200">
             <template slot-scope="scope">
               <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
             </template>
           </el-table-column>
-          <el-table-column label="金额" align="center" width="150">
+          <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
+            <template slot-scope="scope">
+              <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" size="mini" :min="1"
+                               :max="2147483647" @change="selectMoney"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="单价" align="center" width="150">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="mini" :min="0"
-                               label="请输入金额"></el-input-number>
+                               label="请输入单价"></el-input-number>
+            </template>
+          </el-table-column>
+          <el-table-column label="总价" align="center" width="150">
+            <template slot-scope="scope">
+              <div>{{ (scope.row.planQuantity && scope.row.money) ? scope.row.planQuantity * scope.row.money : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
@@ -195,8 +200,8 @@ export default {
     selectMoney() {
       let sum = 0;
       this.form.details.map(item => {
-        if (!isNaN(parseFloat(item.money))) {
-          sum += item.money
+        if (!isNaN(parseFloat(item.money)) && !isNaN(parseInt(item.planQuantity))) {
+          sum += item.money * item.planQuantity
         }
         return item.money
       })

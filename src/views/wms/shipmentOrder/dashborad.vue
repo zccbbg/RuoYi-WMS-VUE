@@ -88,7 +88,7 @@
     <el-dialog :visible.sync="modalObj.show" :title="modalObj.title" :width="modalObj.width">
       <template v-if="modalObj.component === 'print-type'">
         <el-radio-group v-model="modalObj.form.value">
-          <el-radio :label="1">lodop打印</el-radio>
+<!--          <el-radio :label="1">lodop打印</el-radio>-->
           <el-radio :label="2">浏览器打印</el-radio>
         </el-radio-group>
       </template>
@@ -274,7 +274,7 @@ export default {
         width: '520px',
         component: 'print-type',
         form: {
-          value: 1,
+          value: 2,
           row
         },
         ok: () => {
