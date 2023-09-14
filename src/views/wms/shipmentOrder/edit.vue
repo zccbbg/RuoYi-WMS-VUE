@@ -46,39 +46,45 @@
         </div>
       </div>
       <div class="table">
-        <WmsTable :data="form.details" @selection-change="handleSelectionChange"> 、
-          <el-table-column type="selection" width="55" align="center"></el-table-column>
-          <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
-          <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
-          <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
-          <el-table-column label="仓库/库区" align="center" width="200">
-            <template slot-scope="scope">
-              <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
-            </template>
-          </el-table-column>
-          <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" size="mini" :min="1"
-                               :max="2147483647" @change="selectMoney"></el-input-number>
-            </template>
-          </el-table-column>
-          <el-table-column label="单价" align="center" width="150">
-            <template slot-scope="scope">
-              <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="mini" :min="0"
-                               label="请输入单价"></el-input-number>
-            </template>
-          </el-table-column>
-          <el-table-column label="总价" align="center" width="150">
-            <template slot-scope="scope">
-              <div>{{ (scope.row.planQuantity && scope.row.money) ? scope.row.planQuantity * scope.row.money : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center">
-            <template slot-scope="scope">
-              <a class="red" @click="form.details.splice(scope.$index, 1)">删除</a>
-            </template>
-          </el-table-column>
-        </WmsTable>
+        <el-form ref="tableForm" :model="form" :show-message="false">
+          <WmsTable :data="form.details" @selection-change="handleSelectionChange"> 、
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
+            <el-table-column label="物料名" align="center" prop="prod.itemName"></el-table-column>
+            <el-table-column label="物料编号" align="center" prop="prod.itemNo"></el-table-column>
+            <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
+            <el-table-column label="仓库/库区" align="center" width="200">
+              <template slot-scope="scope">
+                <el-form-item :prop=" 'details.' + scope.$index + '.place' "
+                              :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
+                              style="margin-bottom: 0!important;">
+                  <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
+                </el-form-item>
+              </template>
+            </el-table-column>
+            <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.planQuantity" placeholder="计划数量" size="mini" :min="1"
+                                 :max="2147483647" @change="selectMoney"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="单价" align="center" width="150">
+              <template slot-scope="scope">
+                <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="mini" :min="0"
+                                 label="请输入单价"></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="总价" align="center" width="150">
+              <template slot-scope="scope">
+                <div>{{ (scope.row.planQuantity && scope.row.money) ? scope.row.planQuantity * scope.row.money : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center">
+              <template slot-scope="scope">
+                <a class="red" @click="form.details.splice(scope.$index, 1)">删除</a>
+              </template>
+            </el-table-column>
+          </WmsTable>
+        </el-form>
         <!-- <el-empty v-if="!form.details || form.details.length === 0" :image-size="48"></el-empty> -->
       </div>
       <div class="tc mt16">
@@ -212,9 +218,24 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      let that = this
       this.$refs['form'].validate(valid => {
         if (!valid) {
           return
+        }
+        let flag = true
+        that.$refs['tableForm'].validate(valid2 => {
+          if (!valid2) {
+            that.$notify({
+              title: '警告',
+              message: "请完善表单信息",
+              type: 'warning'
+            });
+            flag = false
+          }
+        })
+        if (!flag) {
+          return;
         }
         const details = this.form.details.map(it => {
           console.log(it.place)
@@ -241,6 +262,9 @@ export default {
         })
         const req = {...this.form, details}
         addOrUpdateWmsShipmentOrder(req).then(response => {
+          if (response.code == 398) {
+            return
+          }
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
           this.cancel();
         })
