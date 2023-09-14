@@ -41,18 +41,30 @@
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <WmsTable v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange">
+      <el-table-column align="center" label="单号" prop="orderId" width="250">
+        <template v-slot="scope">
+          <div>{{scope.row.formType < 10 ? '入库：' : '出库：'}}{{ scope.row.orderId }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="厂家" prop="name" width="150">
+        <template v-slot="scope">
+          <div v-if="scope.row.name">{{scope.row.formType < 10 ? '供应商：' : '顾客：'}}{{ scope.row.name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column v-if="columns[1].visible" align="center" label="操作类型" prop="formType">
         <template v-slot="{ row }"><span>{{ row.formType ? opTypeMap[row.formType] : row.formType }}</span></template>
       </el-table-column>
       <el-table-column v-if="columns[2].visible" align="center" label="物料名称" prop="itemName"></el-table-column>
       <el-table-column align="center" label="物料编号" prop="itemNo"></el-table-column>
+      <el-table-column align="center" label="物料规格" prop="itemSpecification"></el-table-column>
+      <el-table-column align="center" label="物料单位" prop="itemUnit"></el-table-column>
+      <el-table-column align="center" label="物料单价" prop="itemUnitPrice"></el-table-column>
       <el-table-column v-if="columns[3].visible" align="center" label="仓库" prop="rackId">
         <template v-slot="{ row }"><span>{{ row.warehouseName }}</span><span
           v-if="row.areaName">/{{ row.areaName }}</span></template>
       </el-table-column>
       <el-table-column v-if="columns[4].visible" align="center" label="库存变化" prop="quantity"></el-table-column>
-      <el-table-column v-if="columns[4].visible" align="center" label="操作时间" prop="createTime"></el-table-column>
-      <el-table-column v-if="columns[5].visible" align="center" label="备注" prop="remark"></el-table-column>
+      <el-table-column v-if="columns[4].visible" align="center" label="操作时间" prop="createTime" width="100"></el-table-column>
     </WmsTable>
     <pagination v-show="total&gt;0" :limit.sync="queryParams.pageSize" :page.sync="queryParams.pageNum" :total="total"
                 @pagination="getList"></pagination>
