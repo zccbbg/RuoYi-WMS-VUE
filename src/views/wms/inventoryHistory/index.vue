@@ -27,6 +27,14 @@
           size="small"
         ></el-date-picker>
       </el-form-item>
+      <el-form-item label="供应商名称" prop="supplierName">
+        <el-input placeholder="请输入供应商名称" v-model="queryParams.supplierName" clearable size="small">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="顾客名称" prop="customerName">
+        <el-input placeholder="请输入顾客名称" v-model="queryParams.customerName" clearable size="small">
+        </el-input>
+      </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -43,12 +51,12 @@
     <WmsTable v-loading="loading" :data="wmsInventoryHistoryList" @selection-change="handleSelectionChange">
       <el-table-column align="center" label="单号" prop="orderId" width="250">
         <template v-slot="scope">
-          <div>{{scope.row.formType < 10 ? '入库：' : '出库：'}}{{ scope.row.orderId }}</div>
+          <div>{{scope.row.formType < 10 ? '入库：' + scope.row.receiptOrderNo : '出库：' + scope.row.shipmentOrderNo }}</div>
         </template>
       </el-table-column>
       <el-table-column align="center" label="厂家" prop="name" width="150">
         <template v-slot="scope">
-          <div v-if="scope.row.name">{{scope.row.formType < 10 ? '供应商：' : '顾客：'}}{{ scope.row.name }}</div>
+          <div v-if="scope.row.supplierName || scope.row.customerName">{{scope.row.formType < 10 ? '供应商：' + scope.row.supplierName : '顾客：' + scope.row.customerName}}</div>
         </template>
       </el-table-column>
       <el-table-column v-if="columns[1].visible" align="center" label="操作类型" prop="formType">
