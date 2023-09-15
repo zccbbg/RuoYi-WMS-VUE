@@ -13,5 +13,5 @@ export function digitalToChinese(n) {
   for (var i=0; i < n.length; i++)
     str += '零壹贰叁肆伍陆柒捌玖'.charAt(n.charAt(i)) + unit.charAt(i);
   console.log('转换前：', str)
-  return str.replace(/零元零角零分/g, "零").replace(/零(仟|佰|拾|角)/g, "零").replace(/(零)+/g, "零").replace(/零(万|亿|元)/g, "$1").replace(/(亿)万(拾)/g, "$1$2").replace(/^元零?|零分/g, "").replace(/元$/g, "元");
+  return str.replace(/零元零角零分/g, "元").replace(/零(仟|佰|拾|角)/g, "零").replace(/(零)+/g, "零").replace(/零(万|亿|元)/g, "$1").replace(/(亿)万(拾)/g, "$1$2").replace(/^元零?|零分/g, "").replace(/元$/g, "元");
 }

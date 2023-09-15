@@ -53,9 +53,9 @@
         <td align="center">{{ it.item.remark || '' }}</td>
       </tr>
       <tr>
-        <td colspan="3" align="center">合计：</td>
-        <td align="center">{{ digitalToChinese(row.payableAmount) }}</td>
-        <td align="center">{{ row.payableAmount }}元</td>
+        <td colspan="4" align="center">合计：</td>
+        <td align="center" colspan="3">{{ digitalToChinese(row.payableAmount) }}</td>
+        <td align="center" colspan="3">{{ row.payableAmount }}元</td>
       </tr>
     </table>
 <!--    <div class="foot">-->
