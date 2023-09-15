@@ -288,13 +288,15 @@ export default {
           id: it.id,
           prod: it,
           money: it.unitPrice ? it.unitPrice : (it.unitPrice == 0 ? 0 : undefined),
-          planQuantity: null,
+          planQuantity: 1,
           realQuantity: null,
           place: [],
           receiptOrderStatus: 0,
           delFlag: 0
         }
       })
+      // 选择完之后手动计算一下总金额
+      this.selectMoney()
       this.closeModal()
     },
     closeModal() {
