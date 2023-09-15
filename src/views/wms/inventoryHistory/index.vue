@@ -27,13 +27,11 @@
           size="small"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="供应商名称" prop="supplierName">
-        <el-input placeholder="请输入供应商名称" v-model="queryParams.supplierName" clearable size="small">
-        </el-input>
+      <el-form-item label="供应商" prop="supplierId">
+        <WmsSupplierSelect v-model="queryParams.supplierId" size="small"></WmsSupplierSelect>
       </el-form-item>
-      <el-form-item label="顾客名称" prop="customerName">
-        <el-input placeholder="请输入顾客名称" v-model="queryParams.customerName" clearable size="small">
-        </el-input>
+      <el-form-item label="顾客" prop="customerId">
+        <WmsCustomerSelect v-model="queryParams.customerId" size="small"></WmsCustomerSelect>
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
@@ -153,6 +151,8 @@ export default {
         itemId: null,
         warehouseArr: null,
         quantity: null,
+        supplierId: null,
+        customerId: null
       },
       // 表单参数
       form: {},
