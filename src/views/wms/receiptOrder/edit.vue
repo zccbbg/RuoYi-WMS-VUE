@@ -40,6 +40,10 @@
                 批量设置仓库/库区
               </el-button>
             </el-col>
+            <el-col :span="8">
+              <span class="mr20 ml10">数量：{{ count }}</span>
+              <span>合计：{{ amount }}</span>
+            </el-col>
           </el-row>
         </div>
         <div class="ops">
@@ -63,6 +67,8 @@
                                :max="2147483647"></el-input-number>
             </template>
           </el-table-column>
+          <el-table-column label="单位" align="center" prop="unit"/>
+          <el-table-column label="规格" align="center" prop="specification"/>
           <el-table-column label="单价" align="center" width="150">
             <template slot-scope="scope">
               <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="small"
@@ -71,7 +77,7 @@
           </el-table-column>
           <el-table-column label="总价" align="center" width="150">
             <template slot-scope="scope">
-              <div>{{ (scope.row.planQuantity && scope.row.money) ? scope.row.planQuantity * scope.row.money : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
+              <div>{{ (scope.row.planQuantity && scope.row.money) ? times(scope.row.planQuantity, scope.row.money) : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
             </template>
           </el-table-column>
           <el-table-column label="操作" align="center">
@@ -112,6 +118,7 @@ import {addOrUpdateWmsReceiptOrder, getWmsReceiptOrder} from '@/api/wms/receiptO
 import {randomId} from '@/utils/RandomUtils'
 import ItemSelect from '@/views/components/ItemSelect'
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
+import {plus, times} from "@/utils/digit";
 
 export default {
   name: 'WmsReceiptOrder',
@@ -169,7 +176,26 @@ export default {
       this.reset()
     }
   },
+  computed: {
+    count() {
+      let sum = 0;
+      this.form.details.forEach(it => {
+        sum += Number(it.planQuantity)
+      })
+      return sum
+    },
+    amount() {
+      let sum = 0;
+      this.form.details.forEach(it => {
+        if (it.money && it.planQuantity) {
+          sum = plus(sum, times(Number(it.money), Number(it.planQuantity)))
+        }
+      })
+      return sum;
+    }
+  },
   methods: {
+    times,
     // 多选框选中数据
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
@@ -290,6 +316,8 @@ export default {
           money: it.unitPrice ? it.unitPrice : (it.unitPrice == 0 ? 0 : undefined),
           planQuantity: 1,
           realQuantity: null,
+          unit: it.unit,
+          specification: it.specification,
           place: [],
           receiptOrderStatus: 0,
           delFlag: 0
@@ -326,7 +354,7 @@ export default {
 <style lang="stylus">
 .receipt-order-edit-wrapper
   .receipt-order-content
-    width 70%
+    width 80%
     min-width 900px
     margin 0 auto
 </style>
