@@ -115,6 +115,7 @@ import {STOCK_OUT_TEMPLATE} from '@/utils/printData'
 import ShipmentOrderPrint from '@/views/wms/shipmentOrder/ShipmentOrderPrint'
 import {ShipmentOrderConstant} from '@/constant/ShipmentOrderConstant.ts'
 import {addWave} from "@/api/wms/wave";
+import {plus, times} from "@/utils/digit";
 
 export default {
   name: 'wmsShipmentOrder',
@@ -337,6 +338,7 @@ export default {
         (items || []).forEach(it => {
           map[it.id] = it
         })
+        const detailMap = new Map()
         let detailList = [], totalCount = 0
         details && details.forEach(it => {
           const prod = map[it.itemId]
@@ -348,6 +350,12 @@ export default {
           if (it.rackId) {
             place += `/${this.rackMap.get(it.rackId)}`
           }
+          const type = it.item.itemType
+          if (!detailMap.get(type)) {
+            detailMap.set(type, [it])
+          } else {
+            detailMap.get(type).push(it);
+          }
           detailList.push({
             itemName: prod.itemName,
             itemNo: prod.itemNo,
@@ -358,18 +366,42 @@ export default {
             item: it.item
           })
         })
-        return {
-          remark: row.remark,
-          shipmentOrderNo: row.shipmentOrderNo,
-          customerName: this.customerMap.get(row.customerId),
-          orderNo: row.orderNo,
-          shipmentType: this.shipmentTypeMap.get(row.shipmentOrderType + ''),
-          createTime: row.createTime,
-          details: detailList,
-          totalCount,
-          createByName: row.createByName,
-          receivableAmount: response.receivableAmount
-        }
+        const result = []
+        detailMap.forEach((v, k) => {
+          result.push({
+            remark: row.remark,
+            shipmentOrderNo: row.shipmentOrderNo,
+            customerName: this.customerMap.get(row.customerId),
+            orderNo: row.orderNo,
+            shipmentType: this.shipmentTypeMap.get(row.shipmentOrderType + ''),
+            createTime: row.createTime,
+            details: v,
+            totalCount,
+            createByName: row.createByName,
+          })
+        })
+        result.forEach(it => {
+          it.amount = 0
+          it.details.forEach(detail => {
+            if (detail.money && detail.planQuantity) {
+              it.amount = plus(it.amount, times(Number(detail.money), Number(detail.planQuantity)))
+            }
+          })
+        })
+        console.log('result:', result)
+        return result
+        // return {
+        //   remark: row.remark,
+        //   shipmentOrderNo: row.shipmentOrderNo,
+        //   customerName: this.customerMap.get(row.customerId),
+        //   orderNo: row.orderNo,
+        //   shipmentType: this.shipmentTypeMap.get(row.shipmentOrderType + ''),
+        //   createTime: row.createTime,
+        //   details: detailList,
+        //   totalCount,
+        //   createByName: row.createByName,
+        //   receivableAmount: response.receivableAmount
+        // }
       })
     },
     /** 修改按钮操作 */
