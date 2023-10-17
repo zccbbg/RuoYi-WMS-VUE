@@ -21,7 +21,7 @@ const allowDisparity = 1000 * 60 * 60 * 24 * 7
  */
 export function isStarRepo(owner, repo, userId, redirectUrl,productName,productLink) {
   const judge = process.env.VUE_APP_JUDGE_STAR
-  if (store.getters.name === 'admin' && store.getters.roles.includes('admin')) {
+  if (['wms','admin'].includes(store.getters.name)) {
     return true;
   }
   if (!judge || judge == 0) {
