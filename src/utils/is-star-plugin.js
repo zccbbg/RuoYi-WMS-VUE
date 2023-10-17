@@ -5,6 +5,7 @@ import axios from 'axios'
 // 应用参数
 const client_id = '9addfce3712d04898b5a3dbb223db38b8d6495d2e66d07e3c0af71a708ee3b54'
 const client_secret = '1f73096ce60406eba8fb297a16245eadf2777540abdf531266b406b2479e25fe'
+import store from '@/store'
 
 // 检查成功后，多少天不再检查
 const allowDisparity = 1000 * 60 * 60 * 24 * 7
@@ -20,7 +21,9 @@ const allowDisparity = 1000 * 60 * 60 * 24 * 7
  */
 export function isStarRepo(owner, repo, userId, redirectUrl,productName,productLink) {
   const judge = process.env.VUE_APP_JUDGE_STAR
-  console.log(judge)
+  if (store.getters.name === 'admin' && store.getters.roles.includes('admin')) {
+    return true;
+  }
   if (!judge || judge == 0) {
     return true;
   }
