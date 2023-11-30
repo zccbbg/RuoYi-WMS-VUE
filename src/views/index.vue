@@ -3,12 +3,12 @@
     <el-card style="margin: 20px 20px; font-size: 14px">
       <div slot="header"><span>工作台</span></div>
       <div class="first">
-        <img alt="" :src="avatar" style="width: 50px; height: 50px; float:left; margin-right:10px;border-radius:50%" />
+        <img alt="" :src="require('@/assets/QRCode/express.jpg')" style="height: 100px; float:left; margin-right:10px;" />
         <p style="font-size:16px;margin-bottom:8px">{{ name }}，{{ hello }}</p>
         <p style="font-size:12px;color:rgb(185, 181, 189);width: 300px;">今天是：{{ nowTime }}</p>
       </div>
       <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
-          心中若有帕拉梅拉，仓库就不会邋里邋遢！库存管不好，赚钱两头少！
+        仓库发货便宜寄快递，大件5折，小件6折。扫描左侧二维码。
       </div>
     </el-card>
     <el-row class="pl20 pr20" :gutter="10">
@@ -51,7 +51,6 @@
                     <div class="card-panel-text">
                       承运商
                     </div>
-                    <count-to :start-val="0" :end-val="carrierList.length" :duration="2600" class="card-panel-num" />
                   </div>
                 </div>
               </el-col>
