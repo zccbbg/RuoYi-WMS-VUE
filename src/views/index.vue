@@ -5,12 +5,12 @@
       <div style="display: flex;align-items: center">
         <div class="first">
           <img alt="" :src="require('@/assets/QRCode/express.jpg')" style="height: 100px; margin-right:10px;" />
-          <div>
-            <p style="font-size:16px;margin-bottom:8px">{{ name }}，{{ hello }}</p>
-            <p style="font-size:12px;color:rgb(185, 181, 189);width: 300px;">今天是：{{ nowTime }}</p>
-          </div>
+<!--          <div>-->
+<!--            <p style="font-size:16px;margin-bottom:8px">{{ name }}，{{ hello }}</p>-->
+<!--            <p style="font-size:12px;color:rgb(185, 181, 189);width: 300px;">今天是：{{ nowTime }}</p>-->
+<!--          </div>-->
         </div>
-        <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
+        <div class="first" style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
           仓库发货便宜寄快递，大件5折，小件6折。扫描左侧二维码。
         </div>
       </div>
