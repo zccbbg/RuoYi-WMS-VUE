@@ -1,7 +1,7 @@
 <template>
   <div class="home-wrapper">
     <el-card style="margin: 20px 20px; font-size: 14px">
-      <div slot="header"><span>工作台</span></div>
+      <div slot="header"><span>讲解视频：</span><a href="https://www.bilibili.com/video/BV1ys4y1q7uG/" target="_blank">https://www.bilibili.com/video/BV1ys4y1q7uG/</a></div>
       <div style="display: flex;align-items: center">
         <div class="first">
           <img alt="" :src="require('@/assets/QRCode/express.jpg')" style="height: 100px; margin-right:10px;" />
