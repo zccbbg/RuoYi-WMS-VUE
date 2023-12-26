@@ -33,12 +33,12 @@
             <el-col :span="1.5">
               <div class="flex-one large-tip bolder-font">物料明细</div>
             </el-col>
-            <el-col :span="1.5">
-              <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"
-                         @click="onBatchSetInventory">
-                批量设置仓库/库区
-              </el-button>
-            </el-col>
+<!--            <el-col :span="1.5">-->
+<!--              <el-button size="small" type="success" plain="plain" icon="el-icon-delete-location"-->
+<!--                         @click="onBatchSetInventory">-->
+<!--                批量设置仓库/库区-->
+<!--              </el-button>-->
+<!--            </el-col>-->
             <el-col :span="8">
               <span class="mr20 ml10">数量：{{ count }}</span>
               <span>合计：{{ amount }}</span>
@@ -58,11 +58,18 @@
             <el-table-column label="物料类型" align="center" prop="prod.itemType"></el-table-column>
             <el-table-column label="仓库/库区" align="center" width="200">
               <template slot-scope="scope">
-                <el-form-item :prop=" 'details.' + scope.$index + '.place' "
-                              :rules="[{ required: true, message: '请选择仓库/库区', trigger: 'change' }]"
-                              style="margin-bottom: 0!important;">
-                  <WmsWarehouseCascader v-model="scope.row.place" size="small"></WmsWarehouseCascader>
-                </el-form-item>
+                {{ scope.row.warehouseName + '/' + scope.row.areaName }}
+              </template>
+            </el-table-column>
+            <el-table-column label="批次" align="center" prop="batch" />
+            <el-table-column label="生产日期" align="center" prop="productionDate" width="120">
+              <template slot-scope="scope">
+                {{ parseTime(scope.row.productionDate, '{y}-{m}-{d}') }}
+              </template>
+            </el-table-column>
+            <el-table-column label="有效期" align="center" prop="expiryDate" width="120">
+              <template slot-scope="scope">
+                {{ parseTime(scope.row.expiryDate, '{y}-{m}-{d}') }}
               </template>
             </el-table-column>
             <el-table-column label="计划数量" align="center" prop="planQuantity" width="150">
@@ -71,8 +78,8 @@
                                  :max="2147483647" @change="selectMoney"></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="单位" align="center" prop="unit"/>
-            <el-table-column label="规格" align="center" prop="specification"/>
+            <el-table-column label="单位" align="center" prop="itemUnit"/>
+            <el-table-column label="规格" align="center" prop="itemSpecification"/>
             <el-table-column label="单价" align="center" width="150">
               <template slot-scope="scope">
                 <el-input-number v-model="scope.row.money" :precision="2" @change="selectMoney" size="mini" :min="0"
@@ -103,7 +110,7 @@
     </div>
     <el-dialog :visible="modalObj.show" :title="modalObj.title" :width="modalObj.width" @close="modalObj.cancel">
       <template v-if="modalObj.component === 'add-item'">
-        <item-select ref="item-select" :data="this.form.details"></item-select>
+        <shipment-item-select ref="item-select" :data="this.form.details"></shipment-item-select>
       </template>
       <span slot="footer">
         <el-button v-if="modalObj.cancel" @click="modalObj.cancel">取消</el-button>
@@ -121,13 +128,13 @@
 <script>
 import {addOrUpdateWmsShipmentOrder, getWmsShipmentOrder} from '@/api/wms/shipmentOrder'
 import {randomId} from '@/utils/RandomUtils'
-import ItemSelect from '@/views/components/ItemSelect'
+import ShipmentItemSelect from '@/views/components/ShipmentItemSelect'
 import BatchWarehouseDialog from "@/views/components/wms/BatchWarehouseDialog/index.vue";
 import {plus, times} from "@/utils/digit";
 
 export default {
   name: 'WmsShipmentOrder',
-  components: {BatchWarehouseDialog, ItemSelect},
+  components: {BatchWarehouseDialog, ShipmentItemSelect},
   dicts: ['wms_shipment_type'],
   data() {
     return {
@@ -264,26 +271,29 @@ export default {
           return;
         }
         const details = this.form.details.map(it => {
-          console.log(it.place)
-          if (it.place) {
-            it.prod.warehouseId = it.place[0]
-            it.prod.areaId = it.place[1]
-            it.prod.rackId = it.place[2]
-          } else {
-            it.prod.warehouseId = null
-            it.prod.areaId = null
-            it.prod.rackId = null
-          }
+          // console.log(it.place)
+          // if (it.place) {
+          //   it.prod.warehouseId = it.place[0]
+          //   it.prod.areaId = it.place[1]
+          //   it.prod.rackId = it.place[2]
+          // } else {
+          //   it.prod.warehouseId = null
+          //   it.prod.areaId = null
+          //   it.prod.rackId = null
+          // }
           return {
-            itemId: it.prod.id,
-            rackId: it.prod.rackId,
-            areaId: it.prod.areaId,
+            itemId: it.id,
+            rackId: it.rackId,
+            areaId: it.areaId,
             money: it.money,
-            warehouseId: it.prod.warehouseId,
+            warehouseId: it.warehouseId,
             planQuantity: it.planQuantity,
             realQuantity: it.realQuantity,
             shipmentOrderStatus: it.shipmentOrderStatus,
-            delFlag: 0
+            delFlag: 0,
+            batch: it.batch,
+            productionDate: it.productionDate,
+            expiryDate: it.expiryDate
           }
         })
         const req = {...this.form, details}
@@ -332,16 +342,23 @@ export default {
       const value = this.$refs['item-select'].getRightList()
       this.form.details = value.map(it => {
         return {
-          id: it.id,
+          id: it.itemId,
           prod: it,
-          money: it.unitPrice ? it.unitPrice : (it.unitPrice == 0 ? 0 : undefined),
+          money: it.itemUnitPrice ? it.itemUnitPrice : (it.itemUnitPrice == 0 ? 0 : undefined),
           planQuantity: 1,
           realQuantity: null,
-          unit: it.unit,
-          specification: it.specification,
+          itemUnit: it.itemUnit,
+          itemSpecification: it.itemSpecification,
           place: [],
           shipmentOrderStatus: 11,
-          delFlag: 0
+          delFlag: 0,
+          warehouseName: it.warehouseName,
+          areaName: it.areaName,
+          batch: it.batch,
+          productionDate: it.productionDate,
+          expiryDate: it.expiryDate,
+          warehouseId: it.warehouseId,
+          areaId: it.areaId
         }
       })
       // 选择完之后手动计算一下总金额
@@ -362,7 +379,7 @@ export default {
       this.modalObj = {
         show: true,
         title: '添加物料',
-        width: '50%',
+        width: '80%',
         component: 'add-item',
         model: {},
         ok,
@@ -375,7 +392,7 @@ export default {
 <style lang="stylus">
 .shipment-order-edit-wrapper
   .shipment-order-content
-    width 80%
+    width 100%
     min-width 900px
     margin 0 auto
 </style>

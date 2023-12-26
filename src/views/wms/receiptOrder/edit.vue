@@ -80,6 +80,23 @@
               <div>{{ (scope.row.planQuantity && scope.row.money) ? times(scope.row.planQuantity, scope.row.money) : (scope.row.planQuantity && Number(scope.row.money) === 0 ? '0' : '') }}</div>
             </template>
           </el-table-column>
+          <el-table-column label="批次" align="center" prop="batch" width="200">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.batch" placeholder="批次" />
+            </template>
+          </el-table-column>
+          <el-table-column label="生产日期" align="center" prop="productionDate" width="220">
+            <template slot-scope="scope">
+              <el-date-picker clearable size="small" v-model="scope.row.productionDate" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="生产日期" style="width: 200px!important;">
+              </el-date-picker>
+            </template>
+          </el-table-column>
+          <el-table-column label="有效期" align="center" prop="expiryDate" width="220">
+            <template slot-scope="scope">
+              <el-date-picker clearable size="small" v-model="scope.row.expiryDate" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="有效期" style="width: 200px!important;">
+              </el-date-picker>
+            </template>
+          </el-table-column>
           <el-table-column label="操作" align="center">
             <template slot-scope="scope">
               <a class="red" @click="form.details.splice(scope.$index, 1)">删除</a>
@@ -265,9 +282,13 @@ export default {
             planQuantity: it.planQuantity,
             realQuantity: it.realQuantity,
             receiptOrderStatus: it.receiptOrderStatus,
+            productionDate: it.productionDate,
+            expiryDate: it.expiryDate,
+            batch: it.batch,
             delFlag: 0
           }
         })
+        console.log('details:', details)
         const req = {...this.form, details}
         addOrUpdateWmsReceiptOrder(req).then(response => {
           this.$modal.msgSuccess(this.form.id ? '修改成功' : '新增成功')
@@ -354,7 +375,7 @@ export default {
 <style lang="stylus">
 .receipt-order-edit-wrapper
   .receipt-order-content
-    width 80%
+    width 100%
     min-width 900px
     margin 0 auto
 </style>
