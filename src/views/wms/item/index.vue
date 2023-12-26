@@ -157,28 +157,28 @@
             </el-form-item>
           </el-col>
         </el-row>
+<!--        <el-row :gutter="24">-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="生产日期" prop="productionDate">-->
+<!--              <el-date-picker clearable size="small" v-model="form.productionDate" type="date"-->
+<!--                              value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择生产日期">-->
+<!--              </el-date-picker>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="批次" prop="batch">-->
+<!--              <el-input v-model="form.batch" placeholder="请输入批次" />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
         <el-row :gutter="24">
-          <el-col :span="12">
-            <el-form-item label="生产日期" prop="productionDate">
-              <el-date-picker clearable size="small" v-model="form.productionDate" type="date"
-                              value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择生产日期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="批次" prop="batch">
-              <el-input v-model="form.batch" placeholder="请输入批次" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="24">
-          <el-col :span="12">
-            <el-form-item label="有效期" prop="expiryDate">
-              <el-date-picker clearable size="small" v-model="form.expiryDate" type="datetime"
-                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择有效期">
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="有效期" prop="expiryDate">-->
+<!--              <el-date-picker clearable size="small" v-model="form.expiryDate" type="datetime"-->
+<!--                value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择有效期">-->
+<!--              </el-date-picker>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
           <el-col :span="12">
             <el-form-item label="备注" prop="remark">
               <el-input v-model="form.remark" placeholder="请输入备注" />
