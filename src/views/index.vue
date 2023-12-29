@@ -152,6 +152,11 @@
                 <h4>累计服务10万+电商平台店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
               </el-card>
             </el-timeline-item>
+            <el-timeline-item placement="top" timestamp="2023年">
+              <el-card>
+                <h4>B站播放量破万，开源ruoyi-mall，公众号粉丝破万，wms-saas火热研发中</h4>
+              </el-card>
+            </el-timeline-item>
           </el-timeline>
         </el-card>
         <el-card style="padding-bottom: 20px; font-size: 14px;margin-top: 20px;">
