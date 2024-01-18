@@ -48,8 +48,8 @@
         <td align="center">{{ it.item.unit || '' }}</td>
         <td align="center">{{ it.money ? it.money : (it.money == 0 ? '0' : '') }}</td>
         <td align="center">{{ (it.money*it.planQuantity) }}</td>
-        <td align="center">{{ it.item.batch || '' }}</td>
-        <td align="center">{{ parseTime(it.item.expiryDate, '{y}-{m}-{d}') }}</td>
+        <td align="center">{{ it.batch || '' }}</td>
+        <td align="center">{{ parseTime(it.expiryDate, '{y}-{m}-{d}') }}</td>
         <td align="center">{{ it.item.remark || '' }}</td>
       </tr>
       <tr>
