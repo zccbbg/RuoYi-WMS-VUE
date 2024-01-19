@@ -261,6 +261,8 @@ export default {
             itemType: prod.itemType,
             planQuantity: it.planQuantity,
             place,
+            batch: it.batch,
+            expiryDate: it.expiryDate,
             money: it.money,
             item: it.item
           })
