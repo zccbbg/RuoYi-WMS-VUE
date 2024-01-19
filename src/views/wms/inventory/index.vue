@@ -78,7 +78,7 @@ export default {
         itemId: null,
         place: null,
         quantityRange: [],
-        panelType: 5
+        panelType: 20
       },
       pageReq: {
         page: 1,
@@ -87,7 +87,7 @@ export default {
       // 表单参数
       form: {},
       columns: [],
-      panelType: 5
+      panelType: 20
     }
   },
   async created() {

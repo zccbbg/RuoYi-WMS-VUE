@@ -38,6 +38,26 @@
       label="仓库/库区"
     ></el-table-column>
     <el-table-column
+      prop="batch"
+      label="批次"
+    ></el-table-column>
+    <el-table-column
+      prop="productionDate"
+      label="生产日期"
+    >
+      <template v-slot="{row}">
+        <div>{{ parseTime(row.productionDate, "{yyyy}-{mm}-{dd}") }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="expiryDate"
+      label="有效期"
+    >
+      <template v-slot="{row}">
+        <div>{{ parseTime(row.expiryDate, "{yyyy}-{mm}-{dd}") }}</div>
+      </template>
+    </el-table-column>
+    <el-table-column
       prop="quantity"
       label="库存"
     ></el-table-column>
