@@ -19,6 +19,15 @@ export function listWarnInventory(pageReq) {
   })
 }
 
+// 查询过期列表
+export function listExpiryInventory(pageReq) {
+  return request({
+    url: '/wms/inventory/expiryList',
+    method: 'post',
+    params: pageReq
+  })
+}
+
 // 查询库存详细
 export function getWmsInventory(id) {
   return request({
