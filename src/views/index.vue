@@ -71,6 +71,7 @@
                     <div class="card-panel-text">
                       承运商
                     </div>
+                    <count-to :start-val="0" :end-val="carrierList.length" :duration="2600" class="card-panel-num" />
                   </div>
                 </div>
               </el-col>
