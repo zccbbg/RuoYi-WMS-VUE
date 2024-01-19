@@ -35,11 +35,11 @@
           <el-input v-model="queryParams.quantity" placeholder="请输入安全库存" clearable size="small"
             @keyup.enter.native="handleQuery" />
         </el-form-item>
-        <el-form-item label="有效期" prop="expiryDate">
-          <el-date-picker clearable size="small" v-model="queryParams.expiryDate" type="datetime"
-            value-format="yyyy-MM-ddTHH:mm:ss" placeholder="选择有效期">
-          </el-date-picker>
-        </el-form-item>
+<!--        <el-form-item label="有效期" prop="expiryDate">-->
+<!--          <el-date-picker clearable size="small" v-model="queryParams.expiryDate" type="datetime"-->
+<!--            value-format="yyyy-MM-ddTHH:mm:ss" placeholder="选择有效期">-->
+<!--          </el-date-picker>-->
+<!--        </el-form-item>-->
       </template>
       <el-form-item class="flex_one tr">
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -76,22 +76,22 @@
       <el-table-column label="分类" align="center" prop="itemTypeName" v-if="columns[2].visible" />
       <el-table-column label="规格" align="center" prop="specification" />
       <el-table-column label="单价" align="center" prop="unitPrice" />
-      <el-table-column label="批次" align="center" prop="batch" />
+<!--      <el-table-column label="批次" align="center" prop="batch" />-->
       <el-table-column label="单位类别" align="center" prop="unit" v-if="columns[3].visible" />
       <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[6].visible" />
       <el-table-column label="所属库区" align="center" prop="areaName" v-if="columns[5].visible" />
       <el-table-column label="所属货架" align="center" prop="rackName" v-if="columns[4].visible" />
       <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible" />
-      <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.expiryDate, "") }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="生产日期" align="center" prop="productionDate" width="180" >
-        <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.productionDate, "{y}:{m}:{d}") }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">-->
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ parseTime(scope.row.expiryDate, "") }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+<!--      <el-table-column label="生产日期" align="center" prop="productionDate" width="180" >-->
+<!--        <template slot-scope="scope">-->
+<!--          <span>{{ parseTime(scope.row.productionDate, "{y}:{m}:{d}") }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="备注" align="center" prop="remark" v-if="columns[9].visible" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
