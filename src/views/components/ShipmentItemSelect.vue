@@ -2,6 +2,14 @@
   <div class="prod-sku-select-wrapper">
     <div class="search">
       <el-form inline="inline" label-width="64">
+        <el-form-item label="物料名称">
+          <el-input
+            class="w200"
+            v-model="query.itemName"
+            clearable
+            placeholder="请输入物料名称"
+          ></el-input>
+        </el-form-item>
         <el-form-item label="仓库" prop="rackId">
           <wms-warehouse-cascader v-model="query.place"></wms-warehouse-cascader>
         </el-form-item>
@@ -136,7 +144,8 @@ export default {
       query: {
         itemType: null,
         batch: null,
-        place: null
+        place: null,
+        itemName: null
       },
       list: [],
       total: 0,
