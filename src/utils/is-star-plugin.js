@@ -27,7 +27,7 @@ export function isStarRepo(owner, repo, userId, redirectUrl,productName,productL
   if (!judge || judge == 0) {
     return true;
   }
-  if(jude ==2 && productName=='Wms-Ruoyi-仓库库存管理'){
+  if(judge ==2 && productName=='Wms-Ruoyi-仓库库存管理'){
     return true;
   }
   const key = userId + '_' + owner + '_' + repo
