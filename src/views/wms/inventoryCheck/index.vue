@@ -146,7 +146,7 @@ export default {
   name: "WmsInventoryCheck",
   dicts: ["wms_check_status"],
   computed: {
-    ...mapGetters(['userId']),
+    ...mapGetters(['userId', 'warehouseMap', 'areaMap']),
   },
   data() {
     return {
@@ -224,6 +224,10 @@ export default {
       listWmsInventoryCheck(query, pageReq).then(response => {
         const {content, totalElements} = response
         this.wmsInventoryCheckList = content;
+        this.wmsInventoryCheckList.forEach(it => {
+          it.warehouseName = this.warehouseMap.get(it.warehouseId)
+          it.areaName = this.areaMap.get(it.areaId)
+        })
         this.total = totalElements;
         this.loading = false;
       });
