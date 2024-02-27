@@ -6,8 +6,8 @@
         <el-input v-model="queryParams.itemNo" placeholder="请输入编号" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="名称" prop="itemName">
-        <el-input v-model="queryParams.itemName" placeholder="请输入名称" clearable size="small"
+      <el-form-item label="名称" prop="itemNameLike">
+        <el-input v-model="queryParams.itemNameLike" placeholder="请输入名称" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="分类" prop="itemType">
@@ -214,7 +214,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         itemNo: null,
-        itemName: null,
+        itemNameLike: null,
         itemType: null,
         unit: null,
         rackId: null,
