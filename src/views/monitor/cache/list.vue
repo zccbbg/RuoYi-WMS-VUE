@@ -4,7 +4,7 @@
       <el-col :span="8">
         <el-card style="height: calc(100vh - 125px)">
           <div slot="header">
-            <span>缓存列表</span>
+            <span><i class="el-icon-collection"></i> 缓存列表</span>
             <el-button
               style="float: right; padding: 3px 0"
               type="text"
@@ -62,7 +62,7 @@
       <el-col :span="8">
         <el-card style="height: calc(100vh - 125px)">
           <div slot="header">
-            <span>键名列表</span>
+            <span><i class="el-icon-key"></i> 键名列表</span>
             <el-button
               style="float: right; padding: 3px 0"
               type="text"
@@ -112,13 +112,13 @@
       <el-col :span="8">
         <el-card :bordered="false" style="height: calc(100vh - 125px)">
           <div slot="header">
-            <span>缓存内容</span>
+            <span><i class="el-icon-document"></i> 缓存内容</span>
             <el-button
               style="float: right; padding: 3px 0"
               type="text"
               icon="el-icon-refresh-right"
               @click="handleClearCacheAll()"
-              >清理全部</el-button
+            >清理全部</el-button
             >
           </div>
           <el-form :model="cacheForm">
@@ -187,7 +187,7 @@ export default {
     /** 清理指定名称缓存 */
     handleClearCacheName(row) {
       clearCacheName(row.cacheName).then(response => {
-        this.$modal.msgSuccess("清理缓存名称[" + this.nowCacheName + "]成功");
+        this.$modal.msgSuccess("清理缓存名称[" + row.cacheName + "]成功");
         this.getCacheKeys();
       });
     },
