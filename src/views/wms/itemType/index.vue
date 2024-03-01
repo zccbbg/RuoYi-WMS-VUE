@@ -3,9 +3,9 @@
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
              class="ry_form">
 
-      <el-form-item label="物料类型名称" prop="typeName">
+      <el-form-item label="物料类型名称" prop="typeNameLike">
         <el-input
-          v-model="queryParams.typeName"
+          v-model="queryParams.typeNameLike"
           placeholder="请输入物料类型名称"
           clearable
           size="small"
@@ -177,7 +177,7 @@ export default {
         pageSize: 10,
         parentId: null,
         ancestors: null,
-        typeName: null,
+        typeNameLike: null,
         orderNum: undefined,
         status: null,
       },

@@ -17,12 +17,11 @@ export function itemTypeTreeselect() {
   })
 }
 // 查询物料类型表列表
-export function listWmsItemTypeNoPage(query, pageReq) {
+export function listWmsItemTypeNoPage(query) {
   return request({
     url: '/wms/itemType/noPageList',
     method: 'get',
-    data: query,
-    params: pageReq
+    params: query
   })
 }
 
