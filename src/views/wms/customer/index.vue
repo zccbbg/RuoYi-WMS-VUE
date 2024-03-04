@@ -6,8 +6,8 @@
         <el-input v-model.trim="queryParams.customerNo" placeholder="请输入编号" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="名称" prop="customerName">
-        <el-input v-model.trim="queryParams.customerName" placeholder="请输入名称" clearable size="small"
+      <el-form-item label="名称" prop="customerNameLike">
+        <el-input v-model.trim="queryParams.customerNameLike" placeholder="请输入名称" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
       <el-form-item label="地址" prop="address">
@@ -201,7 +201,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         customerNo: null,
-        customerName: null,
+        customerNameLike: null,
         address: null,
         mobile: null,
         tel: null,

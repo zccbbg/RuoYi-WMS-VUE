@@ -10,9 +10,9 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="名称" prop="carrierName">
+      <el-form-item label="名称" prop="carrierNameLike">
         <el-input
-          v-model.trim="queryParams.carrierName"
+          v-model.trim="queryParams.carrierNameLike"
           placeholder="请输入名称"
           clearable
           size="small"
@@ -249,7 +249,7 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
                 carrierNo: null,
-                carrierName: null,
+                carrierNameLike: null,
                 address: null,
                 mobile: null,
                 tel: null,
