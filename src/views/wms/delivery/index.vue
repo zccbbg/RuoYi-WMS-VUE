@@ -2,15 +2,15 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
              class="ry_form">
-      <el-form-item label="出库单主表Id" prop="shipmentOrderId">
-        <el-input
-          v-model.trim="queryParams.shipmentOrderId"
-          placeholder="请输入出库单主表Id"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
+<!--      <el-form-item label="出库单主表Id" prop="shipmentOrderId">-->
+<!--        <el-input-->
+<!--          v-model.trim="queryParams.shipmentOrderId"-->
+<!--          placeholder="请输入出库单主表Id"-->
+<!--          clearable-->
+<!--          size="small"-->
+<!--          @keyup.enter.native="handleQuery"-->
+<!--        />-->
+<!--      </el-form-item>-->
       <el-form-item label="承运商" prop="carrierId">
 
         <WmsCarrierSelect v-model="queryParams.carrierId"></WmsCarrierSelect>

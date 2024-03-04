@@ -180,6 +180,7 @@ export default {
     /** 重置按钮操作 */
     resetQuery() {
       this.resetForm("queryForm");
+      this.queryParams.warehouseArr = null
       this.handleQuery();
     },
     // 多选框选中数据
