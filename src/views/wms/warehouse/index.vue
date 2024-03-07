@@ -47,36 +47,37 @@
                 </el-col>
               </el-row>
             </div>
-          </div>
+          </div >
           <div class="content-wrapper">
             <el-tabs v-model="activeName" @tab-click="handleClick">
               <el-tab-pane label="库区信息" name="first">
-                <div class="clearfix oper_area">
-                  <div class="left">
-                    <el-input placeholder="请输入库区编号/名称" v-model="queryAreaParam" class="input-with-select"
-                      suffix-icon="el-icon-search" @keyup.enter.native="handleSearchArea">
-                    </el-input>
+                  <div class="clearfix oper_area">
+                    <div class="left">
+                      <el-input placeholder="请输入库区编号/名称" v-model="queryAreaParam" class="input-with-select"
+                                suffix-icon="el-icon-search" @keyup.enter.native="handleSearchArea">
+                      </el-input>
+                    </div>
+                    <div class="left" style="margin: 3px 10px;">
+                      <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddArea()"
+                                 v-hasPermi="['wms:area:add']">新增库区</el-button>
+                    </div>
                   </div>
-                  <div class="left" style="margin: 3px 10px;">
-                    <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAddArea()"
-                      v-hasPermi="['wms:area:add']">新增库区</el-button>
-                  </div>
-                </div>
-
-                <WmsTable v-loading="loading" :data="wmsAreaList">
-                  <el-table-column label="编号" align="center" prop="areaNo" v-if="columns[0].visible" />
-                  <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible" />
-                  <el-table-column label="名称" align="center" prop="areaName" v-if="columns[1].visible" />
-                  <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible" />
-                  <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-                    <template slot-scope="scope">
-                      <el-button size="mini" type="text" icon="el-icon-edit" @click.stop="handleUpdateArea(scope.row)"
-                        v-hasPermi="['wms:area:edit']">修改</el-button>
-                      <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
-                        v-hasPermi="['wms:area:remove']">删除</el-button>
-                    </template>
-                  </el-table-column>
-                </WmsTable>
+                  <el-scrollbar ref="scrollMenuRef" style="height: 400px;">
+                    <WmsTable v-loading="loading" :data="wmsAreaList">
+                      <el-table-column label="编号" align="center" prop="areaNo" v-if="columns[0].visible" />
+                      <el-table-column label="所属仓库" align="center" prop="warehouseName" v-if="columns[2].visible" />
+                      <el-table-column label="名称" align="center" prop="areaName" v-if="columns[1].visible" />
+                      <el-table-column label="备注" align="center" prop="remark" v-if="columns[3].visible" />
+                      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                        <template slot-scope="scope">
+                          <el-button size="mini" type="text" icon="el-icon-edit" @click.stop="handleUpdateArea(scope.row)"
+                                     v-hasPermi="['wms:area:edit']">修改</el-button>
+                          <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row)"
+                                     v-hasPermi="['wms:area:remove']">删除</el-button>
+                        </template>
+                      </el-table-column>
+                    </WmsTable>
+                  </el-scrollbar>
               </el-tab-pane>
             </el-tabs>
           </div>
