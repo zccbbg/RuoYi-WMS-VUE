@@ -487,7 +487,7 @@ export default {
         pageNum: undefined,
         pageSize: undefined,
       };
-      const pageReq = undefined;
+      const pageReq = {page: 0, size: 1000};
       listWmsArea(query, pageReq).then((response) => {
         const { content, totalElements } = response;
         this.wmsAreaList = content;
@@ -511,7 +511,7 @@ export default {
         this.wmsAreaList = this.areaList.filter(it => it.warehouseId == this.selectedWarehouseId);
         return;
       }
-      this.wmsAreaList = this.areaList.filter(it => it.warehouseId == this.selectedWarehouseId && (it.areaNo == this.queryAreaParam || it.areaName == this.queryAreaParam));
+      this.wmsAreaList = this.areaList.filter(it => it.warehouseId == this.selectedWarehouseId && (it.areaNo.search(this.queryAreaParam) !== -1 || it.areaName.search(this.queryAreaParam) !== -1 ));
     }
   },
 };
