@@ -243,16 +243,29 @@ export default {
     },
     confirmSelectItem() {
       const value = this.$refs['item-select'].getRightList()
-      this.form.details = value.map(it => {
-        return {
-          id:it.id,
-          prod: it,
-          planQuantity: null,
-          targetPlace: [],
-          sourcePlace: [],
-          realQuantity: null,
-          moveStatus: 21,
-          delFlag: 0
+      value.forEach(it => {
+        if (!this.form.details?.length) {
+          this.form.details.push({
+            id:it.id,
+            prod: it,
+            planQuantity: null,
+            targetPlace: [],
+            sourcePlace: [],
+            realQuantity: null,
+            moveStatus: 21,
+            delFlag: 0
+          })
+        } else if (!this.form.details.find(detail => detail.id === it.id)) {
+          this.form.details.push({
+            id:it.id,
+            prod: it,
+            planQuantity: null,
+            targetPlace: [],
+            sourcePlace: [],
+            realQuantity: null,
+            moveStatus: 21,
+            delFlag: 0
+          })
         }
       })
       this.closeModal()
