@@ -255,7 +255,7 @@ export default {
             moveStatus: 21,
             delFlag: 0
           })
-        } else if (!this.form.details.find(detail => detail.id === it.id)) {
+        } else if (!this.form.details.find(detail => detail.prod.id === it.id)) {
           this.form.details.push({
             id:it.id,
             prod: it,
