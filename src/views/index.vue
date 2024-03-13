@@ -4,7 +4,7 @@
       <el-col :span="12">
         <el-card shadow="always" style="padding-bottom: 20px;font-size: 14px" >
           <div slot="header">
-            <span style="font-size: large;font-weight: bold">SaaS版已上线，欢迎试用：</span><a href="https://kct.ichengle.top/register?code=7ixq7h" target="_blank">https://kct.ichengle.top/register?code=7ixq7h</a>
+            <span style="font-size: large;font-weight: bold">SaaS版已上线，如需体验，请在公众号内回复：saas</span>
           </div>
           <div style="display: flex;align-items: center">
             <div class="first" style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
