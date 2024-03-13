@@ -256,6 +256,7 @@ export default {
           ...response,
           details
         }
+        console.log('details edit:', details)
       })
     },
     // 表单重置
@@ -278,15 +279,28 @@ export default {
     },
     confirmSelectItem() {
       const value = this.$refs['item-select'].getRightList()
-      this.form.details = value.map(it => {
-        return {
-          id: it.id,
-          prod: it,
-          planQuantity: null,
-          realQuantity: null,
-          place: [],
-          receiptOrderStatus: 0,
-          delFlag: 0
+      console.log('details add:', value)
+      value.forEach(it => {
+        if (!this.form.details?.length) {
+          this.form.details.push({
+            id: it.id,
+            prod: it,
+            planQuantity: null,
+            realQuantity: null,
+            place: [],
+            receiptOrderStatus: 0,
+            delFlag: 0
+          })
+        } else if (!this.form.details.find(detail => detail.prod.id === it.id)) {
+          this.form.details.push({
+            id: it.id,
+            prod: it,
+            planQuantity: null,
+            realQuantity: null,
+            place: [],
+            receiptOrderStatus: 0,
+            delFlag: 0
+          })
         }
       })
       this.closeModal()
