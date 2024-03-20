@@ -61,7 +61,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['wms:wmsInventorySettlement:add']"
+          v-hasPermi="['wms:inventorySettlement:add']"
         >新增结算单
         </el-button
         >
@@ -74,7 +74,7 @@
           size="mini"
           :loading="exportLoading"
           @click="handleExport"
-          v-hasPermi="['wms:wmsInventorySettlement:export']"
+          v-hasPermi="['wms:inventorySettlement:export']"
         >导出
         </el-button
         >
@@ -136,7 +136,7 @@
             type="text"
             icon="el-icon-edit"
             @click="handleView(scope.row)"
-            v-hasPermi="['wms:wmsInventorySettlement:edit']"
+            v-hasPermi="['wms:inventorySettlement:edit']"
           >查看
           </el-button>
           <el-button
@@ -145,7 +145,7 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-if="11 === scope.row.inventorySettlementStatus"
-            v-hasPermi="['wms:wmsInventorySettlement:edit']"
+            v-hasPermi="['wms:inventorySettlement:edit']"
           >继续结算
           </el-button>
           <el-button
@@ -154,7 +154,7 @@
             icon="el-icon-delete"
             v-if="11 === scope.row.inventorySettlementStatus"
             @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:wmsInventorySettlement:remove']"
+            v-hasPermi="['wms:inventorySettlement:remove']"
           >删除
           </el-button>
         </template>
