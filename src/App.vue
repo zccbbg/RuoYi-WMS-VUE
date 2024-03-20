@@ -19,7 +19,7 @@ export default  {
 </script>
 <style lang="stylus">
 @import "base";
-.el-cascader-menu {
+.el-cascader-menu__wrap{
   height: 300px;
 }
 </style>
