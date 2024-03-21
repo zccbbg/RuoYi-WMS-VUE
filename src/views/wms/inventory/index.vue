@@ -10,7 +10,7 @@
         <item-select v-model="queryParams.itemId"></item-select>
       </el-form-item>
       <el-form-item label="仓库" prop="rackId">
-        <wms-warehouse-cascader v-model="queryParams.place"></wms-warehouse-cascader>
+        <wms-warehouse-cascader v-model="queryParams.place" :checkStrictly=true></wms-warehouse-cascader>
       </el-form-item>
       <el-form-item label="库存" prop="quantity">
         <number-range v-model="queryParams.quantityRange"></number-range>

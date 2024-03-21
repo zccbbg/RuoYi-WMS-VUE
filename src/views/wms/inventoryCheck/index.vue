@@ -19,7 +19,7 @@
       </el-form-item>
 
       <el-form-item label="所属仓库" prop="warehouseId">
-        <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small"></wms-warehouse-cascader>
+        <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small" :checkStrictly=true></wms-warehouse-cascader>
       </el-form-item>
 
       <el-form-item class="flex_one tr">

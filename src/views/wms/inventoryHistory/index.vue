@@ -10,7 +10,7 @@
                      size="small"></item-select>
       </el-form-item>
       <el-form-item label="仓库" prop="rackId">
-        <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small"></wms-warehouse-cascader>
+        <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small" :checkStrictly=true></wms-warehouse-cascader>
       </el-form-item>
       <el-form-item class="flex_one tr">
         <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>

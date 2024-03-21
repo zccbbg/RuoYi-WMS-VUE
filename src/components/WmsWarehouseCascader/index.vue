@@ -3,7 +3,7 @@
   placeholder="请选择仓库信息"
   :options="options"
   v-model="selections"
-  :props="{ checkStrictly: true }"
+  :props="{ checkStrictly: checkStrictly }"
   clearable
   :size="size"
   :disabled="disabled"
@@ -22,6 +22,10 @@ export default {
     size: {
       type: String,
       default: 'small'
+    },
+    checkStrictly:{
+      type: Boolean,
+      default: false
     },
     disabled:{
       type: Boolean,
@@ -71,6 +75,7 @@ export default {
         return {
           value: warehouse.id,
           label: warehouse.warehouseName,
+          disabled: !warehouseMap.get(warehouse.id),
           children: warehouseMap.get(warehouse.id)
         }
       })

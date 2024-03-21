@@ -6,7 +6,7 @@
           <el-input class="w200" v-model="form.inventoryCheckNo" placeholder="盘点单" disabled="disabled"></el-input>
         </el-form-item>
         <el-form-item label="盘点仓库" prop="supplierId">
-          <wms-warehouse-cascader v-model="form.place" size="small"></wms-warehouse-cascader>
+          <wms-warehouse-cascader v-model="form.place" size="small" :checkStrictly=true></wms-warehouse-cascader>
         </el-form-item>
         <el-form-item label="盈亏数" prop="inventoryCheckTotal">
           <el-input-number v-model="inventoryCheckTotal" :precision="2" disabled></el-input-number>
