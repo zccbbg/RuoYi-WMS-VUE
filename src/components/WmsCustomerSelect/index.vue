@@ -1,5 +1,5 @@
 <template>
-  <el-select placeholder="请选择客户" clearable v-model="customer">
+  <el-select placeholder="请选择客户" clearable v-model="customer" :filterable="filterable">
     <el-option
       v-for="customer in customerList"
       :key="customer.id"
@@ -11,7 +11,7 @@
 <script>
 import { mapGetters } from 'vuex';
 export default {
-  props: ['value','size'],
+  props: ['value','size', 'filterable'],
   data() {
     return {
 

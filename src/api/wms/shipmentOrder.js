@@ -69,3 +69,12 @@ export function allocatedInventory(params) {
     method: 'post'
   })
 }
+
+// 单个订单分配仓库
+export function statByCustomerAndType(data) {
+  return request({
+    url: '/wms/shipmentOrder/statByCustomerAndType',
+    method: 'post',
+    data
+  })
+}
