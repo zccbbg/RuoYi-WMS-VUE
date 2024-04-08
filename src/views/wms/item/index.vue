@@ -18,17 +18,8 @@
         <el-input v-model="queryParams.unit" placeholder="请输入单位类别" clearable size="small"
           @keyup.enter.native="handleQuery" />
       </el-form-item>
-      <el-form-item label="所属货架" prop="rackId">
-        <el-input v-model="queryParams.rackId" placeholder="请输入所属货架" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="所属库区" prop="areaId">
-        <el-input v-model="queryParams.areaId" placeholder="请输入所属库区" clearable size="small"
-          @keyup.enter.native="handleQuery" />
-      </el-form-item>
-      <el-form-item label="所属仓库" prop="warehouseId">
-        <el-input v-model="queryParams.warehouseId" placeholder="请输入所属仓库" clearable size="small"
-          @keyup.enter.native="handleQuery" />
+      <el-form-item label="仓库" prop="rackId">
+        <wms-warehouse-cascader v-model="queryParams.place" :checkStrictly=true></wms-warehouse-cascader>
       </el-form-item>
       <template v-if="showMoreCondition">
         <el-form-item label="安全库存" prop="quantity">
@@ -54,14 +45,6 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="handleAdd"
           v-hasPermi="['wms:item:add']">新增</el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
-        <el-button type="success" plain icon="el-icon-edit" size="mini" :disabled="single" @click="handleUpdate"
-          v-hasPermi="['wms:item:edit']">修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button type="danger" plain icon="el-icon-delete" size="mini" :disabled="multiple" @click="handleDelete"
-          v-hasPermi="['wms:item:remove']">删除</el-button>
-      </el-col> -->
       <el-col :span="1.5">
         <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading" @click="handleExport"
           v-hasPermi="['wms:item:export']">导出</el-button>
@@ -258,9 +241,13 @@ export default {
     /** 查询物料列表 */
     getList() {
       this.loading = true;
-      const { pageNum, pageSize } = this.queryParams;
+      const { place, pageNum, pageSize } = this.queryParams;
+      const [warehouseId, areaId, rackId] = place || [];
       const query = {
         ...this.queryParams,
+        warehouseId: warehouseId,
+        areaId: areaId,
+        rackId: rackId,
         pageNum: undefined,
         pageSize: undefined,
       };
