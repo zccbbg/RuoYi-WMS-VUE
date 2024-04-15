@@ -2,8 +2,8 @@ import Dict from './Dict'
 import { mergeOptions } from './DictOptions'
 
 /**
- * 
- * @param {*} Vue 
+ *
+ * @param {*} Vue
  * @param {*} options , 插件安装时传入的对象，我们项目里面是：
  * metas: {
      '*': {
@@ -21,7 +21,7 @@ export default function(Vue, options) {
   mergeOptions(options)
   Vue.mixin({
     data() {
-      //如果vue没有定义dixts即this.$options.dicts为空，则返回{}相当于不混入 
+      //如果vue没有定义dicts即this.$options.dicts为空，则返回{}相当于不混入
       if (this.$options === undefined || this.$options.dicts === undefined || this.$options.dicts === null) {
         return {}
       }
