@@ -20,6 +20,7 @@ export default class Dict {
     this.type = {}
   }
 
+  //options为：this.$options.dicts
   init(options) {
     if (options instanceof Array) {
       options = { types: options }
