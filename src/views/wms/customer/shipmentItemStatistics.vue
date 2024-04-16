@@ -22,10 +22,11 @@
             <treeselect v-model="queryParams.itemTypeId" :options="itemTypeOptions" :show-count="true" placeholder="请选择分类"/>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="6">
           <el-form-item>
             <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+            <el-button type="warning" icon="el-icon-download" size="mini" @click="handleExport">导出</el-button>
           </el-form-item>
         </el-col>
       </el-row>
@@ -56,6 +57,8 @@ import moment from 'moment'
 import {numSub} from "@/utils/numSub";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import ExcelUtil from '@/utils/ExcelUtil'
+import {Message} from "element-ui";
 
 export default {
   name: 'shipmentItemStatistics',
@@ -77,6 +80,8 @@ export default {
       loading: true,
       columns: [],
       dateRange: [],
+      exportColumns: [],
+      exportSummaryRow: []
     }
   },
   methods: {
@@ -113,6 +118,7 @@ export default {
         //查统计数据
       }).finally(() => {
         this.loading = false
+        this.generateExportColumns()
       })
     },
     initDate() {
@@ -128,11 +134,13 @@ export default {
       }
     },
     getSummaries(param) {
+      this.exportSummaryRow = []
       const { columns, data } = param;
       let sums = [];
       columns.forEach((column, index) => {
         if (index === 0) {
           sums[index] = '合计';
+          this.exportSummaryRow.push('合计')
           return;
         }
         if (index === columns.length - 1) {
@@ -150,6 +158,7 @@ export default {
             })
           })
         }
+        this.exportSummaryRow.push(Number(sums[index]).toFixed(2))
       });
       sums = sums.map(it => {
         if (it !== '合计') {
@@ -158,6 +167,46 @@ export default {
         return it
       })
       return sums;
+    },
+    generateExportColumns() {
+      this.exportColumns = []
+      this.exportColumns.push({
+        title: '客户',
+        key: undefined
+      })
+      this.columns.forEach(it => {
+        this.exportColumns.push({
+          title: it.label,
+          key: it.key
+        })
+      })
+      this.exportColumns.push({
+        title: '合计',
+        key: undefined
+      })
+    },
+    async handleExport() {
+      if (this.list.length === 0) {
+        Message.error('暂无数据 ')
+        return;
+      }
+      const head = this.exportColumns.map(it => it.title)
+      const body = []
+      for (let i = 0; i < this.list.length; i++) {
+        const data = []
+        // 客户名
+        data.push(this.list[i].customerName)
+        // 物料
+        this.exportColumns.forEach(column => {
+          if ((column.title === '客户' && !column.key) || (column.title === '合计' && !column.key)) return
+          data.push(this.getAmount(this.list[i], column))
+        })
+        // 小计
+        data.push(Number(this.list[i].total).toFixed(2))
+        body.push(data)
+      }
+      body.push(this.exportSummaryRow)
+      ExcelUtil.exportXls({column:head, data: body, name: `客户出库金额统计_${new Date().getTime()}`});
     }
   },
   created() {
