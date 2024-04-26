@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div class="home-wrapper">
     <el-row class="pl20 pr20 pb20 pt20" :gutter="10">
       <el-col :span="12">
@@ -16,14 +16,16 @@
       <el-col :span="12">
         <el-card style="font-size: 14px">
           <div slot="header">
-            <span style="font-size: large;font-weight: bold">讲解视频：</span><a href="https://www.bilibili.com/video/BV1ys4y1q7uG/" target="_blank">https://www.bilibili.com/video/BV1ys4y1q7uG/</a>
+            <span style="font-size: large;font-weight: bold">讲解视频</span>
           </div>
-          <div style="display: flex;align-items: center">
-            <div class="first">
-              <img alt="" :src="require('@/assets/QRCode/express.jpg')" style="height: 100px; margin-right:10px;" />
-            </div>
-            <div class="first" style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
-              仓库发货便宜寄快递，大件5折，小件6折。扫描左侧二维码。
+          <div>
+            <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
+              <div>
+                <span style="font-size: large;font-weight: bold">wms讲解视频：</span><a href="https://www.bilibili.com/video/BV1ys4y1q7uG/" target="_blank">https://www.bilibili.com/video/BV1ys4y1q7uG/</a>
+              </div>
+              <div>
+                <span style="font-size: large;font-weight: bold">若依实战视频：</span><a href="https://www.bilibili.com/video/BV1Fi4y1q74p/" target="_blank">https://www.bilibili.com/video/BV1Fi4y1q74p/</a>
+              </div>
             </div>
           </div>
 
@@ -192,7 +194,7 @@
             <el-table-column label="安全库存" align="center" prop="quantity" v-if="columns[7].visible" />
             <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
               <template slot-scope="scope">
-                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, "{yyyy}-{mm}-{dd}")
+                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, '{yyyy}-{mm}-{dd}')
                 }}</span>
               </template>
             </el-table-column>
