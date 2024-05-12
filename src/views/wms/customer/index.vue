@@ -219,7 +219,7 @@ export default {
         customerName: [
           { required: true, message: "名称不能为空", trigger: "blur" }
         ],
-        bankAccount: [{ validator: isbankAccount, trigger: "blur" },]
+        // bankAccount: [{ validator: isbankAccount, trigger: "blur" },]
       },
       columns: [
         { key: 1, label: "编号", visible: true },
