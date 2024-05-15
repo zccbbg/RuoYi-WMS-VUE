@@ -44,7 +44,7 @@
       <el-table-column align="top" type="selection" width="55"></el-table-column>
       <el-table-column v-if="columns[0].visible" header-align="center" label="入库单号"
                        prop="receiptOrderNo"></el-table-column>
-      <el-table-column v-if="columns[1].visible" header-align="center" label="入库类型">
+      <el-table-column v-if="columns[1].visible" header-align="center" align="center" label="入库类型">
         <template slot-scope="scope">
           <el-tag effect="plain" size="medium" :type="getReceiptOrderTypeTag(scope.row)">{{
               getReceiptOrderType(scope.row)
@@ -55,7 +55,7 @@
       <el-table-column v-if="columns[2].visible" header-align="center" :formatter="getSupplier"
                        label="供应商"></el-table-column>
       <el-table-column v-if="columns[3].visible" header-align="center" label="订单号" prop="orderNo"></el-table-column>
-      <el-table-column v-if="columns[4].visible" header-align="center" label="入库状态">
+      <el-table-column v-if="columns[4].visible" header-align="center" align="center" label="入库状态">
         <template slot-scope="scope">
           <el-tag effect="plain" size="medium" :type="getReceiptOrderStatusTag(scope.row)">{{
               getReceiptOrderStatus(scope.row)
