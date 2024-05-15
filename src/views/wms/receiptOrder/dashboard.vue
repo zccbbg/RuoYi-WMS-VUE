@@ -41,10 +41,10 @@
       <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
     <WmsTable v-loading="loading" :data="wmsReceiptOrderList" @selection-change="handleSelectionChange">
-      <el-table-column align="center" type="selection" width="55"></el-table-column>
-      <el-table-column v-if="columns[0].visible" align="center" label="入库单号"
+      <el-table-column align="top" type="selection" width="55"></el-table-column>
+      <el-table-column v-if="columns[0].visible" header-align="center" label="入库单号"
                        prop="receiptOrderNo"></el-table-column>
-      <el-table-column v-if="columns[1].visible" align="center" label="入库类型">
+      <el-table-column v-if="columns[1].visible" header-align="center" label="入库类型">
         <template slot-scope="scope">
           <el-tag effect="plain" size="medium" :type="getReceiptOrderTypeTag(scope.row)">{{
               getReceiptOrderType(scope.row)
@@ -52,10 +52,10 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column v-if="columns[2].visible" align="center" :formatter="getSupplier"
+      <el-table-column v-if="columns[2].visible" header-align="center" :formatter="getSupplier"
                        label="供应商"></el-table-column>
-      <el-table-column v-if="columns[3].visible" align="center" label="订单号" prop="orderNo"></el-table-column>
-      <el-table-column v-if="columns[4].visible" align="center" label="入库状态">
+      <el-table-column v-if="columns[3].visible" header-align="center" label="订单号" prop="orderNo"></el-table-column>
+      <el-table-column v-if="columns[4].visible" header-align="center" label="入库状态">
         <template slot-scope="scope">
           <el-tag effect="plain" size="medium" :type="getReceiptOrderStatusTag(scope.row)">{{
               getReceiptOrderStatus(scope.row)
@@ -63,24 +63,24 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column v-if="columns[5].visible" align="center" label="批次号" prop="waveNo"></el-table-column>
-      <el-table-column v-if="columns[6].visible" align="center" label="备注" prop="remark">
+      <el-table-column v-if="columns[5].visible" header-align="center" label="批次号" prop="waveNo"></el-table-column>
+      <el-table-column v-if="columns[6].visible" header-align="center" label="备注" prop="remark">
         <template v-slot="{ row }">
           <el-popover placement="left" width="300" trigger="hover" :content="row.remark" popper-class="popperOptions">
             <p class="showOverTooltip" slot="reference">{{ row.remark }}</p>
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
+      <el-table-column header-align="center" align="right" class-name="small-padding fixed-width" label="操作">
         <template v-slot="{ row }">
           <el-button v-hasPermi="['wms:receiptOrder:edit']"
-                     v-if="ReceiptOrderConstant.Status.NOT_IN === row.receiptOrderStatus && !row.waveNo" icon="el-icon-edit"
+                     :disabled="!(ReceiptOrderConstant.Status.NOT_IN === row.receiptOrderStatus && !row.waveNo)" icon="el-icon-edit"
                      size="mini" type="text" @click.stop="handleUpdate(row)">修改
           </el-button>
-          <el-button v-hasPermi="['wms:receiptOrder:remove']" icon="el-icon-delete" v-if="!row.waveNo"
+          <el-button v-hasPermi="['wms:receiptOrder:remove']" icon="el-icon-delete" :disabled="row.waveNo"
                      size="mini" type="text" @click.stop="handleDelete(row)">删除
           </el-button>
-          <el-button v-hasPermi="['wms:receiptOrder:status']" v-if="row.detailCount && !row.waveNo" icon="el-icon-truck" size="mini"
+          <el-button v-hasPermi="['wms:receiptOrder:status']" :disabled="!(row.detailCount && !row.waveNo)" icon="el-icon-truck" size="mini"
                      type="text" @click.stop="handleStatus(row)">发货/入库
           </el-button>
           <el-button icon="el-icon-print" size="mini" type="text" @click.stop="printOut(row, true)">打印</el-button>

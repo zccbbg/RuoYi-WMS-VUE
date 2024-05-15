@@ -1,5 +1,6 @@
 <template>
   <el-table
+        border
         ref="multipleTable"
         v-bind="$props"
         @selection-change="handleSelectionChange"
