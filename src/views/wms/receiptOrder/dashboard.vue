@@ -71,7 +71,7 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column header-align="center" align="right" class-name="small-padding fixed-width" label="操作">
+      <el-table-column header-align="center" align="right" class-name="small-padding fixed-width" label="操作" fixed="right" width="240">
         <template v-slot="{ row }">
           <el-button v-hasPermi="['wms:receiptOrder:edit']"
                      :disabled="!(ReceiptOrderConstant.Status.NOT_IN === row.receiptOrderStatus && !row.waveNo)" icon="el-icon-edit"
@@ -414,6 +414,9 @@ export default {
 }
 </script>
 <style lang="stylus">
+//.el-table__row .el-table__cell {
+//  vertical-align: top
+//}
 .showOverTooltip {
   display: -webkit-box;
   text-overflow: ellipsis;
