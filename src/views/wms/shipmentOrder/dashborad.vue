@@ -41,7 +41,7 @@
     </el-row>
     <WmsTable v-loading="loading" :data="wmsShipmentOrderList" @selection-change="handleSelectionChange">
       <el-table-column align="center" type="selection" width="55"></el-table-column>
-      <el-table-column v-if="columns[0].visible" align="center" label="出库单号"
+      <el-table-column v-if="columns[0].visible" align="center" label="出库单号" min-width="150"
                        prop="shipmentOrderNo"></el-table-column>
       <el-table-column v-if="columns[1].visible" align="center" label="出库类型">
         <template slot-scope="scope">
@@ -59,7 +59,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column v-if="columns[5].visible" align="center" label="波次号" prop="waveNo"></el-table-column>
+      <el-table-column v-if="columns[5].visible" align="center" label="波次号" prop="waveNo" min-width="100"></el-table-column>
       <el-table-column v-if="columns[5].visible" align="center" label="备注" prop="remark">
         <template v-slot="{ row }">
           <el-popover placement="left" width="300" trigger="hover" :content="row.remark" popper-class="popperOptions">
@@ -67,16 +67,16 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column align="center" class-name="small-padding fixed-width" label="操作">
+      <el-table-column align="right" class-name="small-padding fixed-width" label="操作" width="220">
         <template v-slot="{ row }">
           <el-button v-hasPermi="['wms:shipmentOrder:edit']"
-                     v-if="ShipmentOrderConstant.Status.NOT_IN === row.shipmentOrderStatus && !row.waveNo" icon="el-icon-edit"
+                     :disabled="!(ShipmentOrderConstant.Status.NOT_IN === row.shipmentOrderStatus && !row.waveNo)" icon="el-icon-edit"
                      size="mini" type="text" @click.stop="handleUpdate(row)">修改
           </el-button>
           <el-button v-hasPermi="['wms:shipmentOrder:remove']" icon="el-icon-delete" size="mini" type="text"
-                     v-if="!row.waveNo && row.shipmentOrderStatus !== ShipmentOrderConstant.Status.ALL_IN" @click.stop="handleDelete(row)">删除
+                     :disabled="!(!row.waveNo && row.shipmentOrderStatus !== ShipmentOrderConstant.Status.ALL_IN)" @click.stop="handleDelete(row)">删除
           </el-button>
-          <el-button v-hasPermi="['wms:shipmentOrder:status']" v-if="row.detailCount && !row.waveNo && row.shipmentOrderStatus !== ShipmentOrderConstant.Status.ALL_IN" icon="el-icon-truck" size="mini"
+          <el-button v-hasPermi="['wms:shipmentOrder:status']" :disabled="!(row.detailCount && !row.waveNo && row.shipmentOrderStatus !== ShipmentOrderConstant.Status.ALL_IN)" icon="el-icon-truck" size="mini"
                      type="text" @click.stop="handleStatus(row)">发货/出库
           </el-button>
           <el-button icon="el-icon-print" size="mini" type="text" @click.stop="printOut(row,true)">打印</el-button>
