@@ -1,42 +1,57 @@
-import { allWmsItem } from '@/api/wms/item'
-import { listByTypes } from '@/api/system/dict/data'
-import { DICT_TYPES } from '@/config/business'
-export default {
-  state: {
-    items: [],
-    dictTypeMap: {},
-  },
-  mutations: {
-    SET_ITEMS(state, list) {
-      state.items = list
-    },
-    SET_DICT_TYPE_MAP(state, list) {
-      const map = {};
-      list.forEach(it => {
-        const {dictType} = it;
-        let arr = map[dictType];
-        if (!arr) {
-          arr = [];
-          map[dictType] = arr;
+const useDictStore = defineStore(
+  'dict',
+  {
+    state: () => ({
+      dict: new Array()
+    }),
+    actions: {
+      // 获取字典
+      getDict(_key) {
+        if (_key == null && _key == "") {
+          return null;
         }
-        arr.push(it);
-      })
-      state.dictTypeMap = map;
+        try {
+          for (let i = 0; i < this.dict.length; i++) {
+            if (this.dict[i].key == _key) {
+              return this.dict[i].value;
+            }
+          }
+        } catch (e) {
+          return null;
+        }
+      },
+      // 设置字典
+      setDict(_key, value) {
+        if (_key !== null && _key !== "") {
+          this.dict.push({
+            key: _key,
+            value: value
+          });
+        }
+      },
+      // 删除字典
+      removeDict(_key) {
+        var bln = false;
+        try {
+          for (let i = 0; i < this.dict.length; i++) {
+            if (this.dict[i].key == _key) {
+              this.dict.splice(i, 1);
+              return true;
+            }
+          }
+        } catch (e) {
+          bln = false;
+        }
+        return bln;
+      },
+      // 清空字典
+      cleanDict() {
+        this.dict = new Array();
+      },
+      // 初始字典
+      initDict() {
+      }
     }
-  },
-  actions: {
-    loadItems({commit}) {
-      return allWmsItem()
-        .then(res => {
-          commit('SET_ITEMS', res);
-          return res
-        })
-    },
-    loadAllDict({ commit }) {
-      listByTypes(DICT_TYPES).then(res => {
-        const { rows } = res
-        commit('SET_DICT_TYPE_MAP', rows.map(it => ({value: it.dictValue, label: it.dictLabel, dictType: it.dictType})))
-      })
-    }
-  }
-}
+  })
+
+export default useDictStore

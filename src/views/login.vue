@@ -1,37 +1,40 @@
 <template>
   <div class="login">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">WMS仓库管理系统</h3>
+    <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
+      <h3 class="title">ruoyi-fast后台管理系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
           type="text"
+          size="large"
           auto-complete="off"
           placeholder="账号"
         >
-          <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
+          <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input
           v-model="loginForm.password"
           type="password"
+          size="large"
           auto-complete="off"
           placeholder="密码"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter="handleLogin"
         >
-          <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
+          <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
         <el-input
           v-model="loginForm.code"
+          size="large"
           auto-complete="off"
           placeholder="验证码"
           style="width: 63%"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter="handleLogin"
         >
-          <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
+          <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
         </el-input>
         <div class="login-code">
           <img :src="codeUrl" @click="getCode" class="login-code-img"/>
@@ -41,158 +44,113 @@
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
-          size="medium"
+          size="large"
           type="primary"
-          style="width:45%;"
-          @click.native.prevent="handleLogin"
+          style="width:100%;"
+          @click.prevent="handleLogin"
         >
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
-        </el-button>
-        <el-button
-          :loading="loading"
-          size="medium"
-          type="primary"
-          style="width:45%;"
-          @click.native.prevent="handleTry"
-        >
-          <span>获取体验账号</span>
         </el-button>
         <div style="float: right;" v-if="register">
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
     </el-form>
-    <el-dialog
-      title="公众号二维码"
-      :visible.sync="dialogVisible"
-      :show-close="false"
-      :center="true"
-      width="30%">
-      <div style="text-align: center">
-        <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">wms</span>获取体验账号</span>
-        <br>
-        <img src="@/assets/logo/gzh.jpg" width="160" height="160" style="margin-top: 10px">
-      </div>
-      <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="dialogConfirm">确定</el-button>
-      </span>
-    </el-dialog>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2017-2023 ichengle.top 技术支持：关注“编写美好前程”微信公众号，回复：支持</span>
+      <span>Copyright © 2018-2024 All Rights Reserved.</span>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
-import { encrypt, decrypt } from '@/utils/jsencrypt'
+import { encrypt, decrypt } from "@/utils/jsencrypt";
+import useUserStore from '@/store/modules/user'
 
-export default {
-  name: "Login",
-  data() {
-    return {
-      dialogVisible:false,
-      codeUrl: "",
-      loginForm: {
-        username: "",
-        password: "",
-        rememberMe: false,
-        code: "",
-        uuid: ""
-      },
-      loginRules: {
-        username: [
-          { required: true, trigger: "blur", message: "请输入您的账号" }
-        ],
-        password: [
-          { required: true, trigger: "blur", message: "请输入您的密码" }
-        ],
-        code: [{ required: true, trigger: "change", message: "请输入验证码" }]
-      },
-      loading: false,
-      // 验证码开关
-      captchaEnabled: true,
-      // 注册开关
-      register: false,
-      redirect: undefined
-    };
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect;
-      },
-      immediate: true
-    }
-  },
-  created() {
-    this.getCode();
-    this.getCookie();
-  },
-  methods: {
-    getCode() {
-      getCodeImg().then(res => {
-        this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
-        if (this.captchaEnabled) {
-          this.codeUrl = "data:image/gif;base64," + res.img;
-          this.loginForm.uuid = res.uuid;
-        }
-      });
-    },
-    getCookie() {
-      const username = Cookies.get("username");
-      const password = Cookies.get("password");
-      const rememberMe = Cookies.get('rememberMe')
-      this.loginForm = {
-        username: username === undefined ? this.loginForm.username : username,
-        password: password === undefined ? this.loginForm.password : decrypt(password),
-        rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
-      };
-    },
-    handleTry(){
-        this.dialogVisible =true
-      },
-    dialogConfirm(){
-        this.dialogVisible =false;
-      },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true;
-          if (this.loginForm.rememberMe) {
-            Cookies.set("username", this.loginForm.username, { expires: 30 });
-            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
-            Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
-          } else {
-            Cookies.remove("username");
-            Cookies.remove("password");
-            Cookies.remove('rememberMe');
-          }
-          this.$store.dispatch("Login", this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-          }).catch(() => {
-            this.loading = false;
-            if (this.captchaEnabled) {
-              this.getCode();
-            }
-          });
-        }
-      });
-    }
-  }
+const userStore = useUserStore()
+const router = useRouter();
+const { proxy } = getCurrentInstance();
+
+const loginForm = ref({
+  username: "admin",
+  password: "admin123",
+  rememberMe: false,
+  code: "",
+  uuid: ""
+});
+
+const loginRules = {
+  username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
+  password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
+  code: [{ required: true, trigger: "change", message: "请输入验证码" }]
 };
+
+const codeUrl = ref("");
+const loading = ref(false);
+// 验证码开关
+const captchaEnabled = ref(true);
+// 注册开关
+const register = ref(false);
+const redirect = ref(undefined);
+
+function handleLogin() {
+  proxy.$refs.loginRef.validate(valid => {
+    if (valid) {
+      loading.value = true;
+      // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
+      if (loginForm.value.rememberMe) {
+        Cookies.set("username", loginForm.value.username, { expires: 30 });
+        Cookies.set("password", encrypt(loginForm.value.password), { expires: 30 });
+        Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 30 });
+      } else {
+        // 否则移除
+        Cookies.remove("username");
+        Cookies.remove("password");
+        Cookies.remove("rememberMe");
+      }
+      // 调用action的登录方法
+      userStore.login(loginForm.value).then(() => {
+        router.push({ path: redirect.value || "/" });
+      }).catch(() => {
+        loading.value = false;
+        // 重新获取验证码
+        if (captchaEnabled.value) {
+          getCode();
+        }
+      });
+    }
+  });
+}
+
+function getCode() {
+  getCodeImg().then(res => {
+    captchaEnabled.value = res.data.captchaEnabled === undefined ? true : res.data.captchaEnabled;
+    if (captchaEnabled.value) {
+      codeUrl.value = "data:image/gif;base64," + res.data.img;
+      loginForm.value.uuid = res.data.uuid;
+    }
+  });
+}
+
+function getCookie() {
+  const username = Cookies.get("username");
+  const password = Cookies.get("password");
+  const rememberMe = Cookies.get("rememberMe");
+  loginForm.value = {
+    username: username === undefined ? loginForm.value.username : username,
+    password: password === undefined ? loginForm.value.password : decrypt(password),
+    rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
+  };
+}
+
+getCode();
+getCookie();
 </script>
 
-<style rel="stylesheet/scss" lang="scss">
-.color-main {
-  color: #409EFF;
-}
-.font-extra-large {
-  font-size: 20px;
-}
+<style lang='scss' scoped>
 .login {
   display: flex;
   justify-content: center;
@@ -213,15 +171,15 @@ export default {
   width: 400px;
   padding: 25px 25px 5px 25px;
   .el-input {
-    height: 38px;
+    height: 40px;
     input {
-      height: 38px;
+      height: 40px;
     }
   }
   .input-icon {
     height: 39px;
     width: 14px;
-    margin-left: 2px;
+    margin-left: 0px;
   }
 }
 .login-tip {
@@ -231,7 +189,7 @@ export default {
 }
 .login-code {
   width: 33%;
-  height: 38px;
+  height: 40px;
   float: right;
   img {
     cursor: pointer;
@@ -251,6 +209,7 @@ export default {
   letter-spacing: 1px;
 }
 .login-code-img {
-  height: 38px;
+  height: 40px;
+  padding-left: 12px;
 }
 </style>

@@ -1,27 +1,24 @@
-<script>
-export default {
-  data() {
-    return {};
-  },
-  render() {
-    const { $route: { meta: { link } }, } = this;
-    if ({ link }.link === "") {
-      return "404";
-    }
-    let url = { link }.link;
-    const height = document.documentElement.clientHeight - 94.5 + "px";
-    const style = { height: height };
+<template>
+  <div :style="'height:' + height">
+    <iframe
+      :id="iframeId"
+      style="width: 100%; height: 100%"
+      :src="src"
+      frameborder="no"
+    ></iframe>
+  </div>
+</template>
 
-    return (
-      <div style={style}>
-        <iframe
-          src={url}
-          frameborder="no"
-          style="width: 100%; height: 100%"
-          scrolling="auto"
-        ></iframe>
-      </div>
-    );
+<script setup>
+const props = defineProps({
+  src: {
+    type: String,
+    default: "/"
   },
-};
+  iframeId: {
+    type: String
+  }
+});
+
+const height = ref(document.documentElement.clientHeight - 94.5 + "px");
 </script>

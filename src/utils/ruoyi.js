@@ -1,4 +1,4 @@
-import moment from "moment";
+
 
 /**
  * 通用js方法封装处理
@@ -68,19 +68,6 @@ export function addDateRange(params, dateRange, propName) {
   return search;
 }
 
-export function addDateRange2(params, dateRange, addDay=true) {
-  let search = params;
-  dateRange = Array.isArray(dateRange) ? dateRange : [];
-  if (addDay) {
-    search['beginTime'] = dateRange[0];
-    search['endTime'] = moment(dateRange[1]).add(1,"days").format('yyyy-MM-DD');
-  } else {
-    search['beginTime'] = dateRange[0];
-    search['endTime'] = dateRange[1];
-  }
-  return search;
-}
-
 // 回显数据字典
 export function selectDictLabel(datas, value) {
   if (value === undefined) {
@@ -101,8 +88,11 @@ export function selectDictLabel(datas, value) {
 
 // 回显数据字典（字符串数组）
 export function selectDictLabels(datas, value, separator) {
-  if (value === undefined) {
+  if (value === undefined || value.length ===0) {
     return "";
+  }
+  if (Array.isArray(value)) {
+    value = value.join(",");
   }
   var actions = [];
   var currentSeparator = undefined === separator ? "," : separator;
@@ -237,13 +227,20 @@ export function tansParams(params) {
   return result
 }
 
-// 验证是否为blob格式
-export async function blobValidate(data) {
-  try {
-    const text = await data.text();
-    JSON.parse(text);
-    return false;
-  } catch (error) {
-    return true;
+
+// 返回项目路径
+export function getNormalPath(p) {
+  if (p.length === 0 || !p || p == 'undefined') {
+    return p
+  };
+  let res = p.replace('//', '/')
+  if (res[res.length - 1] === '/') {
+    return res.slice(0, res.length - 1)
   }
+  return res;
+}
+
+// 验证是否为blob格式
+export function blobValidate(data) {
+  return data.type !== 'application/json'
 }

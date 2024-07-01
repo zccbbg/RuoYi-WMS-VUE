@@ -4,18 +4,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'RuoYiDoc',
-  data() {
-    return {
-      url: 'http://doc.ruoyi.vip/ruoyi-vue'
-    }
-  },
-  methods: {
-    goto() {
-      window.open(this.url)
-    }
-  }
+<script setup>
+const url = ref('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus/wikis/pages');
+
+function goto() {
+  window.open(url.value)
 }
 </script>

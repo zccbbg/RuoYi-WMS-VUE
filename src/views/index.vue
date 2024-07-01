@@ -1,486 +1,176 @@
 <template>
-  <div class="home-wrapper">
-    <el-card style="margin: 20px 20px; font-size: 14px">
-      <div slot="header"><span>工作台</span></div>
-      <div class="first">
-        <img alt="" :src="avatar" style="width: 50px; height: 50px; float:left; margin-right:10px;border-radius:50%" />
-        <p style="font-size:16px;margin-bottom:8px">{{ name }}，{{ hello }}</p>
-        <p style="font-size:12px;color:rgb(185, 181, 189);width: 300px;">今天是：{{ nowTime }}</p>
-      </div>
-      <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
-          心中若有帕拉梅拉，仓库就不会邋里邋遢！库存管不好，赚钱两头少！
-      </div>
-    </el-card>
-    <el-row class="pl20 pr20" :gutter="10">
-      <el-col :span="12">
-        <el-card shadow="always" style="padding-bottom: 20px;">
-          <div>
-            <el-row :gutter="40" class="panel-group">
-              <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel" @click="handleGo('/warehouse')">
-                  <div class="card-panel-icon-wrapper icon-message">
-                    <svg-icon icon-class="table" class-name="card-panel-icon" />
-                  </div>
-                  <div class="card-panel-description">
-                    <div class="card-panel-text">
-                      仓库
-                    </div>
-                    <count-to :start-val="0" :end-val="warehouseList.length" :duration="3000" class="card-panel-num" />
-                  </div>
-                </div>
-              </el-col>
-              <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel" @click="handleGo('/relation/supplier')">
-                  <div class="card-panel-icon-wrapper icon-people">
-                    <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-                  </div>
-                  <div class="card-panel-description">
-                    <div class="card-panel-text">
-                      供应商
-                    </div>
-                    <count-to :start-val="0" :end-val="supplierList.length" :duration="2600" class="card-panel-num" />
-                  </div>
-                </div>
-              </el-col>
-              <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel" @click="handleGo('/relation/carrier')">
-                  <div class="card-panel-icon-wrapper icon-people">
-                    <svg-icon icon-class="guide" class-name="card-panel-icon" />
-                  </div>
-                  <div class="card-panel-description">
-                    <div class="card-panel-text">
-                      承运商
-                    </div>
-                    <count-to :start-val="0" :end-val="carrierList.length" :duration="2600" class="card-panel-num" />
-                  </div>
-                </div>
-              </el-col>
-              <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel" @click="handleGo('/relation/customer')">
-                  <div class="card-panel-icon-wrapper icon-message">
-                    <svg-icon icon-class="star" class-name="card-panel-icon" />
-                  </div>
-                  <div class="card-panel-description">
-                    <div class="card-panel-text">
-                      客户
-                    </div>
-                    <count-to :start-val="0" :end-val="customerList.length" :duration="3000" class="card-panel-num" />
-                  </div>
-                </div>
-              </el-col>
-              <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel" @click="goAnchor('warn')">
-                  <div class="card-panel-icon-wrapper icon-money">
-                    <svg-icon icon-class="eye-open" class-name="card-panel-icon" />
-                  </div>
-                  <div class="card-panel-description">
-                    <div class="card-panel-text">
-                      预警
-                    </div>
-                    <count-to :start-val="0" :end-val="totalWarn" :duration="3200" class="card-panel-num" />
-                  </div>
-                </div>
-              </el-col>
-              <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
-                <div class="card-panel" @click="goAnchor('expiry')">
-                  <div class="card-panel-icon-wrapper icon-money">
-                    <svg-icon icon-class="bug" class-name="card-panel-icon" />
-                  </div>
-                  <div class="card-panel-description">
-                    <div class="card-panel-text">
-                      过期
-                    </div>
-                    <count-to :start-val="0" :end-val="totalExpiry" :duration="3200" class="card-panel-num" />
-                  </div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
-        <el-card shadow="always" style="padding-bottom: 20px; font-size: 14px;margin-top: 20px;margin-bottom: 20px;">
-          <div slot="header" ref="warn"><span>预警</span></div>
-          <WmsTable v-loading="loading" :data="warnList">
-<!--            <el-table-column align="left" label="编号" prop="id" width="72"></el-table-column>-->
-            <el-table-column align="left" label="物料" prop="itemName">
-              <template v-slot="{ row }"><span style="color:red">{{ row.itemName }}</span></template>
-            </el-table-column>
-<!--            <el-table-column align="left" label="编码" prop="itemNo"></el-table-column>-->
-            <el-table-column align="left" label="仓库/库区">
-              <template v-slot="{ row }"><span v-if="row.warehouseName">{{ row.warehouseName }}</span><span
-                  v-if="row.areaName">/{{ row.areaName }}</span></template>
-            </el-table-column>
-            <el-table-column align="left" label="生产日期" prop="productionDate" width="100">
-              <template v-slot="{ row }">
-                <div>{{ parseTime(row.productionDate, "{yyyy}-{mm}-{dd}") }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="left" label="有效期" prop="expiryDate" width="100">
-              <template v-slot="{ row }">
-                <div>{{ parseTime(row.expiryDate, "{yyyy}-{mm}-{dd}") }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column align="left" label="当前库存">
-              <template v-slot="{ row }"><span style="color:red;font-weight: bold;">{{ row.quantity }}</span></template>
-            </el-table-column>
-            <el-table-column align="left" label="安全库存" prop="safetyQuantity"></el-table-column>
-          </WmsTable>
-
-          <pagination v-show="totalWarn > 0" :total="totalWarn" :page.sync="queryWarnParams.pageNum"
-            :limit.sync="queryWarnParams.pageSize" @pagination="getWarnList" :autoScroll="ifScroll" />
-        </el-card>
+  <div class="app-container home">
+    <el-row :gutter="20">
+      <el-col :sm="24" :lg="12" style="padding-left: 20px">
+        <h2>ruoyi-fast后台管理系统</h2>
+        <p>
+          ruoyi-fast 是基于 RuoYi-Vue 针对 分布式集群 场景升级(不兼容原框架)
+          <br/>
+          * 前端开发框架 Vue、Element UI<br/>
+          * 后端开发框架 Spring Boot<br/>
+          * 容器框架 Undertow 基于 Netty 的高性能容器<br/>
+          * 权限认证框架 Sa-Token 支持多终端认证系统<br/>
+          * 关系数据库 MySQL 适配 8.X 最低 5.7<br/>
+          * 缓存数据库 Redis 适配 6.X 最低 4.X<br/>
+          * 数据库框架 Mybatis-Plus 快速 CRUD 增加开发效率<br/>
+          * 数据库框架 p6spy 更强劲的 SQL 分析<br/>
+          * 多数据源框架 dynamic-datasource 支持主从与多种类数据库异构<br/>
+          * 序列化框架 Jackson 统一使用 jackson 高效可靠<br/>
+          * Redis客户端 Redisson 性能强劲、API丰富<br/>
+          * 分布式限流 Redisson 全局、请求IP、集群ID 多种限流<br/>
+          * 分布式锁 Lock4j 注解锁、工具锁 多种多样<br/>
+          * 分布式幂等 Lock4j 基于分布式锁实现<br/>
+          * 分布式链路追踪 SkyWalking 支持链路追踪、网格分析、度量聚合、可视化<br/>
+          * 分布式任务调度 Xxl-Job 高性能 高可靠 易扩展<br/>
+          * 文件存储 Minio 本地存储<br/>
+          * 文件存储 七牛、阿里、腾讯	云存储<br/>
+          * 监控框架 SpringBoot-Admin 全方位服务监控<br/>
+          * 校验框架 Validation 增强接口安全性 严谨性<br/>
+          * Excel框架 Alibaba EasyExcel 性能优异 扩展性强<br/>
+          * 文档框架 SpringDoc、javadoc 无注解零入侵基于java注释<br/>
+          * 工具类框架 Hutool、Lombok 减少代码冗余 增加安全性<br/>
+          * 代码生成器 适配MP、SpringDoc规范化代码 一键生成前后端代码<br/>
+          * 部署方式 Docker 容器编排 一键部署业务集群<br/>
+          * 国际化 SpringMessage Spring标准国际化方案<br/>
+        </p>
+        <p>
+          <b>当前版本:</b> <span>v{{ version }}</span>
+        </p>
+        <p>
+          <el-tag type="danger">&yen;免费开源</el-tag>
+        </p>
+        <p>
+          <el-button
+            type="primary"
+            icon="Cloudy"
+            plain
+            @click="goTarget('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus')"
+            >访问码云</el-button
+          >
+          <el-button
+            type="primary"
+            icon="Cloudy"
+            plain
+            @click="goTarget('https://github.com/JavaLionLi/RuoYi-Vue-Plus')"
+            >访问GitHub</el-button
+          >
+          <el-button
+            type="primary"
+            icon="Cloudy"
+            plain
+            @click="goTarget('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus/wikis/pages?sort_id=4106467&doc_id=1469725')"
+          >更新日志</el-button
+          >
+        </p>
       </el-col>
-      <el-col :span="12">
-        <el-card style="padding-bottom: 20px; font-size: 14px">
-          <div slot="header"><span>发展历程</span></div>
-          <el-timeline>
-            <el-timeline-item placement="top" timestamp="2018年">
-              <el-card>
-                <h4>参与京东服务市场商品分析应用开发，参与京东服务市场会员积分应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2019年">
-              <el-card>
-                <h4>参与京东服务市场商品搬家应用开发，参与京东服务市场商品搬家应用开发，参与拼多多服务市场订单应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2020年">
-              <el-card>
-                <h4>所参与开发的拼多多订单应用排名服务市场类目第一，开始快手服务市场订单应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2021年">
-              <el-card>
-                <h4>日处理拼多多订单200万条，开始美团、饿了么应用市场应用开发</h4>
-              </el-card>
-            </el-timeline-item>
-            <el-timeline-item placement="top" timestamp="2022年">
-              <el-card>
-                <h4>累计服务10万+电商平台店铺、5万+外卖店铺。开始抖音、淘宝服务市场订单应用开发，开源ruoyi-wms</h4>
-              </el-card>
-            </el-timeline-item>
-          </el-timeline>
-        </el-card>
-        <el-card style="padding-bottom: 20px; font-size: 14px;margin-top: 20px;">
-          <div slot="header" ref="expiry"><span>过期物料</span></div>
-          <WmsTable v-loading="loading" :data="expiryList">
-<!--            <el-table-column label="编号" align="center" prop="itemNo" v-if="columns[0].visible" />-->
-            <el-table-column label="名称" align="center" prop="itemName" v-if="columns[1].visible">
-              <template slot-scope="scope">
-                <span style="color:red;">{{ scope.row.itemName }}</span>
-              </template>
-            </el-table-column>
-<!--            <el-table-column label="分类" align="center" prop="itemTypeName" v-if="columns[2].visible" />-->
-            <el-table-column label="单位类别" align="center" prop="itemUnit" v-if="columns[3].visible" />
-            <el-table-column label="仓库/库区" align="center" prop="warehouseName" v-if="columns[6].visible">
-              <template v-slot="{row}">
-                <span v-if="row.warehouseName">{{ row.warehouseName }}</span><span
-                v-if="row.areaName">/{{ row.areaName }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="安全库存" align="center" prop="safetyQuantity" v-if="columns[7].visible" />
-            <el-table-column label="生产日期" align="center" prop="productionDate" width="180">
-              <template slot-scope="scope">
-                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.productionDate, "{yyyy}-{mm}-{dd}")
-                  }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="有效期" align="center" prop="expiryDate" width="180" v-if="columns[8].visible">
-              <template slot-scope="scope">
-                <span style="color:red;font-weight: bold;">{{ parseTime(scope.row.expiryDate, "{yyyy}-{mm}-{dd}")
-                }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" v-if="columns[9].visible" />
-          </WmsTable>
-          <pagination v-show="totalExpiry > 0" :total="totalExpiry" :page.sync="queryExpiryParams.pageNum"
-            :limit.sync="queryExpiryParams.pageSize" @pagination="getExpiryList" :autoScroll="ifScroll" />
-        </el-card>
+
+      <el-col :sm="24" :lg="12" style="padding-left: 50px">
+        <el-row>
+          <el-col :span="12">
+            <h2>技术选型</h2>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <h4>后端技术</h4>
+            <ul>
+              <li>SpringBoot</li>
+              <li>Sa-Token</li>
+              <li>JWT</li>
+              <li>MyBatis</li>
+              <li>Druid</li>
+              <li>Jackson</li>
+              <li>...</li>
+            </ul>
+          </el-col>
+          <el-col :span="6">
+            <h4>前端技术</h4>
+            <ul>
+              <li>Vue</li>
+              <li>Vuex</li>
+              <li>Element-ui</li>
+              <li>Axios</li>
+              <li>Sass</li>
+              <li>Quill</li>
+              <li>...</li>
+            </ul>
+          </el-col>
+        </el-row>
       </el-col>
     </el-row>
+    <el-divider />
   </div>
 </template>
 
-<script>
-import PanelGroup from '@/views/components/PanelGroup'
-import { mapGetters } from 'vuex'
-import CountTo from "vue-count-to"
-import {listExpiryInventory, listWarnInventory} from "@/api/wms/inventory";
-import { listExpiryItem } from "@/api/wms/item";
+<script setup name="Index">
+const version = ref('5.2.0')
 
-export default {
-  components: {
-    PanelGroup,
-    CountTo
-  },
-  data() {
-    return {
-      tableData: [{
-        date: '1',
-        name: '应急',
-        address: '20'
-      }],
-      nowTime: '',
-      hello: '',
-      warnList: [],
-      expiryList: [],
-      queryWarnParams: {
-        pageNum: 1,
-        pageSize: 10
-      },
-      queryExpiryParams: {
-        pageNum: 1,
-        pageSize: 10
-      },
-      //预警条数
-      totalWarn: 0,
-      totalExpiry: 0,
-      columns: [
-        { key: 1, label: "编号", visible: true },
-        { key: 2, label: "名称", visible: true },
-        { key: 3, label: "分类", visible: true },
-        { key: 4, label: "单位类别", visible: true },
-        { key: 5, label: "所属货架", visible: false },
-        { key: 6, label: "所属库区", visible: true },
-        { key: 7, label: "所属仓库", visible: true },
-        { key: 8, label: "安全库存", visible: true },
-        { key: 9, label: "有效期", visible: true },
-        { key: 11, label: "备注", visible: false },
-      ],
-      ifScroll: false
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'avatar',
-      'name',
-      "areaList",
-      "warehouseList",
-      "supplierList",
-      "customerList",
-      "carrierList",
-      "warehouseMap",
-      "areaMap"
-    ])
-  },
-  created() {
-    this.showTimes()
-    this.helloTimes()
-    this.getWarnList()
-    this.getExpiryList()
-  },
-  methods: {
-    getWarnList() {
-      this.loading = true;
-      const { pageNum, pageSize } = this.queryWarnParams;
-      const pageReq = { page: pageNum - 1, size: pageSize }
-      listWarnInventory(pageReq).then((response) => {
-        const { content, totalElements } = response
-        this.warnList = content;
-        this.totalWarn = totalElements;
-        this.loading = false;
-      });
-    },
-    getExpiryList() {
-      this.loading = true;
-      const { pageNum, pageSize } = this.queryExpiryParams;
-      const pageReq = { page: pageNum - 1, size: pageSize }
-      listExpiryInventory(pageReq).then((response) => {
-        const { content, totalElements } = response
-        // content.forEach((item) => {
-        //   item.warehouseName = this.warehouseMap.get(item.warehouseId);
-        // });
-        // content.forEach((item) => {
-        //   item.areaName = this.areaMap.get(item.areaId);
-        // });
-        this.expiryList = content;
-        this.totalExpiry = totalElements;
-        this.loading = false;
-      });
-    },
-    timeFormate(timeStamp) {
-      let year = new Date(timeStamp).getFullYear()
-      let month =
-        new Date(timeStamp).getMonth() + 1 < 10
-          ? '0' + (new Date(timeStamp).getMonth() + 1)
-          : new Date(timeStamp).getMonth() + 1
-      let date =
-        new Date(timeStamp).getDate() < 10
-          ? '0' + new Date(timeStamp).getDate()
-          : new Date(timeStamp).getDate()
-      let hh =
-        new Date(timeStamp).getHours() < 10
-          ? '0' + new Date(timeStamp).getHours()
-          : new Date(timeStamp).getHours()
-      let mm =
-        new Date(timeStamp).getMinutes() < 10
-          ? '0' + new Date(timeStamp).getMinutes()
-          : new Date(timeStamp).getMinutes()
-      let ss =
-        new Date(timeStamp).getSeconds() < 10
-          ? '0' + new Date(timeStamp).getSeconds()
-          : new Date(timeStamp).getSeconds()
-      let week = new Date(timeStamp).getDay()
-      let weeks = ['日', '一', '二', '三', '四', '五', '六']
-      let getWeek = '星期' + weeks[week]
-      this.nowTime =
-        year +
-        '年' +
-        month +
-        '月' +
-        date +
-        '日' +
-        ' ' +
-
-        getWeek
-    },
-    showTimes() {
-      this.timeFormate(new Date())
-
-    },
-    helloTimes() {
-      let hh = new Date().getHours()
-      if (0 < hh && hh < 12) {
-        this.hello = '上午好'
-      } else if (hh < 18) {
-        this.hello = '下午好'
-      } else {
-        this.hello = '晚上好'
-      }
-    },
-    handleGo(path) {
-      this.$router.push(path)
-    },
-    goAnchor(elementName) {
-      this.$refs[elementName].scrollIntoView({
-        behavior: "smooth",  // 平滑过渡
-        block: "start"  	// 上边框与视窗顶部平齐。默认值
-      });
-    }
-  }
+function goTarget(url) {
+  window.open(url, '__blank')
 }
 </script>
 
-<style scoped lang="stylus">
-.home-wrapper
-
-  .li {
-    float: left;
-    width: 25%;
-    font-size: 12px;
-    color: rgb(185, 181, 189);
+<style scoped lang="scss">
+.home {
+  blockquote {
+    padding: 10px 20px;
+    margin: 0 0 20px;
+    font-size: 17.5px;
+    border-left: 5px solid #eee;
   }
-
-  .da {
-    float: left;
-    width: 25%;
-    font-size: 20px;
+  hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
   }
-
-  .first {
-    float: left;
+  .col-item {
     margin-bottom: 20px;
   }
 
-  .el-table .warning-row {
-    background: rgb(39, 138, 230);
+  ul {
+    padding: 0;
+    margin: 0;
   }
-  .panel-group {
-    margin-top: 18px;
 
-    .card-panel-col {
-      margin-bottom: 32px;
-    }
+  font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: #676a6c;
+  overflow-x: hidden;
 
-    .card-panel {
-      height: 108px;
-      cursor: pointer;
-      font-size: 12px;
-      position: relative;
-      overflow: hidden;
-      color: #666;
-      background: #fff;
-      box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-      border-color: rgba(0, 0, 0, .05);
+  ul {
+    list-style-type: none;
+  }
 
-      &:hover {
-        .card-panel-icon-wrapper {
-          color: #fff;
-        }
+  h4 {
+    margin-top: 0px;
+  }
 
-        .icon-people {
-          background: #40c9c6;
-        }
+  h2 {
+    margin-top: 10px;
+    font-size: 26px;
+    font-weight: 100;
+  }
 
-        .icon-message {
-          background: #36a3f7;
-        }
+  p {
+    margin-top: 10px;
 
-        .icon-money {
-          background: #f4516c;
-        }
-      }
-
-      .icon-people {
-        color: #40c9c6;
-      }
-
-      .icon-message {
-        color: #36a3f7;
-      }
-
-      .icon-money {
-        color: #f4516c;
-      }
-
-      .card-panel-icon-wrapper {
-        float: left;
-        margin: 14px 0 0 14px;
-        padding: 16px;
-        transition: all 0.38s ease-out;
-        border-radius: 6px;
-      }
-
-      .card-panel-icon {
-        float: left;
-        font-size: 48px;
-      }
-
-      .card-panel-description {
-        float: right;
-        font-weight: bold;
-        margin: 26px;
-        margin-left: 0px;
-
-        .card-panel-text {
-          line-height: 18px;
-          color: rgba(0, 0, 0, 0.45);
-          font-size: 16px;
-          margin-bottom: 12px;
-        }
-
-        .card-panel-num {
-          font-size: 20px;
-        }
-      }
+    b {
+      font-weight: 700;
     }
   }
 
-  @media (max-width:550px) {
-    .card-panel-description {
-      display: none;
-    }
-
-    .card-panel-icon-wrapper {
-      float: none !important;
-      width: 100%;
-      height: 100%;
-      margin: 0 !important;
-
-      .svg-icon {
-        display: block;
-        margin: 14px auto !important;
-        float: none !important;
-      }
+  .update-log {
+    ol {
+      display: block;
+      list-style-type: decimal;
+      margin-block-start: 1em;
+      margin-block-end: 1em;
+      margin-inline-start: 0;
+      margin-inline-end: 0;
+      padding-inline-start: 40px;
     }
   }
+}
 </style>
+

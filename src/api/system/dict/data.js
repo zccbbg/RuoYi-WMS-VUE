@@ -50,11 +50,3 @@ export function delData(dictCode) {
     method: 'delete'
   })
 }
-// 删除字典数据
-export function listByTypes(dictTypes) {
-  return request({
-    url: '/system/dict/data/by_types',
-    method: 'POST',
-    data: dictTypes
-  })
-}

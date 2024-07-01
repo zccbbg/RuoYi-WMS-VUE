@@ -4,18 +4,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'RuoYiGit',
-  data() {
-    return {
-      url: 'https://gitee.com/y_project/RuoYi-Vue'
-    }
-  },
-  methods: {
-    goto() {
-      window.open(this.url)
-    }
-  }
+<script setup>
+const url = ref('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus');
+
+function goto() {
+  window.open(url.value)
 }
 </script>
