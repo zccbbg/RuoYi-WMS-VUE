@@ -2,7 +2,7 @@
   "name": "ruoyi-fast",
   "version": "4.8.2",
   "description": "ruoyi-fast后台管理系统",
-  "author": "LionLi",
+  "author": "ZCC",
   "license": "MIT",
   "scripts": {
     "dev": "vite",

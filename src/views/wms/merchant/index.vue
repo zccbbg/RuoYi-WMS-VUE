@@ -67,16 +67,16 @@
 
     <el-table v-loading="loading" :data="merchantList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="" align="center" prop="id" v-if="false"/>
+      <el-table-column label="id" align="center" prop="id" v-if="false"/>
       <el-table-column label="编号" align="center" prop="merchantNo" />
       <el-table-column label="名称" align="center" prop="merchantName" />
       <el-table-column label="地址" align="center" prop="address" />
       <el-table-column label="级别" align="center" prop="merchantLevel" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-          <template #default="scope">
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
-          </template>
+        <template #default="scope">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -160,9 +160,6 @@ const data = reactive({
     merchantName: undefined,
   },
   rules: {
-    id: [
-      { required: true, message: "不能为空", trigger: "blur" }
-    ],
     merchantNo: [
       { required: true, message: "编号不能为空", trigger: "blur" }
     ],
