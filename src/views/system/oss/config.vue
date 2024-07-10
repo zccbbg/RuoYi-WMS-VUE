@@ -21,8 +21,8 @@
       </el-form-item>
       <el-form-item label="是否默认" prop="status">
         <el-select v-model="queryParams.status" placeholder="请选择状态" clearable style="width: 200px">
-          <el-option key="0" label="是" value="0"/>
-          <el-option key="1" label="否" value="1"/>
+          <el-option key="1" label="是" value="1"/>
+          <el-option key="0" label="否" value="0"/>
         </el-select>
       </el-form-item>
       <el-form-item>
@@ -353,7 +353,7 @@ function submitForm() {
 }
 /** 用户状态修改  */
 function handleStatusChange(row) {
-  let text = row.status === "0" ? "启用" : "停用";
+  let text = row.status === "1" ? "启用" : "停用";
   proxy.$modal.confirm('确认要"' + text + '""' + row.configKey + '"配置吗?').then(() => {
     return changeOssConfigStatus(row.ossConfigId, row.status, row.configKey);
   }).then(() => {
