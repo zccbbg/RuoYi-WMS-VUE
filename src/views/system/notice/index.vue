@@ -212,7 +212,7 @@ function reset() {
     noticeTitle: undefined,
     noticeType: undefined,
     noticeContent: undefined,
-    status: "0"
+    status: "1"
   };
   proxy.resetForm("noticeRef");
 }

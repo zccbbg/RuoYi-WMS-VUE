@@ -199,7 +199,7 @@ function reset() {
     postCode: undefined,
     postName: undefined,
     postSort: 0,
-    status: "0",
+    status: "1",
     remark: undefined
   };
   proxy.resetForm("postRef");

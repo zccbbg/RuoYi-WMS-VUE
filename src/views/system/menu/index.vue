@@ -346,7 +346,7 @@ function reset() {
     isFrame: "1",
     isCache: "0",
     visible: "0",
-    status: "0"
+    status: "1"
   };
   proxy.resetForm("menuRef");
 }

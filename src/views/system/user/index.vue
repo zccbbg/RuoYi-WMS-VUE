@@ -544,7 +544,7 @@ function reset() {
     phonenumber: undefined,
     email: undefined,
     sex: undefined,
-    status: "0",
+    status: "1",
     remark: undefined,
     postIds: [],
     roleIds: []

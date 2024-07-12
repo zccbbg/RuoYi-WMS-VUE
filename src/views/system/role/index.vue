@@ -396,7 +396,7 @@ function reset() {
     roleName: undefined,
     roleKey: undefined,
     roleSort: 0,
-    status: "0",
+    status: "1",
     menuIds: [],
     deptIds: [],
     menuCheckStrictly: true,
