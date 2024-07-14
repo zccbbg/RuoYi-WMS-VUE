@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
       <el-form-item label="编号" prop="merchantNo">
         <el-input
           v-model="queryParams.merchantNo"
@@ -35,26 +35,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:merchant:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:merchant:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="warning"
           plain
           icon="Download"
@@ -62,11 +42,9 @@
           v-hasPermi="['wms:merchant:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="merchantList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table v-loading="loading" :data="merchantList">
       <el-table-column label="id" align="center" prop="id" v-if="false"/>
       <el-table-column label="编号" align="center" prop="merchantNo" />
       <el-table-column label="名称" align="center" prop="merchantName" />
@@ -144,10 +122,7 @@ const merchantList = ref([]);
 const open = ref(false);
 const buttonLoading = ref(false);
 const loading = ref(true);
-const showSearch = ref(true);
 const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 
@@ -221,13 +196,6 @@ function handleQuery() {
 function resetQuery() {
   proxy.resetForm("queryRef");
   handleQuery();
-}
-
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
 }
 
 /** 新增按钮操作 */
