@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
       <el-form-item label="编号" prop="merchantNo">
         <el-input
           v-model="queryParams.merchantNo"
@@ -19,7 +19,6 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -35,26 +34,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['wms:merchant:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['wms:merchant:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="warning"
           plain
           icon="Download"
@@ -62,17 +41,15 @@
           v-hasPermi="['wms:merchant:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="merchantList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+    <el-table v-loading="loading" :data="merchantList" border>
       <el-table-column label="id" align="center" prop="id" v-if="false"/>
-      <el-table-column label="编号" align="center" prop="merchantNo" />
-      <el-table-column label="名称" align="center" prop="merchantName" />
-      <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="级别" align="center" prop="merchantLevel" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="编号" prop="merchantNo" />
+      <el-table-column label="名称" prop="merchantName" />
+      <el-table-column label="地址" prop="address" />
+      <el-table-column label="级别" prop="merchantLevel" />
+      <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
@@ -144,10 +121,7 @@ const merchantList = ref([]);
 const open = ref(false);
 const buttonLoading = ref(false);
 const loading = ref(true);
-const showSearch = ref(true);
 const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 
@@ -215,19 +189,6 @@ function reset() {
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  proxy.resetForm("queryRef");
-  handleQuery();
-}
-
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
 }
 
 /** 新增按钮操作 */
