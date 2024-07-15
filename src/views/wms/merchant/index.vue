@@ -1,69 +1,78 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-      <el-form-item label="编号" prop="merchantNo">
-        <el-input
-          v-model="queryParams.merchantNo"
-          placeholder="请输入编号"
-          clearable
-          @keyup.enter="handleQuery"
+    <el-card shadow="never">
+      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
+        <el-form-item label="编号" prop="merchantNo">
+          <el-input
+            v-model="queryParams.merchantNo"
+            placeholder="请输入编号"
+            clearable
+            @keyup.enter="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="名称" prop="merchantName">
+          <el-input
+            v-model="queryParams.merchantName"
+            placeholder="请输入名称"
+            clearable
+            @keyup.enter="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+
+    <el-card shadow="never" class="mt20">
+      <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
+        <el-col :span="6"><span style="font-size: large">往来单位</span></el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleAdd"
+            v-hasPermi="['wms:merchant:add']"
+          >新增</el-button>
+          <el-button
+            type="warning"
+            plain
+            icon="Download"
+            @click="handleExport"
+            v-hasPermi="['wms:merchant:export']"
+          >导出</el-button>
+        </el-col>
+      </el-row>
+
+      <el-table v-loading="loading" :data="merchantList" border class="mt20">
+        <el-table-column label="id" align="center" prop="id" v-if="false"/>
+        <el-table-column label="编号" prop="merchantNo" />
+        <el-table-column label="名称" prop="merchantName" />
+        <el-table-column label="地址" prop="address" />
+        <el-table-column label="级别" prop="merchantLevel" />
+        <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
+          <template #default="scope">
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-row>
+        <pagination
+          v-show="total>0"
+          :total="total"
+          v-model:page="queryParams.pageNum"
+          v-model:limit="queryParams.pageSize"
+          @pagination="getList"
         />
-      </el-form-item>
-      <el-form-item label="名称" prop="merchantName">
-        <el-input
-          v-model="queryParams.merchantName"
-          placeholder="请输入名称"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-      </el-form-item>
-    </el-form>
+      </el-row>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['wms:merchant:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['wms:merchant:export']"
-        >导出</el-button>
-      </el-col>
-    </el-row>
+    </el-card>
 
-    <el-table v-loading="loading" :data="merchantList" border>
-      <el-table-column label="id" align="center" prop="id" v-if="false"/>
-      <el-table-column label="编号" prop="merchantNo" />
-      <el-table-column label="名称" prop="merchantName" />
-      <el-table-column label="地址" prop="address" />
-      <el-table-column label="级别" prop="merchantLevel" />
-      <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
-    />
+
 
     <!-- 添加或修改往来单位对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
