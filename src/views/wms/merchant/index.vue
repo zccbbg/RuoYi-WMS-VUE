@@ -19,7 +19,6 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -44,13 +43,13 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="merchantList">
+    <el-table v-loading="loading" :data="merchantList" border>
       <el-table-column label="id" align="center" prop="id" v-if="false"/>
-      <el-table-column label="编号" align="center" prop="merchantNo" />
-      <el-table-column label="名称" align="center" prop="merchantName" />
-      <el-table-column label="地址" align="center" prop="address" />
-      <el-table-column label="级别" align="center" prop="merchantLevel" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="编号" prop="merchantNo" />
+      <el-table-column label="名称" prop="merchantName" />
+      <el-table-column label="地址" prop="address" />
+      <el-table-column label="级别" prop="merchantLevel" />
+      <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
@@ -190,12 +189,6 @@ function reset() {
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  proxy.resetForm("queryRef");
-  handleQuery();
 }
 
 /** 新增按钮操作 */
