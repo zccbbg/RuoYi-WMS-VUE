@@ -25,6 +25,7 @@ const tagsViewStore = useTagsViewStore()
   width: 100%;
   position: relative;
   overflow: hidden;
+  background: linear-gradient(#ffffff, #f5f5f5 28%);
 }
 
 .fixed-header + .app-main {
