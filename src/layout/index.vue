@@ -71,6 +71,7 @@ function setLayout() {
   position: relative;
   height: 100%;
   width: 100%;
+  background: linear-gradient(#ffffff, #f5f5f5 28%);
 
   &.mobile.openSidebar {
     position: fixed;
