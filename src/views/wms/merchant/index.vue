@@ -30,6 +30,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -60,13 +61,13 @@
         <el-table-column label="id" prop="id" v-if="true"/>
         <el-table-column label="编号" prop="merchantNo" />
         <el-table-column label="名称" prop="merchantName" />
-        <el-table-column label="联系人" prop="contactPerson" />
-        <el-table-column label="级别" prop="merchantLevel" />
         <el-table-column label="企业类型" prop="merchantType">
           <template #default="scope">
             <dict-tag :options="merchant_type" :value="scope.row.merchantType"/>
           </template>
         </el-table-column>
+        <el-table-column label="级别" prop="merchantLevel" />
+        <el-table-column label="联系人" prop="contactPerson" />
         <el-table-column label="备注" prop="remark" />
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
             <template #default="scope">
@@ -96,6 +97,19 @@
         <el-form-item label="名称" prop="merchantName">
           <el-input v-model="form.merchantName" placeholder="请输入名称" />
         </el-form-item>
+        <el-form-item label="企业类型" prop="merchantType">
+          <el-select v-model="form.merchantType" placeholder="请选择企业类型">
+            <el-option
+              v-for="dict in merchant_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="级别" prop="merchantLevel">
+          <el-input v-model="form.merchantLevel" placeholder="请输入级别" />
+        </el-form-item>
         <el-form-item label="开户行" prop="bankName">
           <el-input v-model="form.bankName" placeholder="请输入开户行" />
         </el-form-item>
@@ -113,19 +127,6 @@
         </el-form-item>
         <el-form-item label="联系人" prop="contactPerson">
           <el-input v-model="form.contactPerson" placeholder="请输入联系人" />
-        </el-form-item>
-        <el-form-item label="级别" prop="merchantLevel">
-          <el-input v-model="form.merchantLevel" placeholder="请输入级别" />
-        </el-form-item>
-        <el-form-item label="企业类型" prop="merchantType">
-          <el-select v-model="form.merchantType" placeholder="请选择企业类型">
-            <el-option
-              v-for="dict in merchant_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
-            ></el-option>
-          </el-select>
         </el-form-item>
         <el-form-item label="Email" prop="email">
           <el-input v-model="form.email" placeholder="请输入Email" />
@@ -204,14 +205,14 @@ function reset() {
     id: null,
     merchantNo: null,
     merchantName: null,
+    merchantType: null,
+    merchantLevel: null,
     bankName: null,
     bankAccount: null,
     address: null,
     mobile: null,
     tel: null,
     contactPerson: null,
-    merchantLevel: null,
-    merchantType: null,
     email: null,
     remark: null,
     delFlag: null,
@@ -227,6 +228,12 @@ function reset() {
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
+}
+
+/** 重置按钮操作 */
+function resetQuery() {
+  proxy.resetForm("queryRef");
+  handleQuery();
 }
 
 /** 新增按钮操作 */
