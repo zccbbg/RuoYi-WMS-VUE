@@ -18,6 +18,16 @@
             @keyup.enter="handleQuery"
           />
         </el-form-item>
+        <el-form-item label="企业类型" prop="merchantType">
+          <el-select v-model="queryParams.merchantType" placeholder="请选择企业类型" clearable>
+            <el-option
+              v-for="dict in merchant_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         </el-form-item>
@@ -25,6 +35,7 @@
     </el-card>
 
     <el-card class="mt20">
+
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
         <el-col :span="6"><span style="font-size: large">往来单位</span></el-col>
         <el-col :span="1.5">
@@ -46,16 +57,22 @@
       </el-row>
 
       <el-table v-loading="loading" :data="merchantList" border class="mt20">
-        <el-table-column label="id" align="center" prop="id" v-if="false"/>
+        <el-table-column label="id" prop="id" v-if="true"/>
         <el-table-column label="编号" prop="merchantNo" />
         <el-table-column label="名称" prop="merchantName" />
-        <el-table-column label="地址" prop="address" />
+        <el-table-column label="联系人" prop="contactPerson" />
         <el-table-column label="级别" prop="merchantLevel" />
-        <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
+        <el-table-column label="企业类型" prop="merchantType">
           <template #default="scope">
-            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
-            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
+            <dict-tag :options="merchant_type" :value="scope.row.merchantType"/>
           </template>
+        </el-table-column>
+        <el-table-column label="备注" prop="remark" />
+        <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
+            <template #default="scope">
+                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:merchant:edit']">修改</el-button>
+                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:merchant:remove']">删除</el-button>
+            </template>
         </el-table-column>
       </el-table>
 
@@ -70,10 +87,6 @@
       </el-row>
 
     </el-card>
-
-
-
-
     <!-- 添加或修改往来单位对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="merchantRef" :model="form" :rules="rules" label-width="80px">
@@ -104,6 +117,16 @@
         <el-form-item label="级别" prop="merchantLevel">
           <el-input v-model="form.merchantLevel" placeholder="请输入级别" />
         </el-form-item>
+        <el-form-item label="企业类型" prop="merchantType">
+          <el-select v-model="form.merchantType" placeholder="请选择企业类型">
+            <el-option
+              v-for="dict in merchant_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="Email" prop="email">
           <el-input v-model="form.email" placeholder="请输入Email" />
         </el-form-item>
@@ -125,6 +148,7 @@
 import { listMerchant, getMerchant, delMerchant, addMerchant, updateMerchant } from "@/api/wms/merchant";
 
 const { proxy } = getCurrentInstance();
+const { merchant_type } = proxy.useDict('merchant_type');
 
 const merchantList = ref([]);
 const open = ref(false);
@@ -141,6 +165,7 @@ const data = reactive({
     pageSize: 10,
     merchantNo: undefined,
     merchantName: undefined,
+    merchantType: undefined,
   },
   rules: {
     merchantNo: [
@@ -148,6 +173,9 @@ const data = reactive({
     ],
     merchantName: [
       { required: true, message: "名称不能为空", trigger: "blur" }
+    ],
+    merchantType: [
+      { required: true, message: "企业类型不能为空", trigger: "change" }
     ],
   }
 });
@@ -183,6 +211,7 @@ function reset() {
     tel: null,
     contactPerson: null,
     merchantLevel: null,
+    merchantType: null,
     email: null,
     remark: null,
     delFlag: null,
