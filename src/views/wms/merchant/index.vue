@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-card shadow="never">
+    <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
         <el-form-item label="编号" prop="merchantNo">
           <el-input
@@ -24,7 +24,7 @@
       </el-form>
     </el-card>
 
-    <el-card shadow="never" class="mt20">
+    <el-card class="mt20">
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
         <el-col :span="6"><span style="font-size: large">往来单位</span></el-col>
         <el-col :span="1.5">
