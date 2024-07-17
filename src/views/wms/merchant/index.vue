@@ -58,7 +58,7 @@
       </el-row>
 
       <el-table v-loading="loading" :data="merchantList" border class="mt20">
-        <el-table-column label="id" prop="id" v-if="true"/>
+        <el-table-column label="id" prop="id" v-if="false"/>
         <el-table-column label="编号" prop="merchantNo" />
         <el-table-column label="名称" prop="merchantName" />
         <el-table-column label="企业类型" prop="merchantType">
