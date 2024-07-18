@@ -476,7 +476,7 @@ const collapse = (draggingNode, dropNode, type) => {
 }
 const handleNodeDrop = async (draggingNode, dropNode, dropType, ev) => {
   if (dropNode.level === 1) {
-    await updateOrderNum(dropNode.parent.data.filter(it => it.label !== '全部'));
+    await updateOrderNum(dropNode.parent.data.filter(it => it.id !== -1));
   } else {
     await updateOrderNum(dropNode.parent.data.children);
   }
@@ -523,7 +523,6 @@ const handleSelectionChange = (selection) => {
 /** 新增按钮操作 */
 const handleAdd = () => {
   resetItemSkuList()
-  loading.value = true
   skuLoading.value = true
   dialog.visible = true;
   dialog.title = "修改商品";
@@ -532,7 +531,6 @@ const handleAdd = () => {
     const _id = row?.itemId || ids.value[0]
     const res = await getItem(_id);
     Object.assign(skuForm.itemSkuList, res.data.sku)
-    loading.value = false;
     skuLoading.value = false
     Object.assign(form.value, res.data);
   });
@@ -540,7 +538,6 @@ const handleAdd = () => {
 /** 修改按钮操作 */
 const handleUpdate = (row) => {
   resetItemSkuList()
-  loading.value = true
   skuLoading.value = true
   dialog.visible = true;
   dialog.title = "修改商品";
@@ -549,7 +546,6 @@ const handleUpdate = (row) => {
     const _id = row?.itemId || ids.value[0]
     const res = await getItem(_id);
     Object.assign(skuForm.itemSkuList, res.data.sku)
-    loading.value = false;
     skuLoading.value = false
     Object.assign(form.value, res.data);
   });
@@ -613,7 +609,7 @@ const submitCategoryForm = () => {
 /** 删除按钮操作 */
 const handleDelete = async (row) => {
   const _ids = row?.itemId || ids.value;
-  await proxy?.$modal.confirm('是否确认删除商品"' + row?.itemName + '"？').finally(() => loading.value = false);
+  await proxy?.$modal.confirm('是否确认删除商品"' + row?.itemName + '"？');
   await delItem(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();

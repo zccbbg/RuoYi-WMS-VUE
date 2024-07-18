@@ -76,9 +76,9 @@ export function delItemCategory(id) {
 
 /**
  * 删除物料类型
- * @param id
+ * @param data
  */
-export function updateOrderNum(id) {
+export function updateOrderNum(data) {
   return request({
     url: '/wms/itemCategory/update/orderNum',
     method: 'post',
