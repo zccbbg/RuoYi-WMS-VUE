@@ -6,7 +6,7 @@
           <div style="display: flex;justify-content: space-between;align-items: center">
             <span style="font-size: 14px;line-height: 16px">仓库列表</span>
             <el-button class="mr10" plain icon="Plus" style="font-size:12px;line-height: 14px" @click="handleAdd"
-                        type="primary">新增仓库
+                        type="primary" size="small">新增仓库
             </el-button>
           </div>
           <el-tree
@@ -28,7 +28,7 @@
             <span class="custom-tree-node">
               <span>{{ node.data.warehouseName }}{{ node.data.warehouseNo ? ' ( 编号：' + node.data.warehouseNo + ' )' : ''}}</span>
               <span>
-                <el-button link type="primary" icon="Delete" class="mr10" style="font-size: 12px" @click.stop="handleDelete(data)">删除</el-button>
+                <el-button link type="primary" icon="Delete" style="font-size: 12px" @click.stop="handleDelete(data)">删除</el-button>
                 <el-button link type="primary" icon="Edit" style="font-size: 12px" @click.stop="handleUpdate(data)">修改</el-button>
               </span>
             </span>
@@ -38,7 +38,7 @@
         <div style="width: 100%">
           <div style="display: flex;align-items: center;justify-content: space-between">
             <span class="mr10" style="font-size: 14px;">库区列表</span>
-            <el-button type="primary" plain icon="Plus" size="default" @click="handleAddArea()">新增库区</el-button>
+            <el-button type="primary" plain icon="Plus" size="small" @click="handleAddArea()">新增库区</el-button>
           </div>
           <el-table :data="wmsAreaList" class="mt10" border v-loading="loading" empty-text="暂无库区">
             <el-table-column label="名称" prop="areaName" />
