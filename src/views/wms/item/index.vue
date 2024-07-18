@@ -56,7 +56,7 @@
           </el-tree>
         </div>
         <div style="width: 100%">
-          <div style="display: flex;align-items: center;justify-content: space-between">
+          <div style="display: flex;align-items: start;justify-content: space-between">
             <span class="mr10" style="font-size: 14px;">商品列表</span>
             <el-button type="primary" plain icon="Plus" @click="handleAdd" class="mb10" size="small">新增商品</el-button>
           </div>
