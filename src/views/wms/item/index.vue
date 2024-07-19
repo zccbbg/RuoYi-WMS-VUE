@@ -55,7 +55,7 @@
             </template>
           </el-tree>
         </div>
-        <div style="width: 100%">
+        <div style="width: 100%;position: relative">
           <div style="display: flex;align-items: start;justify-content: space-between">
             <span class="mr10" style="font-size: 14px;">商品列表</span>
             <el-button type="primary" plain icon="Plus" @click="handleAdd" class="mb10" size="small">新增商品</el-button>
@@ -144,6 +144,13 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row :gutter="24">
+            <el-col :span="12">
+              <el-form-item label="商品品牌" prop="itemBrand">
+                <el-input v-model="form.itemBrand" placeholder="请输入商品品牌"/>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-form>
       </el-card>
       <el-card class="mt20">
@@ -167,19 +174,21 @@
                 <el-input v-model="scope.row.outSkuId" placeholder="留空会自动生成"/>
               </template>
             </el-table-column>
-            <el-table-column label="入库价格" prop="inPrice">
+            <el-table-column label="长宽高(cm)" width="560">
               <template #default="scope">
-                <el-input v-model="scope.row.inPrice" placeholder="请输入入库价格"/>
+                <div style="display: flex;align-items: center">
+                  <span class="mr5">长</span>
+                  <el-input-number :controls="false" :min="0" :precision="1" class="mr5" v-model="scope.row.length" placeholder="请输入长(cm)"/>
+                  <span class="mr5">宽</span>
+                  <el-input-number :controls="false" :min="0" :precision="1" class="mr5" v-model="scope.row.width" placeholder="请输入宽(cm)"/>
+                  <span class="mr5">高</span>
+                  <el-input-number :controls="false" :min="0" :precision="1" v-model="scope.row.height" placeholder="请输入高(cm)"/>
+                </div>
               </template>
             </el-table-column>
-            <el-table-column label="出库价格" prop="outPrice">
+            <el-table-column label="重量(kg)" prop="weight" width="200">
               <template #default="scope">
-                <el-input v-model="scope.row.outPrice" placeholder="请输入出库价格"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="库存预警" prop="quantity">
-              <template #default="scope">
-                <el-input v-model="scope.row.quantity" placeholder="请输入最低库存数量"/>
+                <el-input-number :controls="false" :min="0" :precision="3" v-model="scope.row.weight" placeholder="请输入重量(kg)"/>
               </template>
             </el-table-column>
             <el-table-column label="操作" class-name="small-padding fixed-width" width="80" align="right">
@@ -321,6 +330,7 @@ const initFormData = {
   itemName: undefined,
   itemCategory: undefined,
   unit: undefined,
+  itemBrand: undefined,
   remark: undefined,
 }
 const initCategoryFormData = {
@@ -332,7 +342,7 @@ const initCategoryFormData = {
   status: undefined,
 }
 const data = reactive({
-  form: {...initCategoryFormData},
+  form: {...initFormData},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -368,7 +378,7 @@ const data = reactive({
   }
 });
 const categoryData = reactive({
-  form: {...initFormData},
+  form: {...initCategoryFormData},
   queryParams: {
     pageNum: 1,
     pageSize: 1000,
