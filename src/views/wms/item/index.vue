@@ -313,6 +313,7 @@ const edit = (node, data) => {
   categoryForm.value.id = data.id;
   // resetType();
   categoryForm.value.categoryName = data.label;
+  categoryDialog.title = "修改商品分类";
   categoryDialog.visible = true;
 }
 const dialog = reactive({
@@ -426,7 +427,7 @@ const getItemCategoryTreeSelect = async () => {
   })
 }
 const handleAddType = (show) => {
-  categoryDialog.title = "添加商品分类";
+  categoryDialog.title = "新增商品分类";
   showParent.value = show
   categoryDialog.visible = true;
   if (show) {
