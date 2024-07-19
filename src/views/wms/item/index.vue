@@ -61,36 +61,39 @@
             <el-button type="primary" plain icon="Plus" @click="handleAdd" class="mb10" size="small">新增商品</el-button>
           </div>
           <el-table :data="itemList" @selection-change="handleSelectionChange" :span-method="spanMethod" border empty-text="暂无商品" v-loading="loading">
-            <el-table-column label="分类" prop="itemCategoryId">
+            <el-table-column label="分类" prop="itemCategoryId" width="100">
               <template #default="scope">
                 <div>{{ scope.row.itemCategoryName }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="商品名称" prop="itemId">
-              <template #default="scope">
-                <div>{{ scope.row.itemName }}</div>
+            <el-table-column label="商品信息" prop="itemId">
+              <template #default="{ row }">
+                <div>{{ row.itemName + (row.itemNo ? ('(' +  row.itemNo + ')') : '') }}</div>
+                <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + row.itemBrand) : '' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="商品条码" prop="itemId">
-              <template #default="scope">
-                <div>{{ scope.row.itemNo }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="规格名称" prop="skuName"/>
-            <el-table-column label="规格条码" prop="outSkuId" width="220">
-              <template #default="scope">
-                <div>{{ scope.row.outSkuId }}</div>
+            <el-table-column label="规格信息" prop="skuName" width="220">
+              <template #default="{ row }">
+                <div>{{ row.skuName + '(' + row.outSkuId + ')' }}</div>
                 <div>
-                  <el-button link type="primary" icon="Download" @click="downloadBarcode(scope.row)">下载条形码</el-button>
-                  <el-button link type="primary" icon="Download" @click="downloadQrcode(scope.row)" style="margin-left: 0!important;">
+                  <el-button link type="primary" icon="Download" @click="downloadBarcode(row)">下载条形码</el-button>
+                  <el-button link type="primary" icon="Download" @click="downloadQrcode(row)" style="margin-left: 0!important;">
                     下载二维码
                   </el-button>
                 </div>
               </template>
             </el-table-column>
-            <!--            <el-table-column label="单位类别" prop="unit"/>-->
-            <!--            <el-table-column label="备注"  prop="remark"/>-->
-            <el-table-column label="操作" align="right" prop="itemId">
+            <el-table-column label="体积" align="right" width="250">
+              <template #default="{ row }">
+                <div>{{ getVolumeText(row) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="重量"  prop="weight" width="120" align="right">
+              <template #default="{ row }">
+                <div>{{ (row.weight || row.weight === 0) ? (row.weight + ' kg') : '' }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="right" prop="itemId" width="160">
               <template #default="scope">
                 <el-button link type="primary" @click="handleDelete(scope.row)" icon="Delete">删除</el-button>
                 <el-button link type="primary" @click="handleUpdate(scope.row)" icon="Edit">修改</el-button>
@@ -661,6 +664,14 @@ const downloadQrcode = async (row) => {
   a.click()
   //提示信息
   // this.$message.warn('下载中，请稍后...')
+}
+const getVolumeText = (row) => {
+  if((row.length || row.length === 0) && (row.width || row.width === 0) && (row.height || row.height === 0)) {
+    return row.length + '*' + row.width + '*' + row.height + ' cm³'
+  }
+  return ((row.length || row.length === 0) ? ('长：' + row.length + ' cm ') : '')
+    + ((row.width || row.width === 0) ? ('宽：' + row.width + ' cm ') : '')
+    + ((row.height || row.height === 0) ? ('高：' + row.height + ' cm') : '')
 }
 onMounted(() => {
   getList();
