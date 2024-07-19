@@ -89,7 +89,7 @@
 
     </el-card>
     <!-- 添加或修改往来单位对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
+    <el-drawer :title="title" v-model="open" append-to-body>
       <el-form ref="merchantRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="编号" prop="merchantNo">
           <el-input v-model="form.merchantNo" placeholder="请输入编号" />
@@ -141,7 +141,7 @@
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 
@@ -245,11 +245,9 @@ function handleAdd() {
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  loading.value = true
   reset();
   const _id = row.id || ids.value
   getMerchant(_id).then(response => {
-    loading.value = false;
     form.value = response.data;
     open.value = true;
     title.value = "修改往来单位";
