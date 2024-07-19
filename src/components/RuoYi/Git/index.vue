@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-const url = ref('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus');
+const url = ref('https://gitee.com/zccbbg/ruoyi-fast-service');
 
 function goto() {
   window.open(url.value)

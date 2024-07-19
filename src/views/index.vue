@@ -20,17 +20,13 @@
           * 分布式限流 Redisson 全局、请求IP、集群ID 多种限流<br/>
           * 分布式锁 Lock4j 注解锁、工具锁 多种多样<br/>
           * 分布式幂等 Lock4j 基于分布式锁实现<br/>
-          * 分布式链路追踪 SkyWalking 支持链路追踪、网格分析、度量聚合、可视化<br/>
-          * 分布式任务调度 Xxl-Job 高性能 高可靠 易扩展<br/>
           * 文件存储 Minio 本地存储<br/>
           * 文件存储 七牛、阿里、腾讯	云存储<br/>
-          * 监控框架 SpringBoot-Admin 全方位服务监控<br/>
           * 校验框架 Validation 增强接口安全性 严谨性<br/>
           * Excel框架 Alibaba EasyExcel 性能优异 扩展性强<br/>
           * 文档框架 SpringDoc、javadoc 无注解零入侵基于java注释<br/>
           * 工具类框架 Hutool、Lombok 减少代码冗余 增加安全性<br/>
           * 代码生成器 适配MP、SpringDoc规范化代码 一键生成前后端代码<br/>
-          * 部署方式 Docker 容器编排 一键部署业务集群<br/>
           * 国际化 SpringMessage Spring标准国际化方案<br/>
         </p>
         <p>
@@ -44,7 +40,7 @@
             type="primary"
             icon="Cloudy"
             plain
-            @click="goTarget('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus')"
+            @click="goTarget('https://gitee.com/zccbbg/ruoyi-fast-service')"
             >访问码云</el-button
           >
           <el-button
@@ -58,7 +54,7 @@
             type="primary"
             icon="Cloudy"
             plain
-            @click="goTarget('https://gitee.com/JavaLionLi/RuoYi-Vue-Plus/wikis/pages?sort_id=4106467&doc_id=1469725')"
+            @click="goTarget('https://gitee.com/zccbbg/ruoyi-fast-service/wikis/pages?sort_id=4106467&doc_id=1469725')"
           >更新日志</el-button
           >
         </p>
