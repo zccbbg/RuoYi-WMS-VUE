@@ -535,7 +535,7 @@ const handleAdd = () => {
   resetItemSkuList()
   skuLoading.value = true
   dialog.visible = true;
-  dialog.title = "修改商品";
+  dialog.title = "新增商品";
   nextTick(async () => {
     reset();
     const _id = row?.itemId || ids.value[0]
