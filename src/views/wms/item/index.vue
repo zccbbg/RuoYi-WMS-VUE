@@ -249,7 +249,7 @@
       </template>
       <div id="qrcode"></div>
     </el-dialog>
-    <div id="outSkuIdBox">
+    <div id="outSkuIdBox" style="display: none">
       <img :src="qrcode"/>
       <canvas ref="barcode"></canvas>
     </div>
@@ -270,6 +270,8 @@ import {
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {listItemSkuPage} from "@/api/wms/itemSku";
 import {useRoute} from "vue-router";
+import Qrcode from 'qrcode'
+import JSBarcode from 'jsbarcode'
 
 const barcode = ref(null)
 const route = useRoute()
