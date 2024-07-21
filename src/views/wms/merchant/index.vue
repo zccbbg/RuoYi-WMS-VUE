@@ -89,7 +89,7 @@
 
     </el-card>
     <!-- 添加或修改往来单位对话框 -->
-    <el-drawer :title="title" v-model="open" append-to-body>
+    <el-drawer :title="title" v-model="open" append-to-body size="50%">
       <el-form ref="merchantRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="编号" prop="merchantNo">
           <el-input v-model="form.merchantNo" placeholder="请输入编号" />
