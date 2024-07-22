@@ -16,7 +16,7 @@ export function listItemPage(query) {
 
 export function listItem(query) {
   return request({
-    url: '/wms/item/selectList',
+    url: '/wms/item/listNoPage',
     method: 'get',
     params: query
   });
