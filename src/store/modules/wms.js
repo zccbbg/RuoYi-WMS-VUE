@@ -1,5 +1,6 @@
-import { selectListWarehouse } from '@/api/wms/warehouse';
-import { selectListArea } from '@/api/wms/area';
+import { listWarehouseNoPage } from '@/api/wms/warehouse';
+import { listAreaNoPage } from '@/api/wms/area';
+import { listMerchantNoPage } from "@/api/wms/merchant";
 import {defineStore} from "pinia";
 import {ref} from "vue";
 
@@ -10,7 +11,7 @@ export const useWmsStore = defineStore('wms', () => {
   const warehouseMap = ref(new Map());
 
   const getWarehouseList = () => {
-    selectListWarehouse({}).then((res) => {
+    listWarehouseNoPage({}).then((res) => {
       warehouseList.value = res;
       const map = new Map();
       warehouseList.value.forEach((supplier) => {
@@ -24,7 +25,7 @@ export const useWmsStore = defineStore('wms', () => {
   const areaMap = ref(new Map());
 
   const getAreaList = () => {
-    selectListArea({}).then((res) => {
+    listAreaNoPage({}).then((res) => {
       areaList.value = res;
       const map = new Map();
       areaList.value.forEach((supplier) => {
@@ -33,7 +34,21 @@ export const useWmsStore = defineStore('wms', () => {
       areaMap.value = map;
     });
   };
-  // 货架管理
+
+  // 企业管理
+  const merchantList = ref([]);
+  const merchantMap = ref(new Map());
+
+  const getMerchantList = () => {
+    listMerchantNoPage({}).then((res) => {
+      merchantList.value = res;
+      const map = new Map();
+      merchantList.value.forEach((supplier) => {
+        map.set(supplier.id, supplier);
+      });
+      merchantMap.value = map;
+    });
+  }
 
   return {
     // 仓库管理
@@ -44,5 +59,9 @@ export const useWmsStore = defineStore('wms', () => {
     areaList,
     areaMap,
     getAreaList,
+    // 企业管理
+    merchantList,
+    merchantMap,
+    getMerchantList,
   };
 });

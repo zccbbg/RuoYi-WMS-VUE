@@ -9,6 +9,15 @@ export function listMerchant(query) {
   })
 }
 
+// 查询往来单位列表
+export function listMerchantNoPage(query) {
+  return request({
+    url: '/wms/merchant/listNoPage',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询往来单位详细
 export function getMerchant(id) {
   return request({

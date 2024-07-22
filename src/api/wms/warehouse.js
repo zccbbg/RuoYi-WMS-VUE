@@ -20,9 +20,9 @@ export function listWarehouse(query) {
  * @returns {*}
  */
 
-export function selectListWarehouse(query) {
+export function listWarehouseNoPage(query) {
   return request({
-    url: '/wms/warehouse/selectList',
+    url: '/wms/warehouse/listNoPage',
     method: 'get',
     params: query
   });

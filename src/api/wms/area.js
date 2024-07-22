@@ -20,9 +20,9 @@ export function listArea(query) {
  * @returns {*}
  */
 
-export function selectListArea(query) {
+export function listAreaNoPage(query) {
   return request({
-    url: '/wms/area/selectList',
+    url: '/wms/area/listNoPage',
     method: 'get',
     params: query
   });

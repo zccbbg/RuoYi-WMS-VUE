@@ -280,3 +280,25 @@
    border: 1px dotted #409EFF!important;
    width: 98%
  }
+
+ .footer-global {
+   border-top: 1px solid silver;
+   position: fixed;
+   display: flex;
+   flex-direction: row-reverse;
+   align-items: center;
+   right: 0;
+   bottom: 0;
+   //padding: 12px;
+   box-shadow: -1px 0 12px 0 var(--gray-5);
+   transition: all .28s;
+   background-color: white;
+   z-index: 200;
+   left: 0;
+   height: 50px;
+   margin-bottom: 0 !important;
+ }
+
+ .tc {
+   text-align: center;
+ }
