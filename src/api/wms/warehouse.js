@@ -15,6 +15,20 @@ export function listWarehouse(query) {
 };
 
 /**
+ * 查询仓库列表
+ * @param query
+ * @returns {*}
+ */
+
+export function selectListWarehouse(query) {
+  return request({
+    url: '/wms/warehouse/selectList',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
  * 查询仓库详细
  * @param id
  */
