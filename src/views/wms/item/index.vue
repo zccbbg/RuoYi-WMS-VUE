@@ -72,7 +72,7 @@
                 <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + row.itemBrand) : '' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="规格信息" prop="skuName" width="220">
+            <el-table-column label="规格信息" prop="skuName" align="right">
               <template #default="{ row }">
                 <div>{{ row.skuName + '(' + row.outSkuId + ')' }}</div>
                 <div>
