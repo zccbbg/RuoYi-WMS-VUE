@@ -72,7 +72,7 @@
                 <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + row.itemBrand) : '' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="规格信息" prop="skuName" width="220">
+            <el-table-column label="规格信息" prop="skuName" align="right">
               <template #default="{ row }">
                 <div>{{ row.skuName + '(' + row.outSkuId + ')' }}</div>
                 <div>
@@ -83,14 +83,14 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="体积" align="right" width="250">
+            <el-table-column label="长宽高(cm)" align="right" width="250">
               <template #default="{ row }">
                 <div>{{ getVolumeText(row) }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="重量"  prop="weight" width="120" align="right">
+            <el-table-column label="重量(kg)"  prop="weight" width="120" align="right">
               <template #default="{ row }">
-                <div>{{ (row.weight || row.weight === 0) ? (row.weight + ' kg') : '' }}</div>
+                <div>{{ (row.weight || row.weight === 0) ? row.weight : '' }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="right" prop="itemId" width="160">
@@ -667,11 +667,11 @@ const downloadQrcode = async (row) => {
 }
 const getVolumeText = (row) => {
   if((row.length || row.length === 0) && (row.width || row.width === 0) && (row.height || row.height === 0)) {
-    return row.length + '*' + row.width + '*' + row.height + ' cm³'
+    return row.length + ' * ' + row.width + ' * ' + row.height
   }
-  return ((row.length || row.length === 0) ? ('长：' + row.length + ' cm ') : '')
-    + ((row.width || row.width === 0) ? ('宽：' + row.width + ' cm ') : '')
-    + ((row.height || row.height === 0) ? ('高：' + row.height + ' cm') : '')
+  return ((row.length || row.length === 0) ? ('长：' + row.length) : '')
+    + ((row.width || row.width === 0) ? (' 宽：' + row.width) : '')
+    + ((row.height || row.height === 0) ? (' 高：' + row.height) : '')
 }
 onMounted(() => {
   getList();
