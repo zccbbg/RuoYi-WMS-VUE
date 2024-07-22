@@ -8,6 +8,7 @@ import { isRelogin } from '@/utils/request'
 import useUserStore from '@/store/modules/user'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
+import {useWmsStore} from '@/store/modules/wms';
 
 NProgress.configure({ showSpinner: false });
 
@@ -42,6 +43,7 @@ router.beforeEach((to, from, next) => {
             next({ path: '/' })
           })
         })
+        initData()
       } else {
         next()
       }
@@ -57,6 +59,11 @@ router.beforeEach((to, from, next) => {
     }
   }
 })
+
+async function initData() {
+  await useWmsStore().getWarehouseList()
+  await useWmsStore().getAreaList()
+}
 
 router.afterEach(() => {
   NProgress.done()
