@@ -16,7 +16,7 @@ export function listItemSkuPage(query) {
 
 export function listItemSku(query) {
   return request({
-    url: '/wms/itemSku/selectList',
+    url: '/wms/itemSku/listNoPage',
     method: 'get',
     params: query
   });
