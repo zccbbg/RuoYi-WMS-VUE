@@ -15,6 +15,20 @@ export function listArea(query) {
 };
 
 /**
+ * 查询库区列表
+ * @param query
+ * @returns {*}
+ */
+
+export function selectListArea(query) {
+  return request({
+    url: '/wms/area/selectList',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
  * 查询库区详细
  * @param id
  */
