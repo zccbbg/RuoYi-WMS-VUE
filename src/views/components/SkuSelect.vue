@@ -29,8 +29,8 @@
             </el-col>
           </el-row>
         </el-form>
-            <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品" :span-method="spanMethod" v-loading="loading">
-<!--              <el-table-column type="selection" width="55" :reserve-selection="true"/>-->
+            <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品" :span-method="spanMethod" v-loading="loading" ref="skuSelectFormRef">
+              <el-table-column type="selection" width="55" :reserve-selection="true"/>
               <el-table-column label="商品信息" prop="itemId">
                 <template #default="{ row }">
                   <div>商品名称：{{ row.itemName }}</div>
@@ -52,11 +52,6 @@
               <el-table-column label="重量(kg)"  prop="weight" width="120" align="right">
                 <template #default="{ row }">
                   <div>{{ (row.weight || row.weight === 0) ? row.weight : '' }}</div>
-                </template>
-              </el-table-column>
-              <el-table-column label="数量" prop="quantity" align="center">
-                <template #default="scope">
-                  <el-input-number :step="1" :min="1" v-model="scope.row.quantity"/>
                 </template>
               </el-table-column>
             </el-table>
@@ -95,7 +90,7 @@ const query = reactive({
   outSkuId: ''
 });
 const selectItemSkuVoCheck = ref([])
-
+const skuSelectFormRef = ref(null)
 const total = ref(0);
 const pageReq = reactive({
   page: 1,
@@ -174,7 +169,7 @@ function handleCancelClick() {
 }
 
 function handleOkClick() {
-  emit('handleOkClick', list.value.filter(it => it.quantity));
+  emit('handleOkClick', selectItemSkuVoCheck.value);
   clearQuantity()
 }
 /** 多选框选中数据 */
@@ -183,7 +178,7 @@ const handleSelectionChange = (selection) => {
 }
 
 function clearQuantity() {
-  list.value.forEach(it => it.quantity = undefined)
+  skuSelectFormRef.value.clearSelection()
 }
 
 const getVolumeText = (row) => {

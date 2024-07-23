@@ -93,18 +93,18 @@
                 <div>{{ row.prod.skuName + '(' + row.prod.outSkuId + ')' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="库区" prop="prod.skuName">
+            <el-table-column label="库区" prop="prod.skuName" width="280">
               <template #default="{ row }">
                 <el-select v-model="row.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || !!form.areaId" filterable>
                   <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)" :key="item.id" :label="item.areaName" :value="item.id"/>
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="数量" prop="quantity">
-              <template #header>
-                <span>数量</span>
-                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(1)">批量</el-button>
-              </template>
+            <el-table-column label="数量" prop="quantity" width="220">
+<!--              <template #header>-->
+<!--                <span>数量</span>-->
+<!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(1)">批量</el-button>-->
+<!--              </template>-->
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.quantity"
@@ -113,35 +113,26 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="单价" prop="amount">
-              <template #header>
-                <span>单价</span>
-                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(2)">批量</el-button>
-              </template>
+            <el-table-column label="价格" prop="amount" width="220">
+<!--              <template #header>-->
+<!--                <span>单价</span>-->
+<!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(2)">批量</el-button>-->
+<!--              </template>-->
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.amount"
-                  placeholder="单价"
+                  placeholder="价格"
                   :precision="2"
                   :min="0"
                   :max="2147483647"
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="总价" prop="totalPrices">
-              <template #header>
-                <span>总价</span>
-                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(3)">批量</el-button>
-              </template>
-              <template #default="scope">
-                <el-input-number v-model="scope.row.totalPrices" :precision="2" placeholder="总价" :min="0" :max="2147483647"></el-input-number>
-              </template>
-            </el-table-column>
             <el-table-column label="过期时间" prop="expirationTime" width="180">
-              <template #header>
-                <span>过期时间</span>
-                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="batchSetExpirationTimeDialog.visible = true">批量</el-button>
-              </template>
+<!--              <template #header>-->
+<!--                <span>过期时间</span>-->
+<!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="batchSetExpirationTimeDialog.visible = true">批量</el-button>-->
+<!--              </template>-->
               <template #default="scope">
                 <el-date-picker
                   v-model="scope.row.expirationTime"
@@ -153,7 +144,7 @@
                 />
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="70" align="right" fixed="right">
+            <el-table-column label="操作" width="100" align="right" fixed="right">
               <template #default="scope">
                 <el-button icon="Delete" type="danger" plain size="small" @click="form.details.splice(scope.$index, 1)" link>删除</el-button>
               </template>
@@ -284,9 +275,16 @@ const save = () => {
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
+    if (!form.value.details?.length) {
+      return ElMessage.error('请选择商品')
+    }
     const invalidAreaList = form.value.details.filter(it => !it.areaId )
     if (invalidAreaList?.length) {
       return ElMessage.error('请选择库区')
+    }
+    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
+    if (invalidQuantityList?.length) {
+      return ElMessage.error('请选择数量')
     }
     // 构建参数
     const details = form.value.details.map((it: {
@@ -362,9 +360,16 @@ const doWarehousing = () => {
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
+    if (!form.value.details?.length) {
+      return ElMessage.error('请选择商品')
+    }
     const invalidAreaList = form.value.details.filter(it => !it.areaId )
     if (invalidAreaList?.length) {
       return ElMessage.error('请选择库区')
+    }
+    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
+    if (invalidQuantityList?.length) {
+      return ElMessage.error('请选择数量')
     }
     // 构建参数
     const details = form.value.details.map((it: {
@@ -478,11 +483,11 @@ const handleChangeArea = (e) => {
 const handleAutoCalc = () => {
   let sum = undefined
   form.value.details.forEach(it => {
-    if (it.totalPrices >= 0) {
+    if (it.amount >= 0) {
       if (!sum) {
         sum = 0
       }
-      sum = numSub(sum, -Number(it.totalPrices))
+      sum = numSub(sum, -Number(it.amount))
     }
   })
   form.value.payableAmount = sum
