@@ -175,7 +175,7 @@
     <div class="footer-global">
       <div class="btn-box">
         <div>
-          <el-button @click="warsehousing" type="primary" class="ml10">入库</el-button>
+          <el-button @click="doWarehousing" type="primary" class="ml10">入库</el-button>
           <el-button @click="updateToInvalid" type="danger" :disabled="!form.id">作废</el-button>
         </div>
         <div>
@@ -189,7 +189,7 @@
 
 <script setup lang="ts" name="ReceiptOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, Ref, toRef, toRefs, watch} from "vue";
-import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid} from "@/api/wms/receiptOrder";
+import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing, generateReceiptOrderNo} from "@/api/wms/receiptOrder";
 import {ElMessage} from "element-plus";
 import SkuSelect from "../../components/SkuSelect.vue";
 import {useRoute} from "vue-router";
@@ -220,7 +220,6 @@ const data = reactive({
     pageSize: 10,
     receiptOrderNo: undefined,
     receiptOrderType: undefined,
-    supplierId: undefined,
     orderNo: undefined,
     payableAmount: undefined,
     receiptOrderStatus: undefined,
@@ -357,11 +356,60 @@ const updateToInvalid = () => {
   })
 }
 
-const hasSupplier = ref(false)
-const supplierId = toRef(form.value, 'supplierId')
-watch(supplierId, (value) => {
-  hasSupplier.value = !!value;
-})
+const doWarehousing = () => {
+  receiptForm.value?.validate((valid: any) => {
+    // 校验
+    if (!valid) {
+      return ElMessage.error('请填写必填项')
+    }
+    const invalidAreaList = form.value.details.filter(it => !it.areaId )
+    if (invalidAreaList?.length) {
+      return ElMessage.error('请选择库区')
+    }
+    // 构建参数
+    const details = form.value.details.map((it: {
+      place: any[];
+      prod: { warehouseId: null; areaId: null; rackId: null; id: any; };
+      amount: any;
+      quantity: any;
+      delFlag: any;
+      expirationTime: any;
+      warehouseId: string;
+      areaId: string;
+      rackId: string;
+    }) => {
+      return {
+        skuId: it.prod.id,
+        amount: it.amount,
+        quantity: it.quantity,
+        expirationTime: it.expirationTime,
+        warehouseId: form.value.warehouseId,
+        areaId: it.areaId
+      }
+    })
+
+    //console.log('提交前校验',form.value)
+    const params = {
+      id: form.value.id,
+      receiptOrderNo: form.value.receiptOrderNo,
+      receiptOrderStatus: form.value.receiptOrderStatus,
+      receiptOrderType: form.value.receiptOrderType,
+      merchantId: form.value.merchantId,
+      orderNo: form.value.orderNo,
+      remark: form.value.remark,
+      payableAmount: form.value.payableAmount,
+      details: details
+    }
+    warehousing(params).then((res) => {
+      if (res.code === 200) {
+        ElMessage.success('入库成功')
+        cancel()
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  })
+}
 
 const route = useRoute();
 onMounted(() => {
@@ -369,9 +417,9 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    // getNewReceiptOrderNo().then((res) => {
-    //   form.value.receiptOrderNo = res.msg
-    // })
+    generateReceiptOrderNo().then((res) => {
+      form.value.receiptOrderNo = res.msg
+    })
   }
 })
 

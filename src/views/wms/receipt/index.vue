@@ -120,7 +120,7 @@
           <template #default="scope">
             <div>
               <el-button link type="primary" icon="View" @click="" v-hasPermi="['wms:receiptOrder:query']">查看</el-button>
-              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receiptOrder:edit']">修改</el-button>
+              <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receiptOrder:edit']" :disabled="[-1, 1].includes(scope.row.receiptOrderStatus)">修改</el-button>
             </div>
             <div class="mt10">
               <el-button link type="primary" icon="Download" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receiptOrder:export']">打印</el-button>

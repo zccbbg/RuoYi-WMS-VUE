@@ -50,3 +50,20 @@ export function delReceiptOrder(id) {
     method: 'delete'
   })
 }
+
+// 执行入库
+export function warehousing(data) {
+  return request({
+    url: '/wms/receiptOrder/warehousing',
+    method: 'post',
+    data: data
+  })
+}
+
+// 生成入库单号
+export function generateReceiptOrderNo() {
+  return request({
+    url: '/wms/receiptOrder/generate/no',
+    method: 'get'
+  })
+}
