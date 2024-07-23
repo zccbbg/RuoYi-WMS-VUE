@@ -305,7 +305,7 @@ const append = (data) => {
 
 const remove = async (node, data) => {
   const ids = data.id
-  await proxy?.$modal.confirm('删除' + data.label + '分类将删除该分类下的所有子分类及商品，确认删除吗？');
+  await proxy?.$modal.confirm('确认删除分类【' + data.label + '】吗？');
   await delItemCategory(ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getItemCategoryTreeSelect();
