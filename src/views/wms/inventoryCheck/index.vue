@@ -1,131 +1,134 @@
 <template>
-  <div class="app-container" v-if="show">
-    <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
-             class="ry_form">
-      <el-form-item label="库存盘点单号" prop="inventoryCheckNo">
-        <el-input
-          v-model="queryParams.inventoryCheckNo"
-          placeholder="请输入库存盘点单号"
-          clearable
-          size="small"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="盘点状态" prop="inventoryCheckStatus">
+  <div class="app-container">
+    <div v-show="show">
+      <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="100px" size="medium"
+               class="ry_form">
+        <el-form-item label="库存盘点单号" prop="inventoryCheckNo">
+          <el-input
+            v-model="queryParams.inventoryCheckNo"
+            placeholder="请输入库存盘点单号"
+            clearable
+            size="small"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="盘点状态" prop="inventoryCheckStatus">
 
-        <DictRadio v-model="queryParams.inventoryCheckStatus" @change="handleQuery" size="small"
-                   :radioData="dict.type.wms_check_status" :showAll="'all'"/>
+          <DictRadio v-model="queryParams.inventoryCheckStatus" @change="handleQuery" size="small"
+                     :radioData="dict.type.wms_check_status" :showAll="'all'"/>
 
-      </el-form-item>
+        </el-form-item>
 
-      <el-form-item label="所属仓库" prop="warehouseId">
-        <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small" :checkStrictly=true></wms-warehouse-cascader>
-      </el-form-item>
+        <el-form-item label="所属仓库" prop="warehouseId">
+          <wms-warehouse-cascader v-model="queryParams.warehouseArr" size="small" :checkStrictly=true></wms-warehouse-cascader>
+        </el-form-item>
 
-      <el-form-item class="flex_one tr">
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-        <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini"
-                   @click="showMoreCondition = !showMoreCondition">{{ showMoreCondition ? '收起条件' : '展开条件' }}
-        </el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="el-icon-plus"
-          size="mini"
-          @click="handleAdd"
-          v-hasPermi="['wms:inventoryCheck:add']"
-        >新增盘点单
-        </el-button>
-      </el-col>
-
-      <!-- <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="el-icon-download"
-          size="mini"
-          :loading="exportLoading"
-          @click="handleExport"
-          v-hasPermi="['wms:inventoryCheck:export']"
-        >导出
-        </el-button>
-      </el-col> -->
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-    </el-row>
-
-    <WmsTable v-loading="loading" :data="wmsInventoryCheckList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="库存盘点单号" align="center" prop="inventoryCheckNo"
-                       v-if="columns[0].visible"/>
-      <!--      <el-table-column label="库存盘点类型" align="center" prop="inventoryCheckType" v-if="columns[1].visible"/>-->
-
-      <el-table-column label="盈亏数" align="center" prop="inventoryCheckTotal" v-if="columns[3].visible"/>
-      <!--      <el-table-column label="审核状态" align="center" prop="checkStatus" v-if="columns[4].visible"/>
-            <el-table-column label="审核人" align="center" prop="checkUserId" v-if="columns[5].visible"/>
-            <el-table-column label="审核时间" align="center" prop="checkTime" width="180" v-if="columns[6].visible">
-              <template slot-scope="scope">
-                <span>{{ parseTime(scope.row.checkTime, '') }}</span>
-              </template>
-            </el-table-column>-->
-      <!--      <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[7].visible"/>
-            <el-table-column label="所属库区" align="center" prop="areaId" v-if="columns[8].visible"/>-->
-      <el-table-column label="所属仓库" align="center" prop="rackId" v-if="columns[4].visible">
-        <template v-slot="{ row }"><span>{{ row.warehouseName }}</span><span
-          v-if="row.areaName">/{{ row.areaName }}</span><span v-if="row.rackName">/{{ row.rackName }}</span></template>
-      </el-table-column>
-      <el-table-column label="库存盘点单状态" align="center" prop="inventoryCheckStatus" v-if="columns[2].visible">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.wms_check_status" :value="scope.row.inventoryCheckStatus"/>
-        </template>
-
-      </el-table-column>
-
-      <el-table-column label="备注" align="center" prop="remark" v-if="columns[11].visible"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleView(scope.row)"
-            v-hasPermi="['wms:inventoryCheck:edit']"
-          >查看
+        <el-form-item class="flex_one tr">
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          <el-button :icon="showMoreCondition ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" size="mini"
+                     @click="showMoreCondition = !showMoreCondition">{{ showMoreCondition ? '收起条件' : '展开条件' }}
           </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            v-if="scope.row.inventoryCheckStatus == '11'"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['wms:inventoryCheck:edit']"
-          >继续盘点
-          </el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            v-if="scope.row.inventoryCheckStatus == '11'"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['wms:inventoryCheck:remove']"
-          >删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </WmsTable>
+        </el-form-item>
+      </el-form>
 
-    <pagination
-      v-show="total>0"
-      :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
-      @pagination="getList"
-    />
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            @click="handleAdd"
+            v-hasPermi="['wms:inventoryCheck:add']"
+          >新增盘点单
+          </el-button>
+        </el-col>
+
+        <!-- <el-col :span="1.5">
+          <el-button
+            type="warning"
+            plain
+            icon="el-icon-download"
+            size="mini"
+            :loading="exportLoading"
+            @click="handleExport"
+            v-hasPermi="['wms:inventoryCheck:export']"
+          >导出
+          </el-button>
+        </el-col> -->
+        <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+      </el-row>
+
+      <WmsTable v-loading="loading" :data="wmsInventoryCheckList" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column label="库存盘点单号" align="center" prop="inventoryCheckNo"
+                         v-if="columns[0].visible"/>
+        <!--      <el-table-column label="库存盘点类型" align="center" prop="inventoryCheckType" v-if="columns[1].visible"/>-->
+
+        <el-table-column label="盈亏数" align="center" prop="inventoryCheckTotal" v-if="columns[3].visible"/>
+        <!--      <el-table-column label="审核状态" align="center" prop="checkStatus" v-if="columns[4].visible"/>
+              <el-table-column label="审核人" align="center" prop="checkUserId" v-if="columns[5].visible"/>
+              <el-table-column label="审核时间" align="center" prop="checkTime" width="180" v-if="columns[6].visible">
+                <template slot-scope="scope">
+                  <span>{{ parseTime(scope.row.checkTime, '') }}</span>
+                </template>
+              </el-table-column>-->
+        <!--      <el-table-column label="所属仓库" align="center" prop="warehouseId" v-if="columns[7].visible"/>
+              <el-table-column label="所属库区" align="center" prop="areaId" v-if="columns[8].visible"/>-->
+        <el-table-column label="所属仓库" align="center" prop="rackId" v-if="columns[4].visible">
+          <template v-slot="{ row }"><span>{{ row.warehouseName }}</span><span
+            v-if="row.areaName">/{{ row.areaName }}</span><span v-if="row.rackName">/{{ row.rackName }}</span></template>
+        </el-table-column>
+        <el-table-column label="库存盘点单状态" align="center" prop="inventoryCheckStatus" v-if="columns[2].visible">
+          <template slot-scope="scope">
+            <dict-tag :options="dict.type.wms_check_status" :value="scope.row.inventoryCheckStatus"/>
+          </template>
+
+        </el-table-column>
+
+        <el-table-column label="备注" align="center" prop="remark" v-if="columns[11].visible"/>
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleView(scope.row)"
+              v-hasPermi="['wms:inventoryCheck:edit']"
+            >查看
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              v-if="scope.row.inventoryCheckStatus == '11'"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['wms:inventoryCheck:edit']"
+            >继续盘点
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              v-if="scope.row.inventoryCheckStatus == '11'"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['wms:inventoryCheck:remove']"
+            >删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </WmsTable>
+
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
+    </div>
+    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
 
   </div>
 </template>
@@ -141,10 +144,12 @@ import {
 import {randomId} from "@/utils/RandomUtils";
 import { mapGetters } from 'vuex'
 import { isStarRepo } from '@/utils/is-star-plugin'
+import SeeAdsComponent from '@/components/SeeAdsComponent.vue'
 
 export default {
   name: "WmsInventoryCheck",
   dicts: ["wms_check_status"],
+  components: {SeeAdsComponent},
   computed: {
     ...mapGetters(['userId', 'warehouseMap', 'areaMap']),
   },
@@ -207,13 +212,20 @@ export default {
     };
   },
   async created() {
-    const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,'http://wms.ichengle.top/inventoryCheck','Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
-    this.show = res;
-    if (res) {
-      this.getList()
-    }
+    this.$nextTick(()=>{
+      this.$refs.seeAdsComponentRef.show()
+    })
   },
   methods: {
+    async confirmOk(success){
+      if (success) {
+        const res = await isStarRepo('zccbbg','wms-ruoyi',this.userId,'http://wms.ichengle.top/inventoryCheck','Wms-Ruoyi-仓库库存管理','https://gitee.com/zccbbg/wms-ruoyi')
+        this.show = res;
+        if (res) {
+          this.getList()
+        }
+      }
+    },
     /** 查询库存盘点单据列表 */
     getList() {
       this.loading = true;

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="show">
     <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
              size="medium">
       <el-form-item label="入库状态" prop="receiptOrderStatus">
@@ -169,6 +169,7 @@ export default {
       multiple: true,
       // 显示搜索条件
       showSearch: true,
+      show: false,
       // 总条数
       total: 0,
       // 入库单表格数据

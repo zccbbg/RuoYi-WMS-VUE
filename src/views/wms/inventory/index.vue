@@ -1,37 +1,41 @@
 <template>
-  <div class="app-container" v-if="show">
-    <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
-             size="medium">
-      <el-form-item label="类型" prop="panelType">
-        <DictRadio v-model="queryParams.panelType" :radioData="dict.type.wms_inventory_panel_type" size="small"
-                   @change="handleQuery"></DictRadio>
-      </el-form-item>
-      <el-form-item label="物料" prop="itemId">
-        <item-select v-model="queryParams.itemId"></item-select>
-      </el-form-item>
-      <el-form-item label="仓库" prop="rackId">
-        <wms-warehouse-cascader v-model="queryParams.place" :checkStrictly=true></wms-warehouse-cascader>
-      </el-form-item>
-      <el-form-item label="库存" prop="quantity">
-        <number-range v-model="queryParams.quantityRange"></number-range>
-      </el-form-item>
-      <el-form-item class="flex_one tr">
-        <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
-      </el-form-item>
-    </el-form>
-    <el-row class="mb8" :gutter="10">
-<!--      <el-col :span="1.5">-->
-<!--        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading"-->
-<!--                   @click="handleExport"-->
-<!--                   v-hasPermi="['wms:item:export']">导出-->
-<!--        </el-button>-->
-<!--      </el-col>-->
-      <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-    <component :is="currentComponent" v-loading="loading" @update="getList"  :table-data="wmsInventoryList"></component>
-    <pagination v-show="total&gt;0" :limit.sync="pageReq.size" :page.sync="pageReq.page" :total="total"
-                @pagination="getList"></pagination>
+  <div class="app-container">
+    <div v-show="show">
+      <el-form class="ry_form" v-show="showSearch" :inline="true" label-width="100px" :model="queryParams" ref="queryForm"
+               size="medium">
+        <el-form-item label="类型" prop="panelType">
+          <DictRadio v-model="queryParams.panelType" :radioData="dict.type.wms_inventory_panel_type" size="small"
+                     @change="handleQuery"></DictRadio>
+        </el-form-item>
+        <el-form-item label="物料" prop="itemId">
+          <item-select v-model="queryParams.itemId"></item-select>
+        </el-form-item>
+        <el-form-item label="仓库" prop="rackId">
+          <wms-warehouse-cascader v-model="queryParams.place" :checkStrictly=true></wms-warehouse-cascader>
+        </el-form-item>
+        <el-form-item label="库存" prop="quantity">
+          <number-range v-model="queryParams.quantityRange"></number-range>
+        </el-form-item>
+        <el-form-item class="flex_one tr">
+          <el-button icon="el-icon-search" size="mini" type="primary" @click="handleQuery">搜索</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <el-row class="mb8" :gutter="10">
+        <!--      <el-col :span="1.5">-->
+        <!--        <el-button type="warning" plain icon="el-icon-download" size="mini" :loading="exportLoading"-->
+        <!--                   @click="handleExport"-->
+        <!--                   v-hasPermi="['wms:item:export']">导出-->
+        <!--        </el-button>-->
+        <!--      </el-col>-->
+        <right-toolbar :columns="columns" :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      </el-row>
+      <component :is="currentComponent" v-loading="loading" @update="getList"  :table-data="wmsInventoryList"></component>
+      <pagination v-show="total&gt;0" :limit.sync="pageReq.size" :page.sync="pageReq.page" :total="total"
+                  @pagination="getList"></pagination>
+    </div>
+    <SeeAdsComponent ref="seeAdsComponentRef" v-if="!show" @confirmOk="confirmOk"/>
+
 
   </div>
 </template>
@@ -49,10 +53,11 @@ import PanelByWarehouse from "@/views/wms/inventory/component/PanelByWarehouse.v
 import PanelByArea from "@/views/wms/inventory/component/PanelByArea.vue";
 import { isStarRepo } from "@/utils/is-star-plugin";
 import {mapGetters} from 'vuex'
+import SeeAdsComponent from '@/components/SeeAdsComponent.vue'
 
 export default {
   name: 'WmsInventory',
-  components: {PanelByArea, PanelByWarehouse, PanelByItemType, PanelByItem, ItemSelect, NumberRange},
+  components: { SeeAdsComponent, PanelByArea, PanelByWarehouse, PanelByItemType, PanelByItem, ItemSelect, NumberRange},
   dicts: ['wms_inventory_panel_type'],
   data() {
     return {
@@ -91,11 +96,9 @@ export default {
     }
   },
   async created() {
-    const res = await isStarRepo('zccbbg','RuoYi-Mall',this.userId,'http://wms.ichengle.top/inventory','ruoyi-mall-商城','https://gitee.com/zccbbg/RuoYi-Mall')
-    this.show = res;
-    if (res) {
-      this.getList()
-    }
+    this.$nextTick(()=>{
+      this.$refs.seeAdsComponentRef.show()
+    })
   },
   computed: {
     ...mapGetters(['userId']),
@@ -114,6 +117,12 @@ export default {
     }
   },
   methods: {
+    async confirmOk(success){
+      if (success) {
+       this.show = true;
+       this.getList()
+      }
+    },
     /** 查询库存列表 */
     getList() {
       this.loading = true
