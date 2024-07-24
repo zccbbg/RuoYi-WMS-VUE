@@ -147,6 +147,7 @@
 
 <script setup name="Merchant">
 import { listMerchant, getMerchant, delMerchant, addMerchant, updateMerchant } from "@/api/wms/merchant";
+import {ElMessageBox} from "element-plus";
 
 const { proxy } = getCurrentInstance();
 const { merchant_type } = proxy.useDict('merchant_type');
@@ -283,14 +284,22 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除往来单位编号为"' + _ids + '"的数据项？').then(function() {
-    loading.value = true;
+  proxy.$modal.confirm('确认删除往来单位【' + row.merchantName + '】吗？').then(function() {
     return delMerchant(_ids);
-  }).then(() => {
+  }).then((res) => {
     loading.value = true;
     getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {
+  }).catch((e) => {
+    if (e === 409) {
+      return ElMessageBox.alert(
+        '<div>往来单位【' + row.merchantName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '系统提示',
+        {
+          dangerouslyUseHTMLString: true,
+        }
+      )
+    }
   }).finally(() => {
     loading.value = false;
   });

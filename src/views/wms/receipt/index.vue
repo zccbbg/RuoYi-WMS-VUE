@@ -147,6 +147,7 @@
 import { listReceiptOrder, getReceiptOrder, delReceiptOrder, addReceiptOrder, updateReceiptOrder } from "@/api/wms/receiptOrder";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
+import {ElMessageBox} from "element-plus";
 const { proxy } = getCurrentInstance();
 const { wms_receipt_status, wms_receipt_type } = proxy.useDict("wms_receipt_status", "wms_receipt_type");
 
@@ -210,14 +211,23 @@ function handleAdd() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除入库单号为"' + row.receiptOrderNo + '"的数据项？').then(function() {
+  proxy.$modal.confirm('确认删除入库单【' + row.receiptOrderNo + '】吗？').then(function() {
     loading.value = true;
     return delReceiptOrder(_ids);
   }).then(() => {
     loading.value = true;
     getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {
+  }).catch((e) => {
+    if (e === 409) {
+      return ElMessageBox.alert(
+        '<div>入库单【' + row.receiptOrderNo + '】已入库，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '系统提示',
+        {
+          dangerouslyUseHTMLString: true,
+        }
+      )
+    }
   }).finally(() => {
     loading.value = false;
   });

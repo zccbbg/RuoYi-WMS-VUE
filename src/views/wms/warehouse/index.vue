@@ -262,17 +262,18 @@ const handleUpdateArea = (row) => {
 const  handleDeleteArea =  async (row) => {
   const _ids = row?.id || ids.value;
   await proxy?.$modal.confirm('确认删除库区【' + row?.areaName + '】吗？').finally(() => loading.value = false);
-  const res = await delArea(_ids);
-  if (res.code === 200 && !res.data) {
-    // 提示业务关联无法删除
-    ElMessageBox.alert(
-      '<div>库区【' + row.areaName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-      '系统提示',
-      {
-        dangerouslyUseHTMLString: true,
-      }
-    )
-    return
+  try {
+    await delArea(_ids);
+  } catch (e) {
+    if (e === 409) {
+      return ElMessageBox.alert(
+        '<div>库区【' + row.areaName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '系统提示',
+        {
+          dangerouslyUseHTMLString: true,
+        }
+      )
+    }
   }
   proxy?.$modal.msgSuccess("删除成功");
   await loadAreas();
