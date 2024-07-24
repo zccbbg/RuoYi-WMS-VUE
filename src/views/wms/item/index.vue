@@ -195,8 +195,8 @@
               </template>
             </el-table-column>
             <el-table-column label="操作" class-name="small-padding fixed-width" width="80" align="right">
-              <template #default="scope">
-                <el-button link icon="Delete" type="primary" @click="handleDeleteItemSku(scope)">删除</el-button>
+              <template #default="{ row }">
+                <el-button link icon="Delete" type="primary" @click="handleDeleteItemSku(row)">删除</el-button>
               </template>
             </el-table-column>
             <template #append v-if="skuForm.itemSkuList.length">
@@ -262,7 +262,7 @@
 <script setup name="Item">
 import {getItem, delItem, addItem, updateItem} from '@/api/wms/item';
 import {computed, getCurrentInstance, nextTick, onMounted, reactive, ref, toRefs} from 'vue';
-import {ElForm, ElTree, ElTreeSelect} from 'element-plus';
+import {ElForm, ElMessageBox, ElTree, ElTreeSelect} from 'element-plus';
 import {
   treeSelectItemCategory,
   updateItemCategory,
@@ -271,7 +271,7 @@ import {
   updateOrderNum
 } from "@/api/wms/itemCategory";
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
-import {listItemSkuPage} from "@/api/wms/itemSku";
+import {listItemSkuPage, delItemSku} from "@/api/wms/itemSku";
 import {useRoute} from "vue-router";
 import Qrcode from 'qrcode'
 import JSBarcode from 'jsbarcode'
@@ -474,8 +474,28 @@ const onAppendBtnClick = () => {
     quantity: null,
   })
 }
-const handleDeleteItemSku = (index) => {
-  skuForm.itemSkuList.splice(index.$index, 1)
+const handleDeleteItemSku = async (row) => {
+  if (skuForm.itemSkuList.length === 1) {
+    return proxy?.$modal.msgError("至少包含一个商品规格");
+  }
+  await proxy?.$modal.confirm('确认删除规格【' + row.skuName + '】吗？');
+  const delRes = await delItemSku(row.id);
+  console.info("delRes:", delRes)
+  if (delRes.code === 200 && !delRes.data) {
+    // 提示业务关联无法删除
+    ElMessageBox.alert(
+      '<div>规格【' + row.skuName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+      '系统提示',
+      {
+        dangerouslyUseHTMLString: true,
+      }
+    )
+    return
+  }
+  proxy?.$modal.msgSuccess("删除成功");
+  const res = await getItem(row.itemId);
+  skuForm.itemSkuList = res.data.sku
+  form.value = res.data
 }
 const collapse = (draggingNode, dropNode, type) => {
   //注掉的是同级拖拽
@@ -625,8 +645,19 @@ const submitCategoryForm = () => {
 /** 删除按钮操作 */
 const handleDelete = async (row) => {
   const _ids = row?.itemId || ids.value;
-  await proxy?.$modal.confirm('是否确认删除商品"' + row?.itemName + '"？');
-  await delItem(_ids);
+  await proxy?.$modal.confirm('确认删除商品【' + row?.itemName + '】吗？');
+  const res = await delItem(_ids);
+  if (res.code === 200 && !res.data) {
+    // 提示业务关联无法删除
+    ElMessageBox.alert(
+      '<div>规格【' + row.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+      '系统提示',
+      {
+        dangerouslyUseHTMLString: true,
+      }
+    )
+    return
+  }
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
 }
