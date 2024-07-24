@@ -650,7 +650,7 @@ const handleDelete = async (row) => {
   if (res.code === 200 && !res.data) {
     // 提示业务关联无法删除
     ElMessageBox.alert(
-      '<div>规格【' + row.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+      '<div>商品【' + row.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
       '系统提示',
       {
         dangerouslyUseHTMLString: true,
