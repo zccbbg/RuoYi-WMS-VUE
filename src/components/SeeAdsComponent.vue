@@ -35,10 +35,10 @@ export default {
     },
     show() {
       //如果是管理员的账号进入，直接过滤
-      // if (this.roles.includes("admin")) {
-      //   this.$emit("confirmOk", true)
-      //   return
-      // }
+      if (this.roles.includes("admin")) {
+        this.$emit("confirmOk", true)
+        return
+      }
       this.initMiniWechatImg()
       this.open = true
     },
