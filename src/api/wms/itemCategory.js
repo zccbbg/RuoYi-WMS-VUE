@@ -6,9 +6,17 @@ import request from '@/utils/request';
  * @returns {*}
  */
 
-export function listItemCategory(query) {
+export function listItemCategoryPage(query) {
   return request({
     url: '/wms/itemCategory/list',
+    method: 'get',
+    params: query
+  });
+};
+
+export function listItemCategory(query) {
+  return request({
+    url: '/wms/itemCategory/listNoPage',
     method: 'get',
     params: query
   });
