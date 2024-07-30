@@ -103,6 +103,18 @@
             <dict-tag :options="wms_receipt_status" :value="row.receiptOrderStatus" />
           </template>
         </el-table-column>
+        <el-table-column label="数量/金额" align="left">
+          <template #default="{ row }">
+            <div class="flex-space-between">
+              <span>数量：</span>
+              <span>{{ Number(row.totalQuantity).toFixed(0) }}</span>
+            </div>
+            <div class="flex-space-between" v-if="row.payableAmount || row.payableAmount === 0">
+              <span>金额：</span>
+              <span>{{ row.payableAmount }} 元</span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="创建/操作" align="left">
           <template #default="{ row }">
             <div>创建：{{ row.createBy }}</div>
