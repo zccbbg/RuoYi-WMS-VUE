@@ -62,14 +62,14 @@
           </div>
           <el-table :data="itemList" @selection-change="handleSelectionChange" :span-method="spanMethod" border empty-text="暂无商品" v-loading="loading">
             <el-table-column label="分类" prop="itemCategoryId" width="100">
-              <template #default="{ row }">
-                <div>{{ row.itemCategoryInfo.categoryName }}</div>
+              <template #default="scope">
+                <div>{{ scope.row.itemCategoryName }}</div>
               </template>
             </el-table-column>
             <el-table-column label="商品信息" prop="itemId">
               <template #default="{ row }">
-                <div>{{ row.itemInfo.itemName + (row.itemInfo.itemNo ? ('(' +  row.itemInfo.itemNo + ')') : '') }}</div>
-                <div v-if="row.itemInfo.itemBrand">{{ row.itemInfo.itemBrand ? ('品牌：' + row.itemInfo.itemBrand) : '' }}</div>
+                <div>{{ row.itemName + (row.itemNo ? ('(' +  row.itemNo + ')') : '') }}</div>
+                <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + row.itemBrand) : '' }}</div>
               </template>
             </el-table-column>
             <el-table-column label="规格信息" prop="skuName" align="right">
@@ -100,6 +100,8 @@
               </template>
             </el-table-column>
           </el-table>
+          <pagination v-show="total>0" :total="total" v-model:page="queryParams.pageNum"
+                      v-model:limit="queryParams.pageSize" @pagination="getList"/>
         </div>
       </div>
     </el-card>
@@ -273,7 +275,6 @@ import {listItemSkuPage, delItemSku} from "@/api/wms/itemSku";
 import {useRoute} from "vue-router";
 import Qrcode from 'qrcode'
 import JSBarcode from 'jsbarcode'
-import {useWmsStore} from '@/store/modules/wms'
 
 const barcode = ref(null)
 const route = useRoute()
@@ -307,10 +308,8 @@ const remove = async (node, data) => {
   await proxy?.$modal.confirm('确认删除分类【' + data.label + '】吗？');
   await delItemCategory(ids);
   proxy?.$modal.msgSuccess("删除成功");
-  await useWmsStore().getItemCategoryList()
-  await useWmsStore().getItemCategoryTreeList()
-  await useWmsStore().getItemAndItemSku()
   await getItemCategoryTreeSelect();
+  await getList();
 }
 const edit = (node, data) => {
   if (node.level > 1) {
@@ -414,29 +413,23 @@ const {queryParams, form, rules} = toRefs(data);
 const {queryParams: typeQueryParams, form: categoryForm, rules: typeRules} = toRefs(categoryData);
 const currentType = ref()
 /** 查询物料列表 */
-const getList = () => {
+const getList = async () => {
   loading.value = true;
-  itemList.value = useWmsStore().itemSkuList;
-  if (queryParams.value.itemCategory) {
-    itemList.value = itemList.value.filter(it => it.itemCategoryId === queryParams.value.itemCategory)
-  }
-  if (queryParams.value.itemName) {
-    itemList.value = itemList.value.filter(it => it.itemInfo.itemName === queryParams.value.itemName)
-  }
-  if (queryParams.value.itemNo) {
-    itemList.value = itemList.value.filter(it => it.itemInfo.itemNo === queryParams.value.itemNo)
-  }
+  const res = await listItemSkuPage(queryParams.value);
+  itemList.value = res.rows;
+  total.value = res.total;
   loading.value = false;
 }
 const getItemCategoryTreeSelect = async () => {
-  const data = [...useWmsStore().itemCategoryTreeList];
-  deptOptions2.value = data;
-  data.unshift({
-    id: -1,
-    label: '全部',
-    children: []
+  treeSelectItemCategory().then(res => {
+    res.data.unshift({
+      id: -1,
+      label: '全部',
+      children: []
+    })
+    deptOptions.value = res.data;
+    deptOptions2.value = res.data.filter(it => it.label !== '全部');
   })
-  deptOptions.value = data;
 }
 const handleAddType = (show) => {
   categoryDialog.title = "新增商品分类";
@@ -500,8 +493,9 @@ const handleDeleteItemSku = async (row) => {
     }
   }
   proxy?.$modal.msgSuccess("删除成功");
-  await useWmsStore().getItemAndItemSku();
-  getList()
+  const res = await getItem(row.itemId);
+  skuForm.itemSkuList = res.data.sku
+  form.value = res.data
 }
 const collapse = (draggingNode, dropNode, type) => {
   //注掉的是同级拖拽
@@ -586,10 +580,10 @@ const handleUpdate = (row) => {
   nextTick(async () => {
     reset();
     const _id = row?.itemId || ids.value[0]
-    const item = useWmsStore().itemMap.get(_id)
-    Object.assign(skuForm.itemSkuList, item.itemSkuList)
+    const res = await getItem(_id);
+    Object.assign(skuForm.itemSkuList, res.data.sku)
     skuLoading.value = false
-    Object.assign(form.value, item);
+    Object.assign(form.value, res.data);
   });
 }
 const handleQueryType = (node, data) => {
@@ -628,8 +622,7 @@ const submitForm = () => {
         }
         proxy?.$modal.msgSuccess("修改成功");
         dialog.visible = false;
-        await useWmsStore().getItemAndItemSku();
-        getList()
+        await getList();
       }
     }
   });
@@ -645,23 +638,20 @@ const submitCategoryForm = () => {
       }
       proxy?.$modal.msgSuccess("修改成功");
       categoryDialog.visible = false;
-      await useWmsStore().getItemCategoryList()
-      await useWmsStore().getItemCategoryTreeList();
-      await useWmsStore().getItemAndItemSku();
-      getItemCategoryTreeSelect()
+      await getItemCategoryTreeSelect();
     }
   });
 }
 /** 删除按钮操作 */
 const handleDelete = async (row) => {
   const _ids = row?.itemId || ids.value;
-  await proxy?.$modal.confirm('确认删除商品【' + row.itemInfo.itemName + '】吗？');
+  await proxy?.$modal.confirm('确认删除商品【' + row?.itemName + '】吗？');
   try {
     await delItem(_ids);
   } catch (e) {
     if (e === 409) {
       return ElMessageBox.alert(
-        '<div>商品【' + row.itemInfo.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '<div>商品【' + row.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
         '系统提示',
         {
           dangerouslyUseHTMLString: true,
@@ -670,8 +660,7 @@ const handleDelete = async (row) => {
     }
   }
   proxy?.$modal.msgSuccess("删除成功");
-  await useWmsStore().getItemAndItemSku();
-  getList()
+  await getList();
 }
 const treeRef = ref(null)
 /** 导出按钮操作 */
