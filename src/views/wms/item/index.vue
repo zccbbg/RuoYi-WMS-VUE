@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-width="68px">
-        <el-form-item label="商品条码" prop="itemCode">
+        <el-form-item label="商品编号" prop="itemCode">
           <el-input v-model="queryParams.itemCode" placeholder="请输入商品编号" clearable @keyup.enter="handleQuery"/>
         </el-form-item>
         <el-form-item label="商品名称" prop="itemName">
@@ -28,8 +28,8 @@
       <div style="display: flex;align-items: start">
         <div>
           <div style="display: flex;align-items: center;justify-content: space-between">
-            <span style="font-size: 14px;line-height: 16px">商品分类</span>
-            <el-button class="mr10" style="font-size:12px;line-height: 14px" size="small" plain
+            <span style="font-size: 18px;line-height: 18px">商品分类</span>
+            <el-button class="mr10" style="font-size:12px;line-height: 14px" plain
                      @click="handleAddType(false)"
                      type="primary" icon="Plus">新增分类
             </el-button>
@@ -67,10 +67,10 @@
         </div>
         <div style="width: 100%;position: relative">
           <div style="display: flex;align-items: start;justify-content: space-between">
-            <span class="mr10" style="font-size: 14px;">商品列表</span>
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" class="mb10" size="small">新增商品</el-button>
+            <span class="mr10" style="font-size: 18px;">商品列表</span>
+            <el-button type="primary" plain icon="Plus" @click="handleAdd" class="mb10">新增商品</el-button>
           </div>
-          <el-table :data="itemList" @selection-change="handleSelectionChange" :span-method="spanMethod" border empty-text="暂无商品" v-loading="loading">
+          <el-table :data="itemList" @selection-change="handleSelectionChange" :span-method="spanMethod" border empty-text="暂无商品" v-loading="loading" cell-class-name="my-cell">
             <el-table-column label="商品信息" prop="itemId">
               <template #default="{ row }">
                 <div>{{ row.itemName + (row.itemCode ? ('(' +  row.itemCode + ')') : '') }}</div>
@@ -78,9 +78,12 @@
                 <div v-if="row.itemCategory">{{ row.itemCategory ? ('分类：' + useWmsStore().itemCategoryMap.get(row.itemCategory)?.categoryName) : '' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="规格信息" prop="skuName" align="right">
+            <el-table-column label="规格信息" prop="skuName" align="left">
               <template #default="{ row }">
-                <div>{{ row.skuName + '(' + row.barcode + ')' }}</div>
+                <div>{{ row.skuName }}</div>
+                <div v-if="row.skuCode">编号：{{ row.skuCode }}</div>
+                <div v-if="row.skuNumber">货号：{{ row.skuNumber }}</div>
+                <div v-if="row.barcode">条码：{{ row.barcode }}</div>
 <!--                <div>-->
 <!--                  <el-button link type="primary" icon="Download" @click="downloadBarcode(row)">下载条形码</el-button>-->
 <!--                  <el-button link type="primary" icon="Download" @click="downloadQrcode(row)" style="margin-left: 0!important;">-->
@@ -94,12 +97,35 @@
                 <div>{{ getVolumeText(row) }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="重量(kg)"  prop="grossWeight" width="120" align="right">
+            <el-table-column label="重量(kg)" width="160" align="left">
               <template #default="{ row }">
-                <div>{{ (row.grossWeight || row.grossWeight === 0) ? row.grossWeight : '' }}</div>
+                <div v-if="row.netWeight" class="flex-space-between">
+                  <span>净重：</span>
+                  <div>
+                    {{ (row.netWeight || row.netWeight === 0) ? row.netWeight : '' }}
+                  </div>
+                </div>
+                <div v-if="row.grossWeight" class="flex-space-between">
+                  <span>毛重：</span>
+                  <div>
+                    {{ (row.grossWeight || row.grossWeight === 0) ? row.grossWeight : '' }}
+                  </div>
+                </div>
               </template>
             </el-table-column>
-            <el-table-column label="操作" align="right" prop="itemId" width="160">
+            <el-table-column label="价格(元)" width="160" align="left">
+              <template #default="{ row }">
+                <div v-if="row.costPrice" class="flex-space-between">
+                  <span>成本价：</span>
+                  <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
+                </div>
+                <div v-if="row.sellingPrice" class="flex-space-between">
+                  <span>销售价：</span>
+                  <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="right" prop="itemId" width="200">
               <template #default="scope">
                 <el-button link type="primary" @click="handleDelete(scope.row)" icon="Delete">删除</el-button>
                 <el-button link type="primary" @click="handleUpdate(scope.row)" icon="Edit">修改</el-button>
@@ -469,7 +495,7 @@ const getList = async () => {
 }
 const getItemCategoryTreeSelect = async () => {
   const data = [...useWmsStore().itemCategoryTreeList];
-  deptOptions2.value = data;
+  deptOptions2.value = [...useWmsStore().itemCategoryTreeList];
   data.unshift({
     id: -1,
     label: '全部',
@@ -788,8 +814,5 @@ onMounted(() => {
 .el-table__empty-text {
   width: 100%;
 }
-.flex-center {
-  display: flex;
-  align-items: center;
-}
+
 </style>

@@ -302,3 +302,14 @@
  .tc {
    text-align: center;
  }
+
+ .flex-center {
+   display: flex;
+   align-items: center;
+ }
+
+ .flex-space-between {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+ }
