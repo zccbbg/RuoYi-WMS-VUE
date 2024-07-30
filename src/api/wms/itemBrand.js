@@ -1,9 +1,18 @@
 import request from '@/utils/request'
 
 // 查询商品品牌列表
-export function listItemBrand(query) {
+export function listItemBrandPage(query) {
   return request({
     url: '/wms/itemBrand/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询商品品牌列表
+export function listItemBrand(query) {
+  return request({
+    url: '/wms/itemBrand/listNoPage',
     method: 'get',
     params: query
   })

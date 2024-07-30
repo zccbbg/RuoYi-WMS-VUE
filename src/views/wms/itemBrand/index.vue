@@ -50,16 +50,6 @@
         </el-table-column>
       </el-table>
 
-      <el-row>
-        <pagination
-          v-show="total>0"
-          :total="total"
-          v-model:page="queryParams.pageNum"
-          v-model:limit="queryParams.pageSize"
-          @pagination="getList"
-        />
-      </el-row>
-
     </el-card>
     <!-- 添加或修改商品品牌对话框 -->
     <el-drawer :title="title" v-model="open" size="50%" append-to-body>
@@ -79,8 +69,9 @@
 </template>
 
 <script setup name="ItemBrand">
-import { listItemBrand, getItemBrand, delItemBrand, addItemBrand, updateItemBrand } from "@/api/wms/itemBrand";
+import { listItemBrand, getItemBrand, delItemBrand, addItemBrand, updateItemBrand, listItemBrandPage } from "@/api/wms/itemBrand";
 import {ElMessageBox} from "element-plus";
+import {useWmsStore} from '@/store/modules/wms'
 
 const { proxy } = getCurrentInstance();
 
@@ -112,13 +103,15 @@ const data = reactive({
 const { queryParams, form, rules } = toRefs(data);
 
 /** 查询商品品牌列表 */
-function getList() {
+async function getList() {
   loading.value = true;
-  listItemBrand(queryParams.value).then(response => {
-    itemBrandList.value = response.rows;
-    total.value = response.total;
-    loading.value = false;
-  });
+  await useWmsStore().getItemBrandList()
+  let list = [...useWmsStore().itemBrandList]
+  if (queryParams.value.brandName) {
+    list = list.filter(it => it.brandName === queryParams.value.brandName)
+  }
+  itemBrandList.value = list;
+  loading.value = false;
 }
 
 // 取消按钮
