@@ -6,9 +6,23 @@ import request from '@/utils/request';
  * @returns {*}
  */
 
-export function listItemCategory(query) {
+export function listItemCategoryPage(query) {
   return request({
     url: '/wms/itemCategory/list',
+    method: 'get',
+    params: query
+  });
+};
+
+/**
+ * 查询物料类型列表
+ * @param query
+ * @returns {*}
+ */
+
+export function listItemCategory(query) {
+  return request({
+    url: '/wms/itemCategory/listNoPage',
     method: 'get',
     params: query
   });

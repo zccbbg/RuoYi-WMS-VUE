@@ -275,6 +275,7 @@ import {listItemSkuPage, delItemSku} from "@/api/wms/itemSku";
 import {useRoute} from "vue-router";
 import Qrcode from 'qrcode'
 import JSBarcode from 'jsbarcode'
+import {useWmsStore} from '@/store/modules/wms'
 
 const barcode = ref(null)
 const route = useRoute()
@@ -308,8 +309,7 @@ const remove = async (node, data) => {
   await proxy?.$modal.confirm('确认删除分类【' + data.label + '】吗？');
   await delItemCategory(ids);
   proxy?.$modal.msgSuccess("删除成功");
-  await getItemCategoryTreeSelect();
-  await getList();
+  Promise.all([useWmsStore().getItemCategoryList(), useWmsStore().getItemCategoryTreeList()]).then(() => getItemCategoryTreeSelect())
 }
 const edit = (node, data) => {
   if (node.level > 1) {
@@ -421,15 +421,15 @@ const getList = async () => {
   loading.value = false;
 }
 const getItemCategoryTreeSelect = async () => {
-  treeSelectItemCategory().then(res => {
-    res.data.unshift({
-      id: -1,
-      label: '全部',
-      children: []
-    })
-    deptOptions.value = res.data;
-    deptOptions2.value = res.data.filter(it => it.label !== '全部');
+  const data = [...useWmsStore().itemCategoryTreeList];
+  deptOptions2.value = data;
+  data.unshift({
+    id: -1,
+    label: '全部',
+    children: []
   })
+  deptOptions.value = data;
+  console.info("getItemCategoryTreeSelect")
 }
 const handleAddType = (show) => {
   categoryDialog.title = "新增商品分类";
@@ -636,9 +636,9 @@ const submitCategoryForm = () => {
       } else {
         await addItemCategory(categoryForm.value).finally(() => buttonLoading.value = false);
       }
-      proxy?.$modal.msgSuccess("修改成功");
+      proxy?.$modal.msgSuccess(categoryForm.value.id ? '修改成功' : '新增成功');
       categoryDialog.visible = false;
-      await getItemCategoryTreeSelect();
+      Promise.all([useWmsStore().getItemCategoryList(), useWmsStore().getItemCategoryTreeList()]).then(() => getItemCategoryTreeSelect())
     }
   });
 }
