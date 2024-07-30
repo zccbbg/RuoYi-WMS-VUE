@@ -9,7 +9,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="商品编码">
-                <el-input class="w200" v-model="query.itemNo" clearable placeholder="商品编码"></el-input>
+                <el-input class="w200" v-model="query.itemCode" clearable placeholder="商品编码"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -21,7 +21,7 @@
           <el-row :gutter="20">
             <el-col :span="8">
               <el-form-item label="规格编码">
-                <el-input class="w200" v-model="query.outSkuId" clearable placeholder="规格编码"></el-input>
+                <el-input class="w200" v-model="query.barcode" clearable placeholder="规格编码"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -29,19 +29,21 @@
             </el-col>
           </el-row>
         </el-form>
-            <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品" :span-method="spanMethod" v-loading="loading" ref="skuSelectFormRef">
+            <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品" v-loading="loading" ref="skuSelectFormRef" cell-class-name="my-cell">
               <el-table-column type="selection" width="55" :reserve-selection="true"/>
               <el-table-column label="商品信息" prop="itemId">
                 <template #default="{ row }">
-                  <div>商品名称：{{ row.itemName }}</div>
-                  <div v-if="row.itemNo">商品编码：{{ row.itemNo }}</div>
-                  <div v-if="row.itemBrand">商品品牌：{{ row.itemBrand }}</div>
+                  <div>{{ row.itemName }}</div>
+                  <div v-if="row.itemCode">编码：{{ row.itemCode }}</div>
+                  <div v-if="row.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.itemBrand).brandName }}</div>
                 </template>
               </el-table-column>
-              <el-table-column label="规格信息" prop="skuName">
+              <el-table-column label="规格信息">
                 <template #default="{ row }">
-                  <div>规格名称：{{ row.skuName }}</div>
-                  <div v-if="row.outSkuId">规格编码：{{ row.outSkuId }}</div>
+                  <div>{{ row.skuName }}</div>
+                  <div v-if="row.skuCode">编码：{{ row.skuCode }}</div>
+                  <div v-if="row.skuNumber">货号：{{ row.skuNumber }}</div>
+                  <div v-if="row.barcode">条码：{{ row.barcode }}</div>
                 </template>
               </el-table-column>
               <el-table-column label="长宽高(cm)" align="right" width="250">
@@ -49,9 +51,28 @@
                   <div>{{ getVolumeText(row) }}</div>
                 </template>
               </el-table-column>
-              <el-table-column label="重量(kg)"  prop="weight" width="120" align="right">
+              <el-table-column label="重量(kg)" width="160" align="left">
                 <template #default="{ row }">
-                  <div>{{ (row.weight || row.weight === 0) ? row.weight : '' }}</div>
+                  <div v-if="row.netWeight" class="flex-space-between">
+                    <span>净重：</span>
+                    <div>{{ (row.netWeight || row.netWeight === 0) ? row.netWeight : '' }}</div>
+                  </div>
+                  <div v-if="row.grossWeight" class="flex-space-between">
+                    <span>毛重：</span>
+                    <div>{{ (row.grossWeight || row.grossWeight === 0) ? row.grossWeight : '' }}</div>
+                  </div>
+                </template>
+              </el-table-column>
+              <el-table-column label="价格(元)" width="160" align="left">
+                <template #default="{ row }">
+                  <div v-if="row.costPrice" class="flex-space-between">
+                    <span>成本价：</span>
+                    <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
+                  </div>
+                  <div v-if="row.sellingPrice" class="flex-space-between">
+                    <span>销售价：</span>
+                    <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
+                  </div>
                 </template>
               </el-table-column>
             </el-table>
@@ -77,6 +98,8 @@ import {ElForm} from "element-plus";
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {listItemSkuPage} from "@/api/wms/itemSku";
 import {useRouter} from "vue-router";
+import {useWmsStore} from '@/store/modules/wms'
+
 const { proxy } = getCurrentInstance()
 
 const spanMethod = computed(() => getRowspanMethod(list.value, ['itemId']))
@@ -85,9 +108,9 @@ const loading = ref(false)
 const deptOptions = ref([]);
 const query = reactive({
   itemName: '',
-  itemNo: '',
+  itemCode: '',
   skuName: '',
-  outSkuId: ''
+  barcode: ''
 });
 const selectItemSkuVoCheck = ref([])
 const skuSelectFormRef = ref(null)
@@ -194,4 +217,9 @@ onMounted(() => {
   loadAll();
 })
 </script>
+<style lang="scss">
+.el-table .my-cell {
+  vertical-align: top
+}
+</style>
 
