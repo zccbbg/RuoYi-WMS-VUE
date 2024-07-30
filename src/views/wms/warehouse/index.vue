@@ -26,7 +26,7 @@
           >
             <template #default="{ node, data }">
             <span class="custom-tree-node">
-              <span>{{ node.data.warehouseName }}{{ node.data.warehouseNo ? ' ( 编号：' + node.data.warehouseNo + ' )' : ''}}</span>
+              <span>{{ node.data.warehouseName }}{{ node.data.warehouseCode ? ' ( 编号：' + node.data.warehouseCode + ' )' : ''}}</span>
               <span>
                 <el-button link type="primary" icon="Delete" style="font-size: 12px" @click.stop="handleDelete(data)">删除</el-button>
                 <el-button link type="primary" icon="Edit" style="font-size: 12px" @click.stop="handleUpdate(data)">修改</el-button>
@@ -42,7 +42,7 @@
           </div>
           <el-table :data="wmsAreaList" class="mt10" border v-loading="loading" empty-text="暂无库区">
             <el-table-column label="名称" prop="areaName" />
-            <el-table-column label="编号" prop="areaNo" />
+            <el-table-column label="编号" prop="areaCode" />
             <el-table-column label="备注" prop="remark" />
             <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
               <template v-slot="scope">
@@ -64,8 +64,8 @@
         <el-form-item label="名称" prop="warehouseName">
           <el-input v-model="form.warehouseName" placeholder="请输入名称" />
         </el-form-item>
-        <el-form-item label="编号" prop="warehouseNo">
-          <el-input v-model="form.warehouseNo" placeholder="请输入编号" />
+        <el-form-item label="编号" prop="warehouseCode">
+          <el-input v-model="form.warehouseCode" placeholder="请输入编号" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
@@ -89,8 +89,8 @@
             <el-option v-for="item in warehouseList" :key="item.id" :label="item.warehouseName" :value="item.id" />
           </el-select>
         </el-form-item>
-        <el-form-item label="编号" prop="areaNo">
-          <el-input v-model="areaForm.areaNo" placeholder="请输入编号" />
+        <el-form-item label="编号" prop="areaCode">
+          <el-input v-model="areaForm.areaCode" placeholder="请输入编号" />
         </el-form-item>
         <el-form-item label="备注">
           <el-input v-model="areaForm.remark" placeholder="请输入备注" />
@@ -118,8 +118,8 @@ const wmsStore = useWmsStore();
 const { proxy } = getCurrentInstance();
 
 const customNodeClass = (data, node) => {
-  if (data.warehouseNo) {
-    return 'warehouseNo';
+  if (data.warehouseCode) {
+    return 'warehouseCode';
   }
   return null
 }
@@ -147,7 +147,7 @@ const areaDialog = reactive({
 
 const areaForm = reactive({
   id: undefined,
-  areaNo: undefined,
+  areaCode: undefined,
   areaName: undefined,
   warehouseId: undefined,
   remark: undefined,
@@ -177,7 +177,7 @@ const areaFormSubmitForm = () => {
 }
 const initFormData = {
   id: undefined,
-  warehouseNo: undefined,
+  warehouseCode: undefined,
   warehouseName: undefined,
   remark: undefined,
 }
@@ -186,7 +186,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 100,
-    warehouseNo: undefined,
+    warehouseCode: undefined,
     warehouseName: undefined,
   },
   rules: {

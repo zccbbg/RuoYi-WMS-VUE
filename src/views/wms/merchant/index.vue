@@ -2,9 +2,9 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="编号" prop="merchantNo">
+        <el-form-item label="编号" prop="merchantCode">
           <el-input
-            v-model="queryParams.merchantNo"
+            v-model="queryParams.merchantCode"
             placeholder="请输入编号"
             clearable
             @keyup.enter="handleQuery"
@@ -59,7 +59,7 @@
 
       <el-table v-loading="loading" :data="merchantList" border class="mt20">
         <el-table-column label="id" prop="id" v-if="false"/>
-        <el-table-column label="编号" prop="merchantNo" />
+        <el-table-column label="编号" prop="merchantCode" />
         <el-table-column label="名称" prop="merchantName" />
         <el-table-column label="企业类型" prop="merchantType">
           <template #default="scope">
@@ -91,8 +91,8 @@
     <!-- 添加或修改往来单位对话框 -->
     <el-drawer :title="title" v-model="open" append-to-body size="50%">
       <el-form ref="merchantRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="编号" prop="merchantNo">
-          <el-input v-model="form.merchantNo" placeholder="请输入编号" />
+        <el-form-item label="编号" prop="merchantCode">
+          <el-input v-model="form.merchantCode" placeholder="请输入编号" />
         </el-form-item>
         <el-form-item label="名称" prop="merchantName">
           <el-input v-model="form.merchantName" placeholder="请输入名称" />
@@ -165,12 +165,12 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    merchantNo: undefined,
+    merchantCode: undefined,
     merchantName: undefined,
     merchantType: undefined,
   },
   rules: {
-    merchantNo: [
+    merchantCode: [
       { required: true, message: "编号不能为空", trigger: "blur" }
     ],
     merchantName: [
@@ -204,7 +204,7 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    merchantNo: null,
+    merchantCode: null,
     merchantName: null,
     merchantType: null,
     merchantLevel: null,
