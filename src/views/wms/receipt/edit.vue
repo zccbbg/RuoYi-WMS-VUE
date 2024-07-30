@@ -63,13 +63,18 @@
                 ></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="11">
+            <el-col :span="6">
               <div style="display: flex;align-items: start">
                 <el-form-item label="金额" prop="payableAmount">
                   <el-input-number v-model="form.payableAmount" :precision="2" :min="0"></el-input-number>
                 </el-form-item>
                 <el-button link type="primary" @click="handleAutoCalc" class="ml20" style="line-height: 32px">自动计算</el-button>
               </div>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="数量" prop="totalQuantity">
+                <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0" :disabled="true"></el-input-number>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
@@ -84,23 +89,23 @@
           <el-table :data="form.details" border empty-text="暂无商品明细">
             <el-table-column label="商品信息" prop="prod.itemName">
               <template #default="{ row }">
-                <div>{{ row.prod.itemName + (row.prod.itemNo ? ('(' + row.prod.itemNo + ')') : '') }}</div>
-                <div v-if="row.prod.itemBrand">品牌：{{ row.prod.itemBrand }}</div>
+                <div>{{ row.prod.itemName + (row.prod.itemCode ? ('(' + row.prod.itemCode + ')') : '') }}</div>
+                <div v-if="row.prod.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.prod.itemBrand).brandName }}</div>
               </template>
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
-                <div>{{ row.prod.skuName + '(' + row.prod.outSkuId + ')' }}</div>
+                <div>{{ row.prod.skuName + '(' + row.prod.barcode + ')' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="库区" prop="prod.skuName" width="280">
+            <el-table-column label="库区" prop="prod.skuName" width="200">
               <template #default="{ row }">
                 <el-select v-model="row.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || !!form.areaId" filterable>
                   <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)" :key="item.id" :label="item.areaName" :value="item.id"/>
                 </el-select>
               </template>
             </el-table-column>
-            <el-table-column label="数量" prop="quantity" width="220">
+            <el-table-column label="数量" prop="quantity" width="180">
 <!--              <template #header>-->
 <!--                <span>数量</span>-->
 <!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(1)">批量</el-button>-->
@@ -110,10 +115,11 @@
                   v-model="scope.row.quantity"
                   placeholder="数量"
                   :min="1"
+                  @change="handleChangeQuantity"
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="价格" prop="amount" width="220">
+            <el-table-column label="价格" prop="amount" width="180">
 <!--              <template #header>-->
 <!--                <span>单价</span>-->
 <!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(2)">批量</el-button>-->
@@ -128,20 +134,33 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="过期时间" prop="expirationTime" width="180">
-<!--              <template #header>-->
-<!--                <span>过期时间</span>-->
-<!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="batchSetExpirationTimeDialog.visible = true">批量</el-button>-->
-<!--              </template>-->
+            <el-table-column label="批号" prop="batchNumber" width="150">
               <template #default="scope">
-                <el-date-picker
-                  v-model="scope.row.expirationTime"
-                  type="date"
-                  placeholder="过期时间"
-                  format="YYYY-MM-DD"
-                  value-format="YYYY-MM-DD HH:mm:ss"
-                  style="width: 150px!important;"
-                />
+                <el-input v-model="scope.row.batchNumber"></el-input>
+              </template>
+            </el-table-column>
+            <el-table-column label="生产日期/过期时间" width="250">
+              <template #default="scope">
+                <div class="flex-center">
+                  <span>生产日期：</span>
+                  <el-date-picker
+                    v-model="scope.row.productionDate"
+                    type="date"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    style="width: 150px!important;"
+                  />
+                </div>
+                <div class="flex-center mt5">
+                  <span>过期时间：</span>
+                  <el-date-picker
+                    v-model="scope.row.expirationTime"
+                    type="date"
+                    format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    style="width: 150px!important;"
+                  />
+                </div>
               </template>
             </el-table-column>
             <el-table-column label="操作" width="100" align="right" fixed="right">
@@ -202,7 +221,8 @@ const initFormData = {
   remark: undefined,
   warehouseId: undefined,
   areaId: undefined,
-  details: []
+  totalQuantity: 0,
+  details: [],
 }
 const data = reactive({
   form: {...initFormData},
@@ -292,7 +312,8 @@ const save = () => {
       prod: { warehouseId: null; areaId: null; rackId: null; id: any; };
       amount: any;
       quantity: any;
-      delFlag: any;
+      batchNumber: any;
+      productionDate: any;
       expirationTime: any;
       warehouseId: string;
       areaId: string;
@@ -302,6 +323,8 @@ const save = () => {
         skuId: it.prod.id,
         amount: it.amount,
         quantity: it.quantity,
+        batchNumber: it.batchNumber,
+        productionDate: it.productionDate,
         expirationTime: it.expirationTime,
         warehouseId: form.value.warehouseId,
         areaId: it.areaId
@@ -318,6 +341,7 @@ const save = () => {
       orderNo: form.value.orderNo,
       remark: form.value.remark,
       payableAmount: form.value.payableAmount,
+      totalQuantity: form.value.totalQuantity,
       details: details
     }
     if (params.id) {
@@ -377,7 +401,8 @@ const doWarehousing = () => {
       prod: { warehouseId: null; areaId: null; rackId: null; id: any; };
       amount: any;
       quantity: any;
-      delFlag: any;
+      batchNumber: any;
+      productionDate: any;
       expirationTime: any;
       warehouseId: string;
       areaId: string;
@@ -387,6 +412,8 @@ const doWarehousing = () => {
         skuId: it.prod.id,
         amount: it.amount,
         quantity: it.quantity,
+        batchNumber: it.batchNumber,
+        productionDate: it.productionDate,
         expirationTime: it.expirationTime,
         warehouseId: form.value.warehouseId,
         areaId: it.areaId
@@ -403,6 +430,7 @@ const doWarehousing = () => {
       orderNo: form.value.orderNo,
       remark: form.value.remark,
       payableAmount: form.value.payableAmount,
+      totalQuantity: form.value.totalQuantity,
       details: details
     }
     warehousing(params).then((res) => {
@@ -438,16 +466,18 @@ const loadDetail = (id: any) => {
         prod: {
           id: it.skuId,
           itemName: it.itemName,
-          itemNo: it.itemNo,
+          itemCode: it.itemCode,
           itemBrand: it.itemBrand,
           skuName: it.skuName,
-          outSkuId: it.outSkuId
+          barcode: it.barcode
         },
         id: it.id,
         receiptOrderId: it.receiptOrderId,
         skuId: it.skuId,
         amount: it.amount,
         quantity: it.quantity,
+        batchNumber: it.batchNumber,
+        productionDate: it.productionDate,
         expirationTime: it.expirationTime,
         remark: it.remark,
         warehouseId: it.warehouseId,
@@ -478,6 +508,16 @@ const handleChangeArea = (e) => {
   form.value.details.forEach(it => {
     it.areaId = e
   })
+}
+
+const handleChangeQuantity = () => {
+  let sum = 0
+  form.value.details.forEach(it => {
+    if (it.quantity) {
+      sum += it.quantity
+    }
+  })
+  form.value.totalQuantity = sum
 }
 
 const handleAutoCalc = () => {
