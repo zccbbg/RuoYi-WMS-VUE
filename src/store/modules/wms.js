@@ -92,9 +92,10 @@ export const useWmsStore = defineStore('wms', () => {
         itemBrandList.value = res.data
         const map = new Map()
         itemBrandList.value.forEach(supplier => {
-          map.set(supplier.id, supplier)
+          map.set(supplier.id, {...supplier})
         })
         itemBrandMap.value = map
+        console.info("itemBrandMap:", itemBrandMap.value)
         resolve()
       }).catch(() => reject())
     })

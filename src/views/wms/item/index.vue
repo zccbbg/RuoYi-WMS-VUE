@@ -2,11 +2,21 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-width="68px">
-        <el-form-item label="商品条码" prop="itemNo">
-          <el-input v-model="queryParams.itemNo" placeholder="请输入商品编号" clearable @keyup.enter="handleQuery"/>
+        <el-form-item label="商品条码" prop="itemCode">
+          <el-input v-model="queryParams.itemCode" placeholder="请输入商品编号" clearable @keyup.enter="handleQuery"/>
         </el-form-item>
         <el-form-item label="商品名称" prop="itemName">
           <el-input v-model="queryParams.itemName" placeholder="请输入商品名称" clearable @keyup.enter="handleQuery"/>
+        </el-form-item>
+        <el-form-item label="商品品牌" prop="itemBrand">
+          <el-select v-model="queryParams.itemBrand" clearable filterable>
+            <el-option
+              v-for="item in useWmsStore().itemBrandList"
+              :key="item.id"
+              :label="item.brandName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -61,26 +71,22 @@
             <el-button type="primary" plain icon="Plus" @click="handleAdd" class="mb10" size="small">新增商品</el-button>
           </div>
           <el-table :data="itemList" @selection-change="handleSelectionChange" :span-method="spanMethod" border empty-text="暂无商品" v-loading="loading">
-            <el-table-column label="分类" prop="itemCategoryId" width="100">
-              <template #default="scope">
-                <div>{{ scope.row.itemCategoryName }}</div>
-              </template>
-            </el-table-column>
             <el-table-column label="商品信息" prop="itemId">
               <template #default="{ row }">
-                <div>{{ row.itemName + (row.itemNo ? ('(' +  row.itemNo + ')') : '') }}</div>
-                <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + row.itemBrand) : '' }}</div>
+                <div>{{ row.itemName + (row.itemCode ? ('(' +  row.itemCode + ')') : '') }}</div>
+                <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + useWmsStore().itemBrandMap.get(row.itemBrand)?.brandName) : '' }}</div>
+                <div v-if="row.itemCategory">{{ row.itemCategory ? ('分类：' + useWmsStore().itemCategoryMap.get(row.itemCategory)?.categoryName) : '' }}</div>
               </template>
             </el-table-column>
             <el-table-column label="规格信息" prop="skuName" align="right">
               <template #default="{ row }">
-                <div>{{ row.skuName + '(' + row.outSkuId + ')' }}</div>
-                <div>
-                  <el-button link type="primary" icon="Download" @click="downloadBarcode(row)">下载条形码</el-button>
-                  <el-button link type="primary" icon="Download" @click="downloadQrcode(row)" style="margin-left: 0!important;">
-                    下载二维码
-                  </el-button>
-                </div>
+                <div>{{ row.skuName + '(' + row.barcode + ')' }}</div>
+<!--                <div>-->
+<!--                  <el-button link type="primary" icon="Download" @click="downloadBarcode(row)">下载条形码</el-button>-->
+<!--                  <el-button link type="primary" icon="Download" @click="downloadQrcode(row)" style="margin-left: 0!important;">-->
+<!--                    下载二维码-->
+<!--                  </el-button>-->
+<!--                </div>-->
               </template>
             </el-table-column>
             <el-table-column label="长宽高(cm)" align="right" width="250">
@@ -88,9 +94,9 @@
                 <div>{{ getVolumeText(row) }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="重量(kg)"  prop="weight" width="120" align="right">
+            <el-table-column label="重量(kg)"  prop="grossWeight" width="120" align="right">
               <template #default="{ row }">
-                <div>{{ (row.weight || row.weight === 0) ? row.weight : '' }}</div>
+                <div>{{ (row.grossWeight || row.grossWeight === 0) ? row.grossWeight : '' }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="right" prop="itemId" width="160">
@@ -137,8 +143,8 @@
           </el-row>
           <el-row :gutter="24">
             <el-col :span="12">
-              <el-form-item label="商品编号" prop="itemNo">
-                <el-input v-model="form.itemNo" placeholder="请输入编号"/>
+              <el-form-item label="商品编号" prop="itemCode">
+                <el-input v-model="form.itemCode" placeholder="请输入编号"/>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -150,7 +156,14 @@
           <el-row :gutter="24">
             <el-col :span="12">
               <el-form-item label="商品品牌" prop="itemBrand">
-                <el-input v-model="form.itemBrand" placeholder="请输入商品品牌"/>
+                <el-select v-model="form.itemBrand" clearable filterable style="width: 100%!important;">
+                  <el-option
+                    v-for="item in useWmsStore().itemBrandList"
+                    :key="item.id"
+                    :label="item.brandName"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -172,31 +185,65 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column label="条码/二维码" prop="outSkuId">
+            <el-table-column label="编码/货号/条码" width="250">
               <template #default="scope">
-                <el-input v-model="scope.row.outSkuId" placeholder="留空会自动生成"/>
-              </template>
-            </el-table-column>
-            <el-table-column label="长宽高(cm)" width="560">
-              <template #default="scope">
-                <div style="display: flex;align-items: center">
-                  <span class="mr5">长</span>
-                  <el-input-number :controls="false" :min="0" :precision="1" class="mr5" v-model="scope.row.length" placeholder="请输入长(cm)"/>
-                  <span class="mr5">宽</span>
-                  <el-input-number :controls="false" :min="0" :precision="1" class="mr5" v-model="scope.row.width" placeholder="请输入宽(cm)"/>
-                  <span class="mr5">高</span>
-                  <el-input-number :controls="false" :min="0" :precision="1" v-model="scope.row.height" placeholder="请输入高(cm)"/>
+                <div class="flex-center">
+                  <span class="mr5" style="width: 50px">编码</span>
+                  <el-input v-model="scope.row.skuCode" />
+                </div>
+                <div class="flex-center mt5">
+                  <span class="mr5" style="width: 50px">货号</span>
+                  <el-input v-model="scope.row.skuNumber" />
+                </div>
+                <div class="flex-center mt5">
+                  <span class="mr5" style="width: 50px">条码</span>
+                  <el-input v-model="scope.row.barcode" />
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="重量(kg)" prop="weight" width="200">
+            <el-table-column label="长/宽/高(cm)" width="200">
               <template #default="scope">
-                <el-input-number :controls="false" :min="0" :precision="3" v-model="scope.row.weight" placeholder="请输入重量(kg)"/>
+                <div class="flex-center">
+                  <span class="mr5">长</span>
+                  <el-input-number :controls="false" :min="0" :precision="1" class="mr5" v-model="scope.row.length" />
+                </div>
+                <div class="flex-center mt5">
+                  <span class="mr5">宽</span>
+                  <el-input-number :controls="false" :min="0" :precision="1" class="mr5" v-model="scope.row.width" />
+                </div>
+                <div class="flex-center mt5">
+                  <span class="mr5">高</span>
+                  <el-input-number :controls="false" :min="0" :precision="1" v-model="scope.row.height" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="净重/毛重(kg)" width="240">
+              <template #default="scope">
+                <div class="flex-center">
+                  <span class="mr5">净重</span>
+                  <el-input-number :controls="false" :min="0" :precision="3" v-model="scope.row.netWeight"/>
+                </div>
+                <div class="flex-center mt5">
+                  <span class="mr5">毛重</span>
+                  <el-input-number :controls="false" :min="0" :precision="3" v-model="scope.row.grossWeight"/>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="成本价/销售价(元)" width="240">
+              <template #default="scope">
+                <div class="flex-center">
+                  <span class="mr5">成本价</span>
+                  <el-input-number :controls="false" :min="0" :precision="2" v-model="scope.row.costPrice"/>
+                </div>
+                <div class="flex-center mt5">
+                  <span class="mr5">销售价</span>
+                  <el-input-number :controls="false" :min="0" :precision="2" v-model="scope.row.sellingPrice"/>
+                </div>
               </template>
             </el-table-column>
             <el-table-column label="操作" class-name="small-padding fixed-width" width="80" align="right">
-              <template #default="{ row }">
-                <el-button link icon="Delete" type="primary" @click="handleDeleteItemSku(row)">删除</el-button>
+              <template #default="scope">
+                <el-button link icon="Delete" type="primary" @click="handleDeleteItemSku(scope.row, scope.$index)">删除</el-button>
               </template>
             </el-table-column>
             <template #append v-if="skuForm.itemSkuList.length">
@@ -332,7 +379,7 @@ const categoryDialog = reactive({
 const showParent = ref(false)
 const initFormData = {
   id: undefined,
-  itemNo: undefined,
+  itemCode: undefined,
   itemName: undefined,
   itemCategory: undefined,
   unit: undefined,
@@ -352,7 +399,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    itemNo: undefined,
+    itemCode: undefined,
     itemName: undefined,
     itemType: undefined
   },
@@ -455,7 +502,7 @@ const resetItemSkuList = () => {
   skuForm.itemSkuList.push({
     id: '',
     itemId: '',
-    outSkuId: '',
+    barcode: '',
     inPrice: null,
     outPrice: null,
     skuName: '',
@@ -467,14 +514,18 @@ const onAppendBtnClick = () => {
   skuForm.itemSkuList.push({
     id: '',
     itemId: '',
-    outSkuId: '',
+    barcode: '',
     inPrice: null,
     outPrice: null,
     skuName: '',
     quantity: null,
   })
 }
-const handleDeleteItemSku = async (row) => {
+const handleDeleteItemSku = async (row, index) => {
+  if (!row.id) {
+    skuForm.itemSkuList.splice(index, 1);
+    return
+  }
   if (skuForm.itemSkuList.length === 1) {
     return proxy?.$modal.msgError("至少包含一个商品规格");
   }
@@ -671,7 +722,7 @@ const handleExport = () => {
 }
 /** 下载条形码 */
 const downloadBarcode = (row) => {
-  JSBarcode(barcode.value, row.outSkuId, {
+  JSBarcode(barcode.value, row.barcode, {
     format: "CODE128",
     displayValue: true
   })
@@ -679,19 +730,19 @@ const downloadBarcode = (row) => {
   //创建a标签
   let a = document.createElement('a')
   //设置下载文件的名字
-  a.download = row.outSkuId
+  a.download = row.barcode
   a.href = canvas.toDataURL("image/png")
   a.click()
 }
 /** 下载二维码 */
 const downloadQrcode = async (row) => {
-  qrcode.value = await Qrcode.toDataURL(row.outSkuId)
+  qrcode.value = await Qrcode.toDataURL(row.barcode)
   //创建a标签
   let a = document.createElement('a')
   //获取二维码的url并赋值为a.href
   a.href = qrcode.value
   //设置下载文件的名字
-  a.download = row.outSkuId
+  a.download = row.barcode
   //点击事件，相当于下载
   a.click()
   //提示信息
@@ -736,5 +787,9 @@ onMounted(() => {
 
 .el-table__empty-text {
   width: 100%;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
 }
 </style>
