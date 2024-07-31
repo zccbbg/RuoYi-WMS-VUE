@@ -273,16 +273,16 @@ const handleOkClick = (item) => {
     form.value.details.push(
       {
         itemSku: {...it},
-        money: undefined,
-        subPrice: undefined,
+        amount: undefined,
         quantity: it.quantity,
+        batchNumber: undefined,
+        productionDate: undefined,
         expirationTime: undefined,
         warehouseId: form.value.warehouseId,
         areaId: form.value.areaId
       }
     )
   })
-  console.info("details:", form.value.details)
 }
 // 选择商品 end
 
@@ -290,7 +290,6 @@ const handleOkClick = (item) => {
 const receiptForm = ref()
 
 const save = () => {
-  console.log('form', form.value)
   //验证receiptForm表单
   receiptForm.value?.validate((valid: any) => {
     // 校验
@@ -308,18 +307,7 @@ const save = () => {
       }
     }
     // 构建参数
-    const details = form.value.details.map((it: {
-      place: any[];
-      itemSku: { warehouseId: null; areaId: null; rackId: null; id: any; };
-      amount: any;
-      quantity: any;
-      batchNumber: any;
-      productionDate: any;
-      expirationTime: any;
-      warehouseId: string;
-      areaId: string;
-      rackId: string;
-    }) => {
+    const details = form.value.details.map(it => {
       return {
         skuId: it.itemSku.id,
         amount: it.amount,
@@ -399,18 +387,7 @@ const doWarehousing = () => {
       return ElMessage.error('请选择数量')
     }
     // 构建参数
-    const details = form.value.details.map((it: {
-      place: any[];
-      itemSku: { warehouseId: null; areaId: null; rackId: null; id: any; };
-      amount: any;
-      quantity: any;
-      batchNumber: any;
-      productionDate: any;
-      expirationTime: any;
-      warehouseId: string;
-      areaId: string;
-      rackId: string;
-    }) => {
+    const details = form.value.details.map(it => {
       return {
         skuId: it.itemSku.id,
         amount: it.amount,
@@ -465,33 +442,7 @@ onMounted(() => {
 // 获取入库单详情
 const loadDetail = (id) => {
   getReceiptOrder(id).then((response) => {
-    let { details } = response.data
-    details = details.map(it => {
-      return {
-        itemSku: {
-          ...it.itemSku
-        },
-        id: it.id,
-        receiptOrderId: it.receiptOrderId,
-        skuId: it.skuId,
-        amount: it.amount,
-        quantity: it.quantity,
-        batchNumber: it.batchNumber,
-        productionDate: it.productionDate,
-        expirationTime: it.expirationTime,
-        remark: it.remark,
-        warehouseId: it.warehouseId,
-        areaId: it.areaId,
-      }
-    })
-    console.info("details:", details)
-    const areaSet = new Set(details.map(it => it.areaId))
-    form.value = {
-      ...response.data,
-      details,
-      warehouseId: details.length ? details[0].warehouseId : null,
-      areaId: details.length ? (areaSet.size === 1 ? details[0].areaId : undefined) : null
-    }
+    form.value = {...response.data}
     Promise.resolve();
   }).then(() => {
   })
