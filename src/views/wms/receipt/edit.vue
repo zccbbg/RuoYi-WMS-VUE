@@ -165,7 +165,7 @@
             </el-table-column>
             <el-table-column label="操作" width="100" align="right" fixed="right">
               <template #default="scope">
-                <el-button icon="Delete" type="danger" plain size="small" @click="form.details.splice(scope.$index, 1)" link>删除</el-button>
+                <el-button icon="Delete" type="danger" plain size="small" @click="handleDeleteDetail(scope.row, scope.$index)" link>删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -205,6 +205,7 @@ import SkuSelect from "../../components/SkuSelect.vue";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import { numSub } from '@/utils/ruoyi'
+import { delReceiptOrderDetail } from '@/api/wms/receiptOrderDetail'
 
 const {proxy} = getCurrentInstance();
 const { wms_receipt_type } = proxy.useDict("wms_receipt_type");
@@ -248,9 +249,9 @@ const data = reactive({
     receiptOrderStatus: [
       {required: true, message: "入库状态不能为空", trigger: "change"}
     ],
-    warehouseId: [
-      {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
-    ],
+    // warehouseId: [
+    //   {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
+    // ],
   }
 });
 const { form, rules} = toRefs(data);
@@ -295,16 +296,15 @@ const save = () => {
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
-    if (!form.value.details?.length) {
-      return ElMessage.error('请选择商品')
-    }
-    const invalidAreaList = form.value.details.filter(it => !it.areaId )
-    if (invalidAreaList?.length) {
-      return ElMessage.error('请选择库区')
-    }
-    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
-    if (invalidQuantityList?.length) {
-      return ElMessage.error('请选择数量')
+    if (form.value.details?.length) {
+      const invalidAreaList = form.value.details.filter(it => !it.areaId )
+      if (invalidAreaList?.length) {
+        return ElMessage.error('请选择库区')
+      }
+      const invalidQuantityList = form.value.details.filter(it => !it.quantity)
+      if (invalidQuantityList?.length) {
+        return ElMessage.error('请选择数量')
+      }
     }
     // 构建参数
     const details = form.value.details.map((it: {
@@ -489,8 +489,8 @@ const loadDetail = (id: any) => {
     form.value = {
       ...response.data,
       details,
-      warehouseId: details[0].warehouseId,
-      areaId: areaSet.size === 1 ? details[0].areaId : undefined
+      warehouseId: details.length ? details[0].warehouseId : null,
+      areaId: details.length ? (areaSet.size === 1 ? details[0].areaId : undefined) : null
     }
     Promise.resolve();
   }).then(() => {
@@ -531,6 +531,19 @@ const handleAutoCalc = () => {
     }
   })
   form.value.payableAmount = sum
+}
+
+const handleDeleteDetail = (row, index) => {
+  if (row.id) {
+    proxy.$modal.confirm('确认删除本条商品明细吗？').then(function () {
+      return delReceiptOrderDetail(row.id);
+    }).then(() => {
+      form.value.details.splice(index, 1)
+      proxy.$modal.msgSuccess("删除成功");
+    }).catch(() => {});
+  } else {
+    form.value.details.splice(index, 1)
+  }
 }
 </script>
 
