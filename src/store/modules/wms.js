@@ -17,7 +17,7 @@ export const useWmsStore = defineStore('wms', () => {
       warehouseList.value = res.data;
       const map = new Map();
       warehouseList.value.forEach((supplier) => {
-        map.set(supplier.id, supplier.warehouseName);
+        map.set(supplier.id, supplier);
       });
       warehouseMap.value = map;
     });
@@ -31,7 +31,7 @@ export const useWmsStore = defineStore('wms', () => {
       areaList.value = res.data;
       const map = new Map();
       areaList.value.forEach((supplier) => {
-        map.set(supplier.id, supplier.areaName);
+        map.set(supplier.id, supplier);
       });
       areaMap.value = map;
     });

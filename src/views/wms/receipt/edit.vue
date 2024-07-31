@@ -249,15 +249,15 @@ const data = reactive({
     receiptOrderStatus: [
       {required: true, message: "入库状态不能为空", trigger: "change"}
     ],
-    // warehouseId: [
-    //   {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
-    // ],
+    warehouseId: [
+      {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
+    ],
   }
 });
 const { form, rules} = toRefs(data);
 
 const cancel = () => {
-  const obj = {path: "/basic/receiptOrder"};
+  const obj = {path: "/receiptOrder"};
   proxy?.$tab.closeOpenPage(obj);
 }
 const skuSelectShow: Ref<boolean> = ref<boolean>(false)
@@ -342,6 +342,8 @@ const save = () => {
       remark: form.value.remark,
       payableAmount: form.value.payableAmount,
       totalQuantity: form.value.totalQuantity,
+      warehouseId: form.value.warehouseId,
+      areaId: form.value.areaId,
       details: details
     }
     if (params.id) {
@@ -431,6 +433,8 @@ const doWarehousing = () => {
       remark: form.value.remark,
       payableAmount: form.value.payableAmount,
       totalQuantity: form.value.totalQuantity,
+      warehouseId: form.value.warehouseId,
+      areaId: form.value.areaId,
       details: details
     }
     warehousing(params).then((res) => {
@@ -458,7 +462,7 @@ onMounted(() => {
 
 
 // 获取入库单详情
-const loadDetail = (id: any) => {
+const loadDetail = (id) => {
   getReceiptOrder(id).then((response) => {
     let { details } = response.data
     details = details.map(it => {

@@ -98,12 +98,18 @@
             <div>{{ useWmsStore().merchantMap.get(row.merchantId)?.merchantName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="入库状态" align="left" prop="receiptOrderStatus">
+        <el-table-column label="仓库/库区" align="left" width="200">
+          <template #default="{ row }">
+            <div>仓库：{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
+            <div v-if="row.areaId">库区：{{ useWmsStore().areaMap.get(row.areaId).areaName }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" width="120">
           <template #default="{ row }">
             <dict-tag :options="wms_receipt_status" :value="row.receiptOrderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量/金额" align="left">
+        <el-table-column label="数量/金额(元)" align="left">
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>
@@ -111,7 +117,7 @@
             </div>
             <div class="flex-space-between" v-if="row.payableAmount || row.payableAmount === 0">
               <span>金额：</span>
-              <span>{{ row.payableAmount }} 元</span>
+              <span>{{ row.payableAmount }}</span>
             </div>
           </template>
         </el-table-column>
@@ -131,7 +137,7 @@
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width" width="150">
           <template #default="scope">
             <div>
-              <el-button link type="primary" icon="View" @click="" v-hasPermi="['wms:receiptOrder:query']">查看</el-button>
+              <el-button link type="primary" icon="View" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:receiptOrder:query']">查看</el-button>
               <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receiptOrder:edit']" :disabled="[-1, 1].includes(scope.row.receiptOrderStatus)">修改</el-button>
             </div>
             <div class="mt10">
@@ -246,7 +252,11 @@ function handleDelete(row) {
 }
 
 function handleUpdate(row) {
-  proxy.$router.push({ path: "/basic/receiptOrderEdit",  query: { id: row.id } });
+  proxy.$router.push({ path: "/receiptOrderEdit",  query: { id: row.id } });
+}
+
+function handleGoDetail(row) {
+  proxy.$router.push({ path: "/receiptOrderDetail",  query: { id: row.id } });
 }
 
 /** 导出按钮操作 */
