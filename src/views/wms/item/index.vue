@@ -73,9 +73,9 @@
           <el-table :data="itemList" @selection-change="handleSelectionChange" :span-method="spanMethod" border empty-text="暂无商品" v-loading="loading" cell-class-name="my-cell">
             <el-table-column label="商品信息" prop="itemId">
               <template #default="{ row }">
-                <div>{{ row.itemName + (row.itemCode ? ('(' +  row.itemCode + ')') : '') }}</div>
-                <div v-if="row.itemBrand">{{ row.itemBrand ? ('品牌：' + useWmsStore().itemBrandMap.get(row.itemBrand)?.brandName) : '' }}</div>
-                <div v-if="row.itemCategory">{{ row.itemCategory ? ('分类：' + useWmsStore().itemCategoryMap.get(row.itemCategory)?.categoryName) : '' }}</div>
+                <div>{{ row.item.itemName + (row.item.itemCode ? ('(' +  row.item.itemCode + ')') : '') }}</div>
+                <div v-if="row.item.itemBrand">{{ row.item.itemBrand ? ('品牌：' + useWmsStore().itemBrandMap.get(row.item.itemBrand)?.brandName) : '' }}</div>
+                <div v-if="row.item.itemCategory">{{ row.item.itemCategory ? ('分类：' + useWmsStore().itemCategoryMap.get(row.item.itemCategory)?.categoryName) : '' }}</div>
               </template>
             </el-table-column>
             <el-table-column label="规格信息" prop="skuName" align="left">

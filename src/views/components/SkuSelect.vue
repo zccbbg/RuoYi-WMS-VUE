@@ -33,9 +33,9 @@
               <el-table-column type="selection" width="55" :reserve-selection="true"/>
               <el-table-column label="商品信息" prop="itemId">
                 <template #default="{ row }">
-                  <div>{{ row.itemName }}</div>
-                  <div v-if="row.itemCode">编码：{{ row.itemCode }}</div>
-                  <div v-if="row.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.itemBrand).brandName }}</div>
+                  <div>{{ row.item.itemName }}</div>
+                  <div v-if="row.item.itemCode">编码：{{ row.item.itemCode }}</div>
+                  <div v-if="row.item.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.item.itemBrand).brandName }}</div>
                 </template>
               </el-table-column>
               <el-table-column label="规格信息">
