@@ -87,18 +87,18 @@
             </div>
           </div>
           <el-table :data="form.details" border empty-text="暂无商品明细">
-            <el-table-column label="商品信息" prop="prod.itemName">
+            <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="{ row }">
-                <div>{{ row.prod.itemName + (row.prod.itemCode ? ('(' + row.prod.itemCode + ')') : '') }}</div>
-                <div v-if="row.prod.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.prod.itemBrand).brandName }}</div>
+                <div>{{ row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '') }}</div>
+                <div v-if="row.itemSku.item.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}</div>
               </template>
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
-                <div>{{ row.prod.skuName + '(' + row.prod.barcode + ')' }}</div>
+                <div>{{ row.itemSku.skuName + '(' + row.itemSku.barcode + ')' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="库区" prop="prod.skuName" width="200">
+            <el-table-column label="库区" prop="itemSku.skuName" width="200">
               <template #default="{ row }">
                 <el-select v-model="row.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || !!form.areaId" filterable>
                   <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)" :key="item.id" :label="item.areaName" :value="item.id"/>
@@ -272,7 +272,7 @@ const handleOkClick = (item) => {
   item.forEach((it) => {
     form.value.details.push(
       {
-        prod: it,
+        itemSku: {...it},
         money: undefined,
         subPrice: undefined,
         quantity: it.quantity,
@@ -282,6 +282,7 @@ const handleOkClick = (item) => {
       }
     )
   })
+  console.info("details:", form.value.details)
 }
 // 选择商品 end
 
@@ -309,7 +310,7 @@ const save = () => {
     // 构建参数
     const details = form.value.details.map((it: {
       place: any[];
-      prod: { warehouseId: null; areaId: null; rackId: null; id: any; };
+      itemSku: { warehouseId: null; areaId: null; rackId: null; id: any; };
       amount: any;
       quantity: any;
       batchNumber: any;
@@ -320,7 +321,7 @@ const save = () => {
       rackId: string;
     }) => {
       return {
-        skuId: it.prod.id,
+        skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
         batchNumber: it.batchNumber,
@@ -400,7 +401,7 @@ const doWarehousing = () => {
     // 构建参数
     const details = form.value.details.map((it: {
       place: any[];
-      prod: { warehouseId: null; areaId: null; rackId: null; id: any; };
+      itemSku: { warehouseId: null; areaId: null; rackId: null; id: any; };
       amount: any;
       quantity: any;
       batchNumber: any;
@@ -411,7 +412,7 @@ const doWarehousing = () => {
       rackId: string;
     }) => {
       return {
-        skuId: it.prod.id,
+        skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
         batchNumber: it.batchNumber,
@@ -467,13 +468,8 @@ const loadDetail = (id) => {
     let { details } = response.data
     details = details.map(it => {
       return {
-        prod: {
-          id: it.skuId,
-          itemName: it.itemName,
-          itemCode: it.itemCode,
-          itemBrand: it.itemBrand,
-          skuName: it.skuName,
-          barcode: it.barcode
+        itemSku: {
+          ...it.itemSku
         },
         id: it.id,
         receiptOrderId: it.receiptOrderId,
