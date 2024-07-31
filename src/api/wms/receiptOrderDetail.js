@@ -42,3 +42,11 @@ export function delReceiptOrderDetail(id) {
     method: 'delete'
   })
 }
+
+// 查询入库单详情列表
+export function listByReceiptOrderId(receiptOrderId) {
+  return request({
+    url: '/wms/receiptOrderDetail/list/' + receiptOrderId,
+    method: 'get'
+  })
+}
