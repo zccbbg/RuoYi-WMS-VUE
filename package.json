@@ -30,6 +30,7 @@
     "qrcode": "^1.5.3",
     "vue": "3.2.45",
     "vue-cropper": "1.0.3",
+    "vue-plugin-hiprint": "^0.0.56",
     "vue-router": "4.1.4"
   },
   "devDependencies": {

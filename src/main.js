@@ -42,6 +42,8 @@ import ImagePreview from "@/components/ImagePreview"
 import TreeSelect from '@/components/TreeSelect'
 // 字典标签组件
 import DictTag from '@/components/DictTag'
+// 打印插件
+import { hiPrintPlugin } from 'vue-plugin-hiprint';
 
 const app = createApp(App)
 
@@ -71,6 +73,7 @@ app.use(router)
 app.use(store)
 app.use(plugins)
 app.use(elementIcons)
+app.use(hiPrintPlugin, '$hiprint', false);
 app.component('svg-icon', SvgIcon)
 
 directive(app)
