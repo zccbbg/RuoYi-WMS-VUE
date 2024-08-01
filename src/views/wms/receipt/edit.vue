@@ -201,7 +201,7 @@
         :model-value="skuSelectShow"
         @handleOkClick="handleOkClick"
         @handleCancelClick="skuSelectShow = false"
-        width="60%"
+        :size="'80%'"
       />
     </div>
     <div class="footer-global">

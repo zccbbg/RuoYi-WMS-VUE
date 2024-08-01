@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :model-value="show" title="商品选择" :width="width" @close="handleCancelClick" :close-on-click-modal="false" append-to-body>
+  <el-drawer :model-value="show" title="商品选择" @close="handleCancelClick" :size="size" :close-on-click-modal="false" append-to-body>
         <el-form :inline="true" label-width="68px">
           <el-row :gutter="20">
             <el-col :span="8">
@@ -46,9 +46,16 @@
                   <div v-if="row.barcode">条码：{{ row.barcode }}</div>
                 </template>
               </el-table-column>
-              <el-table-column label="长宽高(cm)" align="right" width="250">
+              <el-table-column label="价格(元)" width="160" align="left">
                 <template #default="{ row }">
-                  <div>{{ getVolumeText(row) }}</div>
+                  <div v-if="row.costPrice" class="flex-space-between">
+                    <span>成本价：</span>
+                    <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
+                  </div>
+                  <div v-if="row.sellingPrice" class="flex-space-between">
+                    <span>销售价：</span>
+                    <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column label="重量(kg)" width="160" align="left">
@@ -63,16 +70,9 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column label="价格(元)" width="160" align="left">
+              <el-table-column label="长宽高(cm)" align="right" width="250">
                 <template #default="{ row }">
-                  <div v-if="row.costPrice" class="flex-space-between">
-                    <span>成本价：</span>
-                    <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
-                  </div>
-                  <div v-if="row.sellingPrice" class="flex-space-between">
-                    <span>销售价：</span>
-                    <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
-                  </div>
+                  <div>{{ getVolumeText(row) }}</div>
                 </template>
               </el-table-column>
             </el-table>
@@ -90,7 +90,7 @@
       </span>
       </div>
     </template>
-  </el-dialog>
+  </el-drawer>
 </template>
 <script setup lang="ts" name="SkuSelect">
 import {computed, getCurrentInstance, onMounted, reactive, ref} from 'vue';
@@ -173,7 +173,7 @@ const goCreateItem = () => {
 // 定义props
 const props = defineProps<{
   modelValue?: boolean
-  width: number | string
+  size: number | string
 }>()
 
 const show = computed(() => {
