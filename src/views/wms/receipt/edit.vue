@@ -198,7 +198,7 @@
 </template>
 
 <script setup name="ReceiptOrderEdit">
-import {computed, getCurrentInstance, onMounted, reactive, ref, Ref, toRef, toRefs, watch} from "vue";
+import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
 import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing, generateReceiptOrderNo} from "@/api/wms/receiptOrder";
 import {ElMessage} from "element-plus";
 import SkuSelect from "../../components/SkuSelect.vue";
@@ -260,7 +260,7 @@ const cancel = () => {
   const obj = {path: "/receiptOrder"};
   proxy?.$tab.closeOpenPage(obj);
 }
-const skuSelectShow: Ref<boolean> = ref<boolean>(false)
+const skuSelectShow = ref(false)
 
 // 选择商品 start
 const showAddItem = () => {
@@ -291,7 +291,7 @@ const receiptForm = ref()
 
 const save = () => {
   //验证receiptForm表单
-  receiptForm.value?.validate((valid: any) => {
+  receiptForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
@@ -370,7 +370,7 @@ const updateToInvalid = () => {
 }
 
 const doWarehousing = () => {
-  receiptForm.value?.validate((valid: any) => {
+  receiptForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
