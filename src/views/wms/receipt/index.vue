@@ -299,7 +299,7 @@ function resetQuery() {
 
 /** 新增按钮操作 */
 function handleAdd() {
-  proxy.$router.push({ path: "/basic/receiptOrderEdit" });
+  proxy.$router.push({ path: "/receiptOrderEdit" });
 }
 
 /** 删除按钮操作 */

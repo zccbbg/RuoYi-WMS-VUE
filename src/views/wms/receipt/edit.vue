@@ -197,7 +197,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="ReceiptOrderEdit">
+<script setup name="ReceiptOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, Ref, toRef, toRefs, watch} from "vue";
 import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing, generateReceiptOrderNo} from "@/api/wms/receiptOrder";
 import {ElMessage} from "element-plus";
