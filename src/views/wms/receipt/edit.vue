@@ -221,12 +221,12 @@
 
 <script setup name="ReceiptOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing, generateReceiptOrderNo} from "@/api/wms/receiptOrder";
+import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing} from "@/api/wms/receiptOrder";
 import {ElMessage} from "element-plus";
 import SkuSelect from "../../components/SkuSelect.vue";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
-import { numSub } from '@/utils/ruoyi'
+import { numSub, generateNo } from '@/utils/ruoyi'
 import { delReceiptOrderDetail } from '@/api/wms/receiptOrderDetail'
 
 const {proxy} = getCurrentInstance();
@@ -458,9 +458,7 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    generateReceiptOrderNo().then((res) => {
-      form.value.receiptOrderNo = res.msg
-    })
+    form.value.receiptOrderNo = generateNo()
   }
 })
 
