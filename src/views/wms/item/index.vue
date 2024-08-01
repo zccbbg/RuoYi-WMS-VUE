@@ -92,9 +92,16 @@
 <!--                </div>-->
               </template>
             </el-table-column>
-            <el-table-column label="长宽高(cm)" align="right" width="250">
+            <el-table-column label="价格(元)" width="160" align="left">
               <template #default="{ row }">
-                <div>{{ getVolumeText(row) }}</div>
+                <div v-if="row.costPrice" class="flex-space-between">
+                  <span>成本价：</span>
+                  <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
+                </div>
+                <div v-if="row.sellingPrice" class="flex-space-between">
+                  <span>销售价：</span>
+                  <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
+                </div>
               </template>
             </el-table-column>
             <el-table-column label="重量(kg)" width="160" align="left">
@@ -113,16 +120,9 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="价格(元)" width="160" align="left">
+            <el-table-column label="长宽高(cm)" align="right" width="250">
               <template #default="{ row }">
-                <div v-if="row.costPrice" class="flex-space-between">
-                  <span>成本价：</span>
-                  <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
-                </div>
-                <div v-if="row.sellingPrice" class="flex-space-between">
-                  <span>销售价：</span>
-                  <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
-                </div>
+                <div>{{ getVolumeText(row) }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="right" prop="itemId" width="200">
