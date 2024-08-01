@@ -209,7 +209,7 @@
                   <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:receiptOrder:remove']" :disabled="scope.row.receiptOrderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:receiptOrder:export']">打印</el-button>
+              <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:receiptOrder:export']">打印</el-button>
             </div>
           </template>
         </el-table-column>
@@ -234,6 +234,8 @@ import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
 import {listByReceiptOrderId} from "@/api/wms/receiptOrderDetail";
 import {ElMessageBox} from "element-plus";
+import receiptPanel from "@/components/PrintTemplate/receipt-panel";
+
 const { proxy } = getCurrentInstance();
 const { wms_receipt_status, wms_receipt_type } = proxy.useDict("wms_receipt_status", "wms_receipt_type");
 const receiptOrderList = ref([]);
@@ -342,10 +344,49 @@ function handleGoDetail(row) {
 }
 
 /** 导出按钮操作 */
-function handleExport() {
-  proxy.download('wms/receiptOrder/export', {
-    ...queryParams.value
-  }, `receiptOrder_${new Date().getTime()}.xlsx`)
+async function handlePrint(row) {
+  const res = await getReceiptOrder(row.id)
+  const receiptOrder = res.data
+  let table = []
+  if (receiptOrder.details?.length) {
+    table = receiptOrder.details.map(detail => {
+      return {
+        itemName: detail.itemSku.item.itemName,
+        skuName: detail.itemSku.skuName,
+        areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
+        batchNumber: detail.batchNumber,
+        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
+        expirationTime: proxy.parseTime(detail.expirationTime, '{y}-{m}-{d}'),
+        quantity: Number(detail.quantity).toFixed(0),
+        amount: detail.amount
+      }
+    })
+  }
+  const printData = {
+    receiptOrderNo: receiptOrder.receiptOrderNo,
+    receiptOrderType: proxy.selectDictLabel(wms_receipt_type.value, receiptOrder.receiptOrderType),
+    receiptOrderStatus: proxy.selectDictLabel(wms_receipt_status.value, receiptOrder.receiptOrderStatus),
+    merchantName: useWmsStore().merchantMap.get(receiptOrder.merchantId)?.merchantName,
+    orderNo: receiptOrder.orderNo,
+    warehouseName: useWmsStore().warehouseMap.get(receiptOrder.warehouseId)?.warehouseName,
+    areaName: useWmsStore().areaMap.get(receiptOrder.areaId)?.areaName,
+    totalQuantity: Number(receiptOrder.totalQuantity).toFixed(0),
+    payableAmount: receiptOrder.payableAmount + '元',
+    createBy: receiptOrder.createBy,
+    createTime: receiptOrder.createTime,
+    updateBy: receiptOrder.updateBy,
+    updateTime: receiptOrder.updateTime,
+    remark: receiptOrder.remark,
+    table
+  }
+  let printTemplate = new proxy.$hiprint.PrintTemplate({template: receiptPanel})
+  printTemplate.print(printData, {}, {
+    styleHandler: () => {
+      let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
+      console.info("css:", css)
+      return css
+    }
+  })
 }
 
 
