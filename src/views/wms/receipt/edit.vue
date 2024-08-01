@@ -278,7 +278,8 @@ const data = reactive({
 });
 const { form, rules} = toRefs(data);
 
-const cancel = () => {
+const cancel = async () => {
+  await proxy?.$modal.confirm('确认取消编辑入库单吗？');
   const obj = {path: "/receiptOrder"};
   proxy?.$tab.closeOpenPage(obj);
 }
@@ -311,7 +312,8 @@ const handleOkClick = (item) => {
 // 初始化receipt-order-form ref
 const receiptForm = ref()
 
-const save = () => {
+const save = async () => {
+  await proxy?.$modal.confirm('确认暂存入库单吗？');
   //验证receiptForm表单
   receiptForm.value?.validate((valid) => {
     // 校验
@@ -380,7 +382,8 @@ const save = () => {
 }
 
 
-const updateToInvalid = () => {
+const updateToInvalid = async () => {
+  await proxy?.$modal.confirm('确认作废入库单吗？');
   editReceiptOrderToInvalid(form.value.id).then(res => {
     if (res.code === 200) {
       ElMessage.success('操作成功')
@@ -391,7 +394,8 @@ const updateToInvalid = () => {
   })
 }
 
-const doWarehousing = () => {
+const doWarehousing = async () => {
+  await proxy?.$modal.confirm('确认入库吗？');
   receiptForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
