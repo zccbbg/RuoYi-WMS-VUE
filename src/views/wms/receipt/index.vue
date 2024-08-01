@@ -174,8 +174,8 @@
         </el-table-column>
         <el-table-column label="创建时间/操作时间" align="left" width="200">
           <template #default="{ row }">
-            <div>创建：{{ row.createTime }}</div>
-            <div v-if="row.updateTime">操作：{{ row.updateTime }}</div>
+            <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
+            <div>操作：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
         </el-table-column>
         <el-table-column label="备注" prop="remark" />
@@ -371,11 +371,11 @@ async function handlePrint(row) {
     warehouseName: useWmsStore().warehouseMap.get(receiptOrder.warehouseId)?.warehouseName,
     areaName: useWmsStore().areaMap.get(receiptOrder.areaId)?.areaName,
     totalQuantity: Number(receiptOrder.totalQuantity).toFixed(0),
-    payableAmount: receiptOrder.payableAmount + '元',
+    payableAmount: ((receiptOrder.payableAmount || receiptOrder.payableAmount === 0) ? (receiptOrder.payableAmount + '元') : ''),
     createBy: receiptOrder.createBy,
-    createTime: receiptOrder.createTime,
+    createTime: proxy.parseTime(receiptOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
     updateBy: receiptOrder.updateBy,
-    updateTime: receiptOrder.updateTime,
+    updateTime: proxy.parseTime(receiptOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
     remark: receiptOrder.remark,
     table
   }
