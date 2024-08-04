@@ -218,11 +218,10 @@
 </template>
 
 <script setup name="ShipmentOrder">
-import { listReceiptOrder, getReceiptOrder, delReceiptOrder, addReceiptOrder, updateReceiptOrder } from "@/api/wms/receiptOrder";
-import { listShipmentOrder, getShipmentOrder, delShipmentOrder } from "@/api/wms/shipmentOrder";
+import { listShipmentOrder, delShipmentOrder } from "@/api/wms/shipmentOrder";
+import {listByShipmentOrderId} from "@/api/wms/shipmentOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
-import {listByReceiptOrderId} from "@/api/wms/receiptOrderDetail";
 import {ElMessageBox} from "element-plus";
 import receiptPanel from "@/components/PrintTemplate/receipt-panel";
 
@@ -389,22 +388,22 @@ function handleExpandExchange(value, expandedRows) {
 }
 
 function loadShipmentOrderDetail(row) {
-  // const index = shipmentOrderList.value.findIndex(it => it.id === row.id)
-  // detailLoading.value[index] = true
-  // listByReceiptOrderId(row.id).then(res => {
-  //   if (res.data?.length) {
-  //     const details = res.data.map(it => {
-  //       return {
-  //         ...it,
-  //         warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName,
-  //         areaName: useWmsStore().areaMap.get(it.areaId)?.areaName
-  //       }
-  //     })
-  //     shipmentOrderList.value[index].details = details
-  //   }
-  // }).finally(() => {
-  //   detailLoading.value[index] = false
-  // })
+  const index = shipmentOrderList.value.findIndex(it => it.id === row.id)
+  detailLoading.value[index] = true
+  listByShipmentOrderId(row.id).then(res => {
+    if (res.data?.length) {
+      const details = res.data.map(it => {
+        return {
+          ...it,
+          warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName,
+          areaName: useWmsStore().areaMap.get(it.areaId)?.areaName
+        }
+      })
+      shipmentOrderList.value[index].details = details
+    }
+  }).finally(() => {
+    detailLoading.value[index] = false
+  })
 }
 
 function ifExpand(expandedRows) {

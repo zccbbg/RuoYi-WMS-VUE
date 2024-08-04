@@ -42,3 +42,11 @@ export function delShipmentOrderDetail(id) {
     method: 'delete'
   })
 }
+
+// 查询出库单详情列表
+export function listByShipmentOrderId(shipmentOrderId) {
+  return request({
+    url: '/wms/shipmentOrderDetail/list/' + shipmentOrderId,
+    method: 'get'
+  })
+}
