@@ -218,12 +218,12 @@
 </template>
 
 <script setup name="ShipmentOrder">
-import { listShipmentOrder, delShipmentOrder } from "@/api/wms/shipmentOrder";
+import {listShipmentOrder, delShipmentOrder, getShipmentOrder} from "@/api/wms/shipmentOrder";
 import {listByShipmentOrderId} from "@/api/wms/shipmentOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
-import receiptPanel from "@/components/PrintTemplate/receipt-panel";
+import shipmentPanel from "@/components/PrintTemplate/shipment-panel";
 
 const { proxy } = getCurrentInstance();
 const { wms_shipment_status, wms_shipment_type} = proxy.useDict("wms_shipment_status", "wms_shipment_type");
@@ -334,48 +334,45 @@ function handleGoDetail(row) {
 
 /** 导出按钮操作 */
 async function handlePrint(row) {
-  // const res = await getReceiptOrder(row.id)
-  // const receiptOrder = res.data
-  // let table = []
-  // if (receiptOrder.details?.length) {
-  //   table = receiptOrder.details.map(detail => {
-  //     return {
-  //       itemName: detail.itemSku.item.itemName,
-  //       skuName: detail.itemSku.skuName,
-  //       areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
-  //       batchNumber: detail.batchNumber,
-  //       productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
-  //       expirationTime: proxy.parseTime(detail.expirationTime, '{y}-{m}-{d}'),
-  //       quantity: Number(detail.quantity).toFixed(0),
-  //       amount: detail.amount
-  //     }
-  //   })
-  // }
-  // const printData = {
-  //   receiptOrderNo: receiptOrder.receiptOrderNo,
-  //   receiptOrderType: proxy.selectDictLabel(wms_receipt_type.value, receiptOrder.receiptOrderType),
-  //   receiptOrderStatus: proxy.selectDictLabel(wms_receipt_status.value, receiptOrder.receiptOrderStatus),
-  //   merchantName: useWmsStore().merchantMap.get(receiptOrder.merchantId)?.merchantName,
-  //   orderNo: receiptOrder.orderNo,
-  //   warehouseName: useWmsStore().warehouseMap.get(receiptOrder.warehouseId)?.warehouseName,
-  //   areaName: useWmsStore().areaMap.get(receiptOrder.areaId)?.areaName,
-  //   totalQuantity: Number(receiptOrder.totalQuantity).toFixed(0),
-  //   payableAmount: receiptOrder.payableAmount + '元',
-  //   createBy: receiptOrder.createBy,
-  //   createTime: receiptOrder.createTime,
-  //   updateBy: receiptOrder.updateBy,
-  //   updateTime: receiptOrder.updateTime,
-  //   remark: receiptOrder.remark,
-  //   table
-  // }
-  // let printTemplate = new proxy.$hiprint.PrintTemplate({template: receiptPanel})
-  // printTemplate.print(printData, {}, {
-  //   styleHandler: () => {
-  //     let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
-  //     console.info("css:", css)
-  //     return css
-  //   }
-  // })
+  const res = await getShipmentOrder(row.id)
+  const shipmentOrder = res.data
+  let table = []
+  if (shipmentOrder.details?.length) {
+    table = shipmentOrder.details.map(detail => {
+      return {
+        itemName: detail.itemSku.item.itemName,
+        skuName: detail.itemSku.skuName,
+        areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
+        quantity: Number(detail.quantity).toFixed(0),
+        amount: detail.amount
+      }
+    })
+  }
+  const printData = {
+    shipmentOrderNo: shipmentOrder.shipmentOrderNo,
+    shipmentOrderType: proxy.selectDictLabel(wms_shipment_type.value, shipmentOrder.shipmentOrderType),
+    shipmentOrderStatus: proxy.selectDictLabel(wms_shipment_status.value, shipmentOrder.shipmentOrderStatus),
+    merchantName: useWmsStore().merchantMap.get(shipmentOrder.merchantId)?.merchantName,
+    orderNo: shipmentOrder.orderNo,
+    warehouseName: useWmsStore().warehouseMap.get(shipmentOrder.warehouseId)?.warehouseName,
+    areaName: useWmsStore().areaMap.get(shipmentOrder.areaId)?.areaName,
+    totalQuantity: Number(shipmentOrder.totalQuantity).toFixed(0),
+    receivableAmount: ((shipmentOrder.receivableAmount || shipmentOrder.receivableAmount === 0) ? (shipmentOrder.receivableAmount + '元') : ''),
+    createBy: shipmentOrder.createBy,
+    createTime: proxy.parseTime(shipmentOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
+    updateBy: shipmentOrder.updateBy,
+    updateTime: proxy.parseTime(shipmentOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
+    remark: shipmentOrder.remark,
+    table
+  }
+  let printTemplate = new proxy.$hiprint.PrintTemplate({template: shipmentPanel})
+  printTemplate.print(printData, {}, {
+    styleHandler: () => {
+      let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
+      console.info("css:", css)
+      return css
+    }
+  })
 }
 
 
