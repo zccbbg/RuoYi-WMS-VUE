@@ -118,7 +118,7 @@
         </el-table-column>
         <el-table-column label="单号/订单号" align="left">
           <template #default="{ row }">
-            <div>单&nbsp;&nbsp;&nbsp;&nbsp;号：{{ row.receiptOrderNo }}</div>
+            <div>单&nbsp;&nbsp;&nbsp;&nbsp;号：{{ row.shipmentOrderNo }}</div>
             <div v-if="row.orderNo">订单号：{{ row.orderNo }}</div>
           </template>
         </el-table-column>
@@ -163,8 +163,8 @@
         </el-table-column>
         <el-table-column label="创建时间/操作时间" align="left" width="200">
           <template #default="{ row }">
-            <div>创建：{{ row.createTime }}</div>
-            <div v-if="row.updateTime">操作：{{ row.updateTime }}</div>
+            <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
+            <div>操作：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
         </el-table-column>
         <el-table-column label="备注" prop="remark" />

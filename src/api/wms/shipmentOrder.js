@@ -35,6 +35,15 @@ export function updateShipmentOrder(data) {
   })
 }
 
+// 出库
+export function shipment(data) {
+  return request({
+    url: '/wms/shipmentOrder/shipment',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除出库单
 export function delShipmentOrder(id) {
   return request({
