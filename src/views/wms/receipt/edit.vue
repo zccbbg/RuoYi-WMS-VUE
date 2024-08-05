@@ -92,10 +92,22 @@
       </el-card>
       <el-card header="商品明细" class="mt10">
         <div class="receipt-order-content">
-          <div class="flex-center mb8">
-            <div style="width: 100%;text-align: right">
-              <el-button type="primary" plain="plain" size="default" @click="showAddItem" icon="Plus">添加商品</el-button>
+          <div class="flex-space-between mb8">
+            <div>
+              <span>一物一码/SN模式：</span>
+              <el-switch
+                :before-change="goSaasTip"
+                class="mr10 ml10"
+                inline-prompt
+                size="large"
+                v-model="mode"
+                :active-value="true"
+                :inactive-value="false"
+                active-text="开启"
+                inactive-text="关闭"
+              />
             </div>
+            <el-button type="primary" plain="plain" size="default" @click="showAddItem" icon="Plus">添加商品</el-button>
           </div>
           <el-table :data="form.details" border empty-text="暂无商品明细">
             <el-table-column label="商品信息" prop="itemSku.itemName">
@@ -222,7 +234,7 @@
 <script setup name="ReceiptOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
 import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing} from "@/api/wms/receiptOrder";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import SkuSelect from "../../components/SkuSelect.vue";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
@@ -231,7 +243,7 @@ import { delReceiptOrderDetail } from '@/api/wms/receiptOrderDetail'
 
 const {proxy} = getCurrentInstance();
 const { wms_receipt_type } = proxy.useDict("wms_receipt_type");
-
+const mode = ref(false)
 const detailLoading = ref(false)
 const initFormData = {
   id: undefined,
@@ -519,6 +531,12 @@ const handleDeleteDetail = (row, index) => {
   } else {
     form.value.details.splice(index, 1)
   }
+}
+const goSaasTip = () => {
+  ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {
+    confirmButtonText: '确定'
+  })
+  return false
 }
 </script>
 
