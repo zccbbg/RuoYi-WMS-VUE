@@ -26,14 +26,6 @@ export function addReceiptOrder(data) {
   })
 }
 
-// 作废入库单
-export function editReceiptOrderToInvalid(id) {
-  return request({
-    url: '/wms/receiptOrder/invalid/' + id,
-    method: 'put'
-  })
-}
-
 // 修改入库单
 export function updateReceiptOrder(data) {
   return request({

@@ -233,7 +233,7 @@
 
 <script setup name="ReceiptOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, editReceiptOrderToInvalid, warehousing} from "@/api/wms/receiptOrder";
+import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, warehousing} from "@/api/wms/receiptOrder";
 import {ElMessage, ElMessageBox} from "element-plus";
 import SkuSelect from "../../components/SkuSelect.vue";
 import {useRoute} from "vue-router";
@@ -292,6 +292,9 @@ const { form, rules} = toRefs(data);
 
 const cancel = async () => {
   await proxy?.$modal.confirm('确认取消编辑入库单吗？');
+  close()
+}
+const close = () => {
   const obj = {path: "/receiptOrder"};
   proxy?.$tab.closeOpenPage(obj);
 }
@@ -326,6 +329,10 @@ const receiptForm = ref()
 
 const save = async () => {
   await proxy?.$modal.confirm('确认暂存入库单吗？');
+  doSave()
+}
+
+const doSave = async (receiptOrderStatus = 0) => {
   //验证receiptForm表单
   receiptForm.value?.validate((valid) => {
     // 校验
@@ -360,7 +367,7 @@ const save = async () => {
     const params = {
       id: form.value.id,
       receiptOrderNo: form.value.receiptOrderNo,
-      receiptOrderStatus: form.value.receiptOrderStatus,
+      receiptOrderStatus,
       receiptOrderType: form.value.receiptOrderType,
       merchantId: form.value.merchantId,
       orderNo: form.value.orderNo,
@@ -375,7 +382,7 @@ const save = async () => {
       updateReceiptOrder(params).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.msg)
-          cancel()
+          close()
         } else {
           ElMessage.error(res.msg)
         }
@@ -384,7 +391,7 @@ const save = async () => {
       addReceiptOrder(params).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.msg)
-          cancel()
+          close()
         } else {
           ElMessage.error(res.msg)
         }
@@ -396,14 +403,7 @@ const save = async () => {
 
 const updateToInvalid = async () => {
   await proxy?.$modal.confirm('确认作废入库单吗？');
-  editReceiptOrderToInvalid(form.value.id).then(res => {
-    if (res.code === 200) {
-      ElMessage.success('操作成功')
-      cancel()
-    } else {
-      ElMessage.error(res.msg)
-    }
-  })
+  doSave(-1)
 }
 
 const doWarehousing = async () => {
@@ -456,7 +456,7 @@ const doWarehousing = async () => {
     warehousing(params).then((res) => {
       if (res.code === 200) {
         ElMessage.success('入库成功')
-        cancel()
+        close()
       } else {
         ElMessage.error(res.msg)
       }
