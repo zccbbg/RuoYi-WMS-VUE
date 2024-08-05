@@ -2,21 +2,18 @@
   <el-drawer :model-value="show" title="选择库存" @close="handleCancelClick" :size="size" :close-on-click-modal="false"
              append-to-body>
     <el-form :inline="true" label-width="68px">
-      <el-form-item label="仓库">
-        <el-select v-model="query.warehouseId" placeholder="请选择仓库" :disabled="selectWarehouseDisable" clearable filterable @change="">
-          <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName" :value="item.id"/>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="库区">
-        <el-select v-model="query.areaId" placeholder="请选择库区" :disabled="selectAreaDisable || !query.warehouseId" clearable filterable @change="">
-          <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === query.warehouseId)" :key="item.id" :label="item.areaName" :value="item.id"/>
-        </el-select>
-      </el-form-item>
       <el-form-item label="商品名称">
-        <el-input v-model="query.itemName" clearable placeholder="商品名称" ></el-input>
+        <el-input v-model="query.itemName" clearable placeholder="商品名称"></el-input>
       </el-form-item>
       <el-form-item label="商品编号">
         <el-input class="w200" v-model="query.itemCode" clearable placeholder="商品编号"></el-input>
+      </el-form-item>
+      <el-form-item label="库区">
+        <el-select v-model="query.areaId" placeholder="请选择库区" :disabled="selectAreaDisabale"
+                   clearable filterable @change="">
+          <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === query.warehouseId)"
+                     :key="item.id" :label="item.areaName" :value="item.id"/>
+        </el-select>
       </el-form-item>
       <el-form-item label="规格名称">
         <el-input class="w200" v-model="query.skuName" clearable placeholder="规格名称"></el-input>
@@ -30,7 +27,7 @@
     </el-form>
     <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品"
               v-loading="loading" ref="inventorySelectFormRef" cell-class-name="my-cell" class="mt20">
-      <!--              <el-table-column type="selection" width="55" :reserve-selection="true"/>-->
+      <el-table-column type="selection" width="55" :reserve-selection="true"/>
       <el-table-column label="库区" prop="areaName"/>
       <el-table-column label="商品信息" prop="itemId">
         <template #default="{ row }">
@@ -84,20 +81,18 @@
           <el-statistic :value="Number(row.quantity).toFixed(0)"/>
         </template>
       </el-table-column>
-      <el-table-column label="出库数量" prop="shipmentQuantity" align="center">
-        <template #default="{ row }">
-          <el-input-number v-model="row.shipmentQuantity" :min="1"/>
-        </template>
-      </el-table-column>
     </el-table>
-    <pagination :hide-on-single-page="true" :total="total" :page-sizes="[5, 10, 20, 50]" v-model:limit="pageReq.size"
-                v-model:page="pageReq.page"
-                @pagination="getList" class="mr10"/>
+    <pagination
+      v-show="total>0"
+      :total="total"
+      v-model:limit="pageReq.size"
+      v-model:page="pageReq.page"
+      @pagination="getList"
+      class="mr10"
+    />
     <template v-slot:footer>
       <div style="width: 100%;display: flex;justify-content: space-between">
         <span>
-<!--          <el-button @click="goCreateItem" icon="Plus">创建商品</el-button>-->
-          <!--          <el-button @click="loadAll" icon="Refresh">刷新</el-button>-->
         </span>
         <span>
           <el-button @click="handleCancelClick">取消</el-button>
@@ -131,13 +126,14 @@ const query = reactive({
   areaId: null,
   warehouseId: null
 });
-const selectItemSkuVoCheck = ref([])
+const selectInventoryVoCheck = ref([])
 const inventorySelectFormRef = ref(null)
 const total = ref(0);
 const pageReq = reactive({
   page: 1,
   size: 10,
 });
+const selectAreaDisabale = ref(false)
 const list = ref([]);
 const rightList = ref([]);
 const rightListKeySet = computed(() => {
@@ -170,7 +166,7 @@ const getList = () => {
       {
         ...item,
         warehouseName: useWmsStore().warehouseMap.get(item.warehouseId)?.warehouseName,
-        areaName: useWmsStore().areaMap.get(item.areaId)?.areaName,
+        areaName: useWmsStore().areaMap.get(item.areaId)?.areaName
       }
     ));
     total.value = res.total;
@@ -191,26 +187,6 @@ const props = defineProps({
     type: String,
     default: '30%'
   },
-  showArea: {
-    type: Boolean,
-    default: true
-  },
-  selectWarehouseDisable: {
-    type: Boolean,
-    default: false,
-  },
-  selectAreaDisable: {
-    type: Boolean,
-    default: false
-  },
-  warehouseId: {
-    type: Number,
-    default: null,
-  },
-  areaId: {
-    type: Number,
-    default: null
-  },
   selectedInventory: {
     type: Array,
     default: []
@@ -221,30 +197,20 @@ const show = computed(() => {
   return props.modelValue;
 })
 
-const warehouseId = computed(() => {
-  query.warehouseId =  props.warehouseId;
-  return props.warehouseId
-})
-
-const areaId = computed(() => {
-  query.warehouseId =  props.areaId;
-  return props.areaId
-})
-
 const emit = defineEmits(["handleCancelClick", 'handleOkClick']);
 
 function handleCancelClick() {
   emit('handleCancelClick');
-  clearQuantity()
+  // clearQuantity()
 }
 
 function handleOkClick() {
-  emit('handleOkClick', list.value.filter(it => it.shipmentQuantity > 0));
+  emit('handleOkClick', selectInventoryVoCheck.value);
 }
 
 /** 多选框选中数据 */
 const handleSelectionChange = (selection) => {
-  selectItemSkuVoCheck.value = selection
+  selectInventoryVoCheck.value = selection
 }
 
 function clearQuantity() {
@@ -260,6 +226,20 @@ const getVolumeText = (row) => {
     + ((row.height || row.height === 0) ? (' 高：' + row.height) : '')
 }
 
+const setWarehouseIdAndAreaId = (warehouseId = null, areaId = null) => {
+  query.warehouseId = warehouseId
+  query.areaId = areaId
+  if (areaId) {
+    selectAreaDisabale.value = true
+  } else {
+    selectAreaDisabale.value = false
+  }
+}
+
+defineExpose({
+  setWarehouseIdAndAreaId,
+  getList
+})
 onMounted(() => {
   loadAll();
 })
