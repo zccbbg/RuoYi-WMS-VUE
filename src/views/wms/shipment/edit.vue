@@ -221,14 +221,6 @@
 
 <script setup name="ShipmentOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {
-  addReceiptOrder,
-  getReceiptOrder,
-  updateReceiptOrder,
-  editReceiptOrderToInvalid,
-  warehousing,
-  generateReceiptOrderNo
-} from "@/api/wms/receiptOrder";
 import {addShipmentOrder, getShipmentOrder, updateShipmentOrder, shipment} from "@/api/wms/shipmentOrder";
 import {delShipmentOrderDetail} from "@/api/wms/shipmentOrderDetail";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -289,10 +281,12 @@ const showAddItem = () => {
 }
 // 选择成功
 const handleOkClick = (item) => {
+  console.info("selected item:", item)
+  console.info("form.value.details:", form.value.details)
   inventorySelectShow.value = false
-  selectedInventory.value = [...item.map(it => it.id)]
+  selectedInventory.value = [...item]
   item.forEach(it => {
-    if (!form.value.details.find(detail => detail.id === it.id)) {
+    if (!form.value.details.find(detail => getPlaceAndSkuKey(detail) === getPlaceAndSkuKey(it))) {
       form.value.details.push(
         {
           itemSku: {
@@ -309,6 +303,10 @@ const handleOkClick = (item) => {
         })
     }
   })
+}
+
+const getPlaceAndSkuKey = (row) => {
+  return row.warehouseId + '_' + row.areaId + '_' + row.skuId
 }
 // 选择商品 end
 
@@ -473,10 +471,9 @@ const handleChangeWarehouse = (e) => {
 }
 
 const handleChangeArea = (e) => {
-  form.value.details.forEach(it => {
-    it.areaId = e
-  })
   inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
+  form.value.details = form.value.details.filter(it => it.areaId === e)
+  selectedInventory.value = selectedInventory.value.filter(selected => selected.areaId === e)
 }
 
 const handleChangeQuantity = () => {
@@ -512,6 +509,8 @@ const handleDeleteDetail = (row, index) => {
     })
   } else {
     form.value.details.splice(index, 1)
+    const indexOfSelected = selectedInventory.value.findIndex(it => getPlaceAndSkuKey(it) === getPlaceAndSkuKey(row))
+    selectedInventory.value.splice(indexOfSelected, 1)
   }
 }
 const goSaasTip = () => {

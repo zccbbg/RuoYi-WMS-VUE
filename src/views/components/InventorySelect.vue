@@ -27,7 +27,7 @@
     </el-form>
     <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品"
               v-loading="loading" ref="inventorySelectFormRef" cell-class-name="my-cell" class="mt20">
-      <el-table-column type="selection" width="55" :reserve-selection="true"/>
+      <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="judgeSelectable"/>
       <el-table-column label="库区" prop="areaName"/>
       <el-table-column label="商品信息" prop="itemId">
         <template #default="{ row }">
@@ -78,18 +78,21 @@
       </el-table-column>
       <el-table-column label="剩余库存" prop="quantity" align="right">
         <template #default="{ row }">
-          <el-statistic :value="Number(row.quantity).toFixed(0)"/>
+          <el-statistic :value="Number(row.quantity)" :precision="0"/>
         </template>
       </el-table-column>
     </el-table>
-    <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:limit="pageReq.size"
-      v-model:page="pageReq.page"
-      @pagination="getList"
-      class="mr10"
-    />
+    <el-row>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        v-model:limit="pageReq.size"
+        v-model:page="pageReq.page"
+        @pagination="getList"
+        class="mr10"
+      />
+    </el-row>
+
     <template v-slot:footer>
       <div style="width: 100%;display: flex;justify-content: space-between">
         <span>
@@ -103,7 +106,7 @@
   </el-drawer>
 </template>
 <script setup name="InventorySelect">
-import {computed, getCurrentInstance, onMounted, reactive, ref, watch} from 'vue';
+import {computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from 'vue';
 import {ElForm} from "element-plus";
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {listItemSkuPage} from "@/api/wms/itemSku";
@@ -170,7 +173,7 @@ const getList = () => {
       }
     ));
     total.value = res.total;
-  }).finally(() => loading.value = false);
+  }).then(() => toggleSelection()).finally(() => loading.value = false);
 }
 
 const clickQuery = () => {
@@ -201,11 +204,12 @@ const emit = defineEmits(["handleCancelClick", 'handleOkClick']);
 
 function handleCancelClick() {
   emit('handleCancelClick');
-  // clearQuantity()
+  clearSelected()
 }
 
 function handleOkClick() {
   emit('handleOkClick', selectInventoryVoCheck.value);
+  clearSelected()
 }
 
 /** 多选框选中数据 */
@@ -213,7 +217,16 @@ const handleSelectionChange = (selection) => {
   selectInventoryVoCheck.value = selection
 }
 
-function clearQuantity() {
+const toggleSelection = () => {
+  props.selectedInventory.forEach(selected => {
+    const index = list.value.findIndex(it => selected.id === it.id)
+    if (index !== -1) {
+      inventorySelectFormRef.value.toggleRowSelection(list.value[index], true)
+    }
+  })
+}
+
+function clearSelected() {
   inventorySelectFormRef.value.clearSelection()
 }
 
@@ -234,6 +247,17 @@ const setWarehouseIdAndAreaId = (warehouseId = null, areaId = null) => {
   } else {
     selectAreaDisabale.value = false
   }
+}
+
+const judgeSelectable = (row) => {
+  if (props.selectedInventory.find(selected => getPlaceAndSkuKey(selected) === getPlaceAndSkuKey(row))) {
+    return false;
+  }
+  return true
+}
+
+const getPlaceAndSkuKey = (row) => {
+  return row.warehouseId + '_' + row.areaId + '_' + row.skuId
 }
 
 defineExpose({

@@ -76,8 +76,10 @@
                 </template>
               </el-table-column>
             </el-table>
+    <el-row>
       <pagination v-show="total > 0" :total="total" :page-sizes="[5, 10, 20, 50]" v-model:limit="pageReq.size" v-model:page="pageReq.page"
-                   @pagination="getList" class="mr10"/>
+                  @pagination="getList" class="mr10"/>
+    </el-row>
     <template v-slot:footer>
       <div style="width: 100%;display: flex;justify-content: space-between">
         <span>
