@@ -8,8 +8,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="商品编码">
-                <el-input class="w200" v-model="query.itemCode" clearable placeholder="商品编码"></el-input>
+              <el-form-item label="商品编号">
+                <el-input class="w200" v-model="query.itemCode" clearable placeholder="商品编号"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -20,8 +20,8 @@
           </el-row>
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-form-item label="规格编码">
-                <el-input class="w200" v-model="query.barcode" clearable placeholder="规格编码"></el-input>
+              <el-form-item label="规格编号">
+                <el-input class="w200" v-model="query.barcode" clearable placeholder="规格编号"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
@@ -34,14 +34,14 @@
               <el-table-column label="商品信息" prop="itemId">
                 <template #default="{ row }">
                   <div>{{ row.item.itemName }}</div>
-                  <div v-if="row.item.itemCode">编码：{{ row.item.itemCode }}</div>
+                  <div v-if="row.item.itemCode">编号：{{ row.item.itemCode }}</div>
                   <div v-if="row.item.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.item.itemBrand).brandName }}</div>
                 </template>
               </el-table-column>
               <el-table-column label="规格信息">
                 <template #default="{ row }">
                   <div>{{ row.skuName }}</div>
-                  <div v-if="row.skuCode">编码：{{ row.skuCode }}</div>
+                  <div v-if="row.skuCode">编号：{{ row.skuCode }}</div>
                   <div v-if="row.skuNumber">货号：{{ row.skuNumber }}</div>
                   <div v-if="row.barcode">条码：{{ row.barcode }}</div>
                 </template>

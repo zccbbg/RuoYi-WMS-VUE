@@ -211,10 +211,10 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column label="编码/货号/条码" width="250">
+            <el-table-column label="编号/货号/条码" width="250">
               <template #default="scope">
                 <div class="flex-center">
-                  <span class="mr5" style="width: 50px">编码</span>
+                  <span class="mr5" style="width: 50px">编号</span>
                   <el-input v-model="scope.row.skuCode" />
                 </div>
                 <div class="flex-center mt5">
