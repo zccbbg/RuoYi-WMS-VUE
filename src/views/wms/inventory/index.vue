@@ -190,7 +190,6 @@ const getList = async () => {
       it.areaIdAndItemId = it.areaId + '-' + it.itemSku.itemId
       it.areaIdAndSkuId = it.areaId + '-' + it.itemSku.id
     } else if (query.type == 3) {
-      it.itemIdAndSkuIdAndWarehouseId = it.itemSku.itemId + '-' + it.itemSku.skuId + '-' + it.warehouseId
       it.itemId = it.itemSku.itemId
     }
   })
@@ -234,7 +233,7 @@ const handleSortTypeChange = (e) => {
   } else if (e == 2) {
     rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId', 'areaIdAndSkuId']
   } else if (e == 3) {
-    rowSpanArray.value = ['itemId', 'skuId', 'itemIdAndSkuIdAndWarehouseId']
+    rowSpanArray.value = ['itemId', 'skuId']
   }
   queryParams.value.pageNum = 1;
   getList()
