@@ -140,7 +140,7 @@
             <el-table-column label="库区" prop="areaName" width="200"/>
             <el-table-column label="剩余库存" prop="maxQuantity" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.maxQuantity).toFixed(0)"/>
+                <el-statistic :value="Number(row.maxQuantity)" :precision="0"/>
               </template>
             </el-table-column>
             <el-table-column label="出库数量" prop="quantity" width="180">

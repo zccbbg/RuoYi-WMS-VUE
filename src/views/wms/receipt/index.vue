@@ -105,12 +105,12 @@
                 <el-table-column label="库区" prop="areaName"/>
                 <el-table-column label="数量" prop="quantity" align="right">
                   <template #default="{ row }">
-                    <el-statistic :value="Number(row.quantity)"/>
+                    <el-statistic :value="Number(row.quantity)" :precision="0"/>
                   </template>
                 </el-table-column>
                 <el-table-column label="价格(元)" align="right">
                   <template #default="{ row }">
-                    <el-statistic :precision="2" :value="Number(row.amount).toFixed(2)"/>
+                    <el-statistic :precision="2" :value="Number(row.amount)"/>
                   </template>
                 </el-table-column>
                 <el-table-column label="批号" prop="batchNumber" />
@@ -159,11 +159,11 @@
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>
-              <span>{{ Number(row.totalQuantity).toFixed(0) }}</span>
+              <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
             </div>
             <div class="flex-space-between" v-if="row.payableAmount || row.payableAmount === 0">
               <span>金额：</span>
-              <span>{{ row.payableAmount }}</span>
+              <el-statistic :value="Number(row.payableAmount)" :precision="2"/>
             </div>
           </template>
         </el-table-column>
