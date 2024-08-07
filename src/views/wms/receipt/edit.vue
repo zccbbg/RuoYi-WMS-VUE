@@ -352,6 +352,8 @@ const doSave = async (receiptOrderStatus = 0) => {
     // 构建参数
     const details = form.value.details.map(it => {
       return {
+        id: it.id,
+        shipmentOrderId: form.value.id,
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
@@ -427,6 +429,8 @@ const doWarehousing = async () => {
     // 构建参数
     const details = form.value.details.map(it => {
       return {
+        id: it.id,
+        shipmentOrderId: form.value.id,
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
