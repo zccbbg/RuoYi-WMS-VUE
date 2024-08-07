@@ -9,10 +9,20 @@
             <el-radio-button label="item">商品</el-radio-button>
           </el-radio-group>
         </el-form-item>
-<!--        <el-form-item label="仓库库区">-->
-<!--          <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default"-->
-<!--                                @keyup.enter="handleQuery"></WarehouseCascader>-->
-<!--        </el-form-item>-->
+        <el-form-item label="仓库" prop="warehouseId">
+          <el-select v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
+                     filterable clearable>
+            <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
+                       :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="库区" prop="areaId">
+          <el-select v-model="queryParams.areaId" placeholder="请选择库区" :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable
+                     filterable>
+            <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === queryParams.warehouseId)"
+                       :key="item.id" :label="item.areaName" :value="item.id"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="商品名称">
           <el-input v-model="queryParams.itemName" clearable placeholder="商品名称"></el-input>
         </el-form-item>
@@ -136,9 +146,7 @@ import {
 import {computed, getCurrentInstance, onMounted, reactive, ref} from 'vue';
 import {ElForm} from 'element-plus';
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
-// import {InfoFilled} from "@element-plus/icons";
 import {useWmsStore} from '@/store/modules/wms'
-// import WarehouseCascader from "@/views/components/WarehouseCascader.vue";
 
 const {proxy} = getCurrentInstance();
 const spanMethod = computed(() => getRowspanMethod(inventoryList.value, rowSpanArray.value))
@@ -227,8 +235,8 @@ const calcSubTotalInWarehouse = (row) => {
 }
 
 const handleSortTypeChange = (e) => {
-  console.info(e)
   if (e === "warehouse") {
+    queryParams.value.areaId = undefined
     rowSpanArray.value = ['warehouseId', 'warehouseIdAndItemId', 'warehouseIdAndItemIdAndSkuId']
   } else if (e === "area") {
     rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId', 'areaIdAndSkuId']
@@ -242,6 +250,10 @@ const handleSortTypeChange = (e) => {
 const handleChangeFilterZero = (e) => {
   queryParams.value.pageNum = 1;
   getList()
+}
+
+const handleChangeWarehouse = () => {
+  queryParams.value.areaId = undefined
 }
 
 onMounted(() => {
