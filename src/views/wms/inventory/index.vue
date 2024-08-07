@@ -39,19 +39,20 @@
 <!--          <WmsWarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default"-->
 <!--                                @keyup.enter="handleQuery"></WmsWarehouseCascader>-->
 <!--        </el-form-item>-->
-        <el-form-item label="">
-          <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large"
-                       @change="handleChangeFilterZero"/>
-        </el-form-item>
+<!--        <el-form-item label="">-->
+<!--          <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large"-->
+<!--                       @change="handleChangeFilterZero"/>-->
+<!--        </el-form-item>-->
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="mt20">
-      <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
-        <el-col :span="6"><span style="font-size: large">库存看板</span></el-col>
-      </el-row>
+      <div class="mb8 flex-space-between">
+        <div style="font-size: large">库存看板</div>
+        <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large" @change="handleChangeFilterZero"/>
+      </div>
       <el-table :data="inventoryList" border :span-method="spanMethod"
                 cell-class-name="my-cell" v-loading="loading">
         <template v-if="queryType == 'warehouse' || queryType == 'area'">
