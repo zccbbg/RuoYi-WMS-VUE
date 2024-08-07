@@ -10,9 +10,9 @@ export function listInventory(query) {
 }
 
 // 查询库存看板仓库维度列表
-export function listInventoryBoard(query) {
+export function listInventoryBoard(query,type) {
   return request({
-    url: '/wms/inventory/boardList',
+    url: '/wms/inventory/boardList/'+type,
     method: 'get',
     params: query
   })

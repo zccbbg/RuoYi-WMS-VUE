@@ -3,10 +3,10 @@
     <el-card>
       <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-width="68px">
         <el-form-item label="类型" prop="itemId">
-          <el-radio-group v-model="queryParams.type" size="medium" @change="handleSortTypeChange">
-            <el-radio-button label="1">仓库</el-radio-button>
-            <el-radio-button label="2">库区</el-radio-button>
-            <el-radio-button label="3">商品</el-radio-button>
+          <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
+            <el-radio-button label="warehouse">仓库</el-radio-button>
+            <el-radio-button label="area">库区</el-radio-button>
+            <el-radio-button label="item">商品</el-radio-button>
           </el-radio-group>
         </el-form-item>
 <!--        <el-form-item label="仓库库区">-->
@@ -44,26 +44,26 @@
       </el-row>
       <el-table :data="inventoryList" border :span-method="spanMethod"
                 cell-class-name="my-cell" v-loading="loading">
-        <template v-if="queryParams.type == 1 || queryParams.type == 2">
+        <template v-if="queryType == 'warehouse' || queryType == 'area'">
           <el-table-column label="仓库" prop="warehouseId">
             <template #default="{ row }">
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
             </template>
           </el-table-column>
-          <template v-if="queryParams.type == 2">
+          <template v-if="queryType == 'area'">
             <el-table-column label="库区" prop="areaId">
               <template #default="{ row }">
                 <div>{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
               </template>
             </el-table-column>
           </template>
-          <el-table-column label="商品信息" :prop="queryParams.type == 1 ? 'warehouseIdAndItemId' : 'areaIdAndItemId'">
+          <el-table-column label="商品信息" :prop="queryType == 'warehouse' ? 'warehouseIdAndItemId' : 'areaIdAndItemId'">
             <template #default="{ row }">
               <div>{{ row.item.itemName }}</div>
               <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="规格信息" :prop="queryParams.type == 1 ? 'warehouseIdAndItemIdAndSkuId' : 'areaIdAndSkuId'">
+          <el-table-column label="规格信息" :prop="queryType == 'warehouse' ? 'warehouseIdAndItemIdAndSkuId' : 'areaIdAndSkuId'">
             <template #default="{ row }">
               <div>{{ row.itemSku.skuName }}</div>
               <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
@@ -156,7 +156,7 @@ const queryFormRef = ref(ElForm);
 const inventoryFormRef = ref(ElForm);
 
 const filterable = ref(false)
-
+const queryType = ref("warehouse")
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
@@ -167,7 +167,6 @@ const queryParams = ref({
   itemCode: undefined,
   skuName: undefined,
   skuCode: undefined,
-  type: 1,
   minQuantity: undefined
 })
 
@@ -180,16 +179,16 @@ const getList = async () => {
     query.minQuantity = undefined
   }
   loading.value = true;
-  const res = await listInventoryBoard(queryParams.value);
+  const res = await listInventoryBoard(queryParams.value,queryType.value);
   inventoryList.value = res.rows;
   inventoryList.value.forEach(it => {
-    if (query.type == 1) {
+    if (queryType.value == "warehouse") {
       it.warehouseIdAndItemId = it.warehouseId + '-' + it.itemSku.itemId
       it.warehouseIdAndItemIdAndSkuId = it.warehouseId + '-' + it.itemSku.itemId + '-' + it.itemSku.id
-    } else if (query.type == 2) {
+    } else if (queryType.value == "area") {
       it.areaIdAndItemId = it.areaId + '-' + it.itemSku.itemId
       it.areaIdAndSkuId = it.areaId + '-' + it.itemSku.id
-    } else if (query.type == 3) {
+    } else if (queryType.value == "item") {
       it.itemId = it.itemSku.itemId
     }
   })
@@ -228,11 +227,12 @@ const calcSubTotalInWarehouse = (row) => {
 }
 
 const handleSortTypeChange = (e) => {
-  if (e == 1) {
+  console.info(e)
+  if (e === "warehouse") {
     rowSpanArray.value = ['warehouseId', 'warehouseIdAndItemId', 'warehouseIdAndItemIdAndSkuId']
-  } else if (e == 2) {
+  } else if (e === "area") {
     rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId', 'areaIdAndSkuId']
-  } else if (e == 3) {
+  } else if (e === "item") {
     rowSpanArray.value = ['itemId', 'skuId']
   }
   queryParams.value.pageNum = 1;
