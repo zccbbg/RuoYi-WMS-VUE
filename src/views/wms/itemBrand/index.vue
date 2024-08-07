@@ -39,7 +39,7 @@
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" :data="itemBrandList" border class="mt20">
+      <el-table v-loading="loading" :data="itemBrandList" border class="mt20" empty-text="暂无品牌">
         <el-table-column label="品牌名称" prop="brandName" />
         <el-table-column label="创建时间" prop="createTime" width="180"/>
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width" width="180">

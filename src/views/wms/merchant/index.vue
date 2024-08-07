@@ -57,7 +57,7 @@
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" :data="merchantList" border class="mt20">
+      <el-table v-loading="loading" :data="merchantList" border class="mt20" empty-text="暂无往来单位">
         <el-table-column label="id" prop="id" v-if="false"/>
         <el-table-column label="编号" prop="merchantCode" />
         <el-table-column label="名称" prop="merchantName" />

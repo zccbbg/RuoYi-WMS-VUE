@@ -57,7 +57,7 @@
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
         <el-col :span="6"><span style="font-size: large">库存记录</span></el-col>
       </el-row>
-      <el-table v-loading="loading" :data="inventoryHistoryList" border class="mt20">
+      <el-table v-loading="loading" :data="inventoryHistoryList" border class="mt20" empty-text="暂无库存记录">
         <el-table-column label="商品信息">
           <template #default="{ row }">
             <div>{{ row.item.itemName }}</div>

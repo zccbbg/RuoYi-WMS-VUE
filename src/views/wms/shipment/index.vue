@@ -85,6 +85,7 @@
                 @expand-change="handleExpandExchange"
                 :row-key="getRowKey"
                 :expand-row-keys="expandedRowKeys"
+                empty-text="暂无出库单"
       >
         <el-table-column type="expand">
           <template #default="props">
