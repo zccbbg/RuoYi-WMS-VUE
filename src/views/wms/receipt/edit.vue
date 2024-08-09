@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px">
+    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px" v-loading="loading">
       <el-card header="入库单基本信息">
         <el-form label-width="108px" :model="form" ref="receiptForm" :rules="rules">
           <el-row :gutter="24">
@@ -244,7 +244,7 @@ import { delReceiptOrderDetail } from '@/api/wms/receiptOrderDetail'
 const {proxy} = getCurrentInstance();
 const { wms_receipt_type } = proxy.useDict("wms_receipt_type");
 const mode = ref(false)
-const detailLoading = ref(false)
+const loading = ref(false)
 const initFormData = {
   id: undefined,
   receiptOrderNo: undefined,
@@ -481,10 +481,13 @@ onMounted(() => {
 
 // 获取入库单详情
 const loadDetail = (id) => {
+  loading.value = true
   getReceiptOrder(id).then((response) => {
     form.value = {...response.data}
     Promise.resolve();
   }).then(() => {
+  }).finally(() => {
+    loading.value = false
   })
 }
 

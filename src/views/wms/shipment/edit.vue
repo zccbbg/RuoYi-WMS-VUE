@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px">
+    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px" v-loading="loading">
       <el-card header="出库单基本信息">
         <el-form label-width="108px" :model="form" ref="shipmentForm" :rules="rules">
           <el-row :gutter="24">
@@ -243,7 +243,7 @@ import InventoryDetailSelect from "@/views/components/InventoryDetailSelect.vue"
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
 
-const detailLoading = ref(false)
+const loading = ref(false)
 const initFormData = {
   id: undefined,
   shipmentOrderNo: undefined,
@@ -477,6 +477,7 @@ onMounted(() => {
 
 // 获取入库单详情
 const loadDetail = (id) => {
+  loading.value = true
   getShipmentOrder(id).then((response) => {
     console.info("response.data:", response.data)
     if (response.data.details?.length) {
@@ -494,6 +495,8 @@ const loadDetail = (id) => {
     inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
     Promise.resolve();
   }).then(() => {
+  }).finally(() => {
+    loading.value = false
   })
 }
 
