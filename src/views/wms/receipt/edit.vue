@@ -474,7 +474,7 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.receiptOrderNo = generateNo()
+    form.value.receiptOrderNo = 'RK' + generateNo()
   }
 })
 

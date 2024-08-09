@@ -470,7 +470,7 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.shipmentOrderNo = generateNo()
+    form.value.shipmentOrderNo = 'CK' + generateNo()
   }
 })
 

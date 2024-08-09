@@ -130,7 +130,7 @@
         </el-table-column>
         <el-table-column label="单号/订单号" align="left">
           <template #default="{ row }">
-            <div>单&nbsp;&nbsp;&nbsp;&nbsp;号：{{ row.receiptOrderNo }}</div>
+            <div>单号：{{ row.receiptOrderNo }}</div>
             <div v-if="row.orderNo">订单号：{{ row.orderNo }}</div>
           </template>
         </el-table-column>
