@@ -113,6 +113,17 @@
                     <el-statistic :precision="2" :value="Number(row.amount)"/>
                   </template>
                 </el-table-column>
+                <el-table-column label="批号" prop="batchNumber" />
+                <el-table-column label="生产日期" prop="productionDate">
+                  <template #default="{ row }">
+                    <div>{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="过期时间" prop="expirationTime">
+                  <template #default="{ row }">
+                    <div>{{ parseTime(row.expirationTime, '{y}-{m}-{d}') }}</div>
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
           </template>
@@ -345,6 +356,9 @@ async function handlePrint(row) {
         skuName: detail.itemSku.skuName,
         areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
         quantity: Number(detail.quantity).toFixed(0),
+        batchNumber: detail.batchNumber,
+        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
+        expirationTime: proxy.parseTime(detail.expirationTime, '{y}-{m}-{d}'),
         amount: detail.amount
       }
     })
