@@ -19,6 +19,9 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="操作单号" prop="formNo">
+          <el-input v-model="queryParams.formNo" clearable placeholder="请输入操作单号"></el-input>
+        </el-form-item>
         <el-form-item label="仓库库区" prop="place">
           <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
@@ -58,6 +61,7 @@
         <el-col :span="6"><span style="font-size: large">库存记录</span></el-col>
       </el-row>
       <el-table v-loading="loading" :data="inventoryHistoryList" border class="mt20" empty-text="暂无库存记录">
+        <el-table-column label="操作单号" prop="formNo"/>
         <el-table-column label="商品信息">
           <template #default="{ row }">
             <div>{{ row.item.itemName }}</div>
@@ -134,6 +138,7 @@ const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
   orderType: -1,
+  orderNo: undefined,
   itemName: undefined,
   itemCode: undefined,
   skuName: undefined,

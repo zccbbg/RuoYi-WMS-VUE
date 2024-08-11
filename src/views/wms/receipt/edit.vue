@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px">
+    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px" v-loading="loading">
       <el-card header="入库单基本信息">
         <el-form label-width="108px" :model="form" ref="receiptForm" :rules="rules">
           <el-row :gutter="24">
@@ -244,7 +244,7 @@ import { delReceiptOrderDetail } from '@/api/wms/receiptOrderDetail'
 const {proxy} = getCurrentInstance();
 const { wms_receipt_type } = proxy.useDict("wms_receipt_type");
 const mode = ref(false)
-const detailLoading = ref(false)
+const loading = ref(false)
 const initFormData = {
   id: undefined,
   receiptOrderNo: undefined,
@@ -352,6 +352,8 @@ const doSave = async (receiptOrderStatus = 0) => {
     // 构建参数
     const details = form.value.details.map(it => {
       return {
+        id: it.id,
+        shipmentOrderId: form.value.id,
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
@@ -427,6 +429,8 @@ const doWarehousing = async () => {
     // 构建参数
     const details = form.value.details.map(it => {
       return {
+        id: it.id,
+        shipmentOrderId: form.value.id,
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
@@ -470,17 +474,20 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.receiptOrderNo = generateNo()
+    form.value.receiptOrderNo = 'RK' + generateNo()
   }
 })
 
 
 // 获取入库单详情
 const loadDetail = (id) => {
+  loading.value = true
   getReceiptOrder(id).then((response) => {
     form.value = {...response.data}
     Promise.resolve();
   }).then(() => {
+  }).finally(() => {
+    loading.value = false
   })
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px">
+    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px" v-loading="loading">
       <el-card header="出库单基本信息">
         <el-form label-width="108px" :model="form" ref="shipmentForm" :rules="rules">
           <el-row :gutter="24">
@@ -138,9 +138,20 @@
               </template>
             </el-table-column>
             <el-table-column label="库区" prop="areaName" width="200"/>
-            <el-table-column label="剩余库存" prop="maxQuantity" align="right" width="150">
+            <el-table-column label="批号" prop="batchNumber" />
+            <el-table-column label="生产日期" prop="productionDate">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.maxQuantity)" :precision="0"/>
+                <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="过期时间" prop="expirationTime">
+              <template #default="{ row }">
+                <div v-if="row.expirationTime">{{ row.expirationTime.substring(0, 10) }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
+              <template #default="{ row }">
+                <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
               </template>
             </el-table-column>
             <el-table-column label="出库数量" prop="quantity" width="180">
@@ -149,7 +160,7 @@
                   v-model="scope.row.quantity"
                   placeholder="出库数量"
                   :min="1"
-                  :max="scope.row.maxQuantity"
+                  :max="scope.row.remainQuantity"
                   @change="handleChangeQuantity"
                 ></el-input-number>
               </template>
@@ -191,7 +202,7 @@
           </div>
         </div>
       </el-card>
-      <InventorySelect
+      <InventoryDetailSelect
         ref="inventorySelectRef"
         :model-value="inventorySelectShow"
         @handleOkClick="handleOkClick"
@@ -227,12 +238,12 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {numSub, generateNo} from '@/utils/ruoyi'
-import InventorySelect from "@/views/components/InventorySelect.vue";
+import InventoryDetailSelect from "@/views/components/InventoryDetailSelect.vue";
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
 
-const detailLoading = ref(false)
+const loading = ref(false)
 const initFormData = {
   id: undefined,
   shipmentOrderNo: undefined,
@@ -286,7 +297,7 @@ const handleOkClick = (item) => {
   inventorySelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
-    if (!form.value.details.find(detail => getPlaceAndSkuKey(detail) === getPlaceAndSkuKey(it))) {
+    if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
       form.value.details.push(
         {
           itemSku: {
@@ -296,9 +307,13 @@ const handleOkClick = (item) => {
           skuId: it.skuId,
           amount: undefined,
           quantity: undefined,
-          maxQuantity: it.quantity,
+          remainQuantity: it.remainQuantity,
+          batchNumber: it.batchNumber,
+          productionDate: it.productionDate,
+          expirationTime: it.expirationTime,
           warehouseId: form.value.warehouseId,
           areaId: form.value.areaId ?? it.areaId,
+          inventoryDetailId: it.id,
           areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
         })
     }
@@ -334,9 +349,15 @@ const doSave = (shipmentOrderStatus = 0) => {
       // 构建参数
       details = form.value.details.map(it => {
         return {
+          id: it.id,
+          receiptOrderId: form.value.id,
           skuId: it.skuId,
           amount: it.amount,
           quantity: it.quantity,
+          batchNumber: it.batchNumber,
+          productionDate: it.productionDate,
+          expirationTime: it.expirationTime,
+          inventoryDetailId: it.inventoryDetailId,
           warehouseId: form.value.warehouseId,
           areaId: it.areaId
         }
@@ -404,9 +425,15 @@ const doShipment = async () => {
     // 构建参数
     const details = form.value.details.map(it => {
       return {
+        id: it.id,
+        receiptOrderId: form.value.id,
         skuId: it.skuId,
         amount: it.amount,
         quantity: it.quantity,
+        batchNumber: it.batchNumber,
+        productionDate: it.productionDate,
+        expirationTime: it.expirationTime,
+        inventoryDetailId: it.inventoryDetailId,
         warehouseId: form.value.warehouseId,
         areaId: it.areaId
       }
@@ -443,24 +470,33 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.shipmentOrderNo = generateNo()
+    form.value.shipmentOrderNo = 'CK' + generateNo()
   }
 })
 
 
 // 获取入库单详情
 const loadDetail = (id) => {
+  loading.value = true
   getShipmentOrder(id).then((response) => {
     console.info("response.data:", response.data)
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
         detail.areaName = useWmsStore().areaMap.get(detail.areaId)?.areaName
       })
+      selectedInventory.value = response.data.details.map(it => {
+        return {
+          id: it.inventoryDetailId,
+          areaId: it.areaId
+        }
+      })
     }
     form.value = {...response.data}
     inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
     Promise.resolve();
   }).then(() => {
+  }).finally(() => {
+    loading.value = false
   })
 }
 
@@ -509,7 +545,7 @@ const handleDeleteDetail = (row, index) => {
     })
   } else {
     form.value.details.splice(index, 1)
-    const indexOfSelected = selectedInventory.value.findIndex(it => getPlaceAndSkuKey(it) === getPlaceAndSkuKey(row))
+    const indexOfSelected = selectedInventory.value.findIndex(it => it.id === row.inventoryDetailId)
     selectedInventory.value.splice(indexOfSelected, 1)
   }
 }
