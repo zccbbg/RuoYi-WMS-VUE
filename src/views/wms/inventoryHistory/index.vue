@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="操作类型" prop="formType">
-          <el-radio-group v-model="queryParams.formType" @change="handleQuery">
+        <el-form-item label="操作类型" prop="orderType">
+          <el-radio-group v-model="queryParams.orderType" @change="handleQuery">
             <el-radio-button
               :key="-1"
               :label="-1"
@@ -72,7 +72,7 @@
         </el-table-column>
         <el-table-column label="操作类型" align="center" width="100">
           <template #default="{ row }">
-            <dict-tag :options="wms_inventory_history_type" :value="row.formType"/>
+            <dict-tag :options="wms_inventory_history_type" :value="row.orderType"/>
           </template>
         </el-table-column>
         <el-table-column label="仓库/库区">
@@ -133,7 +133,7 @@ const queryRef = ref(null)
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
-  formType: -1,
+  orderType: -1,
   itemName: undefined,
   itemCode: undefined,
   skuName: undefined,
@@ -146,8 +146,8 @@ const queryParams = ref({
 /** 查询往来单位列表 */
 function getList() {
   const query = {...queryParams.value}
-  if (query.formType === -1) {
-    query.formType = null
+  if (query.orderType === -1) {
+    query.orderType = null
   }
   if (query.place?.length) {
     query.warehouseId = query.place[0]
