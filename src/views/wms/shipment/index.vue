@@ -86,6 +86,7 @@
                 :row-key="getRowKey"
                 :expand-row-keys="expandedRowKeys"
                 empty-text="暂无出库单"
+                cell-class-name="vertical-top-cell"
       >
         <el-table-column type="expand">
           <template #default="props">
@@ -436,5 +437,8 @@ getList();
 <style lang="scss">
 .el-statistic__content {
   font-size: 14px;
+}
+.el-table .vertical-top-cell {
+  vertical-align: top
 }
 </style>

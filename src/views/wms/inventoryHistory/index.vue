@@ -60,7 +60,7 @@
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
         <el-col :span="6"><span style="font-size: large">库存记录</span></el-col>
       </el-row>
-      <el-table v-loading="loading" :data="inventoryHistoryList" border class="mt20" empty-text="暂无库存记录">
+      <el-table v-loading="loading" :data="inventoryHistoryList" border class="mt20" empty-text="暂无库存记录" cell-class-name="vertical-top-cell">
         <el-table-column label="操作单号" prop="orderNo"/>
         <el-table-column label="商品信息">
           <template #default="{ row }">
@@ -187,5 +187,8 @@ getList();
 <style lang="scss">
 .el-statistic__content {
   font-size: 14px;
+}
+.el-table .vertical-top-cell {
+  vertical-align: top
 }
 </style>

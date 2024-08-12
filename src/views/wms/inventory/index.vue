@@ -54,7 +54,7 @@
         <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large" @change="handleChangeFilterZero"/>
       </div>
       <el-table :data="inventoryList" border :span-method="spanMethod"
-                cell-class-name="my-cell" v-loading="loading" empty-text="暂无库存">
+                cell-class-name="vertical-top-cell" v-loading="loading" empty-text="暂无库存">
         <template v-if="queryType == 'warehouse' || queryType == 'area'">
           <el-table-column label="仓库" prop="warehouseId">
             <template #default="{ row }">
@@ -262,10 +262,10 @@ onMounted(() => {
 });
 </script>
 <style>
-.el-table .my-cell {
-  vertical-align: top
-}
 .el-statistic__content {
   font-size: 14px;
+}
+.el-table .vertical-top-cell {
+  vertical-align: top
 }
 </style>
