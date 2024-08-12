@@ -306,7 +306,7 @@ const save = async () => {
   doSave()
 }
 
-const doSave = (shipmentOrderStatus = 0) => {
+const doSave = (movementOrderStatus = 0) => {
   movementForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
@@ -322,9 +322,8 @@ const doSave = (shipmentOrderStatus = 0) => {
       details = form.value.details.map(it => {
         return {
           id: it.id,
-          receiptOrderId: form.value.id,
+          movementOrderId: form.value.id,
           skuId: it.skuId,
-          amount: it.amount,
           quantity: it.quantity,
           batchNo: it.batchNo,
           productionDate: it.productionDate,
@@ -343,12 +342,8 @@ const doSave = (shipmentOrderStatus = 0) => {
     const params = {
       id: form.value.id,
       movementOrderNo: form.value.movementOrderNo,
-      shipmentOrderType: form.value.shipmentOrderType,
-      shipmentOrderStatus,
-      merchantId: form.value.merchantId,
-      orderNo: form.value.orderNo,
+      movementOrderStatus,
       remark: form.value.remark,
-      receivableAmount: form.value.receivableAmount,
       totalQuantity: form.value.totalQuantity,
       sourceWarehouseId: form.value.sourceWarehouseId,
       sourceAreaId: form.value.sourceAreaId,
@@ -402,9 +397,8 @@ const doMovement = async () => {
     const details = form.value.details.map(it => {
       return {
         id: it.id,
-        receiptOrderId: form.value.id,
+        movementOrderId: form.value.id,
         skuId: it.skuId,
-        amount: it.amount,
         quantity: it.quantity,
         batchNo: it.batchNo,
         productionDate: it.productionDate,
