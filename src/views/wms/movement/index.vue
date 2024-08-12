@@ -201,6 +201,7 @@ import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
 import WarehouseCascader from "@/views/components/WarehouseCascader.vue";
+import movementPanel from "@/components/PrintTemplate/movement-panel";
 
 const { proxy } = getCurrentInstance();
 const { wms_movement_status } = proxy.useDict("wms_movement_status");
@@ -312,48 +313,46 @@ function handleGoDetail(row) {
 
 /** 导出按钮操作 */
 async function handlePrint(row) {
-  // const res = await getMovementOrder(row.id)
-  // const shipmentOrder = res.data
-  // let table = []
-  // if (shipmentOrder.details?.length) {
-  //   table = shipmentOrder.details.map(detail => {
-  //     return {
-  //       itemName: detail.itemSku.item.itemName,
-  //       skuName: detail.itemSku.skuName,
-  //       areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
-  //       quantity: Number(detail.quantity).toFixed(0),
-  //       batchNo: detail.batchNo,
-  //       productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
-  //       expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
-  //       amount: detail.amount
-  //     }
-  //   })
-  // }
-  // const printData = {
-  //   movementOrderNo: shipmentOrder.movementOrderNo,
-  //   shipmentOrderType: proxy.selectDictLabel(wms_shipment_type.value, shipmentOrder.shipmentOrderType),
-  //   movementOrderStatus: proxy.selectDictLabel(wms_shipment_status.value, shipmentOrder.movementOrderStatus),
-  //   merchantName: useWmsStore().merchantMap.get(shipmentOrder.merchantId)?.merchantName,
-  //   orderNo: shipmentOrder.orderNo,
-  //   warehouseName: useWmsStore().warehouseMap.get(shipmentOrder.warehouseId)?.warehouseName,
-  //   areaName: useWmsStore().areaMap.get(shipmentOrder.areaId)?.areaName,
-  //   totalQuantity: Number(shipmentOrder.totalQuantity).toFixed(0),
-  //   receivableAmount: ((shipmentOrder.receivableAmount || shipmentOrder.receivableAmount === 0) ? (shipmentOrder.receivableAmount + '元') : ''),
-  //   createBy: shipmentOrder.createBy,
-  //   createTime: proxy.parseTime(shipmentOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
-  //   updateBy: shipmentOrder.updateBy,
-  //   updateTime: proxy.parseTime(shipmentOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
-  //   remark: shipmentOrder.remark,
-  //   table
-  // }
-  // let printTemplate = new proxy.$hiprint.PrintTemplate({template: shipmentPanel})
-  // printTemplate.print(printData, {}, {
-  //   styleHandler: () => {
-  //     let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
-  //     console.info("css:", css)
-  //     return css
-  //   }
-  // })
+  const res = await getMovementOrder(row.id)
+  const movementOrder = res.data
+  let table = []
+  if (movementOrder.details?.length) {
+    table = movementOrder.details.map(detail => {
+      return {
+        itemName: detail.itemSku.item.itemName,
+        skuName: detail.itemSku.skuName,
+        sourceAreaName: useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName,
+        targetAreaName: useWmsStore().areaMap.get(detail.targetAreaId)?.areaName,
+        quantity: Number(detail.quantity).toFixed(0),
+        batchNo: detail.batchNo,
+        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
+        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}')
+      }
+    })
+  }
+  const printData = {
+    movementOrderNo: movementOrder.movementOrderNo,
+    movementOrderStatus: proxy.selectDictLabel(wms_movement_status.value, movementOrder.movementOrderStatus),
+    sourceWarehouseName: useWmsStore().warehouseMap.get(movementOrder.sourceWarehouseId)?.warehouseName,
+    sourceAreaName: useWmsStore().areaMap.get(movementOrder.sourceAreaId)?.areaName,
+    targetWarehouseName: useWmsStore().warehouseMap.get(movementOrder.targetWarehouseId)?.warehouseName,
+    targetAreaName: useWmsStore().areaMap.get(movementOrder.targetAreaId)?.areaName,
+    totalQuantity: Number(movementOrder.totalQuantity).toFixed(0),
+    createBy: movementOrder.createBy,
+    createTime: proxy.parseTime(movementOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
+    updateBy: movementOrder.updateBy,
+    updateTime: proxy.parseTime(movementOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
+    remark: movementOrder.remark,
+    table
+  }
+  let printTemplate = new proxy.$hiprint.PrintTemplate({template: movementPanel})
+  printTemplate.print(printData, {}, {
+    styleHandler: () => {
+      let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
+      console.info("css:", css)
+      return css
+    }
+  })
 }
 
 
