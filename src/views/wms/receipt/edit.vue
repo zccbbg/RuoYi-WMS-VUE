@@ -168,9 +168,9 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="批号" prop="batchNumber" width="150">
+            <el-table-column label="批号" prop="batchNo" width="150">
               <template #default="scope">
-                <el-input v-model="scope.row.batchNumber"></el-input>
+                <el-input v-model="scope.row.batchNo"></el-input>
               </template>
             </el-table-column>
             <el-table-column label="生产日期/过期时间" width="250">
@@ -188,7 +188,7 @@
                 <div class="flex-center mt5">
                   <span>过期时间：</span>
                   <el-date-picker
-                    v-model="scope.row.expirationTime"
+                    v-model="scope.row.expirationDate"
                     type="date"
                     format="YYYY-MM-DD"
                     value-format="YYYY-MM-DD HH:mm:ss"
@@ -313,9 +313,9 @@ const handleOkClick = (item) => {
         itemSku: {...it},
         amount: undefined,
         quantity: it.quantity,
-        batchNumber: undefined,
+        batchNo: undefined,
         productionDate: undefined,
-        expirationTime: undefined,
+        expirationDate: undefined,
         warehouseId: form.value.warehouseId,
         areaId: form.value.areaId
       }
@@ -357,9 +357,9 @@ const doSave = async (receiptOrderStatus = 0) => {
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
-        batchNumber: it.batchNumber,
+        batchNo: it.batchNo,
         productionDate: it.productionDate,
-        expirationTime: it.expirationTime,
+        expirationDate: it.expirationDate,
         warehouseId: form.value.warehouseId,
         areaId: it.areaId
       }
@@ -434,9 +434,9 @@ const doWarehousing = async () => {
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
-        batchNumber: it.batchNumber,
+        batchNo: it.batchNo,
         productionDate: it.productionDate,
-        expirationTime: it.expirationTime,
+        expirationDate: it.expirationDate,
         warehouseId: form.value.warehouseId,
         areaId: it.areaId
       }

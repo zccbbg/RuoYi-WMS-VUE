@@ -138,15 +138,15 @@
               </template>
             </el-table-column>
             <el-table-column label="库区" prop="areaName" width="200"/>
-            <el-table-column label="批号" prop="batchNumber" />
+            <el-table-column label="批号" prop="batchNo" />
             <el-table-column label="生产日期" prop="productionDate">
               <template #default="{ row }">
                 <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="过期时间" prop="expirationTime">
+            <el-table-column label="过期时间" prop="expirationDate">
               <template #default="{ row }">
-                <div v-if="row.expirationTime">{{ row.expirationTime.substring(0, 10) }}</div>
+                <div v-if="row.expirationDate">{{ row.expirationDate.substring(0, 10) }}</div>
               </template>
             </el-table-column>
             <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
@@ -308,9 +308,9 @@ const handleOkClick = (item) => {
           amount: undefined,
           quantity: undefined,
           remainQuantity: it.remainQuantity,
-          batchNumber: it.batchNumber,
+          batchNo: it.batchNo,
           productionDate: it.productionDate,
-          expirationTime: it.expirationTime,
+          expirationDate: it.expirationDate,
           warehouseId: form.value.warehouseId,
           areaId: form.value.areaId ?? it.areaId,
           inventoryDetailId: it.id,
@@ -354,9 +354,9 @@ const doSave = (shipmentOrderStatus = 0) => {
           skuId: it.skuId,
           amount: it.amount,
           quantity: it.quantity,
-          batchNumber: it.batchNumber,
+          batchNo: it.batchNo,
           productionDate: it.productionDate,
-          expirationTime: it.expirationTime,
+          expirationDate: it.expirationDate,
           inventoryDetailId: it.inventoryDetailId,
           warehouseId: form.value.warehouseId,
           areaId: it.areaId
@@ -430,9 +430,9 @@ const doShipment = async () => {
         skuId: it.skuId,
         amount: it.amount,
         quantity: it.quantity,
-        batchNumber: it.batchNumber,
+        batchNo: it.batchNo,
         productionDate: it.productionDate,
-        expirationTime: it.expirationTime,
+        expirationDate: it.expirationDate,
         inventoryDetailId: it.inventoryDetailId,
         warehouseId: form.value.warehouseId,
         areaId: it.areaId

@@ -726,9 +726,9 @@ export default {
                 {
                   "width": 78.57142857142857,
                   "title": "批号",
-                  "field": "batchNumber",
+                  "field": "batchNo",
                   "checked": true,
-                  "columnId": "batchNumber",
+                  "columnId": "batchNo",
                   "fixed": false,
                   "rowspan": 1,
                   "colspan": 1,
@@ -746,9 +746,9 @@ export default {
                 {
                   "width": 78.57142857142857,
                   "title": "过期时间",
-                  "field": "expirationTime",
+                  "field": "expirationDate",
                   "checked": true,
-                  "columnId": "expirationTime",
+                  "columnId": "expirationDate",
                   "fixed": false,
                   "rowspan": 1,
                   "colspan": 1,

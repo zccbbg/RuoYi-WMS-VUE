@@ -44,11 +44,11 @@
           <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="批号" align="left" prop="batchNumber"/>
+      <el-table-column label="批号" align="left" prop="batchNo"/>
       <el-table-column label="生产日期/过期时间" align="left" width="180">
         <template #default="{ row }">
           <div v-if="row.productionDate">生产日期：{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
-          <div v-if="row.expirationTime">过期时间：{{ parseTime(row.expirationTime, '{y}-{m}-{d}') }}</div>
+          <div v-if="row.expirationDate">过期时间：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
         </template>
       </el-table-column>
       <el-table-column label="入库时间" align="left" prop="createTime" width="180"/>
