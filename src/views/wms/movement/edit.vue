@@ -145,8 +145,9 @@
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.quantity"
-                  placeholder="出库数量"
+                  placeholder="移库数量"
                   :min="1"
+                  :precision="0"
                   :max="scope.row.remainQuantity"
                   @change="handleChangeQuantity"
                 ></el-input-number>
@@ -500,7 +501,7 @@ const handleChangeQuantity = () => {
   let sum = 0
   form.value.details.forEach(it => {
     if (it.quantity) {
-      sum += it.quantity
+      sum += Number(it.quantity)
     }
   })
   form.value.totalQuantity = sum
