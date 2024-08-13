@@ -404,7 +404,7 @@ const doMovement = async () => {
         productionDate: it.productionDate,
         expirationDate: it.expirationDate,
         inventoryDetailId: it.inventoryDetailId,
-        sourceWarehouseId: form.value.warehouseId,
+        sourceWarehouseId: form.value.sourceWarehouseId,
         sourceAreaId: it.sourceAreaId,
         targetWarehouseId: form.value.targetWarehouseId,
         targetAreaId: it.targetAreaId
