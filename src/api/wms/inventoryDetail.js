@@ -1,9 +1,18 @@
 import request from '@/utils/request'
 
-// 查询库存详情列表
+// 分页查询库存详情列表
 export function listInventoryDetail(query) {
   return request({
     url: '/wms/inventoryDetail/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询库存详情列表
+export function listInventoryDetailNoPage(query) {
+  return request({
+    url: '/wms/inventoryDetail/listNoPage',
     method: 'get',
     params: query
   })
