@@ -214,9 +214,9 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="账面库存" prop="remainQuantity" align="right" width="150">
+            <el-table-column label="账面库存" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Number(row.quantity)" :precision="0"/>
+                <el-statistic :value="Math.min(Number(row.quantity), Number(row.remainQuantity))" :precision="0"/>
               </template>
             </el-table-column>
             <el-table-column label="盈亏数" prop="remainQuantity" align="right" width="150">
@@ -234,44 +234,9 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="100" align="right" fixed="right">
-              <template #default="scope">
-                <el-button icon="Delete" type="danger" plain size="small"
-                           @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
-                </el-button>
-              </template>
-            </el-table-column>
           </el-table>
-<!--          <div class="tc mt20">-->
-<!--            <el-popover-->
-<!--              placement="left"-->
-<!--              title="提示"-->
-<!--              :width="200"-->
-<!--              trigger="hover"-->
-<!--              :disabled="form.warehouseId"-->
-<!--              content="请先选择仓库！"-->
-<!--            >-->
-<!--              <template #reference>-->
-<!--                <el-button type="primary" plain="plain" @click="startCheck" icon="Plus" :disabled="!form.warehouseId">-->
-<!--                  添加商品-->
-<!--                </el-button>-->
-<!--              </template>-->
-<!--            </el-popover>-->
-<!--          </div>-->
         </div>
       </el-card>
-      <InventoryDetailSelect
-        ref="inventorySelectRef"
-        :model-value="inventorySelectShow"
-        @handleOkClick="handleOkClick"
-        @handleCancelClick="inventorySelectShow = false"
-        :size="'90%'"
-        :select-warehouse-disable="false"
-        :select-area-disable="!!form?.areaId"
-        :warehouse-id="form.warehouseId"
-        :area-id="form.areaId"
-        :selected-inventory="selectedInventory"
-      />
       <SkuSelect
         ref="sku-select"
         :model-value="skuSelectShow"
@@ -299,9 +264,7 @@
 
 <script setup name="CheckOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {addShipmentOrder, getShipmentOrder, updateShipmentOrder, shipment} from "@/api/wms/shipmentOrder";
 import {addCheckOrder, getCheckOrder, updateCheckOrder} from "@/api/wms/checkOrder";
-import {delShipmentOrderDetail} from "@/api/wms/shipmentOrderDetail";
 import {delCheckOrderDetail} from "@/api/wms/checkOrderDetail";
 import {listInventoryDetailNoPage} from "@/api/wms/inventoryDetail";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -620,18 +583,6 @@ const handleChangeQuantity = () => {
   form.value.checkOrderTotal = checkOrderTotal
 }
 
-const handleDeleteDetail = (row, index) => {
-  if (row.id) {
-    proxy.$modal.confirm('确认删除本条商品明细吗？如确认会立即执行！').then(function () {
-      return delCheckOrderDetail(row.id);
-    }).then(() => {
-      form.value.details.splice(index, 1)
-      proxy.$modal.msgSuccess("删除成功");
-    })
-  } else {
-    form.value.details.splice(index, 1)
-  }
-}
 const goSaasTip = () => {
   ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {
     confirmButtonText: '确定'
