@@ -30,7 +30,7 @@
           </el-row>
         </el-form>
             <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品" v-loading="loading" ref="skuSelectFormRef" cell-class-name="my-cell">
-              <el-table-column type="selection" width="55" :reserve-selection="true"/>
+              <el-table-column type="selection" width="55" :reserve-selection="true" v-if="!singleSelect"/>
               <el-table-column label="商品信息" prop="itemId">
                 <template #default="{ row }">
                   <div>{{ row.item.itemName }}</div>
@@ -73,6 +73,11 @@
               <el-table-column label="长宽高(cm)" align="right" width="250">
                 <template #default="{ row }">
                   <div>{{ getVolumeText(row) }}</div>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" width="100" v-if="singleSelect" align="right">
+                <template #default="{ row }">
+                  <el-button link type="primary" @click="handleChooseSku(row)">选择</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -176,6 +181,7 @@ const goCreateItem = () => {
 const props = defineProps<{
   modelValue?: boolean
   size: number | string
+  singleSelect: boolean
 }>()
 
 const show = computed(() => {
@@ -186,11 +192,16 @@ const show = computed(() => {
 const emit = defineEmits<{
   (e: 'handleCancelClick')
   (e: 'handleOkClick', value)
+  (e: 'handleSingleOkClick', value)
 }>()
 
 function handleCancelClick() {
   emit('handleCancelClick');
   clearQuantity()
+}
+
+function handleChooseSku(row) {
+  emit('handleSingleOkClick', row);
 }
 
 function handleOkClick() {
@@ -201,6 +212,7 @@ function handleOkClick() {
 const handleSelectionChange = (selection) => {
   selectItemSkuVoCheck.value = selection
 }
+
 
 function clearQuantity() {
   skuSelectFormRef.value.clearSelection()
