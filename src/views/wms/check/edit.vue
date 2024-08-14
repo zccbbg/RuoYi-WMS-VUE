@@ -1,6 +1,28 @@
 <template>
-  <div>
-    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px" v-loading="loading">
+  <div v-if="!checking" style="display: flex;justify-content: center;align-items: center;height: 80vh">
+    <el-card header="选择仓库库区开始盘库" >
+      <el-form>
+        <el-form-item label="仓库" prop="warehouseId">
+          <el-select v-model="form.warehouseId" placeholder="请选择仓库" :disabled="checking"
+                     filterable>
+            <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
+                       :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="库区" prop="areaId">
+          <el-select v-model="form.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || checking" clearable filterable>
+            <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)"
+                       :key="item.id" :label="item.areaName" :value="item.id"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" plain="plain" size="default" @click="startCheck"  style="width: 100%!important;">开始盘库</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+  </div>
+  <div v-else v-loading="loading">
+    <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px">
       <el-card header="盘库单基本信息">
         <el-form label-width="108px" :model="form" ref="checkForm" :rules="rules">
           <el-row :gutter="24">
@@ -67,38 +89,38 @@
                 inactive-text="关闭"
               />
             </div>
-            <div>
-              <el-popover
-                placement="left"
-                title="提示"
-                :width="200"
-                trigger="hover"
-                :disabled="form.warehouseId"
-                content="请先选择仓库！"
-              >
-                <template #reference>
+<!--            <div>-->
+<!--              <el-popover-->
+<!--                placement="left"-->
+<!--                title="提示"-->
+<!--                :width="200"-->
+<!--                trigger="hover"-->
+<!--                :disabled="form.warehouseId"-->
+<!--                content="请先选择仓库！"-->
+<!--              >-->
+<!--                <template #reference>-->
                   <el-button type="primary" plain="plain" size="default" @click="addInventoryDetail" icon="Plus"
                              :disabled="!form.warehouseId">新增库存
                   </el-button>
-                </template>
-              </el-popover>
-              <el-popover
-                placement="left"
-                title="提示"
-                :width="200"
-                trigger="hover"
-                :disabled="!checking"
-                content="已在盘库中！"
-              >
-                <template #reference>
-                  <el-button type="primary" plain="plain" size="default" @click="startCheck" icon="Plus"
-                             :disabled="checking">开始盘库
-                  </el-button>
-                </template>
-              </el-popover>
-            </div>
+<!--                </template>-->
+<!--              </el-popover>-->
+<!--              <el-popover-->
+<!--                placement="left"-->
+<!--                title="提示"-->
+<!--                :width="200"-->
+<!--                trigger="hover"-->
+<!--                :disabled="!checking"-->
+<!--                content="已在盘库中！"-->
+<!--              >-->
+<!--                <template #reference>-->
+<!--                  <el-button type="primary" plain="plain" size="default" @click="startCheck" icon="Plus"-->
+<!--                             :disabled="checking">开始盘库-->
+<!--                  </el-button>-->
+<!--                </template>-->
+<!--              </el-popover>-->
+<!--            </div>-->
           </div>
-          <el-table :data="form.details" border empty-text="暂无商品明细" v-loading="checkLoading">
+          <el-table :data="form.details" border empty-text="暂无商品明细">
             <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="scope">
                 <template v-if="scope.row.newInventoryDetail">
@@ -265,7 +287,7 @@
         :single-select="true"
       />
     </div>
-    <div class="footer-global">
+    <div class="footer-global" v-if="checking">
       <div class="btn-box">
         <div>
           <el-button @click="doCheck" type="primary" class="ml10">盘库结束</el-button>
@@ -289,12 +311,11 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {numSub, generateNo} from '@/utils/ruoyi'
-import InventoryDetailSelect from "@/views/components/InventoryDetailSelect.vue";
 import SkuSelect from "@/views/components/SkuSelect.vue";
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
-
+const checkGreaterThanZero = ref(false)
 const loading = ref(false)
 const initFormData = {
   id: undefined,
@@ -331,7 +352,6 @@ const close = () => {
 const inventorySelectShow = ref(false)
 const skuSelectShow = ref(false)
 const currentSkuSelectIndex = ref(null)
-const checkLoading = ref(false)
 // 盘库中标识
 const checking = ref(false)
 
@@ -342,11 +362,12 @@ const startCheck = () => {
   }
   const query = {
     warehouseId: form.value.warehouseId,
-    areaId: form.value.areaId
+    areaId: form.value.areaId,
+    minQuantity: checkGreaterThanZero ? 1 : null
   }
-  checkLoading.value = true
+  checking.value = true
+  loading.value = true
   listInventoryDetailNoPage(query).then(res => {
-    checking.value = true
     res.data.forEach(it => {
       if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
         form.value.details.push({
@@ -367,7 +388,7 @@ const startCheck = () => {
         )
       }
     })
-  }).finally(() => checkLoading.value = false)
+  }).finally(() => loading.value = false)
 }
 
 const addInventoryDetail = () => {
