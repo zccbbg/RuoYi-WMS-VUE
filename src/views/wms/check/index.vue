@@ -166,7 +166,7 @@
                 :content="'盘库单【' + scope.row.checkOrderNo + '】已盘库完成，无法删除！' "
               >
                 <template #reference>
-                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:checkOrder:remove']" :disabled="scope.row.shipmentOrderStatus === 1">删除</el-button>
+                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:checkOrder:remove']" :disabled="scope.row.checkOrderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
               <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:checkOrder:export']">打印</el-button>

@@ -42,3 +42,12 @@ export function delCheckOrder(id) {
     method: 'delete'
   })
 }
+
+// 盘库结束
+export function check(data) {
+  return request({
+    url: '/wms/checkOrder/check',
+    method: 'post',
+    data: data
+  })
+}

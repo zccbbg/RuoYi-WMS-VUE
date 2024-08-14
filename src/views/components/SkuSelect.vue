@@ -93,7 +93,7 @@
         </span>
         <span>
           <el-button @click="handleCancelClick">取消</el-button>
-          <el-button type="primary" @click="handleOkClick">确认</el-button>
+          <el-button type="primary" @click="handleOkClick" v-if="!singleSelect">确认</el-button>
       </span>
       </div>
     </template>

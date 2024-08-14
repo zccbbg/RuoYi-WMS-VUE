@@ -216,7 +216,7 @@
             </el-table-column>
             <el-table-column label="账面库存" align="right" width="150">
               <template #default="{ row }">
-                <el-statistic :value="Math.min(Number(row.quantity), Number(row.remainQuantity))" :precision="0"/>
+                <el-statistic :value="Number(row.quantity)" :precision="0"/>
               </template>
             </el-table-column>
             <el-table-column label="盈亏数" prop="remainQuantity" align="right" width="150">
@@ -232,6 +232,24 @@
                   :min="0"
                   @change="handleChangeQuantity"
                 ></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" width="100" align="right" fixed="right">
+              <template #default="scope">
+                <el-popover
+                  placement="left"
+                  title="提示"
+                  :width="200"
+                  trigger="hover"
+                  :disabled="scope.row.newInventoryDetail"
+                  content="非新增库存，无法删除！"
+                >
+                  <template #reference>
+                    <el-button icon="Delete" type="danger" plain size="small" :disabled="!scope.row.newInventoryDetail"
+                               @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
+                    </el-button>
+                  </template>
+                </el-popover>
               </template>
             </el-table-column>
           </el-table>
@@ -264,7 +282,7 @@
 
 <script setup name="CheckOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {addCheckOrder, getCheckOrder, updateCheckOrder} from "@/api/wms/checkOrder";
+import {addCheckOrder, getCheckOrder, updateCheckOrder, check} from "@/api/wms/checkOrder";
 import {delCheckOrderDetail} from "@/api/wms/checkOrderDetail";
 import {listInventoryDetailNoPage} from "@/api/wms/inventoryDetail";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -488,59 +506,57 @@ const updateToInvalid = async () => {
 }
 
 const doCheck = async () => {
-  // await proxy?.$modal.confirm('确认盘库吗？');
-  // checkForm.value?.validate((valid) => {
-  //   // 校验
-  //   if (!valid) {
-  //     return ElMessage.error('请填写必填项')
-  //   }
-  //   if (!form.value.details?.length) {
-  //     return ElMessage.error('请选择商品')
-  //   }
-  //   const invalidQuantityList = form.value.details.filter(it => !it.quantity)
-  //   if (invalidQuantityList?.length) {
-  //     return ElMessage.error('请选择出库数量')
-  //   }
-  //   // 构建参数
-  //   const details = form.value.details.map(it => {
-  //     return {
-  //       id: it.id,
-  //       receiptOrderId: form.value.id,
-  //       skuId: it.skuId,
-  //       amount: it.amount,
-  //       quantity: it.quantity,
-  //       batchNo: it.batchNo,
-  //       productionDate: it.productionDate,
-  //       expirationDate: it.expirationDate,
-  //       inventoryDetailId: it.inventoryDetailId,
-  //       warehouseId: form.value.warehouseId,
-  //       areaId: it.areaId
-  //     }
-  //   })
-  //
-  //   //console.log('提交前校验',form.value)
-  //   const params = {
-  //     id: form.value.id,
-  //     shipmentOrderNo: form.value.shipmentOrderNo,
-  //     shipmentOrderType: form.value.shipmentOrderType,
-  //     merchantId: form.value.merchantId,
-  //     orderNo: form.value.orderNo,
-  //     remark: form.value.remark,
-  //     receivableAmount: form.value.receivableAmount,
-  //     totalQuantity: form.value.totalQuantity,
-  //     warehouseId: form.value.warehouseId,
-  //     areaId: form.value.areaId,
-  //     details: details
-  //   }
-  //   shipment(params).then((res) => {
-  //     if (res.code === 200) {
-  //       ElMessage.success('出库成功')
-  //       close()
-  //     } else {
-  //       ElMessage.error(res.msg)
-  //     }
-  //   })
-  // })
+  await proxy?.$modal.confirm('确认盘库结束吗？');
+  checkForm.value?.validate((valid) => {
+    // 校验
+    if (!valid) {
+      return ElMessage.error('请填写必填项')
+    }
+    const newList = form.value.details.filter(it => it.newInventoryDetail)
+    if (newList?.length) {
+      if (newList.filter(it => !it.skuId)?.length) {
+        return ElMessage.error('请选择商品')
+      }
+      if (newList.filter(it => !it.areaId)?.length) {
+        return ElMessage.error('请选择库区')
+      }
+    }
+    // 构建参数
+    const details = form.value.details.map(it => {
+      return {
+        id: it.id,
+        checkOrderId: form.value.id,
+        skuId: it.skuId,
+        quantity: it.quantity,
+        checkQuantity: it.checkQuantity,
+        warehouseId: form.value.warehouseId,
+        areaId: it.areaId,
+        batchNo: it.batchNo,
+        productionDate: it.productionDate,
+        expirationDate: it.expirationDate,
+        receiptTime: it.receiptTime,
+        inventoryDetailId: it.inventoryDetailId
+      }
+    })
+
+    const params = {
+      id: form.value.id,
+      checkOrderNo: form.value.checkOrderNo,
+      checkOrderTotal: form.value.checkOrderTotal,
+      warehouseId: form.value.warehouseId,
+      areaId: form.value.areaId,
+      remark: form.value.remark,
+      details: details
+    }
+    check(params).then((res) => {
+      if (res.code === 200) {
+        ElMessage.success('盘库成功')
+        close()
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  })
 }
 
 const route = useRoute();
@@ -563,6 +579,7 @@ const loadDetail = (id) => {
       response.data.details.forEach(detail => {
         detail.areaName = useWmsStore().areaMap.get(detail.areaId)?.areaName
         detail.newInventoryDetail = !detail.inventoryDetailId
+        detail.quantity = detail.remainQuantity
       })
     }
     form.value = {...response.data}
@@ -571,6 +588,19 @@ const loadDetail = (id) => {
   }).finally(() => {
     loading.value = false
   })
+}
+
+const handleDeleteDetail = (row, index) => {
+  if (row.id) {
+    proxy.$modal.confirm('确认删除本条商品明细吗？如确认会立即执行！').then(function () {
+      return delCheckOrderDetail(row.id);
+    }).then(() => {
+      form.value.details.splice(index, 1)
+      proxy.$modal.msgSuccess("删除成功");
+    })
+  } else {
+    form.value.details.splice(index, 1)
+  }
 }
 
 const handleChangeQuantity = () => {
