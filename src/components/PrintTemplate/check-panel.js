@@ -610,6 +610,16 @@ export default {
                 },
                 {
                   "width": 78.57142857142857,
+                  "title": "入库时间",
+                  "field": "receiptTime",
+                  "checked": true,
+                  "columnId": "receiptTime",
+                  "fixed": false,
+                  "rowspan": 1,
+                  "colspan": 1,
+                },
+                {
+                  "width": 78.57142857142857,
                   "align": "right",
                   "title": "账面库存",
                   "field": "quantity",

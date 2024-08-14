@@ -312,9 +312,10 @@ async function handlePrint(row) {
         quantity: Number(detail.quantity).toFixed(0),
         profitAndLoss: Number(detail.checkQuantity - detail.quantity).toFixed(0),
         checkQuantity: Number(detail.checkQuantity).toFixed(0),
-        batchNo: detail.inventoryDetail.batchNo,
-        productionDate: proxy.parseTime(detail.inventoryDetail.productionDate, '{y}-{m}-{d}'),
-        expirationDate: proxy.parseTime(detail.inventoryDetail.expirationDate, '{y}-{m}-{d}'),
+        batchNo: detail.batchNo,
+        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
+        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
+        receiptTime: detail.receiptTime
       }
     })
   }
