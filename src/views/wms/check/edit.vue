@@ -220,19 +220,19 @@
                 </template>
               </template>
             </el-table-column>
-            <el-table-column label="入库时间" prop="receiptTime" width="220">
+            <el-table-column label="入库日期" prop="receiptTime" width="200">
               <template #default="{ row }">
                 <template v-if="row.newInventoryDetail">
                   <el-date-picker
                     v-model="row.receiptTime"
-                    type="datetime"
-                    format="YYYY-MM-DD HH:mm:ss"
+                    type="date"
+                    format="YYYY-MM-DD"
                     value-format="YYYY-MM-DD HH:mm:ss"
-                    style="width: 180px!important;"
+                    style="width: 150px!important;"
                   />
                 </template>
                 <div v-else>
-                  {{ row.receiptTime }}
+                  {{ parseTime(row.receiptTime,  '{y}-{m}-{d}') }}
                 </div>
               </template>
             </el-table-column>
@@ -404,6 +404,7 @@ const addInventoryDetail = () => {
       batchNo: undefined,
       productionDate: undefined,
       expirationDate: undefined,
+      receiptTime: proxy.parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}'),
       newInventoryDetail: true
     }
   )
