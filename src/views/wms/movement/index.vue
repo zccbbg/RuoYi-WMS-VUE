@@ -97,7 +97,7 @@
                     <div v-if="row.productionDate">{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="过期时间" prop="inventoryDetail.expirationDate">
+                <el-table-column label="过期日期" prop="inventoryDetail.expirationDate">
                   <template #default="{ row }">
                     <div v-if="row.expirationDate">{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
                   </template>

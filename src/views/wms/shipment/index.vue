@@ -120,7 +120,7 @@
                     <div>{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="过期时间" prop="expirationDate">
+                <el-table-column label="过期日期" prop="expirationDate">
                   <template #default="{ row }">
                     <div>{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
                   </template>

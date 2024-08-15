@@ -745,7 +745,7 @@ export default {
                 },
                 {
                   "width": 78.57142857142857,
-                  "title": "过期时间",
+                  "title": "过期日期",
                   "field": "expirationDate",
                   "checked": true,
                   "columnId": "expirationDate",

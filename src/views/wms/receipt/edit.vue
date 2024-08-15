@@ -174,7 +174,7 @@
                 <el-input v-model="scope.row.batchNo"></el-input>
               </template>
             </el-table-column>
-            <el-table-column label="生产日期/过期时间" width="250">
+            <el-table-column label="生产日期/过期日期" width="250">
               <template #default="scope">
                 <div class="flex-center">
                   <span>生产日期：</span>
@@ -187,7 +187,7 @@
                   />
                 </div>
                 <div class="flex-center mt5">
-                  <span>过期时间：</span>
+                  <span>过期日期：</span>
                   <el-date-picker
                     v-model="scope.row.expirationDate"
                     type="date"

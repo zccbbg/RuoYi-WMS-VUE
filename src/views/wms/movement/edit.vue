@@ -131,7 +131,7 @@
                 <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="过期时间" prop="expirationDate">
+            <el-table-column label="过期日期" prop="expirationDate">
               <template #default="{ row }">
                 <div v-if="row.expirationDate">{{ row.expirationDate.substring(0, 10) }}</div>
               </template>
