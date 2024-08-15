@@ -362,8 +362,7 @@ const startCheck = () => {
   }
   const query = {
     warehouseId: form.value.warehouseId,
-    areaId: form.value.areaId,
-    minQuantity: checkGreaterThanZero ? 1 : null
+    areaId: form.value.areaId
   }
   checking.value = true
   loading.value = true

@@ -57,58 +57,10 @@
       </el-row>
 
       <el-table v-loading="loading" :data="checkOrderList" border class="mt20"
-                @expand-change="handleExpandExchange"
                 :row-key="getRowKey"
-                :expand-row-keys="expandedRowKeys"
                 empty-text="暂无盘库单"
                 cell-class-name="vertical-top-cell"
       >
-        <el-table-column type="expand">
-          <template #default="props">
-            <div style="padding: 0 50px 20px 50px">
-              <h3>商品明细</h3>
-              <el-table :data="props.row.details" v-loading="detailLoading[props.$index]" empty-text="暂无商品明细">
-                <el-table-column label="商品名称">
-                  <template #default="{ row }">
-                    <div>{{ row?.itemSku?.item?.itemName }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="规格名称">
-                  <template #default="{ row }">
-                    <div>{{ row?.itemSku?.skuName }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="库区" prop="areaName"/>
-                <el-table-column label="批号" prop="inventoryDetail.batchNo" />
-                <el-table-column label="生产日期" prop="inventoryDetail.productionDate">
-                  <template #default="{ row }">
-                    <div>{{ parseTime(row.inventoryDetail.productionDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="过期日期" prop="inventoryDetail.expirationDate">
-                  <template #default="{ row }">
-                    <div>{{ parseTime(row.inventoryDetail.expirationDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="账面库存" prop="quantity" align="right">
-                  <template #default="{ row }">
-                    <el-statistic :value="Number(row.quantity)" :precision="0"/>
-                  </template>
-                </el-table-column>
-                <el-table-column label="盈亏数" align="right">
-                  <template #default="{ row }">
-                    <el-statistic :value="Number(row.checkQuantity) - Number(row.quantity)" :precision="0"/>
-                  </template>
-                </el-table-column>
-                <el-table-column label="实际库存" prop="checkQuantity" align="right">
-                  <template #default="{ row }">
-                    <el-statistic :value="Number(row.checkQuantity)" :precision="0"/>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-          </template>
-        </el-table-column>
         <el-table-column label="单号" align="left" prop="checkOrderNo" />
         <el-table-column label="仓库/库区" align="left" width="200">
           <template #default="{ row }">
@@ -154,7 +106,7 @@
                   <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:checkOrder:edit']" :disabled="[-1, 1].includes(scope.row.checkOrderStatus)">修改</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:checkOrder:query']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
+              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:checkOrder:query']">查看</el-button>
             </div>
             <div class="mt10">
               <el-popover
@@ -185,6 +137,12 @@
         />
       </el-row>
     </el-card>
+    <check-order-detail
+      ref="checkOrderDetailRef"
+      :model-value="watchDetailObj.show"
+      :check-order-no="watchDetailObj.checkOrderNo"
+      @handle-cancel-click="watchDetailObj.show = false"
+    />
   </div>
 </template>
 
@@ -195,7 +153,7 @@ import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
 import checkPanel from "@/components/PrintTemplate/check-panel";
-
+import CheckOrderDetail from "@/views/wms/CheckOrderDetail.vue";
 const { proxy } = getCurrentInstance();
 const {wms_check_status} = proxy.useDict("wms_check_status");
 const checkOrderList = ref([]);
@@ -205,10 +163,6 @@ const loading = ref(true);
 const ids = ref([]);
 const total = ref(0);
 const title = ref("");
-// 当前展开集合
-const expandedRowKeys = ref([])
-// 商品明细table的loading状态集合
-const detailLoading = ref([])
 const data = reactive({
   queryParams: {
     pageNum: 1,
@@ -217,7 +171,11 @@ const data = reactive({
     checkOrderStatus: -2,
   },
 });
-
+const watchDetailObj = ref({
+  show: false,
+  checkOrderNo: null
+})
+const checkOrderDetailRef = ref(null)
 const { queryParams } = toRefs(data);
 
 /** 查询入库单列表 */
@@ -230,10 +188,6 @@ function getList() {
   listCheckOrder(query).then(response => {
     checkOrderList.value = response.rows;
     total.value = response.total;
-    for (let i = 0; i < total; i++) {
-      detailLoading.value.push(false)
-    }
-    expandedRowKeys.value = []
     loading.value = false;
   });
 }
@@ -285,15 +239,10 @@ function handleUpdate(row) {
 }
 
 function handleGoDetail(row) {
-  const index = expandedRowKeys.value.indexOf(row.id)
-  if (index !== -1) {
-    // 收起
-    expandedRowKeys.value.splice(index, 1)
-  } else {
-    // 展开
-    expandedRowKeys.value.push(row.id)
-    loadCheckOrderDetail(row)
-  }
+  watchDetailObj.value.checkOrderNo = row.checkOrderNo
+  checkOrderDetailRef.value.setCheckOrderId(row.id)
+  watchDetailObj.value.show = true
+  checkOrderDetailRef.value.handleQuery()
 }
 
 /** 导出按钮操作 */
@@ -338,44 +287,6 @@ async function handlePrint(row) {
       return css
     }
   })
-}
-
-
-function handleExpandExchange(value, expandedRows) {
-  if (!ifExpand(expandedRows)) {
-    return
-  }
-  expandedRowKeys.value = expandedRows.map(it => it.id)
-  loadCheckOrderDetail(value)
-}
-
-function loadCheckOrderDetail(row) {
-  const index = checkOrderList.value.findIndex(it => it.id === row.id)
-  detailLoading.value[index] = true
-  listByCheckOrderId(row.id).then(res => {
-    if (res.data?.length) {
-      const details = res.data.map(it => {
-        return {
-          ...it,
-          warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName,
-          areaName: useWmsStore().areaMap.get(it.areaId)?.areaName
-        }
-      })
-      checkOrderList.value[index].details = details
-    }
-  }).finally(() => {
-    detailLoading.value[index] = false
-  })
-}
-
-function ifExpand(expandedRows) {
-  if (expandedRows.length < expandedRowKeys.value.length) {
-    expandedRowKeys.value = expandedRows.map(it => it.id)
-    console.info("close")
-    return false;
-  }
-  console.info("open")
-  return true
 }
 
 function getRowKey(row) {
