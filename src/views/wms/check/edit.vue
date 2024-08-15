@@ -258,20 +258,9 @@
             </el-table-column>
             <el-table-column label="操作" width="100" align="right" fixed="right">
               <template #default="scope">
-                <el-popover
-                  placement="left"
-                  title="提示"
-                  :width="200"
-                  trigger="hover"
-                  :disabled="scope.row.newInventoryDetail"
-                  content="非新增库存，无法删除！"
-                >
-                  <template #reference>
-                    <el-button icon="Delete" type="danger" plain size="small" :disabled="!scope.row.newInventoryDetail"
-                               @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
-                    </el-button>
-                  </template>
-                </el-popover>
+                <el-button icon="Delete" type="danger" plain size="small" v-if="scope.row.newInventoryDetail"
+                           @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
