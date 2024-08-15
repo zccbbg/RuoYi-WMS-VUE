@@ -141,16 +141,29 @@
           <pagination v-show="totalWarn > 0" :total="totalWarn" :page.sync="queryWarnParams.pageNum"
             :limit.sync="queryWarnParams.pageSize" @pagination="getWarnList" :autoScroll="ifScroll" />
         </el-card>
-        <el-card shadow="always" style="padding-bottom: 20px;font-size: 14px" >
+        <el-card shadow="always" style="padding-bottom: 20px;font-size: 14px;margin-bottom: 20px;" >
           <div slot="header">
-            <span style="font-size: large;font-weight: bold">招聘开发</span>
+            <span style="font-size: large;font-weight: bold">招聘全栈开发</span>
           </div>
           <div style="display: flex;align-items: center">
             <div class="first" style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
-              参与开发基于jdk17和vue3的ruoyi-mall、ruoyi-erp-进销存。
-              要求：对若依框架和ruoyi-wms、ruoyi-mall 有一定的认知。并且有一定的空余时间。
-              全职、兼职、实习都可。我们在苏州，远程或现场参与开发都可。
-              有兴趣的可以在公众号内回复：应聘。
+              参与开发基于jdk17和vue3的ruoyi-mall、ruoyi-erp-进销存。<br>
+              要求：对若依框架和ruoyi-wms、ruoyi-mall 有一定的认知。并且有一定的空余时间。<br>
+              全职、兼职、实习都可。我们在苏州，远程或现场参与开发都可。<br>
+              有兴趣的可以在公众号内回复：应聘。<br>
+            </div>
+          </div>
+        </el-card>
+        <el-card shadow="always" style="padding-bottom: 20px;font-size: 14px;margin-bottom: 20px;" >
+          <div slot="header">
+            <span style="font-size: large;font-weight: bold">招聘自媒体运营</span>
+          </div>
+          <div style="display: flex;align-items: center">
+            <div class="first" style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
+              参与ruoyi-wms、ruoyi-mall、ruoyi-erp-进销存项目的自媒体运营。<br>
+              要求做过短视频编辑或公众号文章编辑，并且对我们的开源项目有一定的了解。<br>
+              全职、兼职、实习都可。我们在苏州，远程或现场参与开发都可。<br>
+              有兴趣的可以在公众号内回复：应聘。<br>
             </div>
           </div>
         </el-card>
