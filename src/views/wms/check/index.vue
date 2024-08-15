@@ -189,10 +189,8 @@
 </template>
 
 <script setup name="CheckOrder">
-import {listShipmentOrder, delShipmentOrder, getShipmentOrder} from "@/api/wms/shipmentOrder";
 import {listCheckOrder, delCheckOrder, getCheckOrder} from "@/api/wms/checkOrder";
 import {listByCheckOrderId} from "@/api/wms/checkOrderDetail";
-import {listByShipmentOrderId} from "@/api/wms/shipmentOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
@@ -262,7 +260,7 @@ function handleDelete(row) {
   const _ids = row.id || ids.value;
   proxy.$modal.confirm('确认删除【盘库单【' + row.checkOrderNo + '】吗？').then(function() {
     loading.value = true;
-    return delShipmentOrder(_ids);
+    return delCheckOrder(_ids);
   }).then(() => {
     loading.value = true;
     getList();
