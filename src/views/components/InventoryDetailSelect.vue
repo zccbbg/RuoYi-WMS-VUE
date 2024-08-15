@@ -1,7 +1,7 @@
 <template>
   <el-drawer :model-value="show" title="选择库存" @close="handleCancelClick" :size="size" :close-on-click-modal="false"
              append-to-body>
-    <el-form :inline="true" label-width="68px">
+    <el-form :inline="true" label-width="108px">
       <el-form-item label="商品名称">
         <el-input v-model="query.itemName" clearable placeholder="商品名称"></el-input>
       </el-form-item>
@@ -20,6 +20,31 @@
       </el-form-item>
       <el-form-item label="规格编号">
         <el-input class="w200" v-model="query.barcode" clearable placeholder="规格编号"></el-input>
+      </el-form-item>
+      <el-form-item label="批号">
+        <el-input class="w200" v-model="query.batchNo" clearable placeholder="批号"></el-input>
+      </el-form-item>
+      <el-form-item label="入库日期" prop="createTimeRange">
+        <el-date-picker
+          v-model="query.createTimeRange"
+          type="daterange"
+          range-separator="至"
+          value-format="YYYY-MM-DD HH:mm:ss"
+          format="YYYY-MM-DD"
+          :default-time="defaultTime"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        />
+      </el-form-item>
+      <el-form-item label="多少天内过期" prop="daysToExpires">
+        <el-select v-model="query.daysToExpires" clearable>
+          <el-option label="30天内" :value="30">30天内</el-option>
+          <el-option label="60天内" :value="60">60天内</el-option>
+          <el-option label="90天内" :value="90">90天内</el-option>
+          <el-option label="120天内" :value="120">120天内</el-option>
+          <el-option label="180天内" :value="180">180天内</el-option>
+          <el-option label="365天内" :value="365">365天内</el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="clickQuery">查询</el-button>
@@ -45,13 +70,17 @@
         </template>
       </el-table-column>
       <el-table-column label="批号" align="left" prop="batchNo"/>
-      <el-table-column label="生产日期/过期时间" align="left" width="180">
+      <el-table-column label="生产日期/过期日期" align="left" width="180">
         <template #default="{ row }">
           <div v-if="row.productionDate">生产日期：{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
-          <div v-if="row.expirationDate">过期时间：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
+          <div v-if="row.expirationDate">过期日期：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="入库时间" align="left" prop="createTime" width="180"/>
+      <el-table-column label="入库日期" align="left" prop="createTime" width="140">
+        <template #default="{ row }">
+          <div>{{ parseTime(row.createTime, '{y}-{m}-{d}') }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="剩余库存" prop="remainQuantity" align="right">
         <template #default="{ row }">
           <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
@@ -91,6 +120,7 @@ import {useWmsStore} from '@/store/modules/wms'
 import {listInventory} from "@/api/wms/inventory";
 import {listInventoryDetail} from "@/api/wms/inventoryDetail";
 const {proxy} = getCurrentInstance()
+const defaultTime = reactive([new Date(0,0,0,0,0,0), new Date(0,0,0,23,59,59)])
 
 const spanMethod = computed(() => getRowspanMethod(list.value, ['itemId']))
 const router = useRouter()
@@ -103,7 +133,9 @@ const query = reactive({
   skuCode: '',
   minQuantity: 1,
   areaId: null,
-  warehouseId: null
+  warehouseId: null,
+  batchNo: '',
+  daysToExpires: null
 });
 const selectInventoryVoCheck = ref([])
 const inventorySelectFormRef = ref(null)
@@ -124,8 +156,13 @@ const getRowKey = (row) => {
   return row.id;
 }
 const getList = () => {
+  const queryCopy = {...query}
+  if (queryCopy.createTimeRange) {
+    queryCopy.createStartTime = queryCopy.createTimeRange[0]
+    queryCopy.createEndTime = queryCopy.createTimeRange[1]
+  }
   const data = {
-    ...query,
+    ...queryCopy,
     pageNum: pageReq.page,
     pageSize: pageReq.size
   }
