@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('ruoyi-fast');
+const title = ref('ruoyi-wms');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>

@@ -1,7 +1,7 @@
 {
-  "name": "ruoyi-fast",
+  "name": "ruoyi-wms",
   "version": "4.8.2",
-  "description": "ruoyi-fast后台管理系统",
+  "description": "ruoyi-wms后台管理系统",
   "author": "ZCC",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://gitee.com/zccbbg/ruoyi-fast-vue3.git"
+    "url": "https://gitee.com/zccbbg/ruoyi-wms-vue.git"
   },
   "dependencies": {
     "@element-plus/icons-vue": "2.0.10",

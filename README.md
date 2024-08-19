@@ -4,16 +4,16 @@
 
 ## 后端项目地址
 #### gitee地址
-https://gitee.com/zccbbg/ruoyi-fast-service
+https://gitee.com/zccbbg/ruoyi-wms-service
 
 #### github地址
-https://github.com/zccbbg/ruoyi-fast-service
+https://github.com/zccbbg/ruoyi-wms-service
 
 ## 前端运行
 
 ```bash
 # 进入项目目录
-cd ruoyi-fast-vue3
+cd ruoyi-wms-vue
 
 # 安装依赖
 npm install --registry=https://registry.npmmirror.com

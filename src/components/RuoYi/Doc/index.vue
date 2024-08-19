@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-const url = ref('https://gitee.com/zccbbg/ruoyi-fast-service/wikis/pages');
+const url = ref('https://gitee.com/zccbbg/ruoyi-wms-service/wikis/pages');
 
 function goto() {
   window.open(url.value)
