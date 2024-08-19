@@ -70,8 +70,8 @@
           <div slot="header">
             <span style="font-size: large;font-weight: bold">发展历程</span>
           </div>
-          <div>
-            <el-timeline>
+          <div style="padding-top: 20px">
+            <el-timeline >
               <el-timeline-item placement="top" timestamp="2018年">
                 <el-card>
                   <h4>参与京东服务市场商品分析应用开发，参与京东服务市场会员积分应用开发</h4>
