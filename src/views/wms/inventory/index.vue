@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-width="68px">
-        <el-form-item label="类型" prop="itemId">
+        <el-form-item label="维度 " prop="itemId">
           <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
             <el-radio-button label="warehouse">仓库</el-radio-button>
             <el-radio-button label="area">库区</el-radio-button>
@@ -50,7 +50,7 @@
     </el-card>
     <el-card class="mt20">
       <div class="mb8 flex-space-between">
-        <div style="font-size: large">库存看板</div>
+        <div style="font-size: large">库存统计</div>
         <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large" @change="handleChangeFilterZero"/>
       </div>
       <el-table :data="inventoryList" border :span-method="spanMethod"
