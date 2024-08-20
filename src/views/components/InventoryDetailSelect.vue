@@ -111,21 +111,16 @@
   </el-drawer>
 </template>
 <script setup name="InventoryDetailSelect">
-import {computed, getCurrentInstance, nextTick, onMounted, reactive, ref, watch} from 'vue';
+import {computed, getCurrentInstance, onMounted, reactive, ref} from 'vue';
 import {ElForm} from "element-plus";
-import {getRowspanMethod} from "@/utils/getRowSpanMethod";
-import {listItemSkuPage} from "@/api/wms/itemSku";
 import {useRouter} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
-import {listInventory} from "@/api/wms/inventory";
 import {listInventoryDetail} from "@/api/wms/inventoryDetail";
 const {proxy} = getCurrentInstance()
 const defaultTime = reactive([new Date(0,0,0,0,0,0), new Date(0,0,0,23,59,59)])
 
-const spanMethod = computed(() => getRowspanMethod(list.value, ['itemId']))
 const router = useRouter()
 const loading = ref(false)
-const deptOptions = ref([]);
 const query = reactive({
   itemName: '',
   itemCode: '',

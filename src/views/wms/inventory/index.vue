@@ -35,14 +35,6 @@
         <el-form-item label="规格编号">
           <el-input v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
         </el-form-item>
-<!--        <el-form-item label="仓库库区" prop="place">-->
-<!--          <WmsWarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default"-->
-<!--                                @keyup.enter="handleQuery"></WmsWarehouseCascader>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="">-->
-<!--          <el-checkbox v-model="filterable" label="过滤掉库存为0的商品" size="large"-->
-<!--                       @change="handleChangeFilterZero"/>-->
-<!--        </el-form-item>-->
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         </el-form-item>
@@ -92,31 +84,11 @@
             <template #default="{ row }">
               <div>{{ row.itemSku.skuName }}</div>
               <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
-<!--              <div :class="Number(calcSubtotal(scope.row)) < 0 ? 'text-danger' : ''">总库存：{{-->
-<!--                  calcSubtotal(scope.row)-->
-<!--                }}-->
-<!--              </div>-->
             </template>
           </el-table-column>
           <el-table-column label="仓库" prop="itemIdAndSkuIdAndWarehouseId">
             <template #default="{row}">
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
-<!--              <div>-->
-<!--                <span :class="Number(calcSubTotalInWarehouse(row)) < Number(row.inventoryWarning) ? 'text-danger' : ''"-->
-<!--                >库存：{{ calcSubTotalInWarehouse(row) }}</span-->
-<!--                >-->
-<!--                <el-popover placement="top-start" :width="200" :icon="InfoFilled" icon-color="red"-->
-<!--                            title="库存不足，小于商品规格库存预警值">-->
-<!--                  <template #reference>-->
-<!--                    <el-icon v-if="Number(calcSubTotalInWarehouse(row)) < Number(row.inventoryWarning)"-->
-<!--                             style="cursor: pointer;margin-left: 5px"-->
-<!--                    >-->
-<!--                      <QuestionFilled color="red"-->
-<!--                      />-->
-<!--                    </el-icon>-->
-<!--                  </template>-->
-<!--                </el-popover>-->
-<!--              </div>-->
             </template>
           </el-table-column>
           <el-table-column label="所属库区" prop="areaName">
@@ -162,7 +134,6 @@ const multiple = ref(true);
 const total = ref(0);
 const rowSpanArray = ref(['warehouseId', 'warehouseIdAndItemId', 'warehouseIdAndSkuId'])
 const queryFormRef = ref(ElForm);
-const inventoryFormRef = ref(ElForm);
 
 const filterable = ref(false)
 const queryType = ref("warehouse")
@@ -201,7 +172,6 @@ const getList = async () => {
       it.itemId = it.itemSku.itemId
     }
   })
-  console.info("list:", inventoryList.value)
   total.value = res.total;
   loading.value = false;
 }
@@ -219,15 +189,6 @@ const resetQuery = () => {
 }
 const calcSubtotal = (row) => {
   const tempList = inventoryList.value.filter(it => it.itemId === row.itemId)
-  let sum = 0
-  tempList.forEach(it => {
-    sum += Number(it.quantity)
-  })
-  return sum
-}
-
-const calcSubTotalInWarehouse = (row) => {
-  const tempList = inventoryList.value.filter(it => (it.itemId + '-' + it.warehouseId) === (row.itemId + '-' + row.warehouseId))
   let sum = 0
   tempList.forEach(it => {
     sum += Number(it.quantity)
