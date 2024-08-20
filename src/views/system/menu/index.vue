@@ -343,7 +343,7 @@ function reset() {
     icon: undefined,
     menuType: "M",
     orderNum: undefined,
-    isFrame: "1",
+    isFrame: "0",
     isCache: "0",
     visible: "0",
     status: "1"
