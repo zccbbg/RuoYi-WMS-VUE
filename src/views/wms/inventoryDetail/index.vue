@@ -20,15 +20,15 @@
         <el-table-column label="商品信息" prop="areaIdAndItemId">
           <template #default="{ row }">
             <div>{{ row.item.itemName }}</div>
-            <div>{{ row.item.id }}</div>
             <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
+            <div>{{ row.item.id }}</div>
           </template>
         </el-table-column>
         <el-table-column label="规格信息" prop="areaIdAndSkuId">
           <template #default="{ row }">
             <div>{{ row.itemSku.skuName }}</div>
-            <div>{{ row.itemSku.id }}</div>
             <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
+            <div>{{ row.itemSku.id }}</div>
           </template>
         </el-table-column>
       </template>
@@ -112,8 +112,8 @@ const getList = () => {
     total.value = res.total;
     inventoryDetailList.value.forEach(it => {
       if (queryType.value == "warehouse") {
-        it.areaIdAndItemId = it.areaId + '-' + it.itemSku.itemId
-        it.areaIdAndSkuId = it.areaId + '-' + it.skuId
+        it.areaIdAndItemId = it.areaId + '-' + it.item.id
+        it.areaIdAndSkuId = it.areaId + '-' + it.itemSku.id
       } else if (queryType.value == "item") {
         it.itemId = it.itemSku.itemId
       }
