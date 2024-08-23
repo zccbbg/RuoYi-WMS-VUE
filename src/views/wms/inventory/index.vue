@@ -66,7 +66,7 @@
               <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="规格信息" :prop="queryType == 'warehouse' ? 'warehouseIdAndItemIdAndSkuId' : 'areaIdAndSkuId'">
+          <el-table-column label="规格信息" :prop="skuId">
             <template #default="{ row }">
               <div>{{ row.itemSku.skuName }}</div>
               <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
@@ -86,7 +86,7 @@
               <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="仓库" prop="itemIdAndSkuIdAndWarehouseId">
+          <el-table-column label="仓库" prop="skuIdAndWarehouseId">
             <template #default="{row}">
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
             </template>
@@ -164,12 +164,11 @@ const getList = async () => {
   inventoryList.value.forEach(it => {
     if (queryType.value == "warehouse") {
       it.warehouseIdAndItemId = it.warehouseId + '-' + it.itemSku.itemId
-      it.warehouseIdAndItemIdAndSkuId = it.warehouseId + '-' + it.itemSku.itemId + '-' + it.itemSku.id
     } else if (queryType.value == "area") {
       it.areaIdAndItemId = it.areaId + '-' + it.itemSku.itemId
-      it.areaIdAndSkuId = it.areaId + '-' + it.itemSku.id
     } else if (queryType.value == "item") {
       it.itemId = it.itemSku.itemId
+      it.skuIdAndWarehouseId = it.skuId + '-' + it.warehouseId
     }
   })
   total.value = res.total;
@@ -199,11 +198,11 @@ const calcSubtotal = (row) => {
 const handleSortTypeChange = (e) => {
   if (e === "warehouse") {
     queryParams.value.areaId = undefined
-    rowSpanArray.value = ['warehouseId', 'warehouseIdAndItemId', 'warehouseIdAndItemIdAndSkuId']
+    rowSpanArray.value = ['warehouseId', 'warehouseIdAndItemId']
   } else if (e === "area") {
-    rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId', 'areaIdAndSkuId']
+    rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId']
   } else if (e === "item") {
-    rowSpanArray.value = ['itemId', 'skuId']
+    rowSpanArray.value = ['itemId', 'skuId','skuIdAndWarehouseId']
   }
   queryParams.value.pageNum = 1;
   getList()
