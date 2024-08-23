@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
 
-      <el-form :model="queryParams" :inline="true" label-width="108px" style="display:flex;justify-content: space-between;flex-wrap: wrap">
+      <el-form :model="queryParams" :inline="true" label-width="108px" class="form">
         <el-form-item label-width="90px" label="仓库" prop="warehouseId" class="col4">
           <el-select v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
                      filterable clearable style="width:100%;">
@@ -189,5 +189,11 @@ const getList = () => {
 <style scoped lang="scss">
 .col4 {
   width: calc(24% - 1rem);
+  margin-right: 0px;
+}
+.form{
+  display:flex;
+  justify-content: space-between;
+  flex-wrap: wrap
 }
 </style>
