@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
 
-      <el-form :model="queryParams" :inline="true" label-width="108px" class="form">
+      <el-form :model="queryParams" :inline="true" label-width="108px" class="form" ref="queryRef">
         <el-form-item label-width="90px" label="仓库" prop="warehouseId" class="col4">
           <el-select v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
                      filterable clearable style="width:100%;">
@@ -17,19 +17,19 @@
                        :key="item.id" :label="item.areaName" :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="商品名称">
+        <el-form-item class="col4" label-width="90px" label="商品名称" prop="itemName">
           <el-input v-model="queryParams.itemName" clearable placeholder="商品名称"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="商品编号">
+        <el-form-item class="col4" label-width="90px" label="商品编号" prop="itemCode">
           <el-input class="w200" v-model="queryParams.itemCode" clearable placeholder="商品编号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="规格名称">
+        <el-form-item class="col4" label-width="90px" label="规格名称" prop="skuName">
           <el-input class="w200" v-model="queryParams.skuName" clearable placeholder="规格名称"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="规格编号">
-          <el-input class="w200" v-model="queryParams.barcode" clearable placeholder="规格编号"></el-input>
+        <el-form-item class="col4" label-width="90px" label="规格编号" prop="skuCode">
+          <el-input class="w200" v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="批号">
+        <el-form-item class="col4" label-width="90px" label="批号" prop="batchNo">
           <el-input class="w200" v-model="queryParams.batchNo" clearable placeholder="批号"></el-input>
         </el-form-item>
         <el-form-item class="col4" label-width="90px" label="过期" prop="daysToExpires">
@@ -54,9 +54,10 @@
             end-placeholder="结束日期"
           />
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="clickQuery">查询</el-button>
-        </el-form-item>
+        <div>
+          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </div>
       </el-form>
     </el-card>
     <el-card class="mt20">
@@ -111,8 +112,8 @@
         <pagination
           v-show="total>0"
           :total="total"
-          v-model:limit="pageReq.size"
-          v-model:page="pageReq.page"
+          v-model:page="queryParams.pageNum"
+          v-model:limit="queryParams.pageSize"
           @pagination="getList"
           class="mr10"
         />
@@ -123,17 +124,20 @@
 
 <script setup name="InventoryDetail">
 import {useWmsStore} from "@/store/modules/wms";
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {listInventoryDetail} from "@/api/wms/inventoryDetail";
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {ElForm} from "element-plus";
 
+const {proxy} = getCurrentInstance();
 const spanMethod = computed(() => getRowspanMethod(inventoryDetailList.value, rowSpanArray.value))
 const queryType = ref("warehouse");
 const inventoryDetailList = ref([]);
 const loading = ref(false);
 const rowSpanArray = ref(['warehouseId', 'areaId', 'areaIdAndItemId', 'areaIdAndSkuId'])
 const queryParams = ref({
+  pageNum: 1,
+  pageSize: 10,
   itemName: '',
   itemCode: '',
   skuName: '',
@@ -144,10 +148,6 @@ const queryParams = ref({
   daysToExpires: undefined
 });
 const total = ref(0);
-const pageReq = reactive({
-  page: 1,
-  size: 10,
-});
 
 const handleChangeWarehouse = () => {
   queryParams.value.areaId = undefined
@@ -157,21 +157,28 @@ onMounted(() => {
   getList();
 })
 
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1;
+  getList();
+}
+
+/** 重置按钮操作 */
+function resetQuery() {
+  proxy.resetForm("queryRef");
+  handleQuery();
+}
+
 
 
 const getList = () => {
-  const queryCopy = {...queryParams}
-  if (queryCopy.createTimeRange) {
-    queryCopy.createStartTime = queryCopy.createTimeRange[0]
-    queryCopy.createEndTime = queryCopy.createTimeRange[1]
-  }
-  const data = {
-    ...queryCopy,
-    pageNum: pageReq.page,
-    pageSize: pageReq.size
+  const query = {...queryParams.value}
+  if (query.createTimeRange) {
+    query.createStartTime = query.createTimeRange[0]
+    query.createEndTime = query.createTimeRange[1]
   }
   loading.value = true
-  listInventoryDetail(data).then((res) => {
+  listInventoryDetail(query).then((res) => {
     inventoryDetailList.value = res.rows;
     total.value = res.total;
     inventoryDetailList.value.forEach(it => {
