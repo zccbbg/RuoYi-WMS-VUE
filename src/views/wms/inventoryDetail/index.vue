@@ -2,7 +2,13 @@
   <div class="app-container">
     <el-card>
 
-      <el-form :model="queryParams" :inline="true" label-width="108px" class="form" ref="queryRef">
+      <el-form :model="queryParams" :inline="true" label-width="90px" class="form" ref="queryRef">
+        <el-form-item label="维度 " prop="itemId" class="col4">
+          <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
+            <el-radio-button label="warehouse">仓库库区</el-radio-button>
+            <el-radio-button label="item">商品</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label-width="90px" label="仓库" prop="warehouseId" class="col4">
           <el-select v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
                      filterable clearable style="width:100%;">
@@ -54,10 +60,10 @@
             end-placeholder="结束日期"
           />
         </el-form-item>
-        <div>
-          <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </div>
+        <el-form-item class="col4" style="margin-left: 32px">
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+        </el-form-item>
       </el-form>
     </el-card>
     <el-card class="mt20">
@@ -90,9 +96,33 @@
           </template>
         </el-table-column>
       </template>
+      <template v-else>
+        <el-table-column label="商品信息" prop="itemId">
+          <template #default="{ row }">
+            <div>{{ row.item.itemName }}</div>
+            <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="规格信息" prop="skuId">
+          <template #default="{ row }">
+            <div>{{ row.itemSku.skuName }}</div>
+            <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="仓库" prop="skuIdAndWarehouseId">
+          <template #default="{row}">
+            <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="所属库区" prop="skuIdAndAreaId">
+          <template #default="{ row }">
+            <div>{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
+          </template>
+        </el-table-column>
+      </template>
       <el-table-column label="入库日期" align="left" prop="createTime" width="140">
         <template #default="{ row }">
-          <div>{{ parseTime(row.createTime, '{y}-{m}-{d}') }}</div>
+          <div>{{ parseTime(row.createTime, '{y}-{m}-{d} {h}:{i}') }}</div>
         </template>
       </el-table-column>
       <el-table-column label="库存" prop="quantity" align="right">
@@ -128,6 +158,7 @@ import {computed, getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {listInventoryDetail} from "@/api/wms/inventoryDetail";
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {ElForm} from "element-plus";
+import {parseTime} from "../../../utils/ruoyi";
 
 const {proxy} = getCurrentInstance();
 const spanMethod = computed(() => getRowspanMethod(inventoryDetailList.value, rowSpanArray.value))
@@ -169,7 +200,16 @@ function resetQuery() {
   handleQuery();
 }
 
-
+const handleSortTypeChange = (e) => {
+  if (e === "warehouse") {
+    queryParams.value.areaId = undefined
+    rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId', 'areaIdAndSkuId']
+  } else if (e === "item") {
+    rowSpanArray.value = ['itemId', 'skuId','skuIdAndWarehouseId','skuIdAndAreaId']
+  }
+  queryParams.value.pageNum = 1;
+  getList()
+}
 
 const getList = () => {
   const query = {...queryParams.value}
@@ -186,7 +226,9 @@ const getList = () => {
         it.areaIdAndItemId = it.areaId + '-' + it.item.id
         it.areaIdAndSkuId = it.areaId + '-' + it.itemSku.id
       } else if (queryType.value == "item") {
-        it.itemId = it.itemSku.itemId
+        it.itemId = it.item.id
+        it.skuIdAndWarehouseId= it.itemSku.id + '-' + it.warehouseId
+        it.skuIdAndAreaId= it.itemSku.id + '-' + it.areaId
       }
     })
     console.info("list:", inventoryDetailList.value)
@@ -195,12 +237,12 @@ const getList = () => {
 </script>
 <style scoped lang="scss">
 .col4 {
-  width: calc(24% - 1rem);
+  width: calc(25% - 1rem);
   margin-right: 0px;
 }
 .form{
-  display:flex;
-  justify-content: space-between;
-  flex-wrap: wrap
+  //display:flex;
+  //justify-content: space-between;
+  //flex-wrap: wrap
 }
 </style>
