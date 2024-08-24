@@ -2,43 +2,43 @@
   <div class="app-container">
     <el-card>
 
-      <el-form :model="queryParams" :inline="true" label-width="90px" class="form" ref="queryRef">
+      <el-form :model="queryParams" :inline="true" label-width="90px" ref="queryRef">
         <el-form-item label="维度 " prop="itemId" class="col4">
           <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
             <el-radio-button label="warehouse">仓库库区</el-radio-button>
             <el-radio-button label="item">商品</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label-width="90px" label="仓库" prop="warehouseId" class="col4">
+        <el-form-item label="仓库" prop="warehouseId" class="col4">
           <el-select v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
                      filterable clearable style="width:100%;">
             <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
                        :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item label-width="90px" label="库区" prop="areaId" class="col4">
+        <el-form-item label="库区" prop="areaId" class="col4">
           <el-select v-model="queryParams.areaId" placeholder="请选择库区" :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable
                      filterable style="width:100%;">
             <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === queryParams.warehouseId)"
                        :key="item.id" :label="item.areaName" :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="商品名称" prop="itemName">
+        <el-form-item class="col4"  label="商品名称" prop="itemName">
           <el-input v-model="queryParams.itemName" clearable placeholder="商品名称"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="商品编号" prop="itemCode">
+        <el-form-item class="col4"  label="商品编号" prop="itemCode">
           <el-input class="w200" v-model="queryParams.itemCode" clearable placeholder="商品编号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="规格名称" prop="skuName">
+        <el-form-item class="col4"  label="规格名称" prop="skuName">
           <el-input class="w200" v-model="queryParams.skuName" clearable placeholder="规格名称"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="规格编号" prop="skuCode">
+        <el-form-item class="col4"  label="规格编号" prop="skuCode">
           <el-input class="w200" v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="批号" prop="batchNo">
+        <el-form-item class="col4"  label="批号" prop="batchNo">
           <el-input class="w200" v-model="queryParams.batchNo" clearable placeholder="批号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="过期" prop="daysToExpires">
+        <el-form-item class="col4"  label="过期" prop="daysToExpires">
           <el-select v-model="queryParams.daysToExpires" clearable style="width:100%;">
             <el-option label="30天内" :value="30">30天内</el-option>
             <el-option label="60天内" :value="60">60天内</el-option>
@@ -48,7 +48,7 @@
             <el-option label="365天内" :value="365">365天内</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item class="col4" label-width="90px" label="入库日期" prop="createTimeRange">
+        <el-form-item class="col4"  label="入库日期" prop="createTimeRange">
           <el-date-picker
             v-model="queryParams.createTimeRange"
             type="daterange"
@@ -236,13 +236,5 @@ const getList = () => {
 }
 </script>
 <style scoped lang="scss">
-.col4 {
-  width: calc(25% - 1rem);
-  margin-right: 0px;
-}
-.form{
-  //display:flex;
-  //justify-content: space-between;
-  //flex-wrap: wrap
-}
+
 </style>

@@ -313,3 +313,8 @@
    align-items: center;
    justify-content: space-between;
  }
+
+ .col4 {
+     width: calc(25% - 1rem) !important;
+     margin-right: 0px !important;
+ }
