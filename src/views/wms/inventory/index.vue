@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryFormRef" label-width="90px" :inline="true">
+      <el-form :model="queryParams" ref="queryRef" label-width="90px" :inline="true">
         <el-form-item class="col4" label="维度 " prop="itemId">
           <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
             <el-radio-button label="warehouse">仓库</el-radio-button>
@@ -23,20 +23,21 @@
                        :key="item.id" :label="item.areaName" :value="item.id"/>
           </el-select>
         </el-form-item>
-        <el-form-item class="col4" label="商品名称">
+        <el-form-item class="col4" label="商品名称" prop="itemName">
           <el-input v-model="queryParams.itemName" clearable placeholder="商品名称"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label="商品编号">
+        <el-form-item class="col4" label="商品编号" prop="itemCode">
           <el-input v-model="queryParams.itemCode" clearable placeholder="商品编号"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label="规格名称">
+        <el-form-item class="col4" label="规格名称" prop="skuName">
           <el-input v-model="queryParams.skuName" clearable placeholder="规格名称"></el-input>
         </el-form-item>
-        <el-form-item class="col4" label="规格编号">
+        <el-form-item class="col4" label="规格编号" prop="skuCode">
           <el-input v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
         </el-form-item>
         <el-form-item class="col4" style="margin-left: 32px">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -183,7 +184,7 @@ const handleQuery = () => {
 
 /** 重置按钮操作 */
 const resetQuery = () => {
-  queryFormRef.value.resetFields();
+  proxy.resetForm("queryRef");
   handleQuery();
 }
 const calcSubtotal = (row) => {
