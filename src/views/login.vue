@@ -44,19 +44,44 @@
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
-          size="large"
+          size="medium"
           type="primary"
-          style="width:100%;"
+          style="width:45%;"
           @click.prevent="handleLogin"
         >
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
+        </el-button>
+        <el-button
+          size="medium"
+          type="primary"
+          style="width:45%;"
+          @click.native.prevent="handleTry"
+        >
+          <span>获取体验账号</span>
         </el-button>
         <div style="float: right;" v-if="register">
           <router-link class="link-type" :to="'/register'">立即注册</router-link>
         </div>
       </el-form-item>
     </el-form>
+    <el-dialog
+      title="公众号二维码"
+      v-model="dialogVisible"
+      append-to-body
+      :show-close="false"
+      width="30%">
+      <div style="text-align: center">
+        <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">仓库</span>获取体验账号</span>
+        <br>
+        <img src="@/assets/logo/gzh.jpg" width="160" height="160" style="margin-top: 10px">
+      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="dialogConfirm">确定</el-button>
+        </div>
+      </template>
+    </el-dialog>
     <!--  底部  -->
     <div class="el-login-footer">
       <span>Copyright © 2018-2024 All Rights Reserved.</span>
@@ -95,6 +120,14 @@ const captchaEnabled = ref(true);
 // 注册开关
 const register = ref(false);
 const redirect = ref(undefined);
+const dialogVisible = ref(false);
+
+function handleTry(){
+  dialogVisible.value =true
+}
+function dialogConfirm(){
+  dialogVisible.value =false;
+}
 
 function handleLogin() {
   proxy.$refs.loginRef.validate(valid => {
@@ -151,6 +184,12 @@ getCookie();
 </script>
 
 <style lang='scss' scoped>
+.color-main {
+  color: #409EFF;
+}
+.font-extra-large {
+  font-size: 20px;
+}
 .login {
   display: flex;
   justify-content: center;
