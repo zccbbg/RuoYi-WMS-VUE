@@ -143,10 +143,10 @@
 import {listCheckOrder, delCheckOrder, getCheckOrder} from "@/api/wms/checkOrder";
 import {listByCheckOrderId} from "@/api/wms/checkOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
-import {useWmsStore} from "../../../store/modules/wms";
+import {useWmsStore} from "../../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
 import checkPanel from "@/components/PrintTemplate/check-panel";
-import CheckOrderDetail from "@/views/wms/CheckOrderDetail.vue";
+import CheckOrderDetail from "@/views/wms/order/check/CheckOrderDetail.vue";
 const { proxy } = getCurrentInstance();
 const {wms_check_status} = proxy.useDict("wms_check_status");
 const checkOrderList = ref([]);

@@ -226,7 +226,7 @@
 <script setup name="ReceiptOrder">
 import { listReceiptOrder, getReceiptOrder, delReceiptOrder, addReceiptOrder, updateReceiptOrder } from "@/api/wms/receiptOrder";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
-import {useWmsStore} from "../../../store/modules/wms";
+import {useWmsStore} from "../../../../store/modules/wms";
 import {listByReceiptOrderId} from "@/api/wms/receiptOrderDetail";
 import {ElMessageBox} from "element-plus";
 import receiptPanel from "@/components/PrintTemplate/receipt-panel";

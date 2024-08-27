@@ -633,7 +633,7 @@ const goSaasTip = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/variables.module.scss";
+@import "@/assets/styles/variables.module";
 
 .btn-box {
   width: calc(100% - #{$base-sidebar-width});

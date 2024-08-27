@@ -236,7 +236,7 @@
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
 import {addReceiptOrder, getReceiptOrder, updateReceiptOrder, warehousing} from "@/api/wms/receiptOrder";
 import {ElMessage, ElMessageBox} from "element-plus";
-import SkuSelect from "../../components/SkuSelect.vue";
+import SkuSelect from "../../../components/SkuSelect.vue";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import { numSub, generateNo } from '@/utils/ruoyi'
@@ -549,7 +549,7 @@ const goSaasTip = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/variables.module.scss";
+@import "@/assets/styles/variables.module";
 
 .btn-box {
   width: calc(100% - #{$base-sidebar-width});

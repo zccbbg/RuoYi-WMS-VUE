@@ -1,18 +1,18 @@
 <template>
   <div>
     <div class="receipt-order-edit-wrapper app-container" style="margin-bottom: 60px" v-loading="loading">
-      <el-card header="出库单基本信息">
-        <el-form label-width="108px" :model="form" ref="shipmentForm" :rules="rules">
+      <el-card header="移库单基本信息">
+        <el-form label-width="108px" :model="form" ref="movementForm" :rules="rules">
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="出库单号" prop="shipmentOrderNo">
-                <el-input class="w200" v-model="form.shipmentOrderNo" placeholder="出库单号"
+              <el-form-item label="移库单号" prop="movementOrderNo">
+                <el-input class="w200" v-model="form.movementOrderNo" placeholder="移库单号"
                           :disabled="form.id"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="仓库" prop="warehouseId">
-                <el-select v-model="form.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
+              <el-form-item label="源仓库" prop="sourceWarehouseId">
+                <el-select v-model="form.sourceWarehouseId" placeholder="请选择源仓库" @change="handleChangeSourceWarehouse"
                            filterable>
                   <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
                              :value="item.id"/>
@@ -20,40 +20,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="库区" prop="areaId">
-                <el-select v-model="form.areaId" placeholder="请选择库区" :disabled="!form.warehouseId" clearable
-                           filterable @change="handleChangeArea" style="width: 100%!important;">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)"
+              <el-form-item label="源库区" prop="sourceAreaId">
+                <el-select v-model="form.sourceAreaId" placeholder="请选择源库区" :disabled="!form.sourceWarehouseId" clearable
+                           filterable @change="handleChangeSourceArea" style="width: 100%!important;">
+                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.sourceWarehouseId)"
                              :key="item.id" :label="item.areaName" :value="item.id"/>
                 </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter="24">
-            <el-col :span="11">
-              <el-form-item label="出库类型" prop="shipmentOrderType">
-                <el-radio-group v-model="form.shipmentOrderType">
-                  <el-radio-button
-                    v-for="item in wms_shipment_type"
-                    :key="item.value"
-                    :label="item.value"
-                  >{{ item.label }}
-                  </el-radio-button
-                  >
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="客户" prop="merchantId">
-                <el-select v-model="form.merchantId" placeholder="请选择客户" clearable filterable>
-                  <el-option v-for="item in useWmsStore().merchantList" :key="item.id" :label="item.merchantName"
-                             :value="item.id"/>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="订单号" prop="orderNo">
-                <el-input v-model="form.orderNo" placeholder="请输入订单号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -71,18 +43,25 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <div style="display: flex;align-items: start">
-                <el-form-item label="金额" prop="receivableAmount">
-                  <el-input-number v-model="form.receivableAmount" :precision="2" :min="0"></el-input-number>
-                </el-form-item>
-                <el-button link type="primary" @click="handleAutoCalc" class="ml20" style="line-height: 32px">自动计算
-                </el-button>
-              </div>
-            </el-col>
-            <el-col :span="6">
+              <el-form-item label="目标仓库" prop="targetWarehouseId">
+                <el-select v-model="form.targetWarehouseId" placeholder="请选择目标仓库" @change="handleChangeTargetWarehouse"
+                           filterable>
+                  <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
+                             :value="item.id"/>
+                </el-select>
+              </el-form-item>
               <el-form-item label="数量" prop="totalQuantity">
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
                                  :disabled="true"></el-input-number>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="目标库区" prop="targetAreaId">
+                <el-select v-model="form.targetAreaId" placeholder="请选择目标库区" :disabled="!form.targetWarehouseId" clearable
+                           filterable @change="handleChangeTargetArea" style="width: 100%!important;">
+                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
+                             :key="item.id" :label="item.areaName" :value="item.id"/>
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -110,12 +89,12 @@
               title="提示"
               :width="200"
               trigger="hover"
-              :disabled="form.warehouseId"
+              :disabled="form.sourceWarehouseId"
               content="请先选择仓库！"
             >
               <template #reference>
                 <el-button type="primary" plain="plain" size="default" @click="showAddItem" icon="Plus"
-                           :disabled="!form.warehouseId">添加商品
+                           :disabled="!form.sourceWarehouseId">添加商品
                 </el-button>
               </template>
             </el-popover>
@@ -137,7 +116,15 @@
                 <div>{{ row.itemSku.skuName + '(' + row.itemSku.barcode + ')' }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="库区" prop="areaName" width="200"/>
+            <el-table-column label="源库区" width="200" prop="sourceAreaName" />
+            <el-table-column label="目标库区" width="200">
+              <template #default="{ row }">
+                <el-select v-model="row.targetAreaId" placeholder="请选择源库区" filterable :disabled="!form.targetWarehouseId">
+                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
+                             :key="item.id" :label="item.areaName" :value="item.id"/>
+                </el-select>
+              </template>
+            </el-table-column>
             <el-table-column label="批号" prop="batchNo" />
             <el-table-column label="生产日期" prop="productionDate">
               <template #default="{ row }">
@@ -154,26 +141,15 @@
                 <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
               </template>
             </el-table-column>
-            <el-table-column label="出库数量" prop="quantity" width="180">
+            <el-table-column label="移库数量" prop="quantity" width="180">
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.quantity"
-                  placeholder="出库数量"
+                  placeholder="移库数量"
                   :min="1"
                   :precision="0"
                   :max="scope.row.remainQuantity"
                   @change="handleChangeQuantity"
-                ></el-input-number>
-              </template>
-            </el-table-column>
-            <el-table-column label="价格" prop="amount" width="180">
-              <template #default="scope">
-                <el-input-number
-                  v-model="scope.row.amount"
-                  placeholder="价格"
-                  :precision="2"
-                  :min="0"
-                  :max="2147483647"
                 ></el-input-number>
               </template>
             </el-table-column>
@@ -191,11 +167,11 @@
               title="提示"
               :width="200"
               trigger="hover"
-              :disabled="form.warehouseId"
+              :disabled="form.sourceWarehouseId"
               content="请先选择仓库！"
             >
               <template #reference>
-                <el-button type="primary" plain="plain" @click="showAddItem" icon="Plus" :disabled="!form.warehouseId">
+                <el-button type="primary" plain="plain" @click="showAddItem" icon="Plus" :disabled="!form.sourceWarehouseId">
                   添加商品
                 </el-button>
               </template>
@@ -210,16 +186,16 @@
         @handleCancelClick="inventorySelectShow = false"
         :size="'90%'"
         :select-warehouse-disable="false"
-        :select-area-disable="!!form?.areaId"
-        :warehouse-id="form.warehouseId"
-        :area-id="form.areaId"
+        :select-area-disable="!!form?.sourceAreaId"
+        :warehouse-id="form.sourceWarehouseId"
+        :area-id="form.sourceAreaId"
         :selected-inventory="selectedInventory"
       />
     </div>
     <div class="footer-global">
       <div class="btn-box">
         <div>
-          <el-button @click="doShipment" type="primary" class="ml10">出库</el-button>
+          <el-button @click="doMovement" type="primary" class="ml10">移库</el-button>
           <el-button @click="updateToInvalid" type="danger" :disabled="!form.id">作废</el-button>
         </div>
         <div>
@@ -231,10 +207,10 @@
   </div>
 </template>
 
-<script setup name="ShipmentOrderEdit">
+<script setup name="MovementOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
-import {addShipmentOrder, getShipmentOrder, updateShipmentOrder, shipment} from "@/api/wms/shipmentOrder";
-import {delShipmentOrderDetail} from "@/api/wms/shipmentOrderDetail";
+import {addMovementOrder, getMovementOrder, updateMovementOrder, movement} from "@/api/wms/movementOrder";
+import {delMovementOrderDetail} from "@/api/wms/movementOrderDetail";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
@@ -247,15 +223,13 @@ const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
 const loading = ref(false)
 const initFormData = {
   id: undefined,
-  shipmentOrderNo: undefined,
-  shipmentOrderType: "",
-  merchantId: undefined,
-  orderNo: undefined,
-  receivableAmount: undefined,
+  movementOrderNo: undefined,
   shipmentOrderStatus: 0,
   remark: undefined,
-  warehouseId: undefined,
-  areaId: undefined,
+  sourceWarehouseId: undefined,
+  sourceAreaId: undefined,
+  targetWarehouseId: undefined,
+  targetAreaId: undefined,
   totalQuantity: 0,
   details: [],
 }
@@ -264,24 +238,24 @@ const selectedInventory = ref([])
 const data = reactive({
   form: {...initFormData},
   rules: {
-    shipmentOrderNo: [
+    movementOrderNo: [
       {required: true, message: "出库单号不能为空", trigger: "blur"}
     ],
-    shipmentOrderType: [
-      {required: true, message: "出库类型不能为空", trigger: "change"}
+    sourceWarehouseId: [
+      {required: true, message: "请选择源仓库", trigger: ['blur', 'change']}
     ],
-    warehouseId: [
-      {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
+    targetWarehouseId: [
+      {required: true, message: "请选择目标仓库", trigger: ['blur', 'change']}
     ],
   }
 });
 const {form, rules} = toRefs(data);
 const cancel = async () => {
-  await proxy?.$modal.confirm('确认取消编辑出库单吗？');
+  await proxy?.$modal.confirm('确认取消编辑移库单吗？');
   close()
 }
 const close = () => {
-  const obj = {path: "/shipmentOrder"};
+  const obj = {path: "/movementOrder"};
   proxy?.$tab.closeOpenPage(obj);
 }
 const inventorySelectShow = ref(false)
@@ -306,16 +280,15 @@ const handleOkClick = (item) => {
             item: it.item
           },
           skuId: it.skuId,
-          amount: undefined,
           quantity: undefined,
           remainQuantity: it.remainQuantity,
           batchNo: it.batchNo,
           productionDate: it.productionDate,
           expirationDate: it.expirationDate,
-          warehouseId: form.value.warehouseId,
-          areaId: form.value.areaId ?? it.areaId,
+          sourceWarehouseId: form.value.warehouseId,
+          sourceAreaId: form.value.areaId ?? it.areaId,
           inventoryDetailId: it.id,
-          areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
+          sourceAreaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
         })
     }
   })
@@ -327,16 +300,15 @@ const getPlaceAndSkuKey = (row) => {
 // 选择商品 end
 
 // 初始化receipt-order-form ref
-const shipmentForm = ref()
+const movementForm = ref()
 
 const save = async () => {
-  await proxy?.$modal.confirm('确认暂存出库单吗？');
+  await proxy?.$modal.confirm('确认暂存移库单吗？');
   doSave()
 }
 
-const doSave = (shipmentOrderStatus = 0) => {
-  //验证shipmentForm表单
-  shipmentForm.value?.validate((valid) => {
+const doSave = (movementOrderStatus = 0) => {
+  movementForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
@@ -351,16 +323,17 @@ const doSave = (shipmentOrderStatus = 0) => {
       details = form.value.details.map(it => {
         return {
           id: it.id,
-          receiptOrderId: form.value.id,
+          movementOrderId: form.value.id,
           skuId: it.skuId,
-          amount: it.amount,
           quantity: it.quantity,
           batchNo: it.batchNo,
           productionDate: it.productionDate,
           expirationDate: it.expirationDate,
           inventoryDetailId: it.inventoryDetailId,
-          warehouseId: form.value.warehouseId,
-          areaId: it.areaId
+          sourceWarehouseId: form.value.warehouseId,
+          sourceAreaId: it.sourceAreaId,
+          targetWarehouseId: form.value.targetWarehouseId,
+          targetAreaId: it.targetAreaId
         }
       })
     }
@@ -369,20 +342,18 @@ const doSave = (shipmentOrderStatus = 0) => {
     //console.log('提交前校验',form.value)
     const params = {
       id: form.value.id,
-      shipmentOrderNo: form.value.shipmentOrderNo,
-      shipmentOrderType: form.value.shipmentOrderType,
-      shipmentOrderStatus,
-      merchantId: form.value.merchantId,
-      orderNo: form.value.orderNo,
+      movementOrderNo: form.value.movementOrderNo,
+      movementOrderStatus,
       remark: form.value.remark,
-      receivableAmount: form.value.receivableAmount,
       totalQuantity: form.value.totalQuantity,
-      warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
+      sourceWarehouseId: form.value.sourceWarehouseId,
+      sourceAreaId: form.value.sourceAreaId,
+      targetWarehouseId: form.value.targetWarehouseId,
+      targetAreaId: form.value.targetAreaId,
       details: details
     }
     if (params.id) {
-      updateShipmentOrder(params).then((res) => {
+      updateMovementOrder(params).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.msg)
           close()
@@ -391,7 +362,7 @@ const doSave = (shipmentOrderStatus = 0) => {
         }
       })
     } else {
-      addShipmentOrder(params).then((res) => {
+      addMovementOrder(params).then((res) => {
         if (res.code === 200) {
           ElMessage.success(res.msg)
           close()
@@ -405,13 +376,13 @@ const doSave = (shipmentOrderStatus = 0) => {
 
 
 const updateToInvalid = async () => {
-  await proxy?.$modal.confirm('确认作废出库单吗？');
+  await proxy?.$modal.confirm('确认作废移库单吗？');
   doSave(-1)
 }
 
-const doShipment = async () => {
-  await proxy?.$modal.confirm('确认出库吗？');
-  shipmentForm.value?.validate((valid) => {
+const doMovement = async () => {
+  await proxy?.$modal.confirm('确认移库吗？');
+  movementForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
@@ -421,42 +392,41 @@ const doShipment = async () => {
     }
     const invalidQuantityList = form.value.details.filter(it => !it.quantity)
     if (invalidQuantityList?.length) {
-      return ElMessage.error('请选择出库数量')
+      return ElMessage.error('请选择移库数量')
     }
     // 构建参数
     const details = form.value.details.map(it => {
       return {
         id: it.id,
-        receiptOrderId: form.value.id,
+        movementOrderId: form.value.id,
         skuId: it.skuId,
-        amount: it.amount,
         quantity: it.quantity,
         batchNo: it.batchNo,
         productionDate: it.productionDate,
         expirationDate: it.expirationDate,
         inventoryDetailId: it.inventoryDetailId,
-        warehouseId: form.value.warehouseId,
-        areaId: it.areaId
+        sourceWarehouseId: form.value.sourceWarehouseId,
+        sourceAreaId: it.sourceAreaId,
+        targetWarehouseId: form.value.targetWarehouseId,
+        targetAreaId: it.targetAreaId
       }
     })
 
     //console.log('提交前校验',form.value)
     const params = {
       id: form.value.id,
-      shipmentOrderNo: form.value.shipmentOrderNo,
-      shipmentOrderType: form.value.shipmentOrderType,
-      merchantId: form.value.merchantId,
-      orderNo: form.value.orderNo,
+      movementOrderNo: form.value.movementOrderNo,
       remark: form.value.remark,
-      receivableAmount: form.value.receivableAmount,
       totalQuantity: form.value.totalQuantity,
-      warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
+      sourceWarehouseId: form.value.sourceWarehouseId,
+      sourceAreaId: form.value.sourceAreaId,
+      targetWarehouseId: form.value.targetWarehouseId,
+      targetAreaId: form.value.targetAreaId,
       details: details
     }
-    shipment(params).then((res) => {
+    movement(params).then((res) => {
       if (res.code === 200) {
-        ElMessage.success('出库成功')
+        ElMessage.success('移库成功')
         close()
       } else {
         ElMessage.error(res.msg)
@@ -471,29 +441,30 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.shipmentOrderNo = 'CK' + generateNo()
+    form.value.movementOrderNo = 'YK' + generateNo()
   }
 })
 
 
-// 获取入库单详情
+// 获取移库单详情
 const loadDetail = (id) => {
   loading.value = true
-  getShipmentOrder(id).then((response) => {
+  getMovementOrder(id).then((response) => {
     console.info("response.data:", response.data)
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
-        detail.areaName = useWmsStore().areaMap.get(detail.areaId)?.areaName
+        detail.sourceAreaName = useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName
+        detail.targetAreaName = useWmsStore().areaMap.get(detail.targetAreaId)?.areaName
       })
       selectedInventory.value = response.data.details.map(it => {
         return {
           id: it.inventoryDetailId,
-          areaId: it.areaId
+          areaId: it.sourceAreaId
         }
       })
     }
     form.value = {...response.data}
-    inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
+    inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
     Promise.resolve();
   }).then(() => {
   }).finally(() => {
@@ -501,16 +472,29 @@ const loadDetail = (id) => {
   })
 }
 
-const handleChangeWarehouse = (e) => {
-  form.value.areaId = undefined
+const handleChangeSourceWarehouse = (e) => {
+  form.value.sourceAreaId = undefined
   form.value.details = []
-  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
+  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
 }
 
-const handleChangeArea = (e) => {
-  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
-  form.value.details = form.value.details.filter(it => it.areaId === e)
+const handleChangeSourceArea = (e) => {
+  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
+  form.value.details = form.value.details.filter(it => it.sourceAreaId === e)
   selectedInventory.value = selectedInventory.value.filter(selected => selected.areaId === e)
+}
+
+const handleChangeTargetWarehouse = (e) => {
+  form.value.targetAreaId = undefined
+  form.value.details.forEach(it => {
+    it.targetWarehouseId = e
+    it.targetAreaId = undefined
+  })
+
+}
+
+const handleChangeTargetArea = (e) => {
+  form.value.details.forEach(it => it.targetAreaId = e)
 }
 
 const handleChangeQuantity = () => {
@@ -523,23 +507,10 @@ const handleChangeQuantity = () => {
   form.value.totalQuantity = sum
 }
 
-const handleAutoCalc = () => {
-  let sum = undefined
-  form.value.details.forEach(it => {
-    if (it.amount >= 0) {
-      if (!sum) {
-        sum = 0
-      }
-      sum = numSub(sum, -Number(it.amount))
-    }
-  })
-  form.value.receivableAmount = sum
-}
-
 const handleDeleteDetail = (row, index) => {
   if (row.id) {
     proxy.$modal.confirm('确认删除本条商品明细吗？如确认会立即执行！').then(function () {
-      return delShipmentOrderDetail(row.id);
+      return delMovementOrderDetail(row.id);
     }).then(() => {
       form.value.details.splice(index, 1)
       proxy.$modal.msgSuccess("删除成功");
@@ -559,7 +530,7 @@ const goSaasTip = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/styles/variables.module.scss";
+@import "@/assets/styles/variables.module";
 
 .btn-box {
   width: calc(100% - #{$base-sidebar-width});

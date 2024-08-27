@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="98px">
-        <el-form-item label="移库状态" prop="movementOrderStatus">
-          <el-radio-group v-model="queryParams.movementOrderStatus" @change="handleQuery">
+      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
+        <el-form-item label="出库状态" prop="shipmentOrderStatus">
+          <el-radio-group v-model="queryParams.shipmentOrderStatus" @change="handleQuery">
             <el-radio-button
               :key="-2"
               :label="-2"
@@ -11,7 +11,7 @@
               全部
             </el-radio-button>
             <el-radio-button
-              v-for="item in wms_movement_status"
+              v-for="item in wms_shipment_status"
               :key="item.value"
               :label="item.value"
             >
@@ -19,19 +19,38 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="移库单号" prop="movementOrderNo">
+        <el-form-item label="出库类型" prop="shipmentOrderType">
+          <el-radio-group v-model="queryParams.shipmentOrderType" @change="handleQuery">
+            <el-radio-button
+              :key="-1"
+              :label="-1"
+            >
+              全部
+            </el-radio-button>
+            <el-radio-button
+              v-for="item in wms_shipment_type"
+              :key="item.value"
+              :label="item.value"
+            >
+              {{ item.label }}
+            </el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="出库单号" prop="shipmentOrderNo">
           <el-input
-            v-model="queryParams.movementOrderNo"
-            placeholder="请输入移库单号"
+            v-model="queryParams.shipmentOrderNo"
+            placeholder="请输入出库单号"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="源仓库库区">
-          <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
-        <el-form-item label="目标仓库库区">
-          <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
+        <el-form-item label="订单号" prop="orderNo">
+          <el-input
+            v-model="queryParams.orderNo"
+            placeholder="请输入订单号"
+            clearable
+            @keyup.enter="handleQuery"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -43,23 +62,23 @@
     <el-card class="mt20">
 
       <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
-        <el-col :span="6"><span style="font-size: large">移库单</span></el-col>
+        <el-col :span="6"><span style="font-size: large">出库单</span></el-col>
         <el-col :span="1.5">
           <el-button
             type="primary"
             plain
             icon="Plus"
             @click="handleAdd"
-            v-hasPermi="['wms:movementOrder:add']"
+            v-hasPermi="['wms:shipmentOrder:add']"
           >新增</el-button>
         </el-col>
       </el-row>
 
-      <el-table v-loading="loading" :data="movementOrderList" border class="mt20"
+      <el-table v-loading="loading" :data="shipmentOrderList" border class="mt20"
                 @expand-change="handleExpandExchange"
                 :row-key="getRowKey"
                 :expand-row-keys="expandedRowKeys"
-                empty-text="暂无移库单"
+                empty-text="暂无出库单"
                 cell-class-name="vertical-top-cell"
       >
         <el-table-column type="expand">
@@ -77,51 +96,68 @@
                     <div>{{ row?.itemSku?.skuName }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="源库区" prop="sourceAreaName"/>
-                <el-table-column label="目标库区" prop="targetAreaName"/>
+                <el-table-column label="库区" prop="areaName"/>
                 <el-table-column label="数量" prop="quantity" align="right">
                   <template #default="{ row }">
                     <el-statistic :value="Number(row.quantity)" :precision="0"/>
                   </template>
                 </el-table-column>
-                <el-table-column label="批号" prop="batchNo" />
-                <el-table-column label="生产日期" prop="inventoryDetail.productionDate">
+                <el-table-column label="价格(元)" align="right">
                   <template #default="{ row }">
-                    <div v-if="row.productionDate">{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
+                    <el-statistic :precision="2" :value="Number(row.amount)"/>
                   </template>
                 </el-table-column>
-                <el-table-column label="过期日期" prop="inventoryDetail.expirationDate">
+                <el-table-column label="批号" prop="batchNo" />
+                <el-table-column label="生产日期" prop="productionDate">
                   <template #default="{ row }">
-                    <div v-if="row.expirationDate">{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
+                    <div>{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="过期日期" prop="expirationDate">
+                  <template #default="{ row }">
+                    <div>{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
                   </template>
                 </el-table-column>
               </el-table>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号" align="left" prop="movementOrderNo" />
-        <el-table-column label="源仓库/源库区" align="left" width="260">
+        <el-table-column label="单号/订单号" align="left">
           <template #default="{ row }">
-            <div>源仓库：{{ useWmsStore().warehouseMap.get(row.sourceWarehouseId)?.warehouseName }}</div>
-            <div v-if="row.sourceAreaId">源库区：{{ useWmsStore().areaMap.get(row.sourceAreaId)?.areaName }}</div>
+            <div>单号：{{ row.shipmentOrderNo }}</div>
+            <div v-if="row.orderNo">订单号：{{ row.orderNo }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="目标仓库/目标库区" align="left" width="260">
+        <el-table-column label="出库类型" align="left" prop="shipmentOrderType">
           <template #default="{ row }">
-            <div>目标仓库：{{ useWmsStore().warehouseMap.get(row.targetWarehouseId)?.warehouseName }}</div>
-            <div v-if="row.targetAreaId">目标库区：{{ useWmsStore().areaMap.get(row.targetAreaId)?.areaName }}</div>
+            <dict-tag :options="wms_shipment_type" :value="row.shipmentOrderType" />
           </template>
         </el-table-column>
-        <el-table-column label="移库状态" align="center" prop="movementOrderStatus" width="120">
+        <el-table-column label="客户" align="left" prop="merchantId">
           <template #default="{ row }">
-            <dict-tag :options="wms_movement_status" :value="row.movementOrderStatus" />
+            <div>{{ useWmsStore().merchantMap.get(row.merchantId)?.merchantName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="数量" align="left">
+        <el-table-column label="仓库/库区" align="left" width="200">
+          <template #default="{ row }">
+            <div>仓库：{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
+            <div v-if="row.areaId">库区：{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="出库状态" align="center" prop="shipmentOrderStatus" width="120">
+          <template #default="{ row }">
+            <dict-tag :options="wms_shipment_status" :value="row.shipmentOrderStatus" />
+          </template>
+        </el-table-column>
+        <el-table-column label="数量/金额(元)" align="left">
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>
               <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
+            </div>
+            <div class="flex-space-between" v-if="row.receivableAmount || row.receivableAmount === 0">
+              <span>金额：</span>
+              <el-statistic :value="Number(row.receivableAmount)" :precision="2"/>
             </div>
           </template>
         </el-table-column>
@@ -146,14 +182,14 @@
                 title="提示"
                 :width="300"
                 trigger="hover"
-                :disabled="scope.row.movementOrderStatus === 0"
-                :content="'移库单【' + scope.row.movementOrderNo + '】已' + (scope.row.movementOrderStatus === 1 ? '移库' : '作废') + '，无法修改！' "
+                :disabled="scope.row.shipmentOrderStatus === 0"
+                :content="'出库单【' + scope.row.shipmentOrderNo + '】已' + (scope.row.shipmentOrderStatus === 1 ? '出库' : '作废') + '，无法修改！' "
               >
                 <template #reference>
-                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:movementOrder:edit']" :disabled="[-1, 1].includes(scope.row.movementOrderStatus)">修改</el-button>
+                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:shipmentOrder:edit']" :disabled="[-1, 1].includes(scope.row.shipmentOrderStatus)">修改</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:movementOrder:query']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
+              <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:shipmentOrder:query']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
             </div>
             <div class="mt10">
               <el-popover
@@ -161,14 +197,14 @@
                 title="提示"
                 :width="300"
                 trigger="hover"
-                :disabled="[-1, 0].includes(scope.row.movementOrderStatus)"
-                :content="'移库单【' + scope.row.movementOrderNo + '】已移库，无法删除！' "
+                :disabled="[-1, 0].includes(scope.row.shipmentOrderStatus)"
+                :content="'出库单【' + scope.row.shipmentOrderNo + '】已出库，无法删除！' "
               >
                 <template #reference>
-                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:movementOrder:remove']" :disabled="scope.row.movementOrderStatus === 1">删除</el-button>
+                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:shipmentOrder:remove']" :disabled="scope.row.shipmentOrderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
-              <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:movementOrder:export']">打印</el-button>
+              <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:shipmentOrder:export']">打印</el-button>
             </div>
           </template>
         </el-table-column>
@@ -187,18 +223,17 @@
   </div>
 </template>
 
-<script setup name="MovementOrder">
-import {listMovementOrder, delMovementOrder, getMovementOrder} from "@/api/wms/movementOrder";
-import {listByMovementOrderId} from "@/api/wms/movementOrderDetail";
+<script setup name="ShipmentOrder">
+import {listShipmentOrder, delShipmentOrder, getShipmentOrder} from "@/api/wms/shipmentOrder";
+import {listByShipmentOrderId} from "@/api/wms/shipmentOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
-import {useWmsStore} from "../../../store/modules/wms";
+import {useWmsStore} from "../../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
-import WarehouseCascader from "@/views/components/WarehouseCascader.vue";
-import movementPanel from "@/components/PrintTemplate/movement-panel";
+import shipmentPanel from "@/components/PrintTemplate/shipment-panel";
 
 const { proxy } = getCurrentInstance();
-const { wms_movement_status } = proxy.useDict("wms_movement_status");
-const movementOrderList = ref([]);
+const { wms_shipment_status, wms_shipment_type} = proxy.useDict("wms_shipment_status", "wms_shipment_type");
+const shipmentOrderList = ref([]);
 const open = ref(false);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -213,8 +248,12 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    movementOrderNo: undefined,
-    movementOrderStatus: -2,
+    shipmentOrderNo: undefined,
+    shipmentOrderType: -1,
+    merchantId: undefined,
+    orderNo: undefined,
+    receivableAmount: undefined,
+    shipmentOrderStatus: -2,
   },
 });
 
@@ -224,19 +263,14 @@ const { queryParams } = toRefs(data);
 function getList() {
   loading.value = true;
   const query = {...queryParams.value}
-  if (query.movementOrderStatus === -2) {
-    query.movementOrderStatus = null
+  if (query.shipmentOrderStatus === -2) {
+    query.shipmentOrderStatus = null
   }
-  if (query.sourcePlace?.length) {
-    query.sourceWarehouseId = query.sourcePlace[0]
-    query.sourceAreaId = query.sourcePlace[1]
+  if (query.shipmentOrderType === -1) {
+    query.shipmentOrderType = null
   }
-  if (query.targetPlace?.length) {
-    query.targetWarehouseId = query.targetPlace[0]
-    query.targetAreaId = query.targetPlace[1]
-  }
-  listMovementOrder(query).then(response => {
-    movementOrderList.value = response.rows;
+  listShipmentOrder(query).then(response => {
+    shipmentOrderList.value = response.rows;
     total.value = response.total;
     for (let i = 0; i < total; i++) {
       detailLoading.value.push(false)
@@ -260,15 +294,15 @@ function resetQuery() {
 
 /** 新增按钮操作 */
 function handleAdd() {
-  proxy.$router.push({ path: "/movementOrderEdit" });
+  proxy.$router.push({ path: "/shipmentOrderEdit" });
 }
 
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('确认删除移库单【' + row.movementOrderNo + '】吗？').then(function() {
+  proxy.$modal.confirm('确认删除出库单【' + row.shipmentOrderNo + '】吗？').then(function() {
     loading.value = true;
-    return delMovementOrder(_ids);
+    return delShipmentOrder(_ids);
   }).then(() => {
     loading.value = true;
     getList();
@@ -276,7 +310,7 @@ function handleDelete(row) {
   }).catch((e) => {
     if (e === 409) {
       return ElMessageBox.alert(
-        '<div>移库单【' + row.movementOrderNo + '】已移库，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '<div>出库单【' + row.shipmentOrderNo + '】已出库，不能删除 ！</div><div>请联系管理员处理！</div>',
         '系统提示',
         {
           dangerouslyUseHTMLString: true,
@@ -289,7 +323,7 @@ function handleDelete(row) {
 }
 
 function handleUpdate(row) {
-  proxy.$router.push({ path: "/movementOrderEdit",  query: { id: row.id } });
+  proxy.$router.push({ path: "/shipmentOrderEdit",  query: { id: row.id } });
 }
 
 function handleGoDetail(row) {
@@ -300,45 +334,47 @@ function handleGoDetail(row) {
   } else {
     // 展开
     expandedRowKeys.value.push(row.id)
-    loadMovementOrderDetail(row)
+    loadShipmentOrderDetail(row)
   }
 }
 
 /** 导出按钮操作 */
 async function handlePrint(row) {
-  const res = await getMovementOrder(row.id)
-  const movementOrder = res.data
+  const res = await getShipmentOrder(row.id)
+  const shipmentOrder = res.data
   let table = []
-  if (movementOrder.details?.length) {
-    table = movementOrder.details.map(detail => {
+  if (shipmentOrder.details?.length) {
+    table = shipmentOrder.details.map(detail => {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        sourceAreaName: useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName,
-        targetAreaName: useWmsStore().areaMap.get(detail.targetAreaId)?.areaName,
+        areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
         quantity: Number(detail.quantity).toFixed(0),
         batchNo: detail.batchNo,
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
-        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}')
+        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
+        amount: detail.amount
       }
     })
   }
   const printData = {
-    movementOrderNo: movementOrder.movementOrderNo,
-    movementOrderStatus: proxy.selectDictLabel(wms_movement_status.value, movementOrder.movementOrderStatus),
-    sourceWarehouseName: useWmsStore().warehouseMap.get(movementOrder.sourceWarehouseId)?.warehouseName,
-    sourceAreaName: useWmsStore().areaMap.get(movementOrder.sourceAreaId)?.areaName,
-    targetWarehouseName: useWmsStore().warehouseMap.get(movementOrder.targetWarehouseId)?.warehouseName,
-    targetAreaName: useWmsStore().areaMap.get(movementOrder.targetAreaId)?.areaName,
-    totalQuantity: Number(movementOrder.totalQuantity).toFixed(0),
-    createBy: movementOrder.createBy,
-    createTime: proxy.parseTime(movementOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
-    updateBy: movementOrder.updateBy,
-    updateTime: proxy.parseTime(movementOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
-    remark: movementOrder.remark,
+    shipmentOrderNo: shipmentOrder.shipmentOrderNo,
+    shipmentOrderType: proxy.selectDictLabel(wms_shipment_type.value, shipmentOrder.shipmentOrderType),
+    shipmentOrderStatus: proxy.selectDictLabel(wms_shipment_status.value, shipmentOrder.shipmentOrderStatus),
+    merchantName: useWmsStore().merchantMap.get(shipmentOrder.merchantId)?.merchantName,
+    orderNo: shipmentOrder.orderNo,
+    warehouseName: useWmsStore().warehouseMap.get(shipmentOrder.warehouseId)?.warehouseName,
+    areaName: useWmsStore().areaMap.get(shipmentOrder.areaId)?.areaName,
+    totalQuantity: Number(shipmentOrder.totalQuantity).toFixed(0),
+    receivableAmount: ((shipmentOrder.receivableAmount || shipmentOrder.receivableAmount === 0) ? (shipmentOrder.receivableAmount + '元') : ''),
+    createBy: shipmentOrder.createBy,
+    createTime: proxy.parseTime(shipmentOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
+    updateBy: shipmentOrder.updateBy,
+    updateTime: proxy.parseTime(shipmentOrder.updateTime, '{mm}-{dd} {hh}:{ii}'),
+    remark: shipmentOrder.remark,
     table
   }
-  let printTemplate = new proxy.$hiprint.PrintTemplate({template: movementPanel})
+  let printTemplate = new proxy.$hiprint.PrintTemplate({template: shipmentPanel})
   printTemplate.print(printData, {}, {
     styleHandler: () => {
       let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
@@ -354,24 +390,22 @@ function handleExpandExchange(value, expandedRows) {
     return
   }
   expandedRowKeys.value = expandedRows.map(it => it.id)
-  loadMovementOrderDetail(value)
+  loadShipmentOrderDetail(value)
 }
 
-function loadMovementOrderDetail(row) {
-  const index = movementOrderList.value.findIndex(it => it.id === row.id)
+function loadShipmentOrderDetail(row) {
+  const index = shipmentOrderList.value.findIndex(it => it.id === row.id)
   detailLoading.value[index] = true
-  listByMovementOrderId(row.id).then(res => {
+  listByShipmentOrderId(row.id).then(res => {
     if (res.data?.length) {
       const details = res.data.map(it => {
         return {
           ...it,
-          sourceWarehouseName: useWmsStore().warehouseMap.get(it.sourceWarehouseId)?.warehouseName,
-          sourceAreaName: useWmsStore().areaMap.get(it.sourceAreaId)?.areaName,
-          targetWarehouseName: useWmsStore().warehouseMap.get(it.targetWarehouseId)?.warehouseName,
-          targetAreaName: useWmsStore().areaMap.get(it.targetAreaId)?.areaName
+          warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName,
+          areaName: useWmsStore().areaMap.get(it.areaId)?.areaName
         }
       })
-      movementOrderList.value[index].details = details
+      shipmentOrderList.value[index].details = details
     }
   }).finally(() => {
     detailLoading.value[index] = false
@@ -381,8 +415,10 @@ function loadMovementOrderDetail(row) {
 function ifExpand(expandedRows) {
   if (expandedRows.length < expandedRowKeys.value.length) {
     expandedRowKeys.value = expandedRows.map(it => it.id)
+    console.info("close")
     return false;
   }
+  console.info("open")
   return true
 }
 
