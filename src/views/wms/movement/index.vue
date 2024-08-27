@@ -52,13 +52,6 @@
             @click="handleAdd"
             v-hasPermi="['wms:movementOrder:add']"
           >新增</el-button>
-          <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click=""
-            v-hasPermi="['wms:movementOrder:export']"
-          >导出</el-button>
         </el-col>
       </el-row>
 

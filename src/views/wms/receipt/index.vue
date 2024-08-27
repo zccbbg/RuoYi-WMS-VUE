@@ -71,13 +71,6 @@
             @click="handleAdd"
             v-hasPermi="['wms:receiptOrder:add']"
           >新增</el-button>
-          <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click="handleExport"
-            v-hasPermi="['wms:receiptOrder:export']"
-          >导出</el-button>
         </el-col>
       </el-row>
 
