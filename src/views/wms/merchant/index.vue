@@ -47,13 +47,6 @@
             @click="handleAdd"
             v-hasPermi="['wms:merchant:add']"
           >新增</el-button>
-          <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click="handleExport"
-            v-hasPermi="['wms:merchant:export']"
-          >导出</el-button>
         </el-col>
       </el-row>
 
