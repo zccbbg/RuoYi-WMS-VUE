@@ -118,7 +118,8 @@
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
-                <div>{{ row.itemSku.skuName + '(' + row.itemSku.barcode + ')' }}</div>
+                <div>{{ row.itemSku.skuName }}</div>
+                <div v-if="row.itemSku.barcode">条码：{{row.itemSku.barcode}}</div>
               </template>
             </el-table-column>
             <el-table-column label="库区" prop="itemSku.skuName" width="200">
