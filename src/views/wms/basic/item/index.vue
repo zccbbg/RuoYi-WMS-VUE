@@ -82,7 +82,6 @@
               <template #default="{ row }">
                 <div>{{ row.skuName }}</div>
                 <div v-if="row.skuCode">编号：{{ row.skuCode }}</div>
-                <div v-if="row.skuNumber">货号：{{ row.skuNumber }}</div>
                 <div v-if="row.barcode">条码：{{ row.barcode }}</div>
 <!--                <div>-->
 <!--                  <el-button link type="primary" icon="Download" @click="downloadBarcode(row)">下载条形码</el-button>-->
@@ -211,15 +210,11 @@
                 </el-form-item>
               </template>
             </el-table-column>
-            <el-table-column label="编号/货号/条码" width="250">
+            <el-table-column label="编号/条码" width="250">
               <template #default="scope">
                 <div class="flex-center">
                   <span class="mr5" style="width: 50px">编号</span>
                   <el-input v-model="scope.row.skuCode" />
-                </div>
-                <div class="flex-center mt5">
-                  <span class="mr5" style="width: 50px">货号</span>
-                  <el-input v-model="scope.row.skuNumber" />
                 </div>
                 <div class="flex-center mt5">
                   <span class="mr5" style="width: 50px">条码</span>

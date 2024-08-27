@@ -65,7 +65,6 @@
         <template #default="{ row }">
           <div>{{ row.itemSku.skuName }}</div>
           <div v-if="row.itemSku.skuCode">编号：{{ row.itemSku.skuCode }}</div>
-          <div v-if="row.itemSku.skuNumber">货号：{{ row.itemSku.skuNumber }}</div>
           <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
         </template>
       </el-table-column>
