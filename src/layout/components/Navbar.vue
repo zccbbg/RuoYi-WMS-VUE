@@ -5,6 +5,7 @@
     <top-nav id="topmenu-container" class="topmenu-container" v-if="settingsStore.topNav" />
 
     <div class="right-menu">
+      <div style="font-size: 16px;font-weight: bold;margin-right: 10px;">技术支持：关注“程序员诚哥”微信公众号，回复：支持</div>
       <div class="avatar-container">
         <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
