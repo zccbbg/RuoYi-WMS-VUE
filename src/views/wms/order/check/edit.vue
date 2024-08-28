@@ -227,7 +227,7 @@
       <div class="btn-box">
         <div>
           <el-button @click="doCheck" type="primary" class="ml10">盘库结束</el-button>
-          <el-button @click="updateToInvalid" type="danger" :disabled="!form.id">作废</el-button>
+          <el-button @click="updateToInvalid" type="danger" v-if="form.id">作废</el-button>
         </div>
         <div>
           <el-button @click="save" type="primary">暂存</el-button>
