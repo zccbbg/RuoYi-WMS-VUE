@@ -89,63 +89,13 @@
                 inactive-text="关闭"
               />
             </div>
-<!--            <div>-->
-<!--              <el-popover-->
-<!--                placement="left"-->
-<!--                title="提示"-->
-<!--                :width="200"-->
-<!--                trigger="hover"-->
-<!--                :disabled="form.warehouseId"-->
-<!--                content="请先选择仓库！"-->
-<!--              >-->
-<!--                <template #reference>-->
-                  <el-button type="primary" plain="plain" size="default" @click="addInventoryDetail" icon="Plus"
+                  <el-button type="primary" plain="plain" size="default" @click="showSkuSelect" icon="Plus"
                              :disabled="!form.warehouseId">新增库存
                   </el-button>
-<!--                </template>-->
-<!--              </el-popover>-->
-<!--              <el-popover-->
-<!--                placement="left"-->
-<!--                title="提示"-->
-<!--                :width="200"-->
-<!--                trigger="hover"-->
-<!--                :disabled="!checking"-->
-<!--                content="已在盘库中！"-->
-<!--              >-->
-<!--                <template #reference>-->
-<!--                  <el-button type="primary" plain="plain" size="default" @click="startCheck" icon="Plus"-->
-<!--                             :disabled="checking">开始盘库-->
-<!--                  </el-button>-->
-<!--                </template>-->
-<!--              </el-popover>-->
-<!--            </div>-->
           </div>
           <el-table :data="form.details" border empty-text="暂无商品明细">
             <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="scope">
-                <template v-if="scope.row.newInventoryDetail">
-                  <el-button type="primary" plain="plain" size="default" @click="showSkuSelect(scope.$index)" v-if="!scope.row.itemSku">{{ scope.row.itemSku ? '重新选择' : '选择商品' }}</el-button>
-                  <el-popover
-                    placement="top"
-                    title="提示"
-                    :width="200"
-                    trigger="hover"
-                    content="点击重新选择商品"
-                  >
-                    <template #reference>
-                      <div v-if="scope.row.itemSku" @click="showSkuSelect(scope.$index)" style="cursor: pointer;" class="hover-text">
-                        <div>{{
-                            scope.row.itemSku.item.itemName + (scope.row.itemSku.item.itemCode ? ('(' + scope.row.itemSku.item.itemCode + ')') : '')
-                          }}
-                        </div>
-                        <div v-if="scope.row.itemSku.item.itemBrand">
-                          品牌：{{ useWmsStore().itemBrandMap.get(scope.row.itemSku.item.itemBrand).brandName }}
-                        </div>
-                      </div>
-                    </template>
-                  </el-popover>
-                </template>
-                <template v-else>
                   <div>{{
                       scope.row.itemSku.item.itemName + (scope.row.itemSku.item.itemCode ? ('(' + scope.row.itemSku.item.itemCode + ')') : '')
                     }}
@@ -154,7 +104,6 @@
                     品牌：{{ useWmsStore().itemBrandMap.get(scope.row.itemSku.item.itemBrand).brandName }}
                   </div>
                 </template>
-              </template>
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
@@ -269,11 +218,9 @@
       <SkuSelect
         ref="sku-select"
         :model-value="skuSelectShow"
-        @handleOkClick="chooseSkuOkClick"
+        @handleOkClick="handleOkClick"
         @handleCancelClick="skuSelectShow = false"
-        @handleSingleOkClick="chooseSkuOkClick"
         :size="'80%'"
-        :single-select="true"
       />
     </div>
     <div class="footer-global" v-if="checking">
@@ -378,67 +325,32 @@ const startCheck = () => {
     })
   }).finally(() => loading.value = false)
 }
-
-const addInventoryDetail = () => {
-  form.value.details.push({
-      itemSku: null,
-      inventoryDetailId: null,
-      skuId: undefined,
-      warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
-      quantity: 0,
-      checkQuantity: 0,
-      areaName: useWmsStore().areaMap.get(form.value.areaId)?.areaName,
-      batchNo: undefined,
-      productionDate: undefined,
-      expirationDate: undefined,
-      receiptTime: proxy.parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}'),
-      newInventoryDetail: true
-    }
-  )
-}
 // 选择成功
 const handleOkClick = (item) => {
-  inventorySelectShow.value = false
+  skuSelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
-    if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
       form.value.details.push(
         {
-          itemSku: {
-            ...it.itemSku,
-            item: it.item
-          },
-          skuId: it.skuId,
-          amount: undefined,
-          quantity: undefined,
-          remainQuantity: it.remainQuantity,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
+          itemSku: {...it},
+          skuId: it.id,
           warehouseId: form.value.warehouseId,
-          areaId: form.value.areaId ?? it.areaId,
-          inventoryDetailId: it.id,
-          areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
+          inventoryDetailId: null,
+          areaId: form.value.areaId,
+          quantity: 0,
+          checkQuantity: 0,
+          areaName: useWmsStore().areaMap.get(form.value.areaId)?.areaName,
+          batchNo: undefined,
+          productionDate: undefined,
+          expirationDate: undefined,
+          receiptTime: proxy.parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}'),
+          newInventoryDetail: true
         })
-    }
   })
 }
 
-const showSkuSelect = (index) => {
-  currentSkuSelectIndex.value = index
+const showSkuSelect = () => {
   skuSelectShow.value = true
-}
-
-// 选择规格成功
-const chooseSkuOkClick = (item) => {
-  form.value.details[currentSkuSelectIndex.value].itemSku = {...item}
-  form.value.details[currentSkuSelectIndex.value].skuId = item.id
-  skuSelectShow.value = false
-}
-
-const getPlaceAndSkuKey = (row) => {
-  return row.warehouseId + '_' + row.areaId + '_' + row.skuId
 }
 // 选择商品 end
 
@@ -524,9 +436,6 @@ const doCheck = async () => {
     }
     const newList = form.value.details.filter(it => it.newInventoryDetail)
     if (newList?.length) {
-      if (newList.filter(it => !it.skuId)?.length) {
-        return ElMessage.error('请选择商品')
-      }
       if (newList.filter(it => !it.areaId)?.length) {
         return ElMessage.error('请选择库区')
       }
