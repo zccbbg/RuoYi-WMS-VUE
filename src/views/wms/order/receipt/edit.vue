@@ -221,7 +221,7 @@
     <div class="footer-global">
       <div class="btn-box">
         <div>
-          <el-button @click="doWarehousing" type="primary" class="ml10">入库</el-button>
+          <el-button @click="doWarehousing" type="primary" class="ml10">完成入库</el-button>
           <el-button @click="updateToInvalid" type="danger" v-if="form.id">作废</el-button>
         </div>
         <div>

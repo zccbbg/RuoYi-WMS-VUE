@@ -226,7 +226,7 @@
     <div class="footer-global" v-if="checking">
       <div class="btn-box">
         <div>
-          <el-button @click="doCheck" type="primary" class="ml10">盘库结束</el-button>
+          <el-button @click="doCheck" type="primary" class="ml10">完成盘库</el-button>
           <el-button @click="updateToInvalid" type="danger" v-if="form.id">作废</el-button>
         </div>
         <div>
