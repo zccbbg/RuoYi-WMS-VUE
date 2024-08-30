@@ -233,7 +233,7 @@ const loading = ref(false)
 const initFormData = {
   id: undefined,
   shipmentOrderNo: undefined,
-  shipmentOrderType: "",
+  shipmentOrderType: "2",
   merchantId: undefined,
   orderNo: undefined,
   receivableAmount: undefined,

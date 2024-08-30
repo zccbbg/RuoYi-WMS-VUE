@@ -250,7 +250,7 @@ const loading = ref(false)
 const initFormData = {
   id: undefined,
   receiptOrderNo: undefined,
-  receiptOrderType: "",
+  receiptOrderType: "2",
   merchantId: undefined,
   orderNo: undefined,
   payableAmount: undefined,
