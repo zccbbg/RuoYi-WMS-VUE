@@ -141,10 +141,6 @@
               </template>
             </el-table-column>
             <el-table-column label="数量" prop="quantity" width="180">
-<!--              <template #header>-->
-<!--                <span>数量</span>-->
-<!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(1)">批量</el-button>-->
-<!--              </template>-->
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.quantity"
@@ -156,10 +152,6 @@
               </template>
             </el-table-column>
             <el-table-column label="价格" prop="amount" width="180">
-<!--              <template #header>-->
-<!--                <span>单价</span>-->
-<!--                <el-button class="ml10" :disabled="!form.details?.length" @click.stop="openBatchSetNumDialog(2)">批量</el-button>-->
-<!--              </template>-->
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.amount"

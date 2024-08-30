@@ -89,12 +89,12 @@
               title="提示"
               :width="200"
               trigger="hover"
-              :disabled="form.sourceWarehouseId"
-              content="请先选择仓库！"
+              :disabled="form.sourceWarehouseId && form.targetWarehouseId"
+              content="请先选择源仓库和目标仓库！"
             >
               <template #reference>
                 <el-button type="primary" plain="plain" size="default" @click="showAddItem" icon="Plus"
-                           :disabled="!form.sourceWarehouseId">添加商品
+                           :disabled="!form.sourceWarehouseId || !form.targetWarehouseId">添加商品
                 </el-button>
               </template>
             </el-popover>
@@ -113,13 +113,14 @@
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
-                <div>{{ row.itemSku.skuName + '(' + row.itemSku.barcode + ')' }}</div>
+                <div>{{ row.itemSku.skuName}}</div>
+                <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
               </template>
             </el-table-column>
             <el-table-column label="源库区" width="200" prop="sourceAreaName" />
             <el-table-column label="目标库区" width="200">
               <template #default="{ row }">
-                <el-select v-model="row.targetAreaId" placeholder="请选择源库区" filterable :disabled="!form.targetWarehouseId">
+                <el-select v-model="row.targetAreaId" placeholder="请选择目标库区" filterable :disabled="!!form.targetAreaId">
                   <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
                              :key="item.id" :label="item.areaName" :value="item.id"/>
                 </el-select>
@@ -161,22 +162,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="tc mt20">
-            <el-popover
-              placement="left"
-              title="提示"
-              :width="200"
-              trigger="hover"
-              :disabled="form.sourceWarehouseId"
-              content="请先选择仓库！"
-            >
-              <template #reference>
-                <el-button type="primary" plain="plain" @click="showAddItem" icon="Plus" :disabled="!form.sourceWarehouseId">
-                  添加商品
-                </el-button>
-              </template>
-            </el-popover>
-          </div>
         </div>
       </el-card>
       <InventoryDetailSelect
@@ -267,8 +252,6 @@ const showAddItem = () => {
 }
 // 选择成功
 const handleOkClick = (item) => {
-  console.info("selected item:", item)
-  console.info("form.value.details:", form.value.details)
   inventorySelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
@@ -288,6 +271,7 @@ const handleOkClick = (item) => {
           sourceWarehouseId: form.value.warehouseId,
           sourceAreaId: form.value.areaId ?? it.areaId,
           inventoryDetailId: it.id,
+          targetAreaId: form.value.targetAreaId,
           sourceAreaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
         })
     }
@@ -494,6 +478,8 @@ const handleChangeTargetWarehouse = (e) => {
 }
 
 const handleChangeTargetArea = (e) => {
+  console.log('targetAreaId', e)
+  console.log('form.value.targetAreaId', form.value.targetAreaId)
   form.value.details.forEach(it => it.targetAreaId = e)
 }
 
