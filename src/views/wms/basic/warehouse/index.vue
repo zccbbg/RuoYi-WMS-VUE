@@ -264,6 +264,9 @@ const  handleDeleteArea =  async (row) => {
   await proxy?.$modal.confirm('确认删除库区【' + row?.areaName + '】吗？').finally(() => loading.value = false);
   try {
     await delArea(_ids);
+    proxy?.$modal.msgSuccess("删除成功");
+    await loadAreas();
+    wmsStore.getAreaList()
   } catch (e) {
     if (e === 409) {
       return ElMessageBox.alert(
@@ -275,9 +278,6 @@ const  handleDeleteArea =  async (row) => {
       )
     }
   }
-  proxy?.$modal.msgSuccess("删除成功");
-  await loadAreas();
-  wmsStore.getAreaList()
 }
 
 
