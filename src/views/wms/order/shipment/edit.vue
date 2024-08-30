@@ -134,7 +134,8 @@
             </el-table-column>
             <el-table-column label="规格信息">
               <template #default="{ row }">
-                <div>{{ row.itemSku.skuName + '(' + row.itemSku.barcode + ')' }}</div>
+                <div>{{ row.itemSku.skuName }}</div>
+                <div v-if="row.itemSku.barcode">条码：{{row.itemSku.barcode}}</div>
               </template>
             </el-table-column>
             <el-table-column label="库区" prop="areaName" width="200"/>
@@ -454,6 +455,7 @@ const doShipment = async () => {
       areaId: form.value.areaId,
       details: details
     }
+    loading.value = true
     shipment(params).then((res) => {
       if (res.code === 200) {
         ElMessage.success('出库成功')
@@ -461,6 +463,8 @@ const doShipment = async () => {
       } else {
         ElMessage.error(res.msg)
       }
+    }).finally(()=>{
+      loading.value = false
     })
   })
 }
@@ -480,7 +484,6 @@ onMounted(() => {
 const loadDetail = (id) => {
   loading.value = true
   getShipmentOrder(id).then((response) => {
-    console.info("response.data:", response.data)
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
         detail.areaName = useWmsStore().areaMap.get(detail.areaId)?.areaName
