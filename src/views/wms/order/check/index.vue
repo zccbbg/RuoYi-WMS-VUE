@@ -44,7 +44,7 @@
             plain
             icon="Plus"
             @click="handleAdd"
-            v-hasPermi="['wms:checkOrder:add']"
+            v-hasPermi="['wms:check:all']"
           >新增</el-button>
         </el-col>
       </el-row>

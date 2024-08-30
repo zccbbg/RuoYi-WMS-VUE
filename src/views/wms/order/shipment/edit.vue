@@ -186,22 +186,6 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="tc mt20">
-            <el-popover
-              placement="left"
-              title="提示"
-              :width="200"
-              trigger="hover"
-              :disabled="form.warehouseId"
-              content="请先选择仓库！"
-            >
-              <template #reference>
-                <el-button type="primary" plain="plain" @click="showAddItem" icon="Plus" :disabled="!form.warehouseId">
-                  添加商品
-                </el-button>
-              </template>
-            </el-popover>
-          </div>
         </div>
       </el-card>
       <InventoryDetailSelect
