@@ -2,6 +2,10 @@
 
 * 本仓库为前端技术栈 [Vue3](https://v3.cn.vuejs.org) + [Element Plus](https://element-plus.org/zh-CN) + [Vite](https://cn.vitejs.dev) 版本。
 
+## 在线体验
+- 最新版V2演示地址：http://kucun.ichengle.top
+- 旧版V1演示地址：http://wms.ichengle.top
+
 ## 后端项目地址
 #### gitee地址
 https://gitee.com/zccbbg/ruoyi-wms-service
