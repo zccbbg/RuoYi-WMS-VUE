@@ -717,13 +717,13 @@ const submitCategoryForm = () => {
 /** 删除按钮操作 */
 const handleDelete = async (row) => {
   const _ids = row?.itemId || ids.value;
-  await proxy?.$modal.confirm('确认删除商品【' + row?.itemName + '】吗？');
+  await proxy?.$modal.confirm('确认删除商品【' + row?.item.itemName + '】吗？');
   try {
     await delItem(_ids);
   } catch (e) {
     if (e === 409) {
       return ElMessageBox.alert(
-        '<div>商品【' + row.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '<div>商品【' + row.item.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
         '系统提示',
         {
           dangerouslyUseHTMLString: true,
