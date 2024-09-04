@@ -322,8 +322,6 @@ const doSave = (movementOrderStatus = 0) => {
       })
     }
 
-
-    //console.log('提交前校验',form.value)
     const params = {
       id: form.value.id,
       movementOrderNo: form.value.movementOrderNo,
@@ -396,7 +394,7 @@ const doMovement = async () => {
       }
     })
 
-    //console.log('提交前校验',form.value)
+    //('提交前校验',form.value)
     const params = {
       id: form.value.id,
       movementOrderNo: form.value.movementOrderNo,
@@ -434,7 +432,7 @@ onMounted(() => {
 const loadDetail = (id) => {
   loading.value = true
   getMovementOrder(id).then((response) => {
-    console.info("response.data:", response.data)
+
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
         detail.sourceAreaName = useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName
@@ -478,8 +476,8 @@ const handleChangeTargetWarehouse = (e) => {
 }
 
 const handleChangeTargetArea = (e) => {
-  console.log('targetAreaId', e)
-  console.log('form.value.targetAreaId', form.value.targetAreaId)
+  ('targetAreaId', e)
+  ('form.value.targetAreaId', form.value.targetAreaId)
   form.value.details.forEach(it => it.targetAreaId = e)
 }
 

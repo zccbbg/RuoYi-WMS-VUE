@@ -66,7 +66,6 @@ export const useWmsStore = defineStore('wms', () => {
           map.set(supplier.id, supplier)
         })
         itemCategoryMap.value = map
-        console.info("getItemCategoryList")
         resolve()
       }).catch(() => reject())
     })
@@ -76,7 +75,6 @@ export const useWmsStore = defineStore('wms', () => {
     return new Promise((resolve, reject) => {
       treeSelectItemCategory().then(res => {
         itemCategoryTreeList.value = res.data
-        console.info("getItemCategoryTreeList")
         resolve()
       }).catch(() => reject())
     })
@@ -95,7 +93,6 @@ export const useWmsStore = defineStore('wms', () => {
           map.set(supplier.id, {...supplier})
         })
         itemBrandMap.value = map
-        console.info("itemBrandMap:", itemBrandMap.value)
         resolve()
       }).catch(() => reject())
     })

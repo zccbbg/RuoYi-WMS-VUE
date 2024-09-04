@@ -378,7 +378,6 @@ async function handlePrint(row) {
   printTemplate.print(printData, {}, {
     styleHandler: () => {
       let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
-      console.info("css:", css)
       return css
     }
   })
@@ -415,10 +414,10 @@ function loadShipmentOrderDetail(row) {
 function ifExpand(expandedRows) {
   if (expandedRows.length < expandedRowKeys.value.length) {
     expandedRowKeys.value = expandedRows.map(it => it.id)
-    console.info("close")
+
     return false;
   }
-  console.info("open")
+
   return true
 }
 

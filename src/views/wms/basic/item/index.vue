@@ -497,7 +497,6 @@ const getItemCategoryTreeSelect = async () => {
     children: []
   })
   deptOptions.value = data;
-  console.info("getItemCategoryTreeSelect")
 }
 const handleAddType = (show) => {
   categoryDialog.title = "新增商品分类";

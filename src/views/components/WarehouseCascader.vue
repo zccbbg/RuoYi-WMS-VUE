@@ -132,7 +132,6 @@ export default {
       useWmsStore().getAreaList();
     },
     setOptions() {
-      console.log('setOption')
       let areaMap = new Map()
       let warehouseMap = new Map()
       this.areaList.forEach((area) => {

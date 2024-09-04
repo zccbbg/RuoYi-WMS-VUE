@@ -415,10 +415,8 @@ function loadReceiptOrderDetail(row) {
 function ifExpand(expandedRows) {
   if (expandedRows.length < expandedRowKeys.value.length) {
     expandedRowKeys.value = expandedRows.map(it => it.id)
-    console.info("close")
     return false;
   }
-  console.info("open")
   return true
 }
 

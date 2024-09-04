@@ -231,7 +231,6 @@ const getList = () => {
         it.skuIdAndAreaId= it.itemSku.id + '-' + it.areaId
       }
     })
-    console.info("list:", inventoryDetailList.value)
   }).finally(() => loading.value = false);
 }
 </script>

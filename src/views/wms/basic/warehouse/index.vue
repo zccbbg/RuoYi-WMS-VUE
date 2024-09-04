@@ -364,7 +364,6 @@ const submitForm = () => {
 
 /** 删除按钮操作 */
 const handleDelete = async (data) => {
-  console.log('data', data)
   const _ids = data.id;
   await proxy?.$modal.confirm('确认删除仓库【' + data.warehouseName + '】吗？').finally(() => loading.value = false);
   await delWarehouse(_ids);
@@ -400,13 +399,13 @@ const collapse = (draggingNode, dropNode, type) => {
   }
 }
 const handleNodeDrop = async (draggingNode, dropNode, dropType, ev) => {
-  console.log('drop', dropNode)
-  console.log('children', dropNode.parent.data)
+  ('drop', dropNode)
+  ('children', dropNode.parent.data)
   await updateOrderNum(dropNode.parent.data);
 }
 onMounted(async () => {
   await getList();
-  console.log('id', warehouseList.value)
+  ('id', warehouseList.value)
   const warehouseId = warehouseList.value[0].id;
   defaultCheckId.value = warehouseId;
   areaQuery.warehouseId = warehouseId;

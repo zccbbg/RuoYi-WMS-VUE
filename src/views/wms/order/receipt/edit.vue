@@ -367,7 +367,6 @@ const doSave = async (receiptOrderStatus = 0) => {
       }
     })
 
-    //console.log('提交前校验',form.value)
     const params = {
       id: form.value.id,
       receiptOrderNo: form.value.receiptOrderNo,
@@ -444,7 +443,7 @@ const doWarehousing = async () => {
       }
     })
 
-    //console.log('提交前校验',form.value)
+    //('提交前校验',form.value)
     const params = {
       id: form.value.id,
       receiptOrderNo: form.value.receiptOrderNo,

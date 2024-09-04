@@ -278,8 +278,6 @@ const showAddItem = () => {
 }
 // 选择成功
 const handleOkClick = (item) => {
-  console.info("selected item:", item)
-  console.info("form.value.details:", form.value.details)
   inventorySelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
@@ -351,7 +349,7 @@ const doSave = (shipmentOrderStatus = 0) => {
     }
 
 
-    //console.log('提交前校验',form.value)
+    //('提交前校验',form.value)
     const params = {
       id: form.value.id,
       shipmentOrderNo: form.value.shipmentOrderNo,
@@ -425,7 +423,7 @@ const doShipment = async () => {
       }
     })
 
-    //console.log('提交前校验',form.value)
+    //('提交前校验',form.value)
     const params = {
       id: form.value.id,
       shipmentOrderNo: form.value.shipmentOrderNo,
