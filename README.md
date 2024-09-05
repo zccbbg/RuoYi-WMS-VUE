@@ -8,10 +8,10 @@
 
 ## 后端项目地址
 #### gitee地址
-https://gitee.com/zccbbg/ruoyi-wms-service
+https://gitee.com/zccbbg/ruoyi-wms
 
 #### github地址
-https://github.com/zccbbg/ruoyi-wms-service
+https://github.com/zccbbg/ruoyi-wms
 
 ## 前端运行
 
