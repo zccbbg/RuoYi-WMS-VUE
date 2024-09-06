@@ -44,7 +44,7 @@
       <el-form-item style="width:100%;">
         <el-button
           :loading="loading"
-          size="medium"
+          size="large"
           type="primary"
           style="width:45%;"
           @click.prevent="handleLogin"
@@ -53,7 +53,7 @@
           <span v-else>登 录 中...</span>
         </el-button>
         <el-button
-          size="medium"
+          size="large"
           type="primary"
           style="width:45%;"
           @click.native.prevent="handleTry"

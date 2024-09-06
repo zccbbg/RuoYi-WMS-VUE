@@ -3,7 +3,7 @@
     <el-card>
       <el-form :model="queryParams" ref="queryRef" label-width="90px" :inline="true">
         <el-form-item class="col4" label="维度 " prop="itemId">
-          <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
+          <el-radio-group v-model="queryType" size="default" @change="handleSortTypeChange">
             <el-radio-button label="warehouse">仓库</el-radio-button>
             <el-radio-button label="area">库区</el-radio-button>
             <el-radio-button label="item">商品</el-radio-button>
@@ -117,7 +117,7 @@
 import {
   listInventoryBoard
 } from '@/api/wms/inventory';
-import {computed, getCurrentInstance, onMounted, reactive, ref} from 'vue';
+import {computed, getCurrentInstance, onMounted, ref} from 'vue';
 import {ElForm} from 'element-plus';
 import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {useWmsStore} from '@/store/modules/wms'
@@ -134,7 +134,6 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const rowSpanArray = ref(['warehouseId', 'warehouseIdAndItemId', 'warehouseIdAndSkuId'])
-const queryFormRef = ref(ElForm);
 
 const filterable = ref(false)
 const queryType = ref("warehouse")
