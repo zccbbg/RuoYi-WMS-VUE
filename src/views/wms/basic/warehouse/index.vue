@@ -35,27 +35,6 @@
             </template>
           </el-tree>
         </div>
-        <div style="width: 100%">
-          <div style="display: flex;align-items: center;justify-content: space-between">
-            <span class="mr10" style="font-size: 14px;">库区列表</span>
-            <el-button type="primary" plain icon="Plus" size="small" @click="handleAddArea()">新增库区</el-button>
-          </div>
-          <el-table :data="wmsAreaList" class="mt10" border v-loading="loading" empty-text="暂无库区">
-            <el-table-column label="名称" prop="areaName" />
-            <el-table-column label="编号" prop="areaCode" />
-            <el-table-column label="备注" prop="remark" />
-            <el-table-column label="操作" align="right" class-name="small-padding fixed-width">
-              <template v-slot="scope">
-                <el-button link size="default" icon="Delete" type="primary" @click="handleDeleteArea(scope.row)"
-                >删除</el-button
-                >
-                <el-button link size="default" icon="Edit" type="primary" @click.stop="handleUpdateArea(scope.row)"
-                >修改</el-button
-                >
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
       </div>
     </el-card>
     <!-- 添加或修改仓库对话框 -->
@@ -78,31 +57,6 @@
         </div>
       </template>
     </el-dialog>
-    <!-- 添加或修改库区对话框 -->
-    <el-dialog :title="areaDialog.title" v-model="areaDialog.visible" width="500px" append-to-body :close-on-click-modal="false">
-      <el-form ref="areaFormRef" :model="areaForm" :rules="areaRules" label-width="80px">
-        <el-form-item label="名称" prop="areaName">
-          <el-input v-model="areaForm.areaName" placeholder="请输入名称" />
-        </el-form-item>
-        <el-form-item label="所属仓库" prop="warehouseId">
-          <el-select v-model="areaForm.warehouseId" placeholder="请选择所属仓库" style="width: 390px!important;">
-            <el-option v-for="item in warehouseList" :key="item.id" :label="item.warehouseName" :value="item.id" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="编号" prop="areaCode">
-          <el-input v-model="areaForm.areaCode" placeholder="请输入编号" />
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input v-model="areaForm.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button :loading="buttonLoading" type="primary" @click="areaFormSubmitForm">确 定</el-button>
-          <el-button @click="areaFormCancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -110,10 +64,8 @@
 import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse, updateOrderNum } from '@/api/wms/warehouse';
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, toRefs} from 'vue';
 import {ElForm, ElMessageBox, ElTree} from 'element-plus';
-import {addArea, delArea, getArea, listArea, updateArea} from "@/api/wms/area";
 import useUserStore from "@/store/modules/user";
 import {useWmsStore} from "@/store/modules/wms";
-const userStore = useUserStore()
 const wmsStore = useWmsStore();
 const { proxy } = getCurrentInstance();
 
@@ -124,7 +76,6 @@ const customNodeClass = (data, node) => {
   return null
 }
 const warehouseList = ref([]);
-const wmsAreaList = ref([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -140,41 +91,6 @@ const dialog = reactive({
   visible: false,
   title: ''
 });
-const areaDialog = reactive({
-  visible: false,
-  title: ''
-});
-
-const areaForm = reactive({
-  id: undefined,
-  areaCode: undefined,
-  areaName: undefined,
-  warehouseId: undefined,
-  remark: undefined,
-})
-/** 取消按钮 */
-const areaFormCancel = () => {
-  resetArea();
-  areaDialog.visible = false;
-}
-const areaFormRef = ref(ElForm);
-/** 提交按钮 */
-const areaFormSubmitForm = () => {
-  areaFormRef.value.validate(async (valid) => {
-    if (valid) {
-      buttonLoading.value = true;
-      if (areaForm.id) {
-        await updateArea(areaForm).finally(() =>  buttonLoading.value = false);
-      } else {
-        await addArea(areaForm).finally(() =>  buttonLoading.value = false);
-      }
-      proxy?.$modal.msgSuccess(areaForm.id ? '修改成功' : '新增成功');
-      areaDialog.visible = false;
-      await loadAreas();
-      wmsStore.getAreaList()
-    }
-  });
-}
 const initFormData = {
   id: undefined,
   warehouseCode: undefined,
@@ -204,81 +120,9 @@ const { queryParams, form, rules } = toRefs(data);
 // 移植
 const handleClickWarehouse = (node, data)=> {
   selectedWarehouseId.value = data.data.id
-  areaQuery.warehouseId = data.data.id
-  areaForm.warehouseId  = data.data.id
-  areaQuery.areaName = ''
-  loadAreas()
 }
-const areaQuery = reactive({
-  areaName: undefined,
-  warehouseId: undefined,
-  pageNum:0,
-  pageSize:100
-})
 
-const areaRules = reactive({
-  id: [
-    { required: true, message: "不能为空", trigger: "blur" }
-  ],
-  areaName: [
-    { required: true, message: "名称不能为空", trigger: "blur" }
-  ],
-  warehouseId: [
-    { required: true, message: "所属仓库不能为空", trigger: "blur" }
-  ]
-})
-
-
-const loadAreas = ()=> {
-  loading.value = true
-  listArea(areaQuery).then((response) => {
-    wmsAreaList.value = response.rows
-  }).finally(() => {
-    loading.value = false
-  })
-}
-const  handleSearchArea = ()=> {
-  loadAreas()
-}
 const selectedWarehouseId = ref()
-const handleAddArea = ()=> {
-  areaDialog.visible = true;
-  areaDialog.title = "添加库区";
-  nextTick(() => {
-    resetArea();
-    areaForm.id = null
-  });
-}
-const handleUpdateArea = (row) => {
-  areaDialog.visible = true;
-  areaDialog.title = "修改库区";
-  nextTick(async () => {
-    resetArea();
-    const _id = row?.id || ids.value[0]
-    const res = await getArea(_id);
-    Object.assign(areaForm, res.data);
-  });
-}
-const  handleDeleteArea =  async (row) => {
-  const _ids = row?.id || ids.value;
-  await proxy?.$modal.confirm('确认删除库区【' + row?.areaName + '】吗？').finally(() => loading.value = false);
-  try {
-    await delArea(_ids);
-    proxy?.$modal.msgSuccess("删除成功");
-    await loadAreas();
-    wmsStore.getAreaList()
-  } catch (e) {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>库区【' + row.areaName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
-  }
-}
 
 
 /** 查询仓库列表 */
@@ -310,12 +154,6 @@ const handleQuery = () => {
 const resetQuery = () => {
   queryFormRef.value.resetFields();
   handleQuery();
-}
-
-/** 表单重置 */
-const resetArea = () => {
-  areaFormRef.value.resetFields();
-  areaForm.warehouseId = selectedWarehouseId.value
 }
 
 // /** 多选框选中数据
@@ -356,7 +194,6 @@ const submitForm = () => {
       dialog.visible = false;
       await getList();
       await chooseFirstWarehouse(warehouseList.value);
-      loadAreas()
       wmsStore.getWarehouseList()
     }
   });
@@ -370,14 +207,11 @@ const handleDelete = async (data) => {
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
   await chooseFirstWarehouse(warehouseList.value);
-  loadAreas();
   wmsStore.getWarehouseList()
 }
 const chooseFirstWarehouse = async (warehouseList) => {
   if (warehouseList && warehouseList.length !== 0) {
     const warehouseId = warehouseList[0].id;
-    areaQuery.warehouseId = warehouseId
-    areaForm.warehouseId = warehouseId
     defaultCheckId.value = warehouseId
     warehouseTreeRef.value.setCurrentKey(defaultCheckId.value)
   }
@@ -408,9 +242,6 @@ onMounted(async () => {
   ('id', warehouseList.value)
   const warehouseId = warehouseList.value[0].id;
   defaultCheckId.value = warehouseId;
-  areaQuery.warehouseId = warehouseId;
-  areaForm.warehouseId = warehouseId;
-  loadAreas();
 });
 </script>
 <style lang="scss">

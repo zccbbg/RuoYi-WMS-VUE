@@ -1,5 +1,4 @@
 import { listWarehouseNoPage } from '@/api/wms/warehouse';
-import { listAreaNoPage } from '@/api/wms/area';
 import { listMerchantNoPage } from "@/api/wms/merchant";
 import { listItemCategory, treeSelectItemCategory } from "@/api/wms/itemCategory";
 import { listItemBrand } from "@/api/wms/itemBrand";
@@ -20,20 +19,6 @@ export const useWmsStore = defineStore('wms', () => {
         map.set(supplier.id, supplier);
       });
       warehouseMap.value = map;
-    });
-  };
-  // 库区管理
-  const areaList = ref([]);
-  const areaMap = ref(new Map());
-
-  const getAreaList = () => {
-    listAreaNoPage({}).then((res) => {
-      areaList.value = res.data;
-      const map = new Map();
-      areaList.value.forEach((supplier) => {
-        map.set(supplier.id, supplier);
-      });
-      areaMap.value = map;
     });
   };
 
@@ -103,10 +88,6 @@ export const useWmsStore = defineStore('wms', () => {
     warehouseList,
     warehouseMap,
     getWarehouseList,
-    // 库区管理
-    areaList,
-    areaMap,
-    getAreaList,
     // 企业管理
     merchantList,
     merchantMap,

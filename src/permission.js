@@ -62,7 +62,6 @@ router.beforeEach((to, from, next) => {
 
 async function initData() {
   await useWmsStore().getWarehouseList()
-  await useWmsStore().getAreaList()
   await useWmsStore().getMerchantList()
   await useWmsStore().getItemCategoryList()
   await useWmsStore().getItemCategoryTreeList()
