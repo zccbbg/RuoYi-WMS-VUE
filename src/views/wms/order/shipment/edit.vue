@@ -19,15 +19,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item label="库区" prop="areaId">
-                <el-select v-model="form.areaId" placeholder="请选择库区" :disabled="!form.warehouseId" clearable
-                           filterable @change="handleChangeArea" style="width: 100%!important;">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
-                </el-select>
-              </el-form-item>
-            </el-col>
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
@@ -138,7 +129,6 @@
                 <div v-if="row.itemSku.barcode">条码：{{row.itemSku.barcode}}</div>
               </template>
             </el-table-column>
-            <el-table-column label="库区" prop="areaName" width="200"/>
             <el-table-column label="批号" prop="batchNo" />
             <el-table-column label="生产日期" prop="productionDate">
               <template #default="{ row }">

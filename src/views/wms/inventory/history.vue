@@ -22,7 +22,7 @@
         <el-form-item label="操作单号" prop="orderNo">
           <el-input v-model="queryParams.orderNo" clearable placeholder="请输入操作单号"></el-input>
         </el-form-item>
-        <el-form-item label="仓库库区" prop="place">
+        <el-form-item label="仓库" prop="place">
           <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
         <el-form-item label="商品名称" prop="itemName">
@@ -79,10 +79,9 @@
             <dict-tag :options="wms_inventory_history_type" :value="row.orderType"/>
           </template>
         </el-table-column>
-        <el-table-column label="仓库/库区">
+        <el-table-column label="仓库">
           <template #default="{ row }">
-            <div>仓库：{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
-            <div>库区：{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
+            <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="数量/价格(元)">

@@ -96,7 +96,6 @@
                     <div>{{ row?.itemSku?.skuName }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="库区" prop="areaName"/>
                 <el-table-column label="数量" prop="quantity" align="right">
                   <template #default="{ row }">
                     <el-statistic :value="Number(row.quantity)" :precision="0"/>
@@ -138,10 +137,9 @@
             <div>{{ useWmsStore().merchantMap.get(row.merchantId)?.merchantName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="仓库/库区" align="left" width="200">
+        <el-table-column label="仓库" align="left" width="200">
           <template #default="{ row }">
-            <div>仓库：{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
-            <div v-if="row.areaId">库区：{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
+            <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" width="120">

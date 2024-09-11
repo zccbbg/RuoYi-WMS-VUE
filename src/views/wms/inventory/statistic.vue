@@ -5,7 +5,6 @@
         <el-form-item class="col4" label="维度 " prop="itemId">
           <el-radio-group v-model="queryType" size="default" @change="handleSortTypeChange">
             <el-radio-button label="warehouse">仓库</el-radio-button>
-            <el-radio-button label="area">库区</el-radio-button>
             <el-radio-button label="item">商品</el-radio-button>
           </el-radio-group>
         </el-form-item>
@@ -14,13 +13,6 @@
                      filterable clearable>
             <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
                        :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="col4" label="库区" prop="areaId">
-          <el-select style="width: 100%" v-model="queryParams.areaId" placeholder="请选择库区" :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable
-                     filterable>
-            <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === queryParams.warehouseId)"
-                       :key="item.id" :label="item.areaName" :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item class="col4" label="商品名称" prop="itemName">
@@ -54,13 +46,6 @@
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
             </template>
           </el-table-column>
-          <template v-if="queryType == 'area'">
-            <el-table-column label="库区" prop="areaId">
-              <template #default="{ row }">
-                <div>{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
-              </template>
-            </el-table-column>
-          </template>
           <el-table-column label="商品信息" :prop="queryType == 'warehouse' ? 'warehouseIdAndItemId' : 'areaIdAndItemId'">
             <template #default="{ row }">
               <div>{{ row.item.itemName }}</div>
@@ -90,11 +75,6 @@
           <el-table-column label="仓库" prop="skuIdAndWarehouseId">
             <template #default="{row}">
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="所属库区" prop="areaName">
-            <template #default="{ row }">
-              <div>{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
             </template>
           </el-table-column>
         </template>

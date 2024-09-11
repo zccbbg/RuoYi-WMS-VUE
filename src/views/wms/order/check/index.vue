@@ -55,10 +55,9 @@
                 cell-class-name="vertical-top-cell"
       >
         <el-table-column label="单号" align="left" prop="checkOrderNo" />
-        <el-table-column label="仓库/库区" align="left" width="200">
+        <el-table-column label="仓库" align="left" width="200">
           <template #default="{ row }">
-            <div>仓库：{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
-            <div v-if="row.areaId">库区：{{ useWmsStore().areaMap.get(row.areaId)?.areaName }}</div>
+            <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="盘库状态" align="center" prop="checkOrderStatus" width="120">

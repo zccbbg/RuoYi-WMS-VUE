@@ -1,18 +1,12 @@
 <template>
   <div v-if="!checking" style="display: flex;justify-content: center;align-items: center;height: 80vh">
-    <el-card header="选择仓库库区开始盘库" >
+    <el-card header="选择仓库后开始盘库" >
       <el-form>
         <el-form-item label="仓库" prop="warehouseId">
           <el-select v-model="form.warehouseId" placeholder="请选择仓库" :disabled="checking"
                      filterable>
             <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
                        :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="库区" prop="areaId">
-          <el-select v-model="form.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || checking" clearable filterable>
-            <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)"
-                       :key="item.id" :label="item.areaName" :value="item.id"/>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -38,14 +32,6 @@
                            filterable>
                   <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
                              :value="item.id"/>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="库区" prop="areaId">
-                <el-select v-model="form.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || checking" clearable filterable>
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -113,19 +99,6 @@
                 </template>
                 <template v-else>
                   <div>{{ row.itemSku.skuName + (row.itemSku.barcode ? ('(' + row.itemSku.barcode + ')') : '') }}</div>
-                </template>
-              </template>
-            </el-table-column>
-            <el-table-column label="库区" prop="areaName" width="200">
-              <template #default="{ row }">
-                <template v-if="row.newInventoryDetail">
-                  <el-select v-model="row.areaId" placeholder="请选择库区" :disabled="form.areaId" filterable>
-                    <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)"
-                               :key="item.id" :label="item.areaName" :value="item.id"/>
-                  </el-select>
-                </template>
-                <template v-else>
-                  <div>{{ row.areaName }}</div>
                 </template>
               </template>
             </el-table-column>
@@ -433,12 +406,6 @@ const doCheck = async () => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
-    }
-    const newList = form.value.details.filter(it => it.newInventoryDetail)
-    if (newList?.length) {
-      if (newList.filter(it => !it.areaId)?.length) {
-        return ElMessage.error('请选择库区')
-      }
     }
     // 构建参数
     const details = form.value.details.map(it => {

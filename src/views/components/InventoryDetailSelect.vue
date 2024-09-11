@@ -8,13 +8,6 @@
       <el-form-item label="商品编号">
         <el-input class="w200" v-model="query.itemCode" clearable placeholder="商品编号"></el-input>
       </el-form-item>
-      <el-form-item label="库区">
-        <el-select v-model="query.areaId" placeholder="请选择库区" :disabled="selectAreaDisable"
-                   clearable filterable @change="">
-          <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === query.warehouseId)"
-                     :key="item.id" :label="item.areaName" :value="item.id"/>
-        </el-select>
-      </el-form-item>
       <el-form-item label="规格名称">
         <el-input class="w200" v-model="query.skuName" clearable placeholder="规格名称"></el-input>
       </el-form-item>
@@ -53,7 +46,6 @@
     <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无库存"
               v-loading="loading" ref="inventorySelectFormRef" cell-class-name="my-cell" class="mt20">
       <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="judgeSelectable"/>
-      <el-table-column label="库区" prop="areaName"/>
       <el-table-column label="商品信息" prop="itemId">
         <template #default="{ row }">
           <div>{{ row.item.itemName }}</div>

@@ -17,7 +17,6 @@
           <div>{{ row?.itemSku?.skuName }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="库区" prop="areaName"/>
       <el-table-column label="批号" prop="batchNo"/>
       <el-table-column label="生产日期/过期日期" width="180">
         <template #default="{ row }">

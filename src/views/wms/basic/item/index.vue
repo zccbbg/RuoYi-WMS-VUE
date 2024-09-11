@@ -434,12 +434,6 @@ const data = reactive({
     itemCategory: [
       {required: true, message: "分类不能为空", trigger: "blur"}
     ],
-    rackId: [
-      {required: true, message: "所属货架不能为空", trigger: "blur"}
-    ],
-    areaId: [
-      {required: true, message: "所属库区不能为空", trigger: "blur"}
-    ],
     warehouseId: [
       {required: true, message: "所属仓库不能为空", trigger: "blur"}
     ],

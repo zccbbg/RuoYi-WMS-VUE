@@ -19,15 +19,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item label="源库区" prop="sourceAreaId">
-                <el-select v-model="form.sourceAreaId" placeholder="请选择源库区" :disabled="!form.sourceWarehouseId" clearable
-                           filterable @change="handleChangeSourceArea" style="width: 100%!important;">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.sourceWarehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
-                </el-select>
-              </el-form-item>
-            </el-col>
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
@@ -53,15 +44,6 @@
               <el-form-item label="数量" prop="totalQuantity">
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
                                  :disabled="true"></el-input-number>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="目标库区" prop="targetAreaId">
-                <el-select v-model="form.targetAreaId" placeholder="请选择目标库区" :disabled="!form.targetWarehouseId" clearable
-                           filterable @change="handleChangeTargetArea" style="width: 100%!important;">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
-                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -115,15 +97,6 @@
               <template #default="{ row }">
                 <div>{{ row.itemSku.skuName}}</div>
                 <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="源库区" width="200" prop="sourceAreaName" />
-            <el-table-column label="目标库区" width="200">
-              <template #default="{ row }">
-                <el-select v-model="row.targetAreaId" placeholder="请选择目标库区" filterable :disabled="!!form.targetAreaId">
-                  <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.targetWarehouseId)"
-                             :key="item.id" :label="item.areaName" :value="item.id"/>
-                </el-select>
               </template>
             </el-table-column>
             <el-table-column label="批号" prop="batchNo" />

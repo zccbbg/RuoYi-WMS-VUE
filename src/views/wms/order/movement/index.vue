@@ -27,10 +27,10 @@
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="源仓库库区">
+        <el-form-item label="源仓库">
           <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
-        <el-form-item label="目标仓库库区">
+        <el-form-item label="目标仓库">
           <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
         <el-form-item>
@@ -77,8 +77,6 @@
                     <div>{{ row?.itemSku?.skuName }}</div>
                   </template>
                 </el-table-column>
-                <el-table-column label="源库区" prop="sourceAreaName"/>
-                <el-table-column label="目标库区" prop="targetAreaName"/>
                 <el-table-column label="数量" prop="quantity" align="right">
                   <template #default="{ row }">
                     <el-statistic :value="Number(row.quantity)" :precision="0"/>
@@ -100,16 +98,14 @@
           </template>
         </el-table-column>
         <el-table-column label="单号" align="left" prop="movementOrderNo" />
-        <el-table-column label="源仓库/源库区" align="left" width="260">
+        <el-table-column label="源仓库" align="left" width="260">
           <template #default="{ row }">
-            <div>源仓库：{{ useWmsStore().warehouseMap.get(row.sourceWarehouseId)?.warehouseName }}</div>
-            <div v-if="row.sourceAreaId">源库区：{{ useWmsStore().areaMap.get(row.sourceAreaId)?.areaName }}</div>
+            <div>{{ useWmsStore().warehouseMap.get(row.sourceWarehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="目标仓库/目标库区" align="left" width="260">
+        <el-table-column label="目标仓库" align="left" width="260">
           <template #default="{ row }">
-            <div>目标仓库：{{ useWmsStore().warehouseMap.get(row.targetWarehouseId)?.warehouseName }}</div>
-            <div v-if="row.targetAreaId">目标库区：{{ useWmsStore().areaMap.get(row.targetAreaId)?.areaName }}</div>
+            <div>{{ useWmsStore().warehouseMap.get(row.targetWarehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="移库状态" align="center" prop="movementOrderStatus" width="120">

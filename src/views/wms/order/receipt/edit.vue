@@ -16,24 +16,6 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
-              <el-form-item label="库区" prop="areaId">
-                <el-popover
-                  placement="left"
-                  title="提示"
-                  :width="200"
-                  trigger="hover"
-                  :disabled="form.warehouseId"
-                  content="请先选择仓库！"
-                >
-                  <template #reference>
-                    <el-select v-model="form.areaId" placeholder="请选择库区" :disabled="!form.warehouseId" clearable filterable @change="handleChangeArea" style="width: 100%!important;">
-                      <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)" :key="item.id" :label="item.areaName" :value="item.id"/>
-                    </el-select>
-                  </template>
-                </el-popover>
-              </el-form-item>
-            </el-col>
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
@@ -131,24 +113,6 @@
               <template #default="{ row }">
                 <div>{{ row.itemSku.skuName }}</div>
                 <div v-if="row.itemSku.barcode">条码：{{row.itemSku.barcode}}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="库区" prop="itemSku.skuName" width="200">
-              <template #default="{ row }">
-                <el-popover
-                  placement="left"
-                  title="提示"
-                  :width="200"
-                  trigger="hover"
-                  :disabled="form.warehouseId"
-                  content="请先选择仓库！"
-                >
-                  <template #reference>
-                    <el-select v-model="row.areaId" placeholder="请选择库区" :disabled="!form.warehouseId || !!form.areaId" filterable>
-                      <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === form.warehouseId)" :key="item.id" :label="item.areaName" :value="item.id"/>
-                    </el-select>
-                  </template>
-                </el-popover>
               </template>
             </el-table-column>
             <el-table-column label="数量" prop="quantity" width="180">
@@ -342,10 +306,6 @@ const doSave = async (receiptOrderStatus = 0) => {
       return ElMessage.error('请填写必填项')
     }
     if (form.value.details?.length) {
-      const invalidAreaList = form.value.details.filter(it => !it.areaId )
-      if (invalidAreaList?.length) {
-        return ElMessage.error('请选择库区')
-      }
       const invalidQuantityList = form.value.details.filter(it => !it.quantity)
       if (invalidQuantityList?.length) {
         return ElMessage.error('请选择数量')
@@ -418,10 +378,6 @@ const doWarehousing = async () => {
     }
     if (!form.value.details?.length) {
       return ElMessage.error('请选择商品')
-    }
-    const invalidAreaList = form.value.details.filter(it => !it.areaId )
-    if (invalidAreaList?.length) {
-      return ElMessage.error('请选择库区')
     }
     const invalidQuantityList = form.value.details.filter(it => !it.quantity)
     if (invalidQuantityList?.length) {

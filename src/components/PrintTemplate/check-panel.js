@@ -75,10 +75,6 @@ export default {
               {
                 "text": "仓库",
                 "field": "warehouse"
-              },
-              {
-                "text": "库区",
-                "field": "area"
               }
             ],
             "title": "盘库单",
