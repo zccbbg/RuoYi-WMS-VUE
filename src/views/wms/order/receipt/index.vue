@@ -103,18 +103,8 @@
                 </el-table-column>
                 <el-table-column label="价格(元)" align="right">
                   <template #default="{ row }">
-                    <el-statistic :precision="2" :value="Number(row.amount)"/>
-                  </template>
-                </el-table-column>
-                <el-table-column label="批号" prop="batchNo" />
-                <el-table-column label="生产日期" prop="productionDate">
-                  <template #default="{ row }">
-                    <div>{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="过期日期" prop="expirationDate">
-                  <template #default="{ row }">
-                    <div>{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
+                    <el-statistic v-if="row.amount" :precision="2" :value="Number(row.amount)"/>
+                    <div v-else>-</div>
                   </template>
                 </el-table-column>
               </el-table>
@@ -346,7 +336,6 @@ async function handlePrint(row) {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
         batchNo: detail.batchNo,
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
         expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
@@ -362,7 +351,6 @@ async function handlePrint(row) {
     merchantName: useWmsStore().merchantMap.get(receiptOrder.merchantId)?.merchantName,
     orderNo: receiptOrder.orderNo,
     warehouseName: useWmsStore().warehouseMap.get(receiptOrder.warehouseId)?.warehouseName,
-    areaName: useWmsStore().areaMap.get(receiptOrder.areaId)?.areaName,
     totalQuantity: Number(receiptOrder.totalQuantity).toFixed(0),
     payableAmount: ((receiptOrder.payableAmount || receiptOrder.payableAmount === 0) ? (receiptOrder.payableAmount + '元') : ''),
     createBy: receiptOrder.createBy,
@@ -400,7 +388,6 @@ function loadReceiptOrderDetail(row) {
         return {
           ...it,
           warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName,
-          areaName: useWmsStore().areaMap.get(it.areaId)?.areaName
         }
       })
       receiptOrderList.value[index].details = details

@@ -11,7 +11,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="仓库" prop="warehouseId">
-                <el-select v-model="form.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse" filterable>
+                <el-select v-model="form.warehouseId" placeholder="请选择仓库" filterable>
                   <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName" :value="item.id"/>
                 </el-select>
               </el-form-item>
@@ -137,35 +137,6 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="批号" prop="batchNo" width="150">
-              <template #default="scope">
-                <el-input v-model="scope.row.batchNo"></el-input>
-              </template>
-            </el-table-column>
-            <el-table-column label="生产日期/过期日期" width="250">
-              <template #default="scope">
-                <div class="flex-center">
-                  <span>生产日期：</span>
-                  <el-date-picker
-                    v-model="scope.row.productionDate"
-                    type="date"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    style="width: 150px!important;"
-                  />
-                </div>
-                <div class="flex-center mt5">
-                  <span>过期日期：</span>
-                  <el-date-picker
-                    v-model="scope.row.expirationDate"
-                    type="date"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    style="width: 150px!important;"
-                  />
-                </div>
-              </template>
-            </el-table-column>
             <el-table-column label="操作" width="100" align="right" fixed="right">
               <template #default="scope">
                 <el-button icon="Delete" type="danger" plain size="small" @click="handleDeleteDetail(scope.row, scope.$index)" link>删除</el-button>
@@ -221,7 +192,6 @@ const initFormData = {
   receiptOrderStatus: 0,
   remark: undefined,
   warehouseId: undefined,
-  areaId: undefined,
   totalQuantity: 0,
   details: [],
 }
@@ -237,17 +207,8 @@ const data = reactive({
     receiptOrderStatus: undefined,
   },
   rules: {
-    id: [
-      {required: true, message: "不能为空", trigger: "blur"}
-    ],
     receiptOrderNo: [
       {required: true, message: "入库单号不能为空", trigger: "blur"}
-    ],
-    receiptOrderType: [
-      {required: true, message: "入库类型不能为空", trigger: "change"}
-    ],
-    receiptOrderStatus: [
-      {required: true, message: "入库状态不能为空", trigger: "change"}
     ],
     warehouseId: [
       {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
@@ -279,11 +240,7 @@ const handleOkClick = (item) => {
         itemSku: {...it},
         amount: undefined,
         quantity: it.quantity,
-        batchNo: undefined,
-        productionDate: undefined,
-        expirationDate: undefined,
-        warehouseId: form.value.warehouseId,
-        areaId: form.value.areaId
+        warehouseId: form.value.warehouseId
       }
     )
   })
@@ -315,15 +272,10 @@ const doSave = async (receiptOrderStatus = 0) => {
     const details = form.value.details.map(it => {
       return {
         id: it.id,
-        shipmentOrderId: form.value.id,
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
-        batchNo: it.batchNo,
-        productionDate: it.productionDate,
-        expirationDate: it.expirationDate,
         warehouseId: form.value.warehouseId,
-        areaId: it.areaId
       }
     })
 
@@ -338,7 +290,6 @@ const doSave = async (receiptOrderStatus = 0) => {
       payableAmount: form.value.payableAmount,
       totalQuantity: form.value.totalQuantity,
       warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
       details: details
     }
     if (params.id) {
@@ -387,15 +338,10 @@ const doWarehousing = async () => {
     const details = form.value.details.map(it => {
       return {
         id: it.id,
-        shipmentOrderId: form.value.id,
         skuId: it.itemSku.id,
         amount: it.amount,
         quantity: it.quantity,
-        batchNo: it.batchNo,
-        productionDate: it.productionDate,
-        expirationDate: it.expirationDate,
-        warehouseId: form.value.warehouseId,
-        areaId: it.areaId
+        warehouseId: form.value.warehouseId
       }
     })
 
@@ -411,7 +357,6 @@ const doWarehousing = async () => {
       payableAmount: form.value.payableAmount,
       totalQuantity: form.value.totalQuantity,
       warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
       details: details
     }
     warehousing(params).then((res) => {
@@ -445,19 +390,6 @@ const loadDetail = (id) => {
   }).then(() => {
   }).finally(() => {
     loading.value = false
-  })
-}
-
-const handleChangeWarehouse = (e) => {
-  form.value.areaId = undefined
-  form.value.details.forEach(it => {
-    it.areaId = undefined
-  })
-}
-
-const handleChangeArea = (e) => {
-  form.value.details.forEach(it => {
-    it.areaId = e
   })
 }
 
