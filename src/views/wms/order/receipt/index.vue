@@ -104,7 +104,7 @@
                 </el-table-column>
                 <el-table-column label="价格(元)" align="right">
                   <template #default="{ row }">
-                    <el-statistic :precision="2" :value="Number(row.amount)"/>
+                    <el-statistic :precision="2" :value="row.amount? Number(row.amount):'-'"/>
                   </template>
                 </el-table-column>
                 <el-table-column label="批号" prop="batchNo" />
