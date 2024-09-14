@@ -89,7 +89,6 @@
                 class="mr10 ml10"
                 inline-prompt
                 size="large"
-                v-model="mode"
                 :active-value="true"
                 :inactive-value="false"
                 active-text="开启"
@@ -129,22 +128,6 @@
                 <div v-if="row.itemSku.barcode">条码：{{row.itemSku.barcode}}</div>
               </template>
             </el-table-column>
-            <el-table-column label="批号" prop="batchNo" />
-            <el-table-column label="生产日期" prop="productionDate">
-              <template #default="{ row }">
-                <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="过期日期" prop="expirationDate">
-              <template #default="{ row }">
-                <div v-if="row.expirationDate">{{ row.expirationDate.substring(0, 10) }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
-              <template #default="{ row }">
-                <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
-              </template>
-            </el-table-column>
             <el-table-column label="出库数量" prop="quantity" width="180">
               <template #default="scope">
                 <el-input-number
@@ -152,7 +135,6 @@
                   placeholder="出库数量"
                   :min="1"
                   :precision="0"
-                  :max="scope.row.remainQuantity"
                   @change="handleChangeQuantity"
                 ></el-input-number>
               </template>
@@ -178,16 +160,14 @@
           </el-table>
         </div>
       </el-card>
-      <InventoryDetailSelect
+      <InventorySelect
         ref="inventorySelectRef"
         :model-value="inventorySelectShow"
         @handleOkClick="handleOkClick"
         @handleCancelClick="inventorySelectShow = false"
         :size="'90%'"
         :select-warehouse-disable="false"
-        :select-area-disable="!!form?.areaId"
         :warehouse-id="form.warehouseId"
-        :area-id="form.areaId"
         :selected-inventory="selectedInventory"
       />
     </div>
@@ -214,7 +194,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {numSub, generateNo} from '@/utils/ruoyi'
-import InventoryDetailSelect from "@/views/components/InventoryDetailSelect.vue";
+import InventorySelect from "@/views/components/InventorySelect.vue";
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
@@ -230,7 +210,6 @@ const initFormData = {
   shipmentOrderStatus: 0,
   remark: undefined,
   warehouseId: undefined,
-  areaId: undefined,
   totalQuantity: 0,
   details: [],
 }
@@ -271,7 +250,7 @@ const handleOkClick = (item) => {
   inventorySelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
-    if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
+    if (!form.value.details.find(detail => detail.inventoryId === it.id)) {
       form.value.details.push(
         {
           itemSku: {
@@ -281,21 +260,11 @@ const handleOkClick = (item) => {
           skuId: it.skuId,
           amount: undefined,
           quantity: undefined,
-          remainQuantity: it.remainQuantity,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
           warehouseId: form.value.warehouseId,
-          areaId: form.value.areaId ?? it.areaId,
-          inventoryDetailId: it.id,
-          areaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
+          inventoryId: it.id,
         })
     }
   })
-}
-
-const getPlaceAndSkuKey = (row) => {
-  return row.warehouseId + '_' + row.areaId + '_' + row.skuId
 }
 // 选择商品 end
 
@@ -328,12 +297,7 @@ const doSave = (shipmentOrderStatus = 0) => {
           skuId: it.skuId,
           amount: it.amount,
           quantity: it.quantity,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
-          inventoryDetailId: it.inventoryDetailId,
-          warehouseId: form.value.warehouseId,
-          areaId: it.areaId
+          warehouseId: form.value.warehouseId
         }
       })
     }
@@ -351,7 +315,6 @@ const doSave = (shipmentOrderStatus = 0) => {
       receivableAmount: form.value.receivableAmount,
       totalQuantity: form.value.totalQuantity,
       warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
       details: details
     }
     if (params.id) {
@@ -404,12 +367,8 @@ const doShipment = async () => {
         skuId: it.skuId,
         amount: it.amount,
         quantity: it.quantity,
-        batchNo: it.batchNo,
-        productionDate: it.productionDate,
-        expirationDate: it.expirationDate,
-        inventoryDetailId: it.inventoryDetailId,
-        warehouseId: form.value.warehouseId,
-        areaId: it.areaId
+        inventoryId: it.inventoryId,
+        warehouseId: form.value.warehouseId
       }
     })
 
@@ -424,7 +383,6 @@ const doShipment = async () => {
       receivableAmount: form.value.receivableAmount,
       totalQuantity: form.value.totalQuantity,
       warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
       details: details
     }
     loading.value = true
@@ -457,18 +415,16 @@ const loadDetail = (id) => {
   loading.value = true
   getShipmentOrder(id).then((response) => {
     if (response.data.details?.length) {
-      response.data.details.forEach(detail => {
-        detail.areaName = useWmsStore().areaMap.get(detail.areaId)?.areaName
-      })
       selectedInventory.value = response.data.details.map(it => {
         return {
-          id: it.inventoryDetailId,
-          areaId: it.areaId
+          id: it.id,
+          skuId: it.skuId,
+          warehouseId: it.warehouseId
         }
       })
     }
     form.value = {...response.data}
-    inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
+    inventorySelectRef.value.setWarehouse(form.value.warehouseId)
     Promise.resolve();
   }).then(() => {
   }).finally(() => {
@@ -477,15 +433,8 @@ const loadDetail = (id) => {
 }
 
 const handleChangeWarehouse = (e) => {
-  form.value.areaId = undefined
   form.value.details = []
-  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
-}
-
-const handleChangeArea = (e) => {
-  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.warehouseId, form.value.areaId)
-  form.value.details = form.value.details.filter(it => it.areaId === e)
-  selectedInventory.value = selectedInventory.value.filter(selected => selected.areaId === e)
+  inventorySelectRef.value.setWarehouseId(form.value.warehouseId)
 }
 
 const handleChangeQuantity = () => {
@@ -521,7 +470,7 @@ const handleDeleteDetail = (row, index) => {
     })
   } else {
     form.value.details.splice(index, 1)
-    const indexOfSelected = selectedInventory.value.findIndex(it => it.id === row.inventoryDetailId)
+    const indexOfSelected = selectedInventory.value.findIndex(it => it.id === row.inventoryId)
     selectedInventory.value.splice(indexOfSelected, 1)
   }
 }

@@ -106,17 +106,6 @@
                     <el-statistic :precision="2" :value="Number(row.amount)"/>
                   </template>
                 </el-table-column>
-                <el-table-column label="批号" prop="batchNo" />
-                <el-table-column label="生产日期" prop="productionDate">
-                  <template #default="{ row }">
-                    <div>{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="过期日期" prop="expirationDate">
-                  <template #default="{ row }">
-                    <div>{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
               </el-table>
             </div>
           </template>
@@ -346,7 +335,6 @@ async function handlePrint(row) {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
         quantity: Number(detail.quantity).toFixed(0),
         batchNo: detail.batchNo,
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
@@ -362,7 +350,6 @@ async function handlePrint(row) {
     merchantName: useWmsStore().merchantMap.get(shipmentOrder.merchantId)?.merchantName,
     orderNo: shipmentOrder.orderNo,
     warehouseName: useWmsStore().warehouseMap.get(shipmentOrder.warehouseId)?.warehouseName,
-    areaName: useWmsStore().areaMap.get(shipmentOrder.areaId)?.areaName,
     totalQuantity: Number(shipmentOrder.totalQuantity).toFixed(0),
     receivableAmount: ((shipmentOrder.receivableAmount || shipmentOrder.receivableAmount === 0) ? (shipmentOrder.receivableAmount + '元') : ''),
     createBy: shipmentOrder.createBy,
@@ -398,8 +385,7 @@ function loadShipmentOrderDetail(row) {
       const details = res.data.map(it => {
         return {
           ...it,
-          warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName,
-          areaName: useWmsStore().areaMap.get(it.areaId)?.areaName
+          warehouseName: useWmsStore().warehouseMap.get(it.warehouseId)?.warehouseName
         }
       })
       shipmentOrderList.value[index].details = details
