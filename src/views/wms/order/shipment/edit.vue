@@ -195,6 +195,7 @@ import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {numSub, generateNo} from '@/utils/ruoyi'
 import InventorySelect from "@/views/components/InventorySelect.vue";
+import {getWarehouseAndSkuKey} from "@/utils/wmsUtil"
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
@@ -250,7 +251,7 @@ const handleOkClick = (item) => {
   inventorySelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
-    if (!form.value.details.find(detail => detail.inventoryId === it.id)) {
+    if (!form.value.details.find(detail => getWarehouseAndSkuKey(detail) === getWarehouseAndSkuKey(it))) {
       form.value.details.push(
         {
           itemSku: {
@@ -424,7 +425,7 @@ const loadDetail = (id) => {
       })
     }
     form.value = {...response.data}
-    inventorySelectRef.value.setWarehouse(form.value.warehouseId)
+    inventorySelectRef.value.setWarehouseId(form.value.warehouseId)
     Promise.resolve();
   }).then(() => {
   }).finally(() => {

@@ -71,6 +71,7 @@ import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {useRouter} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {listInventory} from "@/api/wms/inventory";
+import {getWarehouseAndSkuKey} from "@/utils/wmsUtil";
 
 const {proxy} = getCurrentInstance()
 
@@ -176,7 +177,7 @@ const handleSelectionChange = (selection) => {
 
 const toggleSelection = () => {
   props.selectedInventory.forEach(selected => {
-    const index = list.value.findIndex(it => selected.id === it.id)
+    const index = list.value.findIndex(it => getWarehouseAndSkuKey(selected) === getWarehouseAndSkuKey(it))
     if (index !== -1) {
       inventorySelectFormRef.value.toggleRowSelection(list.value[index], true)
     }
@@ -188,8 +189,7 @@ function clearSelected() {
 }
 
 const judgeSelectable = (row) => {
-  console.info(getPlaceAndSkuKey(row))
-  if (props.selectedInventory.find(selected => getPlaceAndSkuKey(selected) === getPlaceAndSkuKey(row))) {
+  if (props.selectedInventory.find(selected => getWarehouseAndSkuKey(selected) === getWarehouseAndSkuKey(row))) {
     return false;
   }
   return true
@@ -199,11 +199,8 @@ const setWarehouseId = (warehouseId = null) => {
   query.warehouseId = warehouseId
 }
 
-const getPlaceAndSkuKey = (row) => {
-  return row.warehouseId + '_' + row.skuId
-}
-
 defineExpose({
+  setWarehouseId,
   getList
 })
 onMounted(() => {
