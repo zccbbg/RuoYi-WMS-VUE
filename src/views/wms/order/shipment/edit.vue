@@ -471,9 +471,9 @@ const handleDeleteDetail = (row, index) => {
     })
   } else {
     form.value.details.splice(index, 1)
-    const indexOfSelected = selectedInventory.value.findIndex(it => it.id === row.inventoryId)
-    selectedInventory.value.splice(indexOfSelected, 1)
   }
+  const indexOfSelected = selectedInventory.value.findIndex(it => getWarehouseAndSkuKey(it) === getWarehouseAndSkuKey(row))
+  selectedInventory.value.splice(indexOfSelected, 1)
 }
 const goSaasTip = () => {
   ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {
