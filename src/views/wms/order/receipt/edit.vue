@@ -75,20 +75,6 @@
       <el-card header="商品明细" class="mt10">
         <div class="receipt-order-content">
           <div class="flex-space-between mb8">
-            <div>
-              <span>一物一码/SN模式：</span>
-              <el-switch
-                :before-change="goSaasTip"
-                class="mr10 ml10"
-                inline-prompt
-                size="large"
-                v-model="mode"
-                :active-value="true"
-                :inactive-value="false"
-                active-text="开启"
-                inactive-text="关闭"
-              />
-            </div>
             <el-popover
               placement="left"
               title="提示"
@@ -427,12 +413,6 @@ const handleDeleteDetail = (row, index) => {
   } else {
     form.value.details.splice(index, 1)
   }
-}
-const goSaasTip = () => {
-  ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {
-    confirmButtonText: '确定'
-  })
-  return false
 }
 </script>
 
