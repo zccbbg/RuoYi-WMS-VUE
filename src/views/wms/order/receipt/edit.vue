@@ -146,8 +146,9 @@
         </div>
       </el-card>
       <SkuSelect
-        ref="sku-select"
+        ref="skuSelectRef"
         :model-value="skuSelectShow"
+        :selected-sku="selectedSku"
         @handleOkClick="handleOkClick"
         @handleCancelClick="skuSelectShow = false"
         :size="'80%'"
@@ -177,11 +178,14 @@ import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import { numSub, generateNo } from '@/utils/ruoyi'
 import { delReceiptOrderDetail } from '@/api/wms/receiptOrderDetail'
+import {getWarehouseAndSkuKey} from "@/utils/wmsUtil";
 
 const {proxy} = getCurrentInstance();
 const { wms_receipt_type } = proxy.useDict("wms_receipt_type");
+const selectedSku = ref([])
 const mode = ref(false)
 const loading = ref(false)
+const skuSelectRef = ref(null)
 const initFormData = {
   id: undefined,
   receiptOrderNo: undefined,
@@ -212,7 +216,7 @@ const data = reactive({
     ],
     warehouseId: [
       {required: true, message: "请选择仓库", trigger: ['blur', 'change']}
-    ],
+    ]
   }
 });
 const { form, rules} = toRefs(data);
@@ -229,20 +233,24 @@ const skuSelectShow = ref(false)
 
 // 选择商品 start
 const showAddItem = () => {
+  skuSelectRef.value.getList()
   skuSelectShow.value = true
 }
 // 选择成功
 const handleOkClick = (item) => {
   skuSelectShow.value = false
+  selectedSku.value = [...item]
   item.forEach((it) => {
-    form.value.details.push(
-      {
-        itemSku: {...it},
-        amount: undefined,
-        quantity: it.quantity,
-        warehouseId: form.value.warehouseId
-      }
-    )
+    if (!form.value.details.find(detail => detail.itemSku.id === it.id)) {
+      form.value.details.push(
+        {
+          itemSku: {...it},
+          amount: undefined,
+          quantity: it.quantity,
+          warehouseId: form.value.warehouseId
+        }
+      )
+    }
   })
 }
 // 选择商品 end
@@ -386,6 +394,13 @@ const loadDetail = (id) => {
   loading.value = true
   getReceiptOrder(id).then((response) => {
     form.value = {...response.data}
+    if (response.data.details?.length) {
+      selectedSku.value = response.data.details.map(it => {
+        return {
+          id: it.skuId
+        }
+      })
+    }
     Promise.resolve();
   }).then(() => {
   }).finally(() => {
@@ -427,6 +442,8 @@ const handleDeleteDetail = (row, index) => {
   } else {
     form.value.details.splice(index, 1)
   }
+  const indexOfSelected = selectedSku.value.findIndex(it => row.itemSku.id=== it.id)
+  selectedSku.value.splice(indexOfSelected, 1)
 }
 const goSaasTip = () => {
   ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {

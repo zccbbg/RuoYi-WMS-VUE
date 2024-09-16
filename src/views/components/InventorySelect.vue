@@ -95,7 +95,6 @@ const pageReq = reactive({
   page: 1,
   size: 10,
 });
-const selectAreaDisabale = ref(false)
 const list = ref([]);
 const rightList = ref([]);
 const rightListKeySet = computed(() => {

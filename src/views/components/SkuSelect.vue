@@ -25,12 +25,12 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-button type="primary" @click="clickQuery">查询</el-button>
+              <el-button type="primary" @click="loadAll">查询</el-button>
             </el-col>
           </el-row>
         </el-form>
             <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无商品" v-loading="loading" ref="skuSelectFormRef" cell-class-name="my-cell">
-              <el-table-column type="selection" width="55" :reserve-selection="true" v-if="!singleSelect"/>
+              <el-table-column type="selection" width="55" :reserve-selection="true" v-if="!singleSelect" :selectable="judgeSelectable"/>
               <el-table-column label="商品信息" prop="itemId">
                 <template #default="{ row }">
                   <div>{{ row.item.itemName }}</div>
@@ -139,18 +139,7 @@ const editableList = computed(() => {
 
 const loadAll = () => {
   pageReq.page = 1
-  const pageReqCopy = {...pageReq};
-  const data = {
-    ...query,
-    pageNum: pageReqCopy.page,
-    pageSize: pageReqCopy.size
-  }
-  loading.value = true
-  listItemSkuPage(data).then((res) => {
-    const content = [...res.rows];
-    list.value = content.map((item) => ({...item, checked: false}));
-    total.value = res.total;
-  }).finally(() => loading.value = false);
+  getList()
 };
 const getRowKey = (row: any) => {
   return row.id;
@@ -161,27 +150,36 @@ const getList = () => {
     pageNum: pageReq.page,
     pageSize: pageReq.size
   }
+  loading.value = true
   listItemSkuPage(data).then((res) => {
     const content = [...res.rows];
     list.value = content.map((item) => ({...item, checked: false}));
     total.value = res.total;
-  });
+  }).then(() => toggleSelection()).finally(() => loading.value = false);
 }
-
-const clickQuery = () => {
-  pageReq.page = 1;
-  loadAll();
-};
 const goCreateItem = () => {
   const data = proxy.$router.resolve({path: '/system/itemManage2', query: {openDrawer: true}})
   window.open(data.href, '_blank')
 }
 // 定义props
-const props = defineProps<{
-  modelValue?: boolean
-  size: number | string
-  singleSelect: boolean
-}>()
+const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    default: false
+  },
+  size: {
+    type: String,
+    default: '30%'
+  },
+  singleSelect:{
+    type: Boolean,
+    default: false
+  },
+  selectedSku: {
+    type: Array,
+    default: []
+  }
+})
 
 const show = computed(() => {
   return props.modelValue;
@@ -212,6 +210,22 @@ const handleSelectionChange = (selection) => {
   selectItemSkuVoCheck.value = selection
 }
 
+const toggleSelection = () => {
+  props.selectedSku.forEach(selected => {
+    const index = list.value.findIndex(it => selected.id=== it.id)
+    if (index !== -1) {
+      skuSelectFormRef.value.toggleRowSelection(list.value[index], true)
+    }
+  })
+}
+
+const judgeSelectable = (row) => {
+  if (props.selectedSku.find(selected => selected.id === row.id)) {
+    return false;
+  }
+  return true
+}
+
 
 function clearQuantity() {
   skuSelectFormRef.value.clearSelection()
@@ -225,7 +239,9 @@ const getVolumeText = (row) => {
     + ((row.width || row.width === 0) ? (' 宽：' + row.width) : '')
     + ((row.height || row.height === 0) ? (' 高：' + row.height) : '')
 }
-
+defineExpose({
+  getList
+})
 onMounted(() => {
   loadAll();
 })
