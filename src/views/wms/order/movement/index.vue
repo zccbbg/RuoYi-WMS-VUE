@@ -27,12 +27,6 @@
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="源仓库">
-          <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
-        <el-form-item label="目标仓库">
-          <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -189,7 +183,6 @@ import {listByMovementOrderId} from "@/api/wms/movementOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../../store/modules/wms";
 import {ElMessageBox} from "element-plus";
-import WarehouseCascader from "@/views/components/WarehouseCascader.vue";
 import movementPanel from "@/components/PrintTemplate/movement-panel";
 
 const { proxy } = getCurrentInstance();
@@ -225,11 +218,9 @@ function getList() {
   }
   if (query.sourcePlace?.length) {
     query.sourceWarehouseId = query.sourcePlace[0]
-    query.sourceAreaId = query.sourcePlace[1]
   }
   if (query.targetPlace?.length) {
     query.targetWarehouseId = query.targetPlace[0]
-    query.targetAreaId = query.targetPlace[1]
   }
   listMovementOrder(query).then(response => {
     movementOrderList.value = response.rows;
@@ -310,8 +301,6 @@ async function handlePrint(row) {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        sourceAreaName: useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName,
-        targetAreaName: useWmsStore().areaMap.get(detail.targetAreaId)?.areaName,
         quantity: Number(detail.quantity).toFixed(0),
         batchNo: detail.batchNo,
         productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
@@ -323,9 +312,7 @@ async function handlePrint(row) {
     movementOrderNo: movementOrder.movementOrderNo,
     movementOrderStatus: proxy.selectDictLabel(wms_movement_status.value, movementOrder.movementOrderStatus),
     sourceWarehouseName: useWmsStore().warehouseMap.get(movementOrder.sourceWarehouseId)?.warehouseName,
-    sourceAreaName: useWmsStore().areaMap.get(movementOrder.sourceAreaId)?.areaName,
     targetWarehouseName: useWmsStore().warehouseMap.get(movementOrder.targetWarehouseId)?.warehouseName,
-    targetAreaName: useWmsStore().areaMap.get(movementOrder.targetAreaId)?.areaName,
     totalQuantity: Number(movementOrder.totalQuantity).toFixed(0),
     createBy: movementOrder.createBy,
     createTime: proxy.parseTime(movementOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
@@ -362,9 +349,7 @@ function loadMovementOrderDetail(row) {
         return {
           ...it,
           sourceWarehouseName: useWmsStore().warehouseMap.get(it.sourceWarehouseId)?.warehouseName,
-          sourceAreaName: useWmsStore().areaMap.get(it.sourceAreaId)?.areaName,
           targetWarehouseName: useWmsStore().warehouseMap.get(it.targetWarehouseId)?.warehouseName,
-          targetAreaName: useWmsStore().areaMap.get(it.targetAreaId)?.areaName
         }
       })
       movementOrderList.value[index].details = details
