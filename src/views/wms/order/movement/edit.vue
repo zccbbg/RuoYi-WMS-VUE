@@ -106,7 +106,6 @@
                   placeholder="移库数量"
                   :min="1"
                   :precision="0"
-                  :max="scope.row.remainQuantity"
                   @change="handleChangeQuantity"
                 ></el-input-number>
               </template>
@@ -156,6 +155,7 @@ import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {numSub, generateNo} from '@/utils/ruoyi'
 import InventorySelect from "@/views/components/InventorySelect.vue";
+import {getSourceWarehouseAndSkuKey, getWarehouseAndSkuKey} from "@/utils/wmsUtil";
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
@@ -208,7 +208,7 @@ const handleOkClick = (item) => {
   inventorySelectShow.value = false
   selectedInventory.value = [...item]
   item.forEach(it => {
-    if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
+    if (!form.value.details.find(detail => getSourceWarehouseAndSkuKey(detail) === getWarehouseAndSkuKey(it))) {
       form.value.details.push(
         {
           itemSku: {
@@ -217,12 +217,7 @@ const handleOkClick = (item) => {
           },
           skuId: it.skuId,
           quantity: undefined,
-          remainQuantity: it.remainQuantity,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
-          sourceWarehouseId: form.value.warehouseId,
-          inventoryDetailId: it.id,
+          sourceWarehouseId: form.value.sourceWarehouseId
         })
     }
   })
@@ -256,11 +251,7 @@ const doSave = (movementOrderStatus = 0) => {
           movementOrderId: form.value.id,
           skuId: it.skuId,
           quantity: it.quantity,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
-          inventoryDetailId: it.inventoryDetailId,
-          sourceWarehouseId: form.value.warehouseId,
+          sourceWarehouseId: form.value.sourceWarehouseId,
           targetWarehouseId: form.value.targetWarehouseId,
         }
       })
@@ -325,10 +316,6 @@ const doMovement = async () => {
         movementOrderId: form.value.id,
         skuId: it.skuId,
         quantity: it.quantity,
-        batchNo: it.batchNo,
-        productionDate: it.productionDate,
-        expirationDate: it.expirationDate,
-        inventoryDetailId: it.inventoryDetailId,
         sourceWarehouseId: form.value.sourceWarehouseId,
         targetWarehouseId: form.value.targetWarehouseId,
       }
@@ -376,7 +363,7 @@ const loadDetail = (id) => {
         return {
           id: it.id,
           skuId: it.skuId,
-          warehouseId: it.warehouseId
+          warehouseId: it.sourceWarehouseId
         }
       })
     }
@@ -421,9 +408,9 @@ const handleDeleteDetail = (row, index) => {
     })
   } else {
     form.value.details.splice(index, 1)
-    const indexOfSelected = selectedInventory.value.findIndex(it => it.id === row.inventoryDetailId)
-    selectedInventory.value.splice(indexOfSelected, 1)
   }
+  const indexOfSelected = selectedInventory.value.findIndex(it => getWarehouseAndSkuKey(it) === getSourceWarehouseAndSkuKey(row))
+  selectedInventory.value.splice(indexOfSelected, 1)
 }
 const goSaasTip = () => {
   ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {
