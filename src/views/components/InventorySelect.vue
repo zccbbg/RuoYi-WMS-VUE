@@ -15,7 +15,7 @@
         <el-input class="w200" v-model="query.barcode" clearable placeholder="规格编号"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="clickQuery">查询</el-button>
+        <el-button type="primary" @click="loadAll">查询</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="list" @selection-change="handleSelectionChange" border :row-key="getRowKey" empty-text="暂无库存"
@@ -132,11 +132,6 @@ const getList = () => {
     total.value = res.total;
   }).then(() => toggleSelection()).finally(() => loading.value = false);
 }
-
-const clickQuery = () => {
-  pageReq.page = 1;
-  loadAll();
-};
 
 const props = defineProps({
   modelValue: {
