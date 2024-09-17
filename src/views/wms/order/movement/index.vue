@@ -76,17 +76,6 @@
                     <el-statistic :value="Number(row.quantity)" :precision="0"/>
                   </template>
                 </el-table-column>
-                <el-table-column label="批号" prop="batchNo" />
-                <el-table-column label="生产日期" prop="inventoryDetail.productionDate">
-                  <template #default="{ row }">
-                    <div v-if="row.productionDate">{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
-                <el-table-column label="过期日期" prop="inventoryDetail.expirationDate">
-                  <template #default="{ row }">
-                    <div v-if="row.expirationDate">{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
-                  </template>
-                </el-table-column>
               </el-table>
             </div>
           </template>
@@ -301,10 +290,7 @@ async function handlePrint(row) {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        quantity: Number(detail.quantity).toFixed(0),
-        batchNo: detail.batchNo,
-        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
-        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}')
+        quantity: Number(detail.quantity).toFixed(0)
       }
     })
   }

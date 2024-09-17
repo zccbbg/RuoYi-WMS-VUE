@@ -99,22 +99,6 @@
                 <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="批号" prop="batchNo" />
-            <el-table-column label="生产日期" prop="productionDate">
-              <template #default="{ row }">
-                <div v-if="row.productionDate">{{ row.productionDate.substring(0, 10) }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="过期日期" prop="expirationDate">
-              <template #default="{ row }">
-                <div v-if="row.expirationDate">{{ row.expirationDate.substring(0, 10) }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column label="剩余库存" prop="remainQuantity" align="right" width="150">
-              <template #default="{ row }">
-                <el-statistic :value="Number(row.remainQuantity)" :precision="0"/>
-              </template>
-            </el-table-column>
             <el-table-column label="移库数量" prop="quantity" width="180">
               <template #default="scope">
                 <el-input-number
@@ -137,16 +121,14 @@
           </el-table>
         </div>
       </el-card>
-      <InventoryDetailSelect
+      <InventorySelect
         ref="inventorySelectRef"
         :model-value="inventorySelectShow"
         @handleOkClick="handleOkClick"
         @handleCancelClick="inventorySelectShow = false"
         :size="'90%'"
         :select-warehouse-disable="false"
-        :select-area-disable="!!form?.sourceAreaId"
         :warehouse-id="form.sourceWarehouseId"
-        :area-id="form.sourceAreaId"
         :selected-inventory="selectedInventory"
       />
     </div>
@@ -173,7 +155,7 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 import {numSub, generateNo} from '@/utils/ruoyi'
-import InventoryDetailSelect from "@/views/components/InventoryDetailSelect.vue";
+import InventorySelect from "@/views/components/InventorySelect.vue";
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
@@ -185,9 +167,7 @@ const initFormData = {
   shipmentOrderStatus: 0,
   remark: undefined,
   sourceWarehouseId: undefined,
-  sourceAreaId: undefined,
   targetWarehouseId: undefined,
-  targetAreaId: undefined,
   totalQuantity: 0,
   details: [],
 }
@@ -242,17 +222,10 @@ const handleOkClick = (item) => {
           productionDate: it.productionDate,
           expirationDate: it.expirationDate,
           sourceWarehouseId: form.value.warehouseId,
-          sourceAreaId: form.value.areaId ?? it.areaId,
           inventoryDetailId: it.id,
-          targetAreaId: form.value.targetAreaId,
-          sourceAreaName: useWmsStore().areaMap.get(form.value.areaId ?? it.areaId)?.areaName
         })
     }
   })
-}
-
-const getPlaceAndSkuKey = (row) => {
-  return row.warehouseId + '_' + row.areaId + '_' + row.skuId
 }
 // 选择商品 end
 
@@ -288,9 +261,7 @@ const doSave = (movementOrderStatus = 0) => {
           expirationDate: it.expirationDate,
           inventoryDetailId: it.inventoryDetailId,
           sourceWarehouseId: form.value.warehouseId,
-          sourceAreaId: it.sourceAreaId,
           targetWarehouseId: form.value.targetWarehouseId,
-          targetAreaId: it.targetAreaId
         }
       })
     }
@@ -302,9 +273,7 @@ const doSave = (movementOrderStatus = 0) => {
       remark: form.value.remark,
       totalQuantity: form.value.totalQuantity,
       sourceWarehouseId: form.value.sourceWarehouseId,
-      sourceAreaId: form.value.sourceAreaId,
       targetWarehouseId: form.value.targetWarehouseId,
-      targetAreaId: form.value.targetAreaId,
       details: details
     }
     if (params.id) {
@@ -361,9 +330,7 @@ const doMovement = async () => {
         expirationDate: it.expirationDate,
         inventoryDetailId: it.inventoryDetailId,
         sourceWarehouseId: form.value.sourceWarehouseId,
-        sourceAreaId: it.sourceAreaId,
         targetWarehouseId: form.value.targetWarehouseId,
-        targetAreaId: it.targetAreaId
       }
     })
 
@@ -374,9 +341,7 @@ const doMovement = async () => {
       remark: form.value.remark,
       totalQuantity: form.value.totalQuantity,
       sourceWarehouseId: form.value.sourceWarehouseId,
-      sourceAreaId: form.value.sourceAreaId,
       targetWarehouseId: form.value.targetWarehouseId,
-      targetAreaId: form.value.targetAreaId,
       details: details
     }
     movement(params).then((res) => {
@@ -407,19 +372,16 @@ const loadDetail = (id) => {
   getMovementOrder(id).then((response) => {
 
     if (response.data.details?.length) {
-      response.data.details.forEach(detail => {
-        detail.sourceAreaName = useWmsStore().areaMap.get(detail.sourceAreaId)?.areaName
-        detail.targetAreaName = useWmsStore().areaMap.get(detail.targetAreaId)?.areaName
-      })
       selectedInventory.value = response.data.details.map(it => {
         return {
-          id: it.inventoryDetailId,
-          areaId: it.sourceAreaId
+          id: it.id,
+          skuId: it.skuId,
+          warehouseId: it.warehouseId
         }
       })
     }
     form.value = {...response.data}
-    inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
+    inventorySelectRef.value.setWarehouseId(form.value.sourceWarehouseId)
     Promise.resolve();
   }).then(() => {
   }).finally(() => {
@@ -428,30 +390,15 @@ const loadDetail = (id) => {
 }
 
 const handleChangeSourceWarehouse = (e) => {
-  form.value.sourceAreaId = undefined
   form.value.details = []
-  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
-}
-
-const handleChangeSourceArea = (e) => {
-  inventorySelectRef.value.setWarehouseIdAndAreaId(form.value.sourceWarehouseId, form.value.sourceAreaId)
-  form.value.details = form.value.details.filter(it => it.sourceAreaId === e)
-  selectedInventory.value = selectedInventory.value.filter(selected => selected.areaId === e)
+  inventorySelectRef.value.setWarehouseId(form.value.sourceWarehouseId)
 }
 
 const handleChangeTargetWarehouse = (e) => {
-  form.value.targetAreaId = undefined
   form.value.details.forEach(it => {
     it.targetWarehouseId = e
-    it.targetAreaId = undefined
   })
 
-}
-
-const handleChangeTargetArea = (e) => {
-  ('targetAreaId', e)
-  ('form.value.targetAreaId', form.value.targetAreaId)
-  form.value.details.forEach(it => it.targetAreaId = e)
 }
 
 const handleChangeQuantity = () => {
