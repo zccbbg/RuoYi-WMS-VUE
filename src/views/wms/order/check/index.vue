@@ -247,7 +247,6 @@ async function handlePrint(row) {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        areaName: useWmsStore().areaMap.get(detail.areaId)?.areaName,
         quantity: Number(detail.quantity).toFixed(0),
         profitAndLoss: Number(detail.checkQuantity - detail.quantity).toFixed(0),
         checkQuantity: Number(detail.checkQuantity).toFixed(0),
@@ -262,7 +261,6 @@ async function handlePrint(row) {
     checkOrderNo: checkOrder.checkOrderNo,
     checkOrderStatus: proxy.selectDictLabel(wms_check_status.value, checkOrder.checkOrderStatus),
     warehouseName: useWmsStore().warehouseMap.get(checkOrder.warehouseId)?.warehouseName,
-    areaName: useWmsStore().areaMap.get(checkOrder.areaId)?.areaName,
     checkOrderTotal: Number(checkOrder.checkOrderTotal).toFixed(0),
     createBy: checkOrder.createBy,
     createTime: proxy.parseTime(checkOrder.createTime, '{mm}-{dd} {hh}:{ii}'),

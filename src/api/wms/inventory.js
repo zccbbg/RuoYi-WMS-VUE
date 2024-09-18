@@ -9,6 +9,14 @@ export function listInventory(query) {
   })
 }
 
+export function listInventoryNoPage(query) {
+  return request({
+    url: '/wms/inventory/listNoPage',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询库存看板仓库维度列表
 export function listInventoryBoard(query,type) {
   return request({

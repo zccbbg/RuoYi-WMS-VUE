@@ -102,62 +102,6 @@
                 </template>
               </template>
             </el-table-column>
-            <el-table-column label="批号" prop="batchNo">
-              <template #default="{ row }">
-                <template v-if="row.newInventoryDetail">
-                  <el-input v-model="row.batchNo"></el-input>
-                </template>
-                <template v-else>
-                  <div>{{ row.batchNo }}</div>
-                </template>
-              </template>
-            </el-table-column>
-            <el-table-column label="生产日期/过期日期" prop="productionDate" width="250">
-              <template #default="{ row }">
-                <template v-if="row.newInventoryDetail">
-                  <div class="flex-center">
-                    <span>生产日期：</span>
-                    <el-date-picker
-                      v-model="row.productionDate"
-                      type="date"
-                      format="YYYY-MM-DD"
-                      value-format="YYYY-MM-DD HH:mm:ss"
-                      style="width: 150px!important;"
-                    />
-                  </div>
-                  <div class="flex-center mt5">
-                    <span>过期日期：</span>
-                    <el-date-picker
-                      v-model="row.expirationDate"
-                      type="date"
-                      format="YYYY-MM-DD"
-                      value-format="YYYY-MM-DD HH:mm:ss"
-                      style="width: 150px!important;"
-                    />
-                  </div>
-                </template>
-                <template v-else>
-                  <div v-if="row.productionDate">生产日期：{{ row.productionDate.substring(0, 10) }}</div>
-                  <div v-if="row.expirationDate">过期日期：{{ row.expirationDate.substring(0, 10) }}</div>
-                </template>
-              </template>
-            </el-table-column>
-            <el-table-column label="入库日期" prop="receiptTime" width="200">
-              <template #default="{ row }">
-                <template v-if="row.newInventoryDetail">
-                  <el-date-picker
-                    v-model="row.receiptTime"
-                    type="date"
-                    format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD HH:mm:ss"
-                    style="width: 150px!important;"
-                  />
-                </template>
-                <div v-else>
-                  {{ parseTime(row.receiptTime,  '{y}-{m}-{d}') }}
-                </div>
-              </template>
-            </el-table-column>
             <el-table-column label="账面库存" align="right" width="150">
               <template #default="{ row }">
                 <el-statistic :value="Number(row.quantity)" :precision="0"/>
@@ -215,7 +159,7 @@
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
 import {addCheckOrder, getCheckOrder, updateCheckOrder, check} from "@/api/wms/checkOrder";
 import {delCheckOrderDetail} from "@/api/wms/checkOrderDetail";
-import {listInventoryDetailNoPage} from "@/api/wms/inventoryDetail";
+import {listInventoryNoPage} from "@/api/wms/inventory";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {useRoute} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
@@ -232,7 +176,6 @@ const initFormData = {
   checkOrderStatus: 0,
   remark: undefined,
   warehouseId: undefined,
-  areaId: undefined,
   checkOrderTotal: 0,
   details: [],
 }
@@ -271,26 +214,19 @@ const startCheck = () => {
   }
   const query = {
     warehouseId: form.value.warehouseId,
-    areaId: form.value.areaId
   }
   checking.value = true
   loading.value = true
-  listInventoryDetailNoPage(query).then(res => {
+  listInventoryNoPage(query).then(res => {
     res.data.forEach(it => {
-      if (!form.value.details.find(detail => detail.inventoryDetailId === it.id)) {
+      if (!form.value.details.find(detail => detail.inventoryId === it.id)) {
         form.value.details.push({
             itemSku: it.itemSku,
-            inventoryDetailId: it.id,
+            inventoryId: it.id,
             skuId: it.itemSku.id,
             warehouseId: it.warehouseId,
-            areaId: it.areaId,
             quantity: Number(it.remainQuantity),
             checkQuantity: Number(it.remainQuantity),
-            areaName: useWmsStore().areaMap.get(it.areaId)?.areaName,
-            batchNo: it.batchNo,
-            productionDate: it.productionDate,
-            expirationDate: it.expirationDate,
-            receiptTime: it.createTime,
             newInventoryDetail: false
           }
         )
@@ -308,15 +244,9 @@ const handleOkClick = (item) => {
           itemSku: {...it},
           skuId: it.id,
           warehouseId: form.value.warehouseId,
-          inventoryDetailId: null,
-          areaId: form.value.areaId,
+          inventoryId: null,
           quantity: 0,
           checkQuantity: 0,
-          areaName: useWmsStore().areaMap.get(form.value.areaId)?.areaName,
-          batchNo: undefined,
-          productionDate: undefined,
-          expirationDate: undefined,
-          receiptTime: proxy.parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}'),
           newInventoryDetail: true
         })
   })
@@ -352,13 +282,8 @@ const doSave = (checkOrderStatus = 0) => {
           skuId: it.skuId,
           quantity: it.quantity,
           checkQuantity: it.checkQuantity,
-          inventoryDetailId: it.inventoryDetailId,
+          inventoryId: it.inventoryId,
           warehouseId: form.value.warehouseId,
-          areaId: it.areaId,
-          batchNo: it.batchNo,
-          productionDate: it.productionDate,
-          expirationDate: it.expirationDate,
-          receiptTime: it.receiptTime
         }
       })
     }
@@ -369,7 +294,6 @@ const doSave = (checkOrderStatus = 0) => {
       remark: form.value.remark,
       checkOrderTotal: form.value.checkOrderTotal,
       warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
       details: details
     }
     if (params.id) {
@@ -415,13 +339,7 @@ const doCheck = async () => {
         skuId: it.skuId,
         quantity: it.quantity,
         checkQuantity: it.checkQuantity,
-        warehouseId: form.value.warehouseId,
-        areaId: it.areaId,
-        batchNo: it.batchNo,
-        productionDate: it.productionDate,
-        expirationDate: it.expirationDate,
-        receiptTime: it.receiptTime,
-        inventoryDetailId: it.inventoryDetailId
+        warehouseId: form.value.warehouseId
       }
     })
 
@@ -430,7 +348,6 @@ const doCheck = async () => {
       checkOrderNo: form.value.checkOrderNo,
       checkOrderTotal: form.value.checkOrderTotal,
       warehouseId: form.value.warehouseId,
-      areaId: form.value.areaId,
       remark: form.value.remark,
       details: details
     }
@@ -463,8 +380,7 @@ const loadDetail = (id) => {
   getCheckOrder(id).then((response) => {
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
-        detail.areaName = useWmsStore().areaMap.get(detail.areaId)?.areaName
-        detail.newInventoryDetail = !detail.inventoryDetailId
+        detail.newInventoryDetail = !detail.inventoryId
         detail.quantity = detail.remainQuantity
       })
     }
