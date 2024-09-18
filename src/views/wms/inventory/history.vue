@@ -19,12 +19,17 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="仓库" prop="warehouseId">
+          <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库"
+                     filterable clearable>
+            <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
+                       :value="item.id"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="操作单号" prop="orderNo">
           <el-input v-model="queryParams.orderNo" clearable placeholder="请输入操作单号"></el-input>
         </el-form-item>
-<!--        <el-form-item label="仓库" prop="place">-->
-<!--          <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>-->
-<!--        </el-form-item>-->
+
         <el-form-item label="商品名称" prop="itemName">
           <el-input v-model="queryParams.itemName" clearable placeholder="请输入商品名称"></el-input>
         </el-form-item>
