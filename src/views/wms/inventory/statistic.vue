@@ -9,7 +9,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item class="col4" label="仓库" prop="warehouseId">
-          <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
+          <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库"
                      filterable clearable>
             <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
                        :value="item.id"/>
@@ -40,13 +40,13 @@
       </div>
       <el-table :data="inventoryList" border :span-method="spanMethod"
                 cell-class-name="vertical-top-cell" v-loading="loading" empty-text="暂无库存">
-        <template v-if="queryType == 'warehouse' || queryType == 'area'">
+        <template v-if="queryType == 'warehouse'">
           <el-table-column label="仓库" prop="warehouseId">
             <template #default="{ row }">
               <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
             </template>
           </el-table-column>
-          <el-table-column label="商品信息" :prop="queryType == 'warehouse' ? 'warehouseIdAndItemId' : 'areaIdAndItemId'">
+          <el-table-column label="商品信息" prop="warehouseIdAndItemId">
             <template #default="{ row }">
               <div>{{ row.item.itemName }}</div>
               <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
@@ -122,7 +122,6 @@ const queryParams = ref({
   pageSize: 10,
   skuId: undefined,
   warehouseId: undefined,
-  areaId: undefined,
   itemName: undefined,
   itemCode: undefined,
   skuName: undefined,
@@ -144,8 +143,6 @@ const getList = async () => {
   inventoryList.value.forEach(it => {
     if (queryType.value == "warehouse") {
       it.warehouseIdAndItemId = it.warehouseId + '-' + it.itemSku.itemId
-    } else if (queryType.value == "area") {
-      it.areaIdAndItemId = it.areaId + '-' + it.itemSku.itemId
     } else if (queryType.value == "item") {
       it.itemId = it.itemSku.itemId
       it.skuIdAndWarehouseId = it.skuId + '-' + it.warehouseId
@@ -177,11 +174,8 @@ const calcSubtotal = (row) => {
 
 const handleSortTypeChange = (e) => {
   if (e === "warehouse") {
-    queryParams.value.areaId = undefined
     rowSpanArray.value = ['warehouseId', 'warehouseIdAndItemId']
-  } else if (e === "area") {
-    rowSpanArray.value = ['warehouseId', 'areaId', 'areaIdAndItemId']
-  } else if (e === "item") {
+  }  else if (e === "item") {
     rowSpanArray.value = ['itemId', 'skuId','skuIdAndWarehouseId']
   }
   queryParams.value.pageNum = 1;
@@ -191,10 +185,6 @@ const handleSortTypeChange = (e) => {
 const handleChangeFilterZero = (e) => {
   queryParams.value.pageNum = 1;
   getList()
-}
-
-const handleChangeWarehouse = () => {
-  queryParams.value.areaId = undefined
 }
 
 onMounted(() => {
