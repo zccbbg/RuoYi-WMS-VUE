@@ -22,9 +22,9 @@
         <el-form-item label="操作单号" prop="orderNo">
           <el-input v-model="queryParams.orderNo" clearable placeholder="请输入操作单号"></el-input>
         </el-form-item>
-        <el-form-item label="仓库" prop="place">
-          <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
+<!--        <el-form-item label="仓库" prop="place">-->
+<!--          <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>-->
+<!--        </el-form-item>-->
         <el-form-item label="商品名称" prop="itemName">
           <el-input v-model="queryParams.itemName" clearable placeholder="请输入商品名称"></el-input>
         </el-form-item>
@@ -96,13 +96,6 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="批号" prop="batchNo"/>
-        <el-table-column label="生产日期/过期日期">
-          <template #default="{ row }">
-            <div v-if="row.productionDate">生产日期：{{ parseTime(row.productionDate, '{y}-{m}-{d}') }}</div>
-            <div v-if="row.expirationDate">过期日期：{{ parseTime(row.expirationDate, '{y}-{m}-{d}') }}</div>
-          </template>
-        </el-table-column>
         <el-table-column label="操作时间" prop="createTime"/>
       </el-table>
 
@@ -124,7 +117,6 @@
 import {listInventoryHistory} from "@/api/wms/inventoryHistory";
 import {getCurrentInstance, reactive, ref} from "vue";
 import {useWmsStore} from '@/store/modules/wms'
-import WarehouseCascader from "@/views/components/WarehouseCascader.vue";
 const defaultTime = reactive([new Date(0,0,0,0,0,0), new Date(0,0,0,23,59,59)])
 const {proxy} = getCurrentInstance();
 const {wms_inventory_history_type} = proxy.useDict('wms_inventory_history_type');
@@ -142,9 +134,7 @@ const queryParams = ref({
   itemCode: undefined,
   skuName: undefined,
   skuCode: undefined,
-  place: [],
   warehouseId: undefined,
-  areaId: undefined,
 })
 
 /** 查询往来单位列表 */
@@ -152,10 +142,6 @@ function getList() {
   const query = {...queryParams.value}
   if (query.orderType === -1) {
     query.orderType = null
-  }
-  if (query.place?.length) {
-    query.warehouseId = query.place[0]
-    query.areaId = query.place[1]
   }
   if (query.createTimeRange) {
     query.startTime = query.createTimeRange[0]
