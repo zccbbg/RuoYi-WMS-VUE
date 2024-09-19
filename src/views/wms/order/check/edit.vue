@@ -68,7 +68,6 @@
                 class="mr10 ml10"
                 inline-prompt
                 size="large"
-                v-model="mode"
                 :active-value="true"
                 :inactive-value="false"
                 active-text="开启"
@@ -225,8 +224,8 @@ const startCheck = () => {
             inventoryId: it.id,
             skuId: it.itemSku.id,
             warehouseId: it.warehouseId,
-            quantity: Number(it.remainQuantity),
-            checkQuantity: Number(it.remainQuantity),
+            quantity: Number(it.quantity),
+            checkQuantity: Number(it.quantity),
             newInventoryDetail: false
           }
         )
