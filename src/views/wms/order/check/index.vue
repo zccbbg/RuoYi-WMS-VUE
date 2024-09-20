@@ -1,36 +1,40 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="盘库状态" prop="checkOrderStatus">
-          <el-radio-group v-model="queryParams.checkOrderStatus" @change="handleQuery">
-            <el-radio-button
-              :key="-2"
-              :label="-2"
-            >
-              全部
-            </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_check_status"
-              :key="item.value"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="盘库单号" prop="checkOrderNo">
-          <el-input
-            v-model="queryParams.checkOrderNo"
-            placeholder="请输入盘库单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item>
+      <el-form :model="queryParams" class="form-wrapper" ref="queryRef" :inline="true" label-width="68px">
+        <div class="formSearch">
+          <el-form-item label="盘库状态" prop="checkOrderStatus" class="fixed-search">
+            <el-radio-group v-model="queryParams.checkOrderStatus" @change="handleQuery" style="width: 100%">
+              <el-radio-button
+                :key="-2"
+                :label="-2"
+                class="radio-btn-4"
+              >
+                全部
+              </el-radio-button>
+              <el-radio-button
+                v-for="item in wms_check_status"
+                :key="item.value"
+                class="radio-btn-4"
+                :label="item.value"
+              >
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="盘库单号" prop="checkOrderNo" class="col1">
+            <el-input
+              v-model="queryParams.checkOrderNo"
+              placeholder="请输入盘库单号"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+        </div>
+        <div class="btn-right-search2">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+        </div>
       </el-form>
     </el-card>
 

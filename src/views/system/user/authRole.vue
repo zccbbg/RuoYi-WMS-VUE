@@ -1,5 +1,5 @@
 <template>
-   <div class="app-container">
+   <div class="app-container bg-container">
       <h4 class="form-header h4">基本信息</h4>
       <el-form :model="form" label-width="80px">
          <el-row>

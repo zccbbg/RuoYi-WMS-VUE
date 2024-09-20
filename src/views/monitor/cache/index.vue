@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-row>
       <el-col :span="24" class="card-box">
         <el-card>

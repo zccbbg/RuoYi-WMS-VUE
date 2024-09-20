@@ -1,37 +1,39 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="编号" prop="merchantCode">
-          <el-input
-            v-model="queryParams.merchantCode"
-            placeholder="请输入编号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item label="名称" prop="merchantName">
-          <el-input
-            v-model="queryParams.merchantName"
-            placeholder="请输入名称"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item label="企业类型" prop="merchantType">
-          <el-select v-model="queryParams.merchantType" placeholder="请选择企业类型" clearable>
-            <el-option
-              v-for="dict in merchant_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
+      <el-form :model="queryParams" class="form-wrapper" ref="queryRef" :inline="true" label-width="68px">
+        <div class="formSearch">
+          <el-form-item label="企业类型" prop="merchantType" class="col1">
+            <el-select v-model="queryParams.merchantType" placeholder="请选择企业类型" clearable>
+              <el-option
+                v-for="dict in merchant_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="编号" prop="merchantCode" class="col1">
+            <el-input
+              v-model="queryParams.merchantCode"
+              placeholder="请输入编号"
+              clearable
+              @keyup.enter="handleQuery"
             />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
+          </el-form-item>
+          <el-form-item label="名称" prop="merchantName" class="col1">
+            <el-input
+              v-model="queryParams.merchantName"
+              placeholder="请输入名称"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+        </div>
+        <div class="btn-right-search2">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+          <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
+        </div>
       </el-form>
     </el-card>
 

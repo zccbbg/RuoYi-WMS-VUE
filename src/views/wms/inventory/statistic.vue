@@ -1,44 +1,46 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" label-width="90px" :inline="true">
-        <el-form-item class="col4" label="维度 " prop="itemId">
-          <el-radio-group v-model="queryType" size="medium" @change="handleSortTypeChange">
-            <el-radio-button label="warehouse">仓库</el-radio-button>
-            <el-radio-button label="area">库区</el-radio-button>
-            <el-radio-button label="item">商品</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item class="col4" label="仓库" prop="warehouseId">
-          <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
-                     filterable clearable>
-            <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                       :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="col4" label="库区" prop="areaId">
-          <el-select style="width: 100%" v-model="queryParams.areaId" placeholder="请选择库区" :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable
-                     filterable>
-            <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === queryParams.warehouseId)"
-                       :key="item.id" :label="item.areaName" :value="item.id"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item class="col4" label="商品名称" prop="itemName">
-          <el-input v-model="queryParams.itemName" clearable placeholder="商品名称"></el-input>
-        </el-form-item>
-        <el-form-item class="col4" label="商品编号" prop="itemCode">
-          <el-input v-model="queryParams.itemCode" clearable placeholder="商品编号"></el-input>
-        </el-form-item>
-        <el-form-item class="col4" label="规格名称" prop="skuName">
-          <el-input v-model="queryParams.skuName" clearable placeholder="规格名称"></el-input>
-        </el-form-item>
-        <el-form-item class="col4" label="规格编号" prop="skuCode">
-          <el-input v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
-        </el-form-item>
-        <el-form-item class="col4" style="margin-left: 32px">
+      <el-form class="form-wrapper" :model="queryParams" ref="queryRef" label-width="70px" :inline="true" >
+        <div class="formSearch">
+          <el-form-item class="col1" label="维度" prop="itemId">
+            <el-radio-group v-model="queryType" style="width: 100%" @change="handleSortTypeChange">
+              <el-radio-button class="radio-btn-3" label="warehouse">仓库</el-radio-button>
+              <el-radio-button class="radio-btn-3" label="area">库区</el-radio-button>
+              <el-radio-button class="radio-btn-3" label="item">商品</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item class="col1" label="仓库" prop="warehouseId">
+            <el-select style="width: 100%" v-model="queryParams.warehouseId" placeholder="请选择仓库" @change="handleChangeWarehouse"
+                       filterable clearable>
+              <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
+                         :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="col1" label="库区" prop="areaId">
+            <el-select style="width: 100%" v-model="queryParams.areaId" placeholder="请选择库区" :disabled="!queryParams.warehouseId || queryParams.type == 1" clearable
+                       filterable>
+              <el-option v-for="item in useWmsStore().areaList.filter(it => it.warehouseId === queryParams.warehouseId)"
+                         :key="item.id" :label="item.areaName" :value="item.id"/>
+            </el-select>
+          </el-form-item>
+          <el-form-item class="col1" label="商品名称" prop="itemName">
+            <el-input v-model="queryParams.itemName" clearable placeholder="商品名称"></el-input>
+          </el-form-item>
+          <el-form-item class="col1" label="商品编号" prop="itemCode">
+            <el-input v-model="queryParams.itemCode" clearable placeholder="商品编号"></el-input>
+          </el-form-item>
+          <el-form-item class="col1" label="规格名称" prop="skuName">
+            <el-input v-model="queryParams.skuName" clearable placeholder="规格名称"></el-input>
+          </el-form-item>
+          <el-form-item class="col1" label="规格编号" prop="skuCode">
+            <el-input v-model="queryParams.skuCode" clearable placeholder="规格编号"></el-input>
+          </el-form-item>
+        </div>
+        <div class="btn-right-search">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+          <el-button icon="Refresh" @click="resetQuery" class="mt16" style="margin-left: 0;">重置</el-button>
+        </div>
       </el-form>
     </el-card>
     <el-card class="mt20">

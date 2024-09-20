@@ -1,42 +1,46 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="98px">
-        <el-form-item label="移库状态" prop="movementOrderStatus">
-          <el-radio-group v-model="queryParams.movementOrderStatus" @change="handleQuery">
-            <el-radio-button
-              :key="-2"
-              :label="-2"
-            >
-              全部
-            </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_movement_status"
-              :key="item.value"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="移库单号" prop="movementOrderNo">
-          <el-input
-            v-model="queryParams.movementOrderNo"
-            placeholder="请输入移库单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item label="源仓库库区">
-          <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
-        <el-form-item label="目标仓库库区">
-          <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
-        <el-form-item>
+      <el-form :model="queryParams" class="form-wrapper" ref="queryRef" :inline="true" label-width="98px">
+        <div class="formSearch">
+          <el-form-item label="移库单号" prop="movementOrderNo" class="col1">
+            <el-input
+              v-model="queryParams.movementOrderNo"
+              placeholder="请输入移库单号"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="源仓库库区" class="col1">
+            <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
+          </el-form-item>
+          <el-form-item label="移库状态" prop="movementOrderStatus" class="fixed-search">
+            <el-radio-group v-model="queryParams.movementOrderStatus" @change="handleQuery" style="width: 100%">
+              <el-radio-button
+                :key="-2"
+                :label="-2"
+                class="radio-btn-4"
+              >
+                全部
+              </el-radio-button>
+              <el-radio-button
+                v-for="item in wms_movement_status"
+                :key="item.value"
+                class="radio-btn-4"
+                :label="item.value"
+              >
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="目标仓库库区" class="col1">
+            <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
+          </el-form-item>
+        </div>
+        <div class="btn-right-search">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+          <el-button icon="Refresh" @click="resetQuery" class="mt16" style="margin-left: 0;">重置</el-button>
+        </div>
       </el-form>
     </el-card>
 

@@ -1,58 +1,62 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="操作类型" prop="orderType">
-          <el-radio-group v-model="queryParams.orderType" @change="handleQuery">
-            <el-radio-button
-              :key="-1"
-              :label="-1"
-            >
-              全部
-            </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_inventory_history_type"
-              :key="item.value"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="操作单号" prop="orderNo">
-          <el-input v-model="queryParams.orderNo" clearable placeholder="请输入操作单号"></el-input>
-        </el-form-item>
-        <el-form-item label="仓库库区" prop="place">
-          <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
-        </el-form-item>
-        <el-form-item label="商品名称" prop="itemName">
-          <el-input v-model="queryParams.itemName" clearable placeholder="请输入商品名称"></el-input>
-        </el-form-item>
-        <el-form-item label="商品编号" prop="itemCode">
-          <el-input v-model="queryParams.itemCode" clearable placeholder="请输入商品编号"></el-input>
-        </el-form-item>
-        <el-form-item label="规格名称" prop="skuName">
-          <el-input v-model="queryParams.skuName" clearable placeholder="请输入规格名称"></el-input>
-        </el-form-item>
-        <el-form-item label="规格编号" prop="skuCode">
-          <el-input v-model="queryParams.skuCode" clearable placeholder="请输入规格编号"></el-input>
-        </el-form-item>
-        <el-form-item label="操作时间" prop="createTimeRange">
-          <el-date-picker
-            v-model="queryParams.createTimeRange"
-            type="datetimerange"
-            range-separator="至"
-            value-format="YYYY-MM-DD HH:mm:ss"
-            format="YYYY-MM-DD HH:mm:ss"
-            :default-time="defaultTime"
-            start-placeholder="开始时间"
-            end-placeholder="结束时间"
-          />
-        </el-form-item>
-        <el-form-item>
+      <el-form :model="queryParams" class="form-wrapper" ref="queryRef" :inline="true" label-width="68px">
+        <div class="formSearch">
+          <el-form-item label="操作单号" prop="orderNo" class="col1">
+            <el-input v-model="queryParams.orderNo" clearable placeholder="请输入操作单号"></el-input>
+          </el-form-item>
+          <el-form-item label="仓库库区" prop="place" class="col1">
+            <WarehouseCascader v-model:value="queryParams.place" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
+          </el-form-item>
+          <el-form-item label="操作类型" prop="orderType" class="fixed-search">
+            <el-radio-group v-model="queryParams.orderType" @change="handleQuery" style="width: 100%">
+              <el-radio-button
+                class="radio-btn-5"
+                :key="-1"
+                :label="-1"
+              >
+                全部
+              </el-radio-button>
+              <el-radio-button
+                class="radio-btn-5"
+                v-for="item in wms_inventory_history_type"
+                :key="item.value"
+                :label="item.value"
+              >
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="商品名称" prop="itemName" class="col1">
+            <el-input v-model="queryParams.itemName" clearable placeholder="请输入商品名称"></el-input>
+          </el-form-item>
+          <el-form-item label="商品编号" prop="itemCode" class="col1">
+            <el-input v-model="queryParams.itemCode" clearable placeholder="请输入商品编号"></el-input>
+          </el-form-item>
+          <el-form-item label="规格名称" prop="skuName" class="col1">
+            <el-input v-model="queryParams.skuName" clearable placeholder="请输入规格名称"></el-input>
+          </el-form-item>
+          <el-form-item label="规格编号" prop="skuCode" class="col1">
+            <el-input v-model="queryParams.skuCode" clearable placeholder="请输入规格编号"></el-input>
+          </el-form-item>
+          <el-form-item label="操作时间" prop="createTimeRange" class="col1">
+            <el-date-picker
+              v-model="queryParams.createTimeRange"
+              type="datetimerange"
+              range-separator="至"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              format="YYYY-MM-DD HH:mm:ss"
+              :default-time="defaultTime"
+              start-placeholder="开始"
+              end-placeholder="结束"
+            />
+          </el-form-item>
+        </div>
+        <div class="btn-right-search">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+          <el-button icon="Refresh" @click="resetQuery" class="mt16" style="margin-left: 0;">重置</el-button>
+        </div>
       </el-form>
     </el-card>
 

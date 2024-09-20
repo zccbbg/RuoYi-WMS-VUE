@@ -86,7 +86,7 @@ function setLayout() {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #F8F9FD;
+  background: var(--base-nav-background);
 
   .hamburger-container {
     line-height: 46px;

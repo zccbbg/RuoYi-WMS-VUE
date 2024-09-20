@@ -1,61 +1,67 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="入库状态" prop="receiptOrderStatus">
-          <el-radio-group v-model="queryParams.receiptOrderStatus" @change="handleQuery">
-            <el-radio-button
-              :key="-2"
-              :label="-2"
-            >
-              全部
-            </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_receipt_status"
-              :key="item.value"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="入库类型" prop="receiptOrderStatus">
-          <el-radio-group v-model="queryParams.receiptOrderType" @change="handleQuery">
-            <el-radio-button
-              :key="-1"
-              :label="-1"
-            >
-              全部
-            </el-radio-button>
-            <el-radio-button
-              v-for="item in wms_receipt_type"
-              :key="item.value"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="入库单号" prop="receiptOrderNo">
-          <el-input
-            v-model="queryParams.receiptOrderNo"
-            placeholder="请输入入库单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item label="订单号" prop="orderNo">
-          <el-input
-            v-model="queryParams.orderNo"
-            placeholder="请输入订单号"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item>
+      <el-form :model="queryParams" class="form-wrapper" ref="queryRef" :inline="true" label-width="68px">
+        <div class="formSearch">
+          <el-form-item label="入库类型" prop="receiptOrderStatus" class="fixed-search">
+            <el-radio-group v-model="queryParams.receiptOrderType" @change="handleQuery" style="width: 100%">
+              <el-radio-button
+                :key="-1"
+                :label="-1"
+                class="radio-btn-5"
+              >
+                全部
+              </el-radio-button>
+              <el-radio-button
+                v-for="item in wms_receipt_type"
+                :key="item.value"
+                class="radio-btn-5"
+                :label="item.value"
+              >
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="入库单号" prop="receiptOrderNo" class="col1">
+            <el-input
+              v-model="queryParams.receiptOrderNo"
+              placeholder="请输入入库单号"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="订单号" prop="orderNo" class="col1">
+            <el-input
+              v-model="queryParams.orderNo"
+              placeholder="请输入订单号"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="入库状态" prop="receiptOrderStatus" class="col0">
+            <el-radio-group v-model="queryParams.receiptOrderStatus" @change="handleQuery" style="width: 100%">
+              <el-radio-button
+                :key="-2"
+                :label="-2"
+                class="radio-btn-4"
+              >
+                全部
+              </el-radio-button>
+              <el-radio-button
+                class="radio-btn-4"
+                v-for="item in wms_receipt_status"
+                :key="item.value"
+                :label="item.value"
+              >
+                {{ item.label }}
+              </el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+        </div>
+        <div class="btn-right-search">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+          <el-button icon="Refresh" @click="resetQuery" class="mt16" style="margin-left: 0;">重置</el-button>
+        </div>
       </el-form>
     </el-card>
 

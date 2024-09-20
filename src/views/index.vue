@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container home">
+  <div class="app-container home bg-container">
     <el-row class="pl20 pr20 pb20 pt20" :gutter="10">
       <el-col :span="12">
         <el-card shadow="always" style="padding-bottom: 20px;font-size: 14px" >

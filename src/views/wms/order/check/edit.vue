@@ -562,7 +562,7 @@ const goSaasTip = () => {
 }
 
 .hover-text:hover {
-  color: #409EFF; /* 鼠标移上去时文字颜色变为蓝色 */
+  color: #3671e8; /* 鼠标移上去时文字颜色变为蓝色 */
   text-decoration: underline; /* 鼠标移上去时带有下划线 */
 }
 </style>

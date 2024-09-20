@@ -245,7 +245,7 @@ function handleScroll() {
 .tags-view-container {
   height: 34px;
   width: 100%;
-  background: #F8F9FD;
+  background: var(--base-nav-background);
   border-bottom: 1px solid #d8dce5;
   .tags-view-wrapper {
     .tags-view-item {

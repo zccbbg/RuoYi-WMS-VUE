@@ -1,0 +1,37 @@
+/**
+* I think element-ui's default theme color is too light for long-term use.
+* So I modified the default color and you can modify it to your liking.
+**/
+@import "element-plus/theme-chalk/src/index";
+
+
+/* theme color */
+$--color-primary: #3671e8;
+// $--color-primary: #1890ff;
+$--color-success: #13ce66;
+$--color-warning: #ffba00;
+$--color-danger: #ff4949;
+// $--color-info: #1E1E1E;
+
+$--button-font-weight: 400;
+
+// $--color-text-regular: #1f2d3d;
+
+$--border-color-light: #dfe4ed;
+$--border-color-lighter: #e6ebf5;
+
+$--table-border: 1px solid #dfe6ec;
+
+
+
+
+// the :export directive is the magic sauce for webpack
+// https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
+
+:root {
+  --hover-bg: rgb(46, 127, 210, 0.1);
+  --normal-bg: #1890ff;
+  --alarm-bg: #ff4949;
+  --offLine-bg: #ffba00;
+  // --current-color: #121824;
+}

@@ -1,27 +1,29 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-width="68px">
-        <el-form-item label="商品编号" prop="itemCode">
-          <el-input v-model="queryParams.itemCode" placeholder="请输入商品编号" clearable @keyup.enter="handleQuery"/>
-        </el-form-item>
-        <el-form-item label="商品名称" prop="itemName">
-          <el-input v-model="queryParams.itemName" placeholder="请输入商品名称" clearable @keyup.enter="handleQuery"/>
-        </el-form-item>
-        <el-form-item label="商品品牌" prop="itemBrand">
-          <el-select v-model="queryParams.itemBrand" clearable filterable>
-            <el-option
-              v-for="item in useWmsStore().itemBrandList"
-              :key="item.id"
-              :label="item.brandName"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
+      <el-form :model="queryParams" class="form-wrapper" ref="queryFormRef" :inline="true" label-width="68px">
+        <div class="formSearch">
+          <el-form-item label="商品编号" prop="itemCode" class="col1">
+            <el-input v-model="queryParams.itemCode" placeholder="请输入商品编号" clearable @keyup.enter="handleQuery"/>
+          </el-form-item>
+          <el-form-item label="商品名称" prop="itemName" class="col1">
+            <el-input v-model="queryParams.itemName" placeholder="请输入商品名称" clearable @keyup.enter="handleQuery"/>
+          </el-form-item>
+          <el-form-item label="商品品牌" prop="itemBrand" class="col1">
+            <el-select v-model="queryParams.itemBrand" clearable filterable>
+              <el-option
+                v-for="item in useWmsStore().itemBrandList"
+                :key="item.id"
+                :label="item.brandName"
+                :value="item.id"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+        <div class="btn-right-search2">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
           <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+        </div>
       </el-form>
     </el-card>
     <el-card class="mt20">

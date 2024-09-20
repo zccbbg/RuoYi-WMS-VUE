@@ -1,5 +1,7 @@
 // 处理主题样式
 export function handleThemeStyle(theme) {
+  document.getElementsByTagName('body')[0].className = 'theme-light'
+  document.getElementById('app').style = 'background: #3671e8;'
 	document.documentElement.style.setProperty('--el-color-primary', theme)
 	for (let i = 1; i <= 9; i++) {
 		document.documentElement.style.setProperty(`--el-color-primary-light-${i}`, `${getLightColor(theme, i / 10)}`)

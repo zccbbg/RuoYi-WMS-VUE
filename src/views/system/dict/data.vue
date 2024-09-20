@@ -1,5 +1,5 @@
 <template>
-   <div class="app-container">
+   <div class="app-container bg-container">
       <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
          <el-form-item label="字典名称" prop="dictType">
             <el-select v-model="queryParams.dictType" style="width: 200px">

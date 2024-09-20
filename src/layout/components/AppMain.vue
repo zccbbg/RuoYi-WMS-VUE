@@ -35,6 +35,7 @@ const tagsViewStore = useTagsViewStore()
   .app-main {
     /* 84 = navbar + tags-view = 50 + 34 */
     min-height: calc(100vh - 84px);
+    background: var(--base-main-bg);
   }
 
   .fixed-header + .app-main {

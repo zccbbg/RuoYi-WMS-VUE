@@ -1,19 +1,21 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
-      <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="品牌名称" prop="brandName">
-          <el-input
-            v-model="queryParams.brandName"
-            placeholder="请输入品牌名称"
-            clearable
-            @keyup.enter="handleQuery"
-          />
-        </el-form-item>
-        <el-form-item>
+      <el-form :model="queryParams" class="form-wrapper" ref="queryRef" :inline="true" label-width="68px">
+        <div class="formSearch">
+          <el-form-item label="品牌名称" prop="brandName" class="col1">
+            <el-input
+              v-model="queryParams.brandName"
+              placeholder="请输入品牌名称"
+              clearable
+              @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+        </div>
+        <div class="btn-right-search2">
           <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-          <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
+          <el-button icon="Refresh" @click="resetQuery" >重置</el-button>
+        </div>
       </el-form>
     </el-card>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-card>
       <div style="display: flex;align-items: start">
         <div>

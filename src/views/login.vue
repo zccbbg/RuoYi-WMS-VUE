@@ -185,7 +185,7 @@ getCookie();
 
 <style lang='scss' scoped>
 .color-main {
-  color: #409EFF;
+  color: #3671e8;
 }
 .font-extra-large {
   font-size: 20px;

@@ -124,6 +124,11 @@ aside {
 //main-container全局样式
 .app-container {
   padding: 20px;
+  //background-color: var(--base-main-bg);
+}
+
+.bg-container {
+  background-color: var(--base-body-background);
 }
 
 .components-container {

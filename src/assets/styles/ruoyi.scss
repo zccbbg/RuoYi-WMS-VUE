@@ -31,6 +31,9 @@
 .mt10 {
 	margin-top: 10px;
 }
+ .mt16 {
+	margin-top: 16px;
+}
 .mr10 {
 	margin-right: 10px;
 }
@@ -141,7 +144,7 @@
 /** 表格更多操作下拉样式 */
 .el-table .el-dropdown-link {
 	cursor: pointer;
-	color: #409EFF;
+	//color: #409EFF;
 	margin-left: 10px;
 }
 
@@ -277,7 +280,7 @@
 }
 
  .add-btn {
-   border: 1px dotted #409EFF!important;
+   border: 1px dotted #3671e8 !important;
    width: 98%
  }
 
@@ -315,6 +318,141 @@
  }
 
  .col4 {
-     width: calc(25% - 1rem) !important;
-     margin-right: 0px !important;
+   width: calc(25% - 1rem) !important;
+   margin-right: 0px !important;
  }
+
+ .form-wrapper {
+   display: flex;
+   align-items: flex-start;
+
+   .formSearch {
+     flex: 1 1 0;
+     display: flex;
+     align-items: flex-start;
+     flex-wrap: wrap;
+     padding: 1rem 0 0 1rem;
+
+     > div {
+       margin: 0 16px 16px 0;
+     }
+
+     > .col0 {
+       width: calc(41% - 1rem);
+     }
+     > .col1 {
+       width: calc(25% - 1rem);
+     }
+
+     > .col2 {
+       width: calc(16% - 1rem);
+     }
+
+     > .fixed-search {
+       width: calc(50% - 1rem);
+
+       .ivu-select-selection:hover,
+       .ivu-input:hover,
+       .ivu-select-visible,
+       .ivu-select-selection-focused {
+         z-index: 3;
+       }
+
+       .right_angle {
+         .ivu-select-selection,
+         .ivu-input {
+           border-top-right-radius: 0;
+           border-bottom-right-radius: 0;
+         }
+       }
+
+       .left_angle {
+         flex: 1;
+
+         .ivu-input,
+         .ivu-select-selection {
+           border-top-left-radius: 0;
+           border-bottom-left-radius: 0;
+         }
+       }
+
+       .ivu-input,
+       .ivu-select {
+         margin-left: -1px;
+       }
+     }
+
+     .th_flag_wrapper {
+       display: block;
+
+       .value {
+         max-width: 100%;
+       }
+
+       .price_modal {
+         top: 35px;
+       }
+     }
+
+     .select_goods_title {
+       .ivu-select-dropdown-list {
+         .ivu-select-item {
+           overflow: hidden;
+           text-overflow: ellipsis;
+         }
+       }
+     }
+
+     .select_sku {
+       .ivu-tag-text {
+         max-width: 75px;
+       }
+     }
+   }
+   .btn-right-search {
+     border-left: 1px solid #dcdee2;
+     padding: 0 0 0 16px;
+     margin: 16px 0;
+     display: flex;
+     flex-direction: column;
+     align-items: stretch;
+     width: 100px;
+   }
+   .btn-right-search2 {
+     border-left: 1px solid #dcdee2;
+     padding: 0 0 0 16px;
+     margin: 16px 0;
+     display: flex;
+     align-items: stretch;
+     width: 190px;
+   }
+ }
+
+ .radio-btn-2 {
+   width: 50%;
+   .el-radio-button__inner {
+     width: 100%;
+   }
+ }
+
+ .radio-btn-3 {
+   width: 33.3333%;
+   .el-radio-button__inner {
+     width: 100%;
+   }
+ }
+ .radio-btn-4 {
+   width: 25%;
+   .el-radio-button__inner {
+     width: 100%;
+   }
+ }
+
+ .radio-btn-5 {
+   width: 20%;
+   .el-radio-button__inner {
+     width: 100%;
+   }
+ }
+
+

@@ -84,13 +84,29 @@
 }
 
 .el-menu--collapse
-  > div
-  > .el-submenu
-  > .el-submenu__title
-  .el-submenu__icon-arrow {
+> div
+> .el-submenu
+> .el-submenu__title
+.el-submenu__icon-arrow {
   display: none;
 }
 
-.el-dropdown .el-dropdown-link{
-  color: var(--el-color-primary) !important;
+// 按钮默认样式
+.el-button {
+  border-radius: 6px !important;
 }
+
+.el-textarea__inner {
+  font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+}
+
+// 重置按钮样式
+// .el-button--primary.is-plain,
+// .el-button--success.is-plain,
+// .el-button--warning.is-plain,
+// .el-button--danger.is-plain,
+// .el-button--info.is-plain {
+//   color: #fff !important;
+//   background-color: var(--current-color) !important;
+//   border: 1px solid var(--current-color) !important;
+// }

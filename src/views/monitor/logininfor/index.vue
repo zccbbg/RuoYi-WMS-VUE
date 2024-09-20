@@ -1,5 +1,5 @@
 <template>
-   <div class="app-container">
+   <div class="app-container bg-container">
       <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
          <el-form-item label="登录地址" prop="ipaddr">
             <el-input

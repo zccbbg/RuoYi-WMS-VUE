@@ -66,45 +66,58 @@
       border: none;
       height: 100%;
       width: 100% !important;
+      background-color: var(--base-menu-background);
     }
 
-    .el-menu-item, .menu-title {
+    .el-menu-item, .el-sub-menu__title {
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
-    }
-
-    .el-menu-item .el-menu-tooltip__trigger {
-      display: inline-block !important;
+      color: var(--base-menu-color) !important;
+      background-color: var(--base-menu-background);
     }
 
     // menu hover
-    .sub-menu-title-noDropdown,
-    .el-sub-menu__title {
+    .submenu-title-noDropdown,
+    .el-submenu__title {
+      // color: #fff !important;
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: var(--base-menu-background-active) !important;
       }
     }
 
-    & .theme-dark .is-active > .el-sub-menu__title {
-      color: $base-menu-color-active !important;
+    & .is-active > .el-submenu__title {
+      color: var(--base-menu-color-active) !important;
+      background-color: var(--base-menu-background-active) !important;
     }
 
-    & .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .el-sub-menu .el-menu-item {
+    & .nest-menu .el-submenu > .el-submenu__title,
+    & .el-submenu .el-menu-item {
       min-width: $base-sidebar-width !important;
 
+      // &:hover {
+      //   background-color: rgba(0, 0, 0, 0.06) !important;
+      // }
+    }
+
+    & .nest-menu .el-submenu > .el-submenu__title,
+    & .el-submenu .el-menu-item {
+      background-color: var(--base-sub-menu-background) !important;
+
       &:hover {
-        background-color: rgba(0, 0, 0, 0.06) !important;
+        background-color: var(--base-sub-menu-hover) !important;
       }
     }
 
-    & .theme-dark .nest-menu .el-sub-menu>.el-sub-menu__title,
-    & .theme-dark .el-sub-menu .el-menu-item {
-      background-color: $base-sub-menu-background !important;
+    & .el-submenu .is-active,
+    & .el-menu .is-active {
+      color: #fff !important;
+      background-color: var(--base-sub-menu-hover) !important;
+    }
 
-      &:hover {
-        background-color: $base-sub-menu-hover !important;
+    & .el-menu-item, & .el-sub-menu__title {
+      i {
+        color: var(--base-menu-color) !important;
       }
     }
   }
@@ -118,11 +131,11 @@
       margin-left: 54px;
     }
 
-    .sub-menu-title-noDropdown {
+    .submenu-title-noDropdown {
       padding: 0 !important;
       position: relative;
 
-      .el-tooltip {
+      .el-menu-tooltip__trigger {
         padding: 0 !important;
 
         .svg-icon {
@@ -205,18 +218,42 @@
     .svg-icon {
       margin-right: 16px;
     }
-  }
 
-  .nest-menu .el-sub-menu>.el-sub-menu__title,
-  .el-menu-item {
-    &:hover {
-      // you can use $sub-menuHover
-      background-color: rgba(0, 0, 0, 0.06) !important;
+    background-color: var(--base-sub-menu-background);
+
+    i {
+      color: var(--base-menu-color);
+    }
+
+    & .is-active {
+      color: var(--base-menu-color-active);
+      background-color: var(--base-sub-menu-hover);
+    }
+
+    .el-menu-item {
+      &:hover {
+        background-color: var(--base-sub-menu-hover);
+      }
     }
   }
 
+  .el-submenu > .el-submenu__title {
+    &:hover {
+      background-color: var(--base-sub-menu-hover);
+    }
+  }
+
+  .nest-menu .el-submenu > .el-submenu__title,
+  .el-menu-item {
+    &:hover {
+      // you can use $subMenuHover
+      background-color: var(--base-sub-menu-hover) !important;
+    }
+  }
+
+
   // the scroll bar appears when the sub-menu is too long
-  >.el-menu--popup {
+  > .el-menu--popup {
     max-height: 100vh;
     overflow-y: auto;
 

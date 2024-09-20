@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container bg-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
       <el-form-item label="配置key" prop="configKey">
         <el-input
