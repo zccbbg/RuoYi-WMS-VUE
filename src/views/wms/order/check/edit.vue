@@ -133,8 +133,9 @@
         </div>
       </el-card>
       <SkuSelect
-        ref="sku-select"
+        ref="skuSelectRef"
         :model-value="skuSelectShow"
+        :selected-sku="selectedSku"
         @handleOkClick="handleOkClick"
         @handleCancelClick="skuSelectShow = false"
         :size="'80%'"
@@ -157,6 +158,7 @@
 
 <script setup name="CheckOrderEdit">
 import {computed, getCurrentInstance, onMounted, reactive, ref, toRef, toRefs, watch} from "vue";
+const skuSelectRef = ref(null)
 import {addCheckOrder, getCheckOrder, updateCheckOrder, check} from "@/api/wms/checkOrder";
 import {delCheckOrderDetail} from "@/api/wms/checkOrderDetail";
 import {listInventoryNoPage} from "@/api/wms/inventory";
@@ -169,6 +171,7 @@ import SkuSelect from "@/views/components/SkuSelect.vue";
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
 const loading = ref(false)
+const selectedSku = ref([])
 const initFormData = {
   id: undefined,
   checkOrderNo: undefined,
@@ -178,7 +181,6 @@ const initFormData = {
   checkOrderTotal: 0,
   details: [],
 }
-const selectedInventory = ref([])
 const data = reactive({
   form: {...initFormData},
   rules: {
@@ -235,8 +237,9 @@ const startCheck = () => {
 // 选择成功
 const handleOkClick = (item) => {
   skuSelectShow.value = false
-  selectedInventory.value = [...item]
+  selectedSku.value = [...item]
   item.forEach(it => {
+    if (!form.value.details.find(detail => detail.itemSku.id === it.id)) {
       form.value.details.push(
         {
           itemSku: {...it},
@@ -247,10 +250,12 @@ const handleOkClick = (item) => {
           checkQuantity: 0,
           newInventory: true
         })
+    }
   })
 }
 
 const showSkuSelect = () => {
+  skuSelectRef.value.getList()
   skuSelectShow.value = true
 }
 // 选择商品 end
@@ -294,6 +299,7 @@ const doSave = (checkOrderStatus = 0) => {
       warehouseId: form.value.warehouseId,
       details: details
     }
+    loading.value = true
     if (params.id) {
       updateCheckOrder(params).then((res) => {
         if (res.code === 200) {
@@ -302,6 +308,8 @@ const doSave = (checkOrderStatus = 0) => {
         } else {
           ElMessage.error(res.msg)
         }
+      }).finally(() => {
+        loading.value = false
       })
     } else {
       addCheckOrder(params).then((res) => {
@@ -311,6 +319,8 @@ const doSave = (checkOrderStatus = 0) => {
         } else {
           ElMessage.error(res.msg)
         }
+      }).finally(() => {
+        loading.value = false
       })
     }
   })
@@ -381,6 +391,11 @@ const loadDetail = (id) => {
         detail.newInventory = !detail.inventoryId
         detail.quantity = detail.quantity
       })
+      selectedSku.value = response.data.details.map(it => {
+        return {
+          id: it.skuId
+        }
+      })
     }
     form.value = {...response.data}
     Promise.resolve();
@@ -401,6 +416,8 @@ const handleDeleteDetail = (row, index) => {
   } else {
     form.value.details.splice(index, 1)
   }
+  const indexOfSelected = selectedSku.value.findIndex(it => row.itemSku.id=== it.id)
+  selectedSku.value.splice(indexOfSelected, 1)
 }
 
 const handleChangeQuantity = () => {
