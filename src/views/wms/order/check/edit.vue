@@ -121,11 +121,12 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="操作" width="100" align="right" fixed="right">
+            <el-table-column label="操作" width="100" align="center">
               <template #default="scope">
-                <el-button icon="Delete" type="danger" plain size="small" v-if="scope.row.newInventoryDetail"
+                <el-button icon="Delete" type="danger" plain size="small" v-if="scope.row.newInventory"
                            @click="handleDeleteDetail(scope.row, scope.$index)" link>删除
                 </el-button>
+                <div v-else> - </div>
               </template>
             </el-table-column>
           </el-table>
@@ -167,7 +168,6 @@ import SkuSelect from "@/views/components/SkuSelect.vue";
 
 const {proxy} = getCurrentInstance();
 const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
-const checkGreaterThanZero = ref(false)
 const loading = ref(false)
 const initFormData = {
   id: undefined,
@@ -178,7 +178,6 @@ const initFormData = {
   checkOrderTotal: 0,
   details: [],
 }
-const inventorySelectRef = ref(null)
 const selectedInventory = ref([])
 const data = reactive({
   form: {...initFormData},
@@ -226,7 +225,7 @@ const startCheck = () => {
             warehouseId: it.warehouseId,
             quantity: Number(it.quantity),
             checkQuantity: Number(it.quantity),
-            newInventoryDetail: false
+            newInventory: false
           }
         )
       }
@@ -246,7 +245,7 @@ const handleOkClick = (item) => {
           inventoryId: null,
           quantity: 0,
           checkQuantity: 0,
-          newInventoryDetail: true
+          newInventory: true
         })
   })
 }
@@ -379,8 +378,8 @@ const loadDetail = (id) => {
   getCheckOrder(id).then((response) => {
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
-        detail.newInventoryDetail = !detail.inventoryId
-        detail.quantity = detail.remainQuantity
+        detail.newInventory = !detail.inventoryId
+        detail.quantity = detail.quantity
       })
     }
     form.value = {...response.data}
