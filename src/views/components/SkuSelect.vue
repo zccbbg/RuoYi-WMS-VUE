@@ -242,9 +242,6 @@ const getVolumeText = (row) => {
 defineExpose({
   getList
 })
-onMounted(() => {
-  loadAll();
-})
 </script>
 <style lang="scss">
 .el-table .my-cell {

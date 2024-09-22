@@ -346,6 +346,7 @@ const doCheck = async () => {
         checkOrderId: form.value.id,
         skuId: it.skuId,
         quantity: it.quantity,
+        inventoryId: it.inventoryId,
         checkQuantity: it.checkQuantity,
         warehouseId: form.value.warehouseId
       }
