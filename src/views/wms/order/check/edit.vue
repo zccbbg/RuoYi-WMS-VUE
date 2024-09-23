@@ -267,7 +267,32 @@ const save = async () => {
   await proxy?.$modal.confirm('确认暂存盘库单吗？');
   doSave()
 }
-
+const getParams = (checkOrderStatus) => {
+  let details = []
+  if (form.value.details?.length) {
+    // 构建参数
+    details = form.value.details.map(it => {
+      return {
+        id: it.id,
+        checkOrderId: form.value.id,
+        skuId: it.skuId,
+        quantity: it.quantity,
+        checkQuantity: it.checkQuantity,
+        inventoryId: it.inventoryId,
+        warehouseId: form.value.warehouseId,
+      }
+    })
+  }
+  return  {
+    id: form.value.id,
+    checkOrderNo: form.value.checkOrderNo,
+    checkOrderStatus,
+    remark: form.value.remark,
+    checkOrderTotal: form.value.checkOrderTotal,
+    warehouseId: form.value.warehouseId,
+    details: details
+  }
+}
 const doSave = (checkOrderStatus = 0) => {
   //验证shipmentForm表单
   checkForm.value?.validate((valid) => {
@@ -275,30 +300,7 @@ const doSave = (checkOrderStatus = 0) => {
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
-    let details = []
-    if (form.value.details?.length) {
-      // 构建参数
-      details = form.value.details.map(it => {
-        return {
-          id: it.id,
-          checkOrderId: form.value.id,
-          skuId: it.skuId,
-          quantity: it.quantity,
-          checkQuantity: it.checkQuantity,
-          inventoryId: it.inventoryId,
-          warehouseId: form.value.warehouseId,
-        }
-      })
-    }
-    const params = {
-      id: form.value.id,
-      checkOrderNo: form.value.checkOrderNo,
-      checkOrderStatus,
-      remark: form.value.remark,
-      checkOrderTotal: form.value.checkOrderTotal,
-      warehouseId: form.value.warehouseId,
-      details: details
-    }
+    const params = getParams(checkOrderStatus);
     loading.value = true
     if (params.id) {
       updateCheckOrder(params).then((res) => {
@@ -339,27 +341,8 @@ const doCheck = async () => {
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
-    // 构建参数
-    const details = form.value.details.map(it => {
-      return {
-        id: it.id,
-        checkOrderId: form.value.id,
-        skuId: it.skuId,
-        quantity: it.quantity,
-        inventoryId: it.inventoryId,
-        checkQuantity: it.checkQuantity,
-        warehouseId: form.value.warehouseId
-      }
-    })
-
-    const params = {
-      id: form.value.id,
-      checkOrderNo: form.value.checkOrderNo,
-      checkOrderTotal: form.value.checkOrderTotal,
-      warehouseId: form.value.warehouseId,
-      remark: form.value.remark,
-      details: details
-    }
+    loading.value = true
+    const params = getParams(1);
     check(params).then((res) => {
       if (res.code === 200) {
         ElMessage.success('盘库成功')
@@ -367,6 +350,8 @@ const doCheck = async () => {
       } else {
         ElMessage.error(res.msg)
       }
+    }).finally(() => {
+      loading.value = false
     })
   })
 }
