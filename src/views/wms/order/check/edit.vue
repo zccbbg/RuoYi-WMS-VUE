@@ -218,8 +218,12 @@ const startCheck = () => {
   checking.value = true
   loading.value = true
   listInventoryNoPage(query).then(res => {
+    selectedSku.value = res.data.map(it => {
+      return {
+        id: it.skuId
+      }
+    })
     res.data.forEach(it => {
-      if (!form.value.details.find(detail => detail.inventoryId === it.id)) {
         form.value.details.push({
             itemSku: it.itemSku,
             inventoryId: it.id,
@@ -230,7 +234,6 @@ const startCheck = () => {
             newInventory: false
           }
         )
-      }
     })
   }).finally(() => loading.value = false)
 }
@@ -375,7 +378,6 @@ const loadDetail = (id) => {
     if (response.data.details?.length) {
       response.data.details.forEach(detail => {
         detail.newInventory = !detail.inventoryId
-        detail.quantity = detail.quantity
       })
       selectedSku.value = response.data.details.map(it => {
         return {
