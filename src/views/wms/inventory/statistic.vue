@@ -131,14 +131,14 @@ const queryParams = ref({
 
 /** 查询库存列表 */
 const getList = async () => {
-  const query = {...queryParams.value}
+  let query = {...queryParams.value}
   if (filterable.value) {
     query.minQuantity = 1
   } else {
     query.minQuantity = undefined
   }
   loading.value = true;
-  const res = await listInventoryBoard(queryParams.value,queryType.value);
+  const res = await listInventoryBoard(query,queryType.value);
   inventoryList.value = res.rows;
   inventoryList.value.forEach(it => {
     if (queryType.value == "warehouse") {
