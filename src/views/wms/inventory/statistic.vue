@@ -48,8 +48,8 @@
           </el-table-column>
           <el-table-column label="商品信息" prop="warehouseIdAndItemId">
             <template #default="{ row }">
-              <div>{{ row.item.itemName }}</div>
-              <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
+              <div>{{ row.itemSku.item.itemName }}</div>
+              <div v-if="row.itemSku.item.itemCode">商品编号：{{ row.itemSku.itemSku.item.itemCode }}</div>
             </template>
           </el-table-column>
           <el-table-column label="规格信息" :prop="skuId">
@@ -62,8 +62,8 @@
         <template v-else>
           <el-table-column label="商品信息" prop="itemId">
             <template #default="{ row }">
-              <div>{{ row.item.itemName }}</div>
-              <div v-if="row.item.itemCode">商品编号：{{ row.item.itemCode }}</div>
+              <div>{{ row.itemSku.item.itemName }}</div>
+              <div v-if="row.itemSku.item.itemCode">商品编号：{{ row.itemSku.item.itemCode }}</div>
             </template>
           </el-table-column>
           <el-table-column label="规格信息" prop="skuId">
