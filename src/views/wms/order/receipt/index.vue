@@ -290,24 +290,13 @@ function handleDelete(row) {
   const _ids = row.id || ids.value;
   proxy.$modal.confirm('确认删除入库单【' + row.receiptOrderNo + '】吗？').then(function() {
     loading.value = true;
-    return delReceiptOrder(_ids);
-  }).then(() => {
-    loading.value = true;
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch((e) => {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>入库单【' + row.receiptOrderNo + '】已入库，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
-  }).finally(() => {
-    loading.value = false;
-  });
+    delReceiptOrder(_ids).then(() => {
+      proxy.$modal.msgSuccess("删除成功");
+    }).finally(() => {
+      loading.value = false;
+      getList();
+    });
+  })
 }
 
 function handleUpdate(row) {
