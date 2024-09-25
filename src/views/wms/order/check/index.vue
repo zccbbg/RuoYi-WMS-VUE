@@ -70,16 +70,16 @@
             <el-statistic :value="Number(row.checkOrderTotal)" :precision="0"/>
           </template>
         </el-table-column>
-        <el-table-column label="创建/操作" align="left">
+        <el-table-column label="创建/更新" align="left">
           <template #default="{ row }">
             <div>创建：{{ row.createBy }}</div>
-            <div v-if="row.updateBy">操作：{{ row.updateBy }}</div>
+            <div v-if="row.updateBy">更新：{{ row.updateBy }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间/操作时间" align="left" width="200">
+        <el-table-column label="创建时间/更新时间" align="left" width="200">
           <template #default="{ row }">
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
-            <div>操作：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
+            <div>更新：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
         </el-table-column>
         <el-table-column label="备注" prop="remark" />
