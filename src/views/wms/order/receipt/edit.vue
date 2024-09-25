@@ -263,13 +263,7 @@ const save = async () => {
   doSave()
 }
 
-const doSave = async (receiptOrderStatus = 0) => {
-  //验证receiptForm表单
-  receiptForm.value?.validate((valid) => {
-    // 校验
-    if (!valid) {
-      return ElMessage.error('请填写必填项')
-    }
+const getParamsBeforeSave = (receiptOrderStatus) => {
     if (form.value.details?.length) {
       const invalidQuantityList = form.value.details.filter(it => !it.quantity)
       if (invalidQuantityList?.length) {
@@ -287,7 +281,7 @@ const doSave = async (receiptOrderStatus = 0) => {
       }
     })
 
-    const params = {
+    return {
       id: form.value.id,
       receiptOrderNo: form.value.receiptOrderNo,
       receiptOrderStatus,
@@ -300,6 +294,17 @@ const doSave = async (receiptOrderStatus = 0) => {
       warehouseId: form.value.warehouseId,
       details: details
     }
+}
+
+const doSave = async (receiptOrderStatus = 0) => {
+  //验证receiptForm表单
+  receiptForm.value?.validate((valid) => {
+    // 校验
+    if (!valid) {
+      return ElMessage.error('请填写必填项')
+    }
+    const params = getParamsBeforeSave(receiptOrderStatus)
+    loading.value = true
     if (params.id) {
       updateReceiptOrder(params).then((res) => {
         if (res.code === 200) {
@@ -308,6 +313,8 @@ const doSave = async (receiptOrderStatus = 0) => {
         } else {
           ElMessage.error(res.msg)
         }
+      }).finally(() => {
+        loading.value = false
       })
     } else {
       addReceiptOrder(params).then((res) => {
@@ -317,15 +324,11 @@ const doSave = async (receiptOrderStatus = 0) => {
         } else {
           ElMessage.error(res.msg)
         }
+      }).finally(() => {
+        loading.value = false
       })
     }
   })
-}
-
-
-const updateToInvalid = async () => {
-  await proxy?.$modal.confirm('确认作废入库单吗？');
-  doSave(-1)
 }
 
 const doWarehousing = async () => {
@@ -335,38 +338,12 @@ const doWarehousing = async () => {
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
+
     if (!form.value.details?.length) {
       return ElMessage.error('请选择商品')
     }
-    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
-    if (invalidQuantityList?.length) {
-      return ElMessage.error('请选择数量')
-    }
-    // 构建参数
-    const details = form.value.details.map(it => {
-      return {
-        id: it.id,
-        skuId: it.itemSku.id,
-        amount: it.amount,
-        quantity: it.quantity,
-        warehouseId: form.value.warehouseId
-      }
-    })
-
-    //('提交前校验',form.value)
-    const params = {
-      id: form.value.id,
-      receiptOrderNo: form.value.receiptOrderNo,
-      receiptOrderStatus: form.value.receiptOrderStatus,
-      receiptOrderType: form.value.receiptOrderType,
-      merchantId: form.value.merchantId,
-      orderNo: form.value.orderNo,
-      remark: form.value.remark,
-      payableAmount: form.value.payableAmount,
-      totalQuantity: form.value.totalQuantity,
-      warehouseId: form.value.warehouseId,
-      details: details
-    }
+    loading.value = true
+    const params = getParamsBeforeSave(1);
     warehousing(params).then((res) => {
       if (res.code === 200) {
         ElMessage.success('入库成功')
@@ -374,8 +351,15 @@ const doWarehousing = async () => {
       } else {
         ElMessage.error(res.msg)
       }
+    }).finally(() => {
+      loading.value = false
     })
   })
+}
+
+const updateToInvalid = async () => {
+  await proxy?.$modal.confirm('确认作废入库单吗？');
+  doSave(-1)
 }
 
 const route = useRoute();
