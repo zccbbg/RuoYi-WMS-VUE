@@ -212,7 +212,7 @@
 </template>
 
 <script setup name="ReceiptOrder">
-import { listReceiptOrder, getReceiptOrder, delReceiptOrder, addReceiptOrder, updateReceiptOrder } from "@/api/wms/receiptOrder";
+import {delReceiptOrder, getReceiptOrder, listReceiptOrder} from "@/api/wms/receiptOrder";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../../store/modules/wms";
 import {listByReceiptOrderId} from "@/api/wms/receiptOrderDetail";
@@ -336,9 +336,6 @@ async function handlePrint(row) {
       return {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
-        batchNo: detail.batchNo,
-        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
-        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
         quantity: Number(detail.quantity).toFixed(0),
         amount: detail.amount
       }
@@ -363,9 +360,7 @@ async function handlePrint(row) {
   let printTemplate = new proxy.$hiprint.PrintTemplate({template: receiptPanel})
   printTemplate.print(printData, {}, {
     styleHandler: () => {
-      let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
-      console.info("css:", css)
-      return css
+      return '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">'
     }
   })
 }

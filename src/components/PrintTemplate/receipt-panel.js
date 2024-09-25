@@ -336,57 +336,6 @@ export default {
         },
         {
           "options": {
-            "left": 340,
-            "top": 147.5,
-            "height": 9.75,
-            "width": 150,
-            "fields": [
-              {
-                "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
-                "field": "orderNo"
-              },
-              {
-                "text": "入库类型",
-                "field": "receiptOrderType"
-              },
-              {
-                "text": "入库状态",
-                "field": "receiptOrderStatus"
-              },
-              {
-                "text": "创建日期",
-                "field": "createTime"
-              },
-              {
-                "text": "备注",
-                "field": "remark"
-              }
-            ],
-            "title": "库区",
-            "field": "areaName",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "qrCodeLevel": 0,
-            "right": 489.75,
-            "bottom": 131.25,
-            "vCenter": 414.75,
-            "hCenter": 126.375
-          },
-          "printElementType": {
-            "title": "文本",
-            "type": "text"
-          }
-        },
-        {
-          "options": {
             "left": 20,
             "top": 172.5,
             "height": 9.75,
@@ -708,46 +657,6 @@ export default {
                   "fixed": false,
                   "rowspan": 1,
                   "colspan": 1
-                },
-                {
-                  "width": 90,
-                  "title": "库区",
-                  "field": "areaName",
-                  "checked": true,
-                  "columnId": "areaName",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1
-                },
-                {
-                  "width": 78.57142857142857,
-                  "title": "批号",
-                  "field": "batchNo",
-                  "checked": true,
-                  "columnId": "batchNo",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                },
-                {
-                  "width": 78.57142857142857,
-                  "title": "生产日期",
-                  "field": "productionDate",
-                  "checked": true,
-                  "columnId": "productionDate",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                },
-                {
-                  "width": 78.57142857142857,
-                  "title": "过期日期",
-                  "field": "expirationDate",
-                  "checked": true,
-                  "columnId": "expirationDate",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
                 },
                 {
                   "width": 78.57142857142857,
