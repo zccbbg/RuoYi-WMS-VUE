@@ -62,7 +62,7 @@
         <div class="receipt-order-content">
           <div class="flex-space-between mb8">
             <div>
-              <span>一物一码/SN模式：</span>
+              <span>审批模式：</span>
               <el-switch
                 :before-change="goSaasTip"
                 class="mr10 ml10"
@@ -419,7 +419,7 @@ const handleChangeQuantity = () => {
 }
 
 const goSaasTip = () => {
-  ElMessageBox.alert('一物一码/SN模式请去Saas版本体验！', '系统提示', {
+  ElMessageBox.alert('审批模式请去Saas版本体验！', '系统提示', {
     confirmButtonText: '确定'
   })
   return false
