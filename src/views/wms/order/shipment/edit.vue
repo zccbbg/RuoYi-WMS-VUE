@@ -446,10 +446,13 @@ const handleAutoCalc = () => {
 const handleDeleteDetail = (row, index) => {
   if (row.id) {
     proxy.$modal.confirm('确认删除本条商品明细吗？如确认会立即执行！').then(function () {
+      loading.value = true;
       return delShipmentOrderDetail(row.id);
     }).then(() => {
       form.value.details.splice(index, 1)
       proxy.$modal.msgSuccess("删除成功");
+    }).finally(()=>{
+      loading.value=false
     })
   } else {
     form.value.details.splice(index, 1)
