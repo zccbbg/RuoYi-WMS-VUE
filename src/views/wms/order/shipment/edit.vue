@@ -19,6 +19,12 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item label="数量" prop="totalQuantity">
+                <el-input-number style="width: 100%" v-model="form.totalQuantity" :controls="false" :precision="0"
+                                 :disabled="true"></el-input-number>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
@@ -64,17 +70,11 @@
             <el-col :span="6">
               <div style="display: flex;align-items: start">
                 <el-form-item label="金额" prop="receivableAmount">
-                  <el-input-number v-model="form.receivableAmount" :precision="2" :min="0"></el-input-number>
+                  <el-input-number style="width: 100%;" v-model="form.receivableAmount" :precision="2" :min="0"></el-input-number>
                 </el-form-item>
-                <el-button link type="primary" @click="handleAutoCalc" class="ml20" style="line-height: 32px">自动计算
+                <el-button link type="primary" @click="handleAutoCalc" style="line-height: 32px">自动计算
                 </el-button>
               </div>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="数量" prop="totalQuantity">
-                <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
-                                 :disabled="true"></el-input-number>
-              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
