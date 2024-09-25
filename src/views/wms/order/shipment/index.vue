@@ -336,9 +336,6 @@ async function handlePrint(row) {
         itemName: detail.itemSku.item.itemName,
         skuName: detail.itemSku.skuName,
         quantity: Number(detail.quantity).toFixed(0),
-        batchNo: detail.batchNo,
-        productionDate: proxy.parseTime(detail.productionDate, '{y}-{m}-{d}'),
-        expirationDate: proxy.parseTime(detail.expirationDate, '{y}-{m}-{d}'),
         amount: detail.amount
       }
     })
@@ -362,8 +359,7 @@ async function handlePrint(row) {
   let printTemplate = new proxy.$hiprint.PrintTemplate({template: shipmentPanel})
   printTemplate.print(printData, {}, {
     styleHandler: () => {
-      let css = '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
-      return css
+      return '<link href="https://cyl-press.oss-cn-shenzhen.aliyuncs.com/print-lock.css" media="print" rel="stylesheet">';
     }
   })
 }
