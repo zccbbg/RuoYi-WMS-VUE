@@ -264,14 +264,9 @@ const save = async () => {
 }
 
 const getParamsBeforeSave = (receiptOrderStatus) => {
-    if (form.value.details?.length) {
-      const invalidQuantityList = form.value.details.filter(it => !it.quantity)
-      if (invalidQuantityList?.length) {
-        return ElMessage.error('请选择数量')
-      }
-    }
-    // 构建参数
-    const details = form.value.details.map(it => {
+  let details = []
+  if (form.value.details?.length) {
+    details = form.value.details.map(it => {
       return {
         id: it.id,
         skuId: it.itemSku.id,
@@ -280,20 +275,21 @@ const getParamsBeforeSave = (receiptOrderStatus) => {
         warehouseId: form.value.warehouseId,
       }
     })
+  }
 
-    return {
-      id: form.value.id,
-      receiptOrderNo: form.value.receiptOrderNo,
-      receiptOrderStatus,
-      receiptOrderType: form.value.receiptOrderType,
-      merchantId: form.value.merchantId,
-      orderNo: form.value.orderNo,
-      remark: form.value.remark,
-      payableAmount: form.value.payableAmount,
-      totalQuantity: form.value.totalQuantity,
-      warehouseId: form.value.warehouseId,
-      details: details
-    }
+  return {
+    id: form.value.id,
+    receiptOrderNo: form.value.receiptOrderNo,
+    receiptOrderStatus,
+    receiptOrderType: form.value.receiptOrderType,
+    merchantId: form.value.merchantId,
+    orderNo: form.value.orderNo,
+    remark: form.value.remark,
+    payableAmount: form.value.payableAmount,
+    totalQuantity: form.value.totalQuantity,
+    warehouseId: form.value.warehouseId,
+    details: details
+  }
 }
 
 const doSave = async (receiptOrderStatus = 0) => {
@@ -342,8 +338,14 @@ const doWarehousing = async () => {
     if (!form.value.details?.length) {
       return ElMessage.error('请选择商品')
     }
-    loading.value = true
+    if (form.value.details?.length) {
+      const invalidQuantityList = form.value.details.filter(it => !it.quantity)
+      if (invalidQuantityList?.length) {
+        return ElMessage.error('请选择数量')
+      }
+    }
     const params = getParamsBeforeSave(1);
+    loading.value = true
     warehousing(params).then((res) => {
       if (res.code === 200) {
         ElMessage.success('入库成功')

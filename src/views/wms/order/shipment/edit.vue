@@ -280,10 +280,6 @@ const save = async () => {
 const getParamsBeforeSave = (shipmentOrderStatus) => {
   let details = []
   if (form.value.details?.length) {
-    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
-    if (invalidQuantityList?.length) {
-      return ElMessage.error('请选择数量')
-    }
     // 构建参数
     details = form.value.details.map(it => {
       return {
@@ -297,7 +293,6 @@ const getParamsBeforeSave = (shipmentOrderStatus) => {
     })
   }
 
-  //('提交前校验',form.value)
   return {
     id: form.value.id,
     shipmentOrderNo: form.value.shipmentOrderNo,
@@ -360,6 +355,10 @@ const doShipment = async () => {
     }
     if (!form.value.details?.length) {
       return ElMessage.error('请选择商品')
+    }
+    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
+    if (invalidQuantityList?.length) {
+      return ElMessage.error('请选择数量')
     }
     const params = getParamsBeforeSave(1)
 
