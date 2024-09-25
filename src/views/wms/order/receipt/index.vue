@@ -111,13 +111,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号/订单号" align="left">
+        <el-table-column label="单号/订单号" align="left" min-width="100">
           <template #default="{ row }">
             <div>单号：{{ row.receiptOrderNo }}</div>
             <div v-if="row.orderNo">订单号：{{ row.orderNo }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="入库类型" align="left" prop="receiptOrderType">
+        <el-table-column label="入库类型" align="center" prop="receiptOrderType" width="100">
           <template #default="{ row }">
             <dict-tag :options="wms_receipt_type" :value="row.receiptOrderType" />
           </template>
@@ -132,7 +132,7 @@
             <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="入库状态" align="center" prop="receiptOrderStatus">
+        <el-table-column label="入库状态" align="center" prop="receiptOrderStatus" width="80">
           <template #default="{ row }">
             <dict-tag :options="wms_receipt_status" :value="row.receiptOrderStatus" />
           </template>

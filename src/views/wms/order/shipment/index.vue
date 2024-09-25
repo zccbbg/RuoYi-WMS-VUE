@@ -110,13 +110,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号/订单号" align="left">
+        <el-table-column label="单号/订单号" align="left" min-width="100">
           <template #default="{ row }">
             <div>单号：{{ row.shipmentOrderNo }}</div>
             <div v-if="row.orderNo">订单号：{{ row.orderNo }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="出库类型" align="left" prop="shipmentOrderType">
+        <el-table-column label="出库类型" align="center" prop="shipmentOrderType" width="100">
           <template #default="{ row }">
             <dict-tag :options="wms_shipment_type" :value="row.shipmentOrderType" />
           </template>
@@ -126,12 +126,12 @@
             <div>{{ useWmsStore().merchantMap.get(row.merchantId)?.merchantName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="仓库" align="left" width="200">
+        <el-table-column label="仓库" align="left">
           <template #default="{ row }">
             <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="出库状态" align="center" prop="shipmentOrderStatus" width="120">
+        <el-table-column label="出库状态" align="center" prop="shipmentOrderStatus" width="80">
           <template #default="{ row }">
             <dict-tag :options="wms_shipment_status" :value="row.shipmentOrderStatus" />
           </template>
@@ -148,16 +148,17 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="创建/更新" align="left">
-          <template #default="{ row }">
-            <div>创建：{{ row.createBy }}</div>
-            <div v-if="row.updateBy">更新：{{ row.updateBy }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间/更新时间" align="left" width="200">
+
+        <el-table-column label="创建时间/更新时间" align="left" width="150">
           <template #default="{ row }">
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>更新：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建/更新" align="left">
+          <template #default="{ row }">
+            <div>{{ row.createBy }}</div>
+            <div v-if="row.updateBy">{{ row.updateBy }}</div>
           </template>
         </el-table-column>
         <el-table-column label="备注" prop="remark" />
@@ -215,7 +216,6 @@ import {listShipmentOrder, delShipmentOrder, getShipmentOrder} from "@/api/wms/s
 import {listByShipmentOrderId} from "@/api/wms/shipmentOrderDetail";
 import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 import {useWmsStore} from "../../../../store/modules/wms";
-import {ElMessageBox} from "element-plus";
 import shipmentPanel from "@/components/PrintTemplate/shipment-panel";
 
 const { proxy } = getCurrentInstance();
