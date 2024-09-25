@@ -291,21 +291,10 @@ function handleDelete(row) {
     loading.value = true;
     return delShipmentOrder(_ids);
   }).then(() => {
-    loading.value = true;
-    getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch((e) => {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>出库单【' + row.shipmentOrderNo + '】已出库，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
   }).finally(() => {
     loading.value = false;
+    getList();
   });
 }
 
