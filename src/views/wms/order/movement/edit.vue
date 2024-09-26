@@ -228,42 +228,46 @@ const save = async () => {
   await proxy?.$modal.confirm('确认暂存移库单吗？');
   doSave()
 }
-
+const getParams = (orderStatus) => {
+  let details = []
+  if (form.value.details?.length) {
+    // 构建参数
+    details = form.value.details.map(it => {
+      return {
+        id: it.id,
+        movementOrderId: form.value.id,
+        skuId: it.skuId,
+        quantity: it.quantity,
+        sourceWarehouseId: form.value.sourceWarehouseId,
+        targetWarehouseId: form.value.targetWarehouseId,
+      }
+    })
+  }
+  return {
+    id: form.value.id,
+    orderNo: form.value.orderNo,
+    orderStatus,
+    remark: form.value.remark,
+    totalQuantity: form.value.totalQuantity,
+    sourceWarehouseId: form.value.sourceWarehouseId,
+    targetWarehouseId: form.value.targetWarehouseId,
+    details: details
+  }
+}
 const doSave = (orderStatus = 0) => {
   movementForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
-    let details = []
-    if (form.value.details?.length) {
-      const invalidQuantityList = form.value.details.filter(it => !it.quantity)
-      if (invalidQuantityList?.length) {
-        return ElMessage.error('请选择数量')
-      }
-      // 构建参数
-      details = form.value.details.map(it => {
-        return {
-          id: it.id,
-          movementOrderId: form.value.id,
-          skuId: it.skuId,
-          quantity: it.quantity,
-          sourceWarehouseId: form.value.sourceWarehouseId,
-          targetWarehouseId: form.value.targetWarehouseId,
-        }
-      })
+
+    const invalidQuantityList = form.value.details.filter(it => !it.quantity)
+    if (invalidQuantityList?.length) {
+      return ElMessage.error('请选择数量')
     }
 
-    const params = {
-      id: form.value.id,
-      orderNo: form.value.orderNo,
-      orderStatus,
-      remark: form.value.remark,
-      totalQuantity: form.value.totalQuantity,
-      sourceWarehouseId: form.value.sourceWarehouseId,
-      targetWarehouseId: form.value.targetWarehouseId,
-      details: details
-    }
+    const params = getParams(orderStatus)
+    loading.value = true
     if (params.id) {
       updateMovementOrder(params).then((res) => {
         if (res.code === 200) {
@@ -272,6 +276,8 @@ const doSave = (orderStatus = 0) => {
         } else {
           ElMessage.error(res.msg)
         }
+      }).finally(()=>{
+        loading.value = false
       })
     } else {
       addMovementOrder(params).then((res) => {
@@ -281,15 +287,11 @@ const doSave = (orderStatus = 0) => {
         } else {
           ElMessage.error(res.msg)
         }
+      }).finally(()=>{
+        loading.value = false
       })
     }
   })
-}
-
-
-const updateToInvalid = async () => {
-  await proxy?.$modal.confirm('确认作废移库单吗？');
-  doSave(-1)
 }
 
 const doMovement = async () => {
@@ -306,28 +308,10 @@ const doMovement = async () => {
     if (invalidQuantityList?.length) {
       return ElMessage.error('请选择移库数量')
     }
-    // 构建参数
-    const details = form.value.details.map(it => {
-      return {
-        id: it.id,
-        movementOrderId: form.value.id,
-        skuId: it.skuId,
-        quantity: it.quantity,
-        sourceWarehouseId: form.value.sourceWarehouseId,
-        targetWarehouseId: form.value.targetWarehouseId,
-      }
-    })
 
     //('提交前校验',form.value)
-    const params = {
-      id: form.value.id,
-      orderNo: form.value.orderNo,
-      remark: form.value.remark,
-      totalQuantity: form.value.totalQuantity,
-      sourceWarehouseId: form.value.sourceWarehouseId,
-      targetWarehouseId: form.value.targetWarehouseId,
-      details: details
-    }
+    const params = getParams(1)
+    loading.value = true
     movement(params).then((res) => {
       if (res.code === 200) {
         ElMessage.success('移库成功')
@@ -335,8 +319,15 @@ const doMovement = async () => {
       } else {
         ElMessage.error(res.msg)
       }
+    }).finally(()=>{
+      loading.value = false
     })
   })
+}
+
+const updateToInvalid = async () => {
+  await proxy?.$modal.confirm('确认作废移库单吗？');
+  doSave(-1)
 }
 
 const route = useRoute();
