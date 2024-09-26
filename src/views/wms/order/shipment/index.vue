@@ -44,10 +44,10 @@
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="订单号" prop="orderNo">
+        <el-form-item label="业务单号" prop="orderNo">
           <el-input
             v-model="queryParams.orderNo"
-            placeholder="请输入订单号"
+            placeholder="请输入业务单号"
             clearable
             @keyup.enter="handleQuery"
           />
@@ -110,10 +110,10 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号/订单号" align="left" min-width="100">
+        <el-table-column label="单号/业务单号" align="left" min-width="100">
           <template #default="{ row }">
             <div>单号：{{ row.shipmentOrderNo }}</div>
-            <div v-if="row.orderNo">订单号：{{ row.orderNo }}</div>
+            <div v-if="row.orderNo">业务单号：{{ row.orderNo }}</div>
           </template>
         </el-table-column>
         <el-table-column label="出库类型" align="center" prop="shipmentOrderType" width="100">

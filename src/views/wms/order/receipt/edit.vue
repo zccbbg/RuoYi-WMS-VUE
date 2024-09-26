@@ -5,8 +5,8 @@
         <el-form label-width="108px" :model="form" ref="receiptForm" :rules="rules">
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="入库单号" prop="receiptOrderNo">
-                <el-input class="w200" v-model="form.receiptOrderNo" placeholder="入库单号" :disabled="form.id"></el-input>
+              <el-form-item label="入库单号" prop="orderNo">
+                <el-input class="w200" v-model="form.orderNo" placeholder="入库单号" :disabled="form.id"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -24,8 +24,8 @@
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="入库类型" prop="receiptOrderType">
-                <el-radio-group v-model="form.receiptOrderType">
+              <el-form-item label="入库类型" prop="optType">
+                <el-radio-group v-model="form.optType">
                   <el-radio-button
                     v-for="item in wms_receipt_type"
                     :key="item.value"
@@ -43,8 +43,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="订单号" prop="orderNo">
-                <el-input v-model="form.orderNo" placeholder="请输入订单号"></el-input>
+              <el-form-item label="业务单号" prop="bizOrderNo">
+                <el-input v-model="form.bizOrderNo" placeholder="请输入业务单号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -63,8 +63,8 @@
             </el-col>
             <el-col :span="6">
               <div style="display: flex;align-items: start">
-                <el-form-item label="金额" prop="payableAmount">
-                  <el-input-number style="width:100%" v-model="form.payableAmount" :precision="2" :min="0"></el-input-number>
+                <el-form-item label="金额" prop="totalAmount">
+                  <el-input-number style="width:100%" v-model="form.totalAmount" :precision="2" :min="0"></el-input-number>
                 </el-form-item>
                 <el-button link type="primary" @click="handleAutoCalc" style="line-height: 32px">自动计算</el-button>
               </div>
@@ -188,12 +188,12 @@ const loading = ref(false)
 const skuSelectRef = ref(null)
 const initFormData = {
   id: undefined,
-  receiptOrderNo: undefined,
-  receiptOrderType: "2",
-  merchantId: undefined,
   orderNo: undefined,
-  payableAmount: undefined,
-  receiptOrderStatus: 0,
+  optType: "2",
+  merchantId: undefined,
+  bizOrderNo: undefined,
+  totalAmount: undefined,
+  orderStatus: 0,
   remark: undefined,
   warehouseId: undefined,
   totalQuantity: 0,
@@ -204,14 +204,14 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    receiptOrderNo: undefined,
-    receiptOrderType: undefined,
     orderNo: undefined,
-    payableAmount: undefined,
-    receiptOrderStatus: undefined,
+    optType: undefined,
+    bizOrderNo: undefined,
+    totalAmount: undefined,
+    orderStatus: undefined,
   },
   rules: {
-    receiptOrderNo: [
+    orderNo: [
       {required: true, message: "入库单号不能为空", trigger: "blur"}
     ],
     warehouseId: [
@@ -263,7 +263,7 @@ const save = async () => {
   doSave()
 }
 
-const getParamsBeforeSave = (receiptOrderStatus) => {
+const getParamsBeforeSave = (orderStatus) => {
   let details = []
   if (form.value.details?.length) {
     details = form.value.details.map(it => {
@@ -279,27 +279,27 @@ const getParamsBeforeSave = (receiptOrderStatus) => {
 
   return {
     id: form.value.id,
-    receiptOrderNo: form.value.receiptOrderNo,
-    receiptOrderStatus,
-    receiptOrderType: form.value.receiptOrderType,
-    merchantId: form.value.merchantId,
     orderNo: form.value.orderNo,
+    orderStatus,
+    optType: form.value.optType,
+    merchantId: form.value.merchantId,
+    bizOrderNo: form.value.bizOrderNo,
     remark: form.value.remark,
-    payableAmount: form.value.payableAmount,
+    totalAmount: form.value.totalAmount,
     totalQuantity: form.value.totalQuantity,
     warehouseId: form.value.warehouseId,
     details: details
   }
 }
 
-const doSave = async (receiptOrderStatus = 0) => {
+const doSave = async (orderStatus = 0) => {
   //验证receiptForm表单
   receiptForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
-    const params = getParamsBeforeSave(receiptOrderStatus)
+    const params = getParamsBeforeSave(orderStatus)
     loading.value = true
     if (params.id) {
       updateReceiptOrder(params).then((res) => {
@@ -370,7 +370,7 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.receiptOrderNo = 'RK' + generateNo()
+    form.value.orderNo = 'RK' + generateNo()
   }
 })
 
@@ -414,7 +414,7 @@ const handleAutoCalc = () => {
       sum = numSub(sum, -Number(it.amount))
     }
   })
-  form.value.payableAmount = sum
+  form.value.totalAmount = sum
 }
 
 const handleDeleteDetail = (row, index) => {
