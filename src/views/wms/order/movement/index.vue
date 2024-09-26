@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="98px">
-        <el-form-item label="移库状态" prop="movementOrderStatus">
-          <el-radio-group v-model="queryParams.movementOrderStatus" @change="handleQuery">
+        <el-form-item label="移库状态" prop="orderStatus">
+          <el-radio-group v-model="queryParams.orderStatus" @change="handleQuery">
             <el-radio-button
               :key="-2"
               :label="-2"
@@ -19,9 +19,9 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="移库单号" prop="movementOrderNo">
+        <el-form-item label="移库单号" prop="orderNo">
           <el-input
-            v-model="queryParams.movementOrderNo"
+            v-model="queryParams.orderNo"
             placeholder="请输入移库单号"
             clearable
             @keyup.enter="handleQuery"
@@ -80,7 +80,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号" align="left" prop="movementOrderNo" />
+        <el-table-column label="单号" align="left" prop="orderNo" />
         <el-table-column label="源仓库" align="left" width="260">
           <template #default="{ row }">
             <div>{{ useWmsStore().warehouseMap.get(row.sourceWarehouseId)?.warehouseName }}</div>
@@ -91,9 +91,9 @@
             <div>{{ useWmsStore().warehouseMap.get(row.targetWarehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="移库状态" align="center" prop="movementOrderStatus" width="120">
+        <el-table-column label="移库状态" align="center" prop="orderStatus" width="120">
           <template #default="{ row }">
-            <dict-tag :options="wms_movement_status" :value="row.movementOrderStatus" />
+            <dict-tag :options="wms_movement_status" :value="row.orderStatus" />
           </template>
         </el-table-column>
         <el-table-column label="数量" align="left">
@@ -125,11 +125,11 @@
                 title="提示"
                 :width="300"
                 trigger="hover"
-                :disabled="scope.row.movementOrderStatus === 0"
-                :content="'移库单【' + scope.row.movementOrderNo + '】已' + (scope.row.movementOrderStatus === 1 ? '移库' : '作废') + '，无法修改！' "
+                :disabled="scope.row.orderStatus === 0"
+                :content="'移库单【' + scope.row.orderNo + '】已' + (scope.row.orderStatus === 1 ? '移库' : '作废') + '，无法修改！' "
               >
                 <template #reference>
-                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:movement:all']" :disabled="[-1, 1].includes(scope.row.movementOrderStatus)">修改</el-button>
+                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:movement:all']" :disabled="[-1, 1].includes(scope.row.orderStatus)">修改</el-button>
                 </template>
               </el-popover>
               <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:movement:all']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
@@ -140,11 +140,11 @@
                 title="提示"
                 :width="300"
                 trigger="hover"
-                :disabled="[-1, 0].includes(scope.row.movementOrderStatus)"
-                :content="'移库单【' + scope.row.movementOrderNo + '】已移库，无法删除！' "
+                :disabled="[-1, 0].includes(scope.row.orderStatus)"
+                :content="'移库单【' + scope.row.orderNo + '】已移库，无法删除！' "
               >
                 <template #reference>
-                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:movement:all']" :disabled="scope.row.movementOrderStatus === 1">删除</el-button>
+                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:movement:all']" :disabled="scope.row.orderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
               <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:movement:all']">打印</el-button>
@@ -191,8 +191,8 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    movementOrderNo: undefined,
-    movementOrderStatus: -2,
+    orderNo: undefined,
+    orderStatus: -2,
   },
 });
 
@@ -202,8 +202,8 @@ const { queryParams } = toRefs(data);
 function getList() {
   loading.value = true;
   const query = {...queryParams.value}
-  if (query.movementOrderStatus === -2) {
-    query.movementOrderStatus = null
+  if (query.orderStatus === -2) {
+    query.orderStatus = null
   }
   if (query.sourcePlace?.length) {
     query.sourceWarehouseId = query.sourcePlace[0]
@@ -242,7 +242,7 @@ function handleAdd() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('确认删除移库单【' + row.movementOrderNo + '】吗？').then(function() {
+  proxy.$modal.confirm('确认删除移库单【' + row.orderNo + '】吗？').then(function() {
     loading.value = true;
     return delMovementOrder(_ids);
   }).then(() => {
@@ -252,7 +252,7 @@ function handleDelete(row) {
   }).catch((e) => {
     if (e === 409) {
       return ElMessageBox.alert(
-        '<div>移库单【' + row.movementOrderNo + '】已移库，不能删除 ！</div><div>请联系管理员处理！</div>',
+        '<div>移库单【' + row.orderNo + '】已移库，不能删除 ！</div><div>请联系管理员处理！</div>',
         '系统提示',
         {
           dangerouslyUseHTMLString: true,
@@ -295,8 +295,8 @@ async function handlePrint(row) {
     })
   }
   const printData = {
-    movementOrderNo: movementOrder.movementOrderNo,
-    movementOrderStatus: proxy.selectDictLabel(wms_movement_status.value, movementOrder.movementOrderStatus),
+    orderNo: movementOrder.orderNo,
+    orderStatus: proxy.selectDictLabel(wms_movement_status.value, movementOrder.orderStatus),
     sourceWarehouseName: useWmsStore().warehouseMap.get(movementOrder.sourceWarehouseId)?.warehouseName,
     targetWarehouseName: useWmsStore().warehouseMap.get(movementOrder.targetWarehouseId)?.warehouseName,
     totalQuantity: Number(movementOrder.totalQuantity).toFixed(0),

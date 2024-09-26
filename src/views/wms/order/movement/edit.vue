@@ -5,8 +5,8 @@
         <el-form label-width="108px" :model="form" ref="movementForm" :rules="rules">
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="移库单号" prop="movementOrderNo">
-                <el-input class="w200" v-model="form.movementOrderNo" placeholder="移库单号"
+              <el-form-item label="移库单号" prop="orderNo">
+                <el-input class="w200" v-model="form.orderNo" placeholder="移库单号"
                           :disabled="form.id"></el-input>
               </el-form-item>
             </el-col>
@@ -163,7 +163,7 @@ const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
 const loading = ref(false)
 const initFormData = {
   id: undefined,
-  movementOrderNo: undefined,
+  orderNo: undefined,
   shipmentOrderStatus: 0,
   remark: undefined,
   sourceWarehouseId: undefined,
@@ -176,7 +176,7 @@ const selectedInventory = ref([])
 const data = reactive({
   form: {...initFormData},
   rules: {
-    movementOrderNo: [
+    orderNo: [
       {required: true, message: "出库单号不能为空", trigger: "blur"}
     ],
     sourceWarehouseId: [
@@ -211,10 +211,7 @@ const handleOkClick = (item) => {
     if (!form.value.details.find(detail => getSourceWarehouseAndSkuKey(detail) === getWarehouseAndSkuKey(it))) {
       form.value.details.push(
         {
-          itemSku: {
-            ...it.itemSku,
-            item: it.item
-          },
+          itemSku: it.itemSku,
           skuId: it.skuId,
           quantity: undefined,
           sourceWarehouseId: form.value.sourceWarehouseId
@@ -232,7 +229,7 @@ const save = async () => {
   doSave()
 }
 
-const doSave = (movementOrderStatus = 0) => {
+const doSave = (orderStatus = 0) => {
   movementForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
@@ -259,8 +256,8 @@ const doSave = (movementOrderStatus = 0) => {
 
     const params = {
       id: form.value.id,
-      movementOrderNo: form.value.movementOrderNo,
-      movementOrderStatus,
+      orderNo: form.value.orderNo,
+      orderStatus,
       remark: form.value.remark,
       totalQuantity: form.value.totalQuantity,
       sourceWarehouseId: form.value.sourceWarehouseId,
@@ -324,7 +321,7 @@ const doMovement = async () => {
     //('提交前校验',form.value)
     const params = {
       id: form.value.id,
-      movementOrderNo: form.value.movementOrderNo,
+      orderNo: form.value.orderNo,
       remark: form.value.remark,
       totalQuantity: form.value.totalQuantity,
       sourceWarehouseId: form.value.sourceWarehouseId,
@@ -348,7 +345,7 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.movementOrderNo = 'YK' + generateNo()
+    form.value.orderNo = 'YK' + generateNo()
   }
 })
 
