@@ -2,8 +2,8 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="出库状态" prop="shipmentOrderStatus">
-          <el-radio-group v-model="queryParams.shipmentOrderStatus" @change="handleQuery">
+        <el-form-item label="出库状态" prop="orderStatus">
+          <el-radio-group v-model="queryParams.orderStatus" @change="handleQuery">
             <el-radio-button
               :key="-2"
               :label="-2"
@@ -19,8 +19,8 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="出库类型" prop="shipmentOrderType">
-          <el-radio-group v-model="queryParams.shipmentOrderType" @change="handleQuery">
+        <el-form-item label="出库类型" prop="optType">
+          <el-radio-group v-model="queryParams.optType" @change="handleQuery">
             <el-radio-button
               :key="-1"
               :label="-1"
@@ -36,17 +36,17 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="出库单号" prop="shipmentOrderNo">
+        <el-form-item label="出库单号" prop="orderNo">
           <el-input
-            v-model="queryParams.shipmentOrderNo"
+            v-model="queryParams.orderNo"
             placeholder="请输入出库单号"
             clearable
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="业务单号" prop="orderNo">
+        <el-form-item label="业务单号" prop="bizOrderNo">
           <el-input
-            v-model="queryParams.orderNo"
+            v-model="queryParams.bizOrderNo"
             placeholder="请输入业务单号"
             clearable
             @keyup.enter="handleQuery"
@@ -112,13 +112,13 @@
         </el-table-column>
         <el-table-column label="单号/业务单号" align="left" min-width="100">
           <template #default="{ row }">
-            <div>单号：{{ row.shipmentOrderNo }}</div>
-            <div v-if="row.orderNo">业务单号：{{ row.orderNo }}</div>
+            <div>单号：{{ row.orderNo }}</div>
+            <div v-if="row.bizOrderNo">业务单号：{{ row.bizOrderNo }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="出库类型" align="center" prop="shipmentOrderType" width="100">
+        <el-table-column label="出库类型" align="center" prop="optType" width="100">
           <template #default="{ row }">
-            <dict-tag :options="wms_shipment_type" :value="row.shipmentOrderType" />
+            <dict-tag :options="wms_shipment_type" :value="row.optType" />
           </template>
         </el-table-column>
         <el-table-column label="客户" align="left" prop="merchantId">
@@ -131,9 +131,9 @@
             <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="出库状态" align="center" prop="shipmentOrderStatus" width="80">
+        <el-table-column label="出库状态" align="center" prop="orderStatus" width="80">
           <template #default="{ row }">
-            <dict-tag :options="wms_shipment_status" :value="row.shipmentOrderStatus" />
+            <dict-tag :options="wms_shipment_status" :value="row.orderStatus" />
           </template>
         </el-table-column>
         <el-table-column label="数量/金额(元)" align="left">
@@ -142,9 +142,9 @@
               <span>数量：</span>
               <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
             </div>
-            <div class="flex-space-between" v-if="row.receivableAmount || row.receivableAmount === 0">
+            <div class="flex-space-between" v-if="row.totalAmount || row.totalAmount === 0">
               <span>金额：</span>
-              <el-statistic :value="Number(row.receivableAmount)" :precision="2"/>
+              <el-statistic :value="Number(row.totalAmount)" :precision="2"/>
             </div>
           </template>
         </el-table-column>
@@ -170,11 +170,11 @@
                 title="提示"
                 :width="300"
                 trigger="hover"
-                :disabled="scope.row.shipmentOrderStatus === 0"
-                :content="'出库单【' + scope.row.shipmentOrderNo + '】已' + (scope.row.shipmentOrderStatus === 1 ? '出库' : '作废') + '，无法修改！' "
+                :disabled="scope.row.orderStatus === 0"
+                :content="'出库单【' + scope.row.orderNo + '】已' + (scope.row.orderStatus === 1 ? '出库' : '作废') + '，无法修改！' "
               >
                 <template #reference>
-                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:shipment:all']" :disabled="[-1, 1].includes(scope.row.shipmentOrderStatus)">修改</el-button>
+                  <el-button link type="primary" @click="handleUpdate(scope.row)" v-hasPermi="['wms:shipment:all']" :disabled="[-1, 1].includes(scope.row.orderStatus)">修改</el-button>
                 </template>
               </el-popover>
               <el-button link type="primary" @click="handleGoDetail(scope.row)" v-hasPermi="['wms:shipment:all']">{{ expandedRowKeys.includes(scope.row.id) ? '收起' : '查看' }}</el-button>
@@ -185,11 +185,11 @@
                 title="提示"
                 :width="300"
                 trigger="hover"
-                :disabled="[-1, 0].includes(scope.row.shipmentOrderStatus)"
-                :content="'出库单【' + scope.row.shipmentOrderNo + '】已出库，无法删除！' "
+                :disabled="[-1, 0].includes(scope.row.orderStatus)"
+                :content="'出库单【' + scope.row.orderNo + '】已出库，无法删除！' "
               >
                 <template #reference>
-                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:shipment:all']" :disabled="scope.row.shipmentOrderStatus === 1">删除</el-button>
+                  <el-button link type="danger" @click="handleDelete(scope.row)" v-hasPermi="['wms:shipment:all']" :disabled="scope.row.orderStatus === 1">删除</el-button>
                 </template>
               </el-popover>
               <el-button link type="primary" @click="handlePrint(scope.row)" v-hasPermi="['wms:shipment:all']">打印</el-button>
@@ -235,12 +235,12 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    shipmentOrderNo: undefined,
-    shipmentOrderType: -1,
-    merchantId: undefined,
     orderNo: undefined,
-    receivableAmount: undefined,
-    shipmentOrderStatus: -2,
+    optType: -1,
+    merchantId: undefined,
+    bizOrderNo: undefined,
+    totalAmount: undefined,
+    orderStatus: -2,
   },
 });
 
@@ -250,11 +250,11 @@ const { queryParams } = toRefs(data);
 function getList() {
   loading.value = true;
   const query = {...queryParams.value}
-  if (query.shipmentOrderStatus === -2) {
-    query.shipmentOrderStatus = null
+  if (query.orderStatus === -2) {
+    query.orderStatus = null
   }
-  if (query.shipmentOrderType === -1) {
-    query.shipmentOrderType = null
+  if (query.optType === -1) {
+    query.optType = null
   }
   listShipmentOrder(query).then(response => {
     shipmentOrderList.value = response.rows;
@@ -287,7 +287,7 @@ function handleAdd() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('确认删除出库单【' + row.shipmentOrderNo + '】吗？').then(function() {
+  proxy.$modal.confirm('确认删除出库单【' + row.orderNo + '】吗？').then(function() {
     loading.value = true;
     return delShipmentOrder(_ids);
   }).then(() => {
@@ -330,14 +330,14 @@ async function handlePrint(row) {
     })
   }
   const printData = {
-    shipmentOrderNo: shipmentOrder.shipmentOrderNo,
-    shipmentOrderType: proxy.selectDictLabel(wms_shipment_type.value, shipmentOrder.shipmentOrderType),
-    shipmentOrderStatus: proxy.selectDictLabel(wms_shipment_status.value, shipmentOrder.shipmentOrderStatus),
-    merchantName: useWmsStore().merchantMap.get(shipmentOrder.merchantId)?.merchantName,
     orderNo: shipmentOrder.orderNo,
+    optType: proxy.selectDictLabel(wms_shipment_type.value, shipmentOrder.optType),
+    orderStatus: proxy.selectDictLabel(wms_shipment_status.value, shipmentOrder.orderStatus),
+    merchantName: useWmsStore().merchantMap.get(shipmentOrder.merchantId)?.merchantName,
+    bizOrderNo: shipmentOrder.bizOrderNo,
     warehouseName: useWmsStore().warehouseMap.get(shipmentOrder.warehouseId)?.warehouseName,
     totalQuantity: Number(shipmentOrder.totalQuantity).toFixed(0),
-    receivableAmount: ((shipmentOrder.receivableAmount || shipmentOrder.receivableAmount === 0) ? (shipmentOrder.receivableAmount + '元') : ''),
+    totalAmount: ((shipmentOrder.totalAmount || shipmentOrder.totalAmount === 0) ? (shipmentOrder.totalAmount + '元') : ''),
     createBy: shipmentOrder.createBy,
     createTime: proxy.parseTime(shipmentOrder.createTime, '{mm}-{dd} {hh}:{ii}'),
     updateBy: shipmentOrder.updateBy,

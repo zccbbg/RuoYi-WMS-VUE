@@ -23,9 +23,9 @@
       <el-table-column type="selection" width="55" :reserve-selection="true" :selectable="judgeSelectable"/>
       <el-table-column label="商品信息" prop="itemId">
         <template #default="{ row }">
-          <div>{{ row.item.itemName }}</div>
-          <div v-if="row.item.itemCode">编号：{{ row.item.itemCode }}</div>
-          <div v-if="row.item.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.item.itemBrand).brandName }}</div>
+          <div>{{ row.itemSku.item.itemName }}</div>
+          <div v-if="row.itemSku.item.itemCode">编号：{{ row.itemSku.item.itemCode }}</div>
+          <div v-if="row.itemSku.item.itemBrand">品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}</div>
         </template>
       </el-table-column>
       <el-table-column label="规格信息">

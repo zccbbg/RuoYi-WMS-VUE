@@ -5,8 +5,8 @@
         <el-form label-width="108px" :model="form" ref="shipmentForm" :rules="rules">
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="出库单号" prop="shipmentOrderNo">
-                <el-input class="w200" v-model="form.shipmentOrderNo" placeholder="出库单号"
+              <el-form-item label="出库单号" prop="orderNo">
+                <el-input class="w200" v-model="form.orderNo" placeholder="出库单号"
                           :disabled="form.id"></el-input>
               </el-form-item>
             </el-col>
@@ -28,8 +28,8 @@
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="出库类型" prop="shipmentOrderType">
-                <el-radio-group v-model="form.shipmentOrderType">
+              <el-form-item label="出库类型" prop="optType">
+                <el-radio-group v-model="form.optType">
                   <el-radio-button
                     v-for="item in wms_shipment_type"
                     :key="item.value"
@@ -49,8 +49,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="业务单号" prop="orderNo">
-                <el-input v-model="form.orderNo" placeholder="请输入业务单号"></el-input>
+              <el-form-item label="业务单号" prop="bizOrderNo">
+                <el-input v-model="form.bizOrderNo" placeholder="请输入业务单号"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -69,8 +69,8 @@
             </el-col>
             <el-col :span="6">
               <div style="display: flex;align-items: start">
-                <el-form-item label="金额" prop="receivableAmount">
-                  <el-input-number style="width: 100%;" v-model="form.receivableAmount" :precision="2" :min="0"></el-input-number>
+                <el-form-item label="金额" prop="totalAmount">
+                  <el-input-number style="width: 100%;" v-model="form.totalAmount" :precision="2" :min="0"></el-input-number>
                 </el-form-item>
                 <el-button link type="primary" @click="handleAutoCalc" style="line-height: 32px">自动计算
                 </el-button>
@@ -203,12 +203,12 @@ const {wms_shipment_type} = proxy.useDict("wms_shipment_type");
 const loading = ref(false)
 const initFormData = {
   id: undefined,
-  shipmentOrderNo: undefined,
-  shipmentOrderType: "2",
-  merchantId: undefined,
   orderNo: undefined,
-  receivableAmount: undefined,
-  shipmentOrderStatus: 0,
+  optType: "2",
+  merchantId: undefined,
+  bizOrderNo: undefined,
+  totalAmount: undefined,
+  orderStatus: 0,
   remark: undefined,
   warehouseId: undefined,
   totalQuantity: 0,
@@ -219,10 +219,10 @@ const selectedInventory = ref([])
 const data = reactive({
   form: {...initFormData},
   rules: {
-    shipmentOrderNo: [
+    orderNo: [
       {required: true, message: "出库单号不能为空", trigger: "blur"}
     ],
-    shipmentOrderType: [
+    optType: [
       {required: true, message: "出库类型不能为空", trigger: "change"}
     ],
     warehouseId: [
@@ -254,10 +254,7 @@ const handleOkClick = (item) => {
     if (!form.value.details.find(detail => getWarehouseAndSkuKey(detail) === getWarehouseAndSkuKey(it))) {
       form.value.details.push(
         {
-          itemSku: {
-            ...it.itemSku,
-            item: it.item
-          },
+          itemSku: it.itemSku,
           skuId: it.skuId,
           amount: undefined,
           quantity: undefined,
@@ -277,7 +274,7 @@ const save = async () => {
   doSave()
 }
 
-const getParamsBeforeSave = (shipmentOrderStatus) => {
+const getParamsBeforeSave = (orderStatus) => {
   let details = []
   if (form.value.details?.length) {
     // 构建参数
@@ -295,20 +292,20 @@ const getParamsBeforeSave = (shipmentOrderStatus) => {
 
   return {
     id: form.value.id,
-    shipmentOrderNo: form.value.shipmentOrderNo,
-    shipmentOrderType: form.value.shipmentOrderType,
-    merchantId: form.value.merchantId,
     orderNo: form.value.orderNo,
-    shipmentOrderStatus,
+    optType: form.value.optType,
+    merchantId: form.value.merchantId,
+    bizOrderNo: form.value.bizOrderNo,
+    orderStatus,
     remark: form.value.remark,
-    receivableAmount: form.value.receivableAmount,
+    totalAmount: form.value.totalAmount,
     totalQuantity: form.value.totalQuantity,
     warehouseId: form.value.warehouseId,
     details: details
   }
 }
 
-const doSave = (shipmentOrderStatus = 0) => {
+const doSave = (orderStatus = 0) => {
   //验证shipmentForm表单
   shipmentForm.value?.validate((valid) => {
     // 校验
@@ -317,7 +314,7 @@ const doSave = (shipmentOrderStatus = 0) => {
     }
 
     //('提交前校验',form.value)
-    const params = getParamsBeforeSave(shipmentOrderStatus)
+    const params = getParamsBeforeSave(orderStatus)
 
     loading.value = true
     if (params.id) {
@@ -387,7 +384,7 @@ onMounted(() => {
   if (id) {
     loadDetail(id)
   } else {
-    form.value.shipmentOrderNo = 'CK' + generateNo()
+    form.value.orderNo = 'CK' + generateNo()
   }
 })
 
@@ -439,7 +436,7 @@ const handleAutoCalc = () => {
       sum = numSub(sum, -Number(it.amount))
     }
   })
-  form.value.receivableAmount = sum
+  form.value.totalAmount = sum
 }
 
 const handleDeleteDetail = (row, index) => {
