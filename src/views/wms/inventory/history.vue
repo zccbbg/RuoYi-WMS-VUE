@@ -89,17 +89,19 @@
             <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="操作前">
+        <el-table-column label="操作前" align="right">
           <template #default="{ row }">
-            <div class="flex-space-between">
-              <el-statistic :value="Number(row.beforeQuantity)" :precision="0"/>
+            <div >
+              <el-statistic :value="Number(row.beforeQuantity)" :precision="0" v-if="row.beforeQuantity"/>
+              <span v-else>-</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="操作后">
+        <el-table-column label="操作后" align="right">
           <template #default="{ row }">
-            <div class="flex-space-between">
-              <el-statistic :value="Number(row.afterQuantity)" :precision="0"/>
+            <div>
+              <el-statistic :value="Number(row.afterQuantity)" :precision="0" v-if="row.afterQuantity"/>
+              <span v-else>-</span>
             </div>
           </template>
         </el-table-column>
