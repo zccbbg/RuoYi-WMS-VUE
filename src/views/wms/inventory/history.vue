@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-card>
       <el-form :model="queryParams" ref="queryRef" :inline="true" label-width="68px">
-        <el-form-item label="操作类型" prop="orderType">
+        <el-form-item label="订单类型" prop="orderType">
           <el-radio-group v-model="queryParams.orderType" @change="handleQuery">
             <el-radio-button
               :key="-1"
@@ -79,7 +79,7 @@
             <div v-if="row.itemSku.skuCode">规格编号：{{ row.itemSku.skuCode }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="操作类型" align="center" width="100">
+        <el-table-column label="订单类型" align="center" width="100">
           <template #default="{ row }">
             <dict-tag :options="wms_inventory_history_type" :value="row.orderType"/>
           </template>
