@@ -80,40 +80,37 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号" align="left" prop="orderNo" />
-        <el-table-column label="源仓库" align="left" width="260">
+        <el-table-column label="单号" align="left" prop="orderNo" min-width="100"/>
+        <el-table-column label="源仓库" align="left">
           <template #default="{ row }">
             <div>{{ useWmsStore().warehouseMap.get(row.sourceWarehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="目标仓库" align="left" width="260">
+        <el-table-column label="目标仓库" align="left">
           <template #default="{ row }">
             <div>{{ useWmsStore().warehouseMap.get(row.targetWarehouseId)?.warehouseName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="移库状态" align="center" prop="orderStatus" width="120">
+        <el-table-column label="移库状态" align="center" prop="orderStatus" width="80">
           <template #default="{ row }">
             <dict-tag :options="wms_movement_status" :value="row.orderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" align="left">
+        <el-table-column label="数量" align="right" width="80">
           <template #default="{ row }">
-            <div class="flex-space-between">
-              <span>数量：</span>
               <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
-            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间/更新时间" align="left" width="150">
+          <template #default="{ row }">
+            <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
+            <div>更新：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
         </el-table-column>
         <el-table-column label="创建/更新" align="left">
           <template #default="{ row }">
-            <div>创建：{{ row.createBy }}</div>
-            <div v-if="row.updateBy">更新：{{ row.updateBy }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间/更新时间" align="left" width="200">
-          <template #default="{ row }">
-            <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
-            <div>更新：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
+            <div>{{ row.createBy }}</div>
+            <div v-if="row.updateBy">{{ row.updateBy }}</div>
           </template>
         </el-table-column>
         <el-table-column label="备注" prop="remark" />
