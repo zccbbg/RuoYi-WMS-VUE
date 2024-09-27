@@ -19,6 +19,15 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item label="目标仓库" prop="targetWarehouseId">
+                <el-select v-model="form.targetWarehouseId" placeholder="请选择目标仓库" @change="handleChangeTargetWarehouse"
+                           filterable style="width: 100%">
+                  <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
+                             :value="item.id"/>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-row :gutter="24">
             <el-col :span="11">
@@ -33,17 +42,20 @@
                 ></el-input>
               </el-form-item>
             </el-col>
+
             <el-col :span="6">
-              <el-form-item label="目标仓库" prop="targetWarehouseId">
-                <el-select v-model="form.targetWarehouseId" placeholder="请选择目标仓库" @change="handleChangeTargetWarehouse"
-                           filterable>
-                  <el-option v-for="item in useWmsStore().warehouseList" :key="item.id" :label="item.warehouseName"
-                             :value="item.id"/>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="数量" prop="totalQuantity">
+              <div style="display: flex;align-items: start">
+                <el-form-item label="金额" prop="totalAmount">
+                  <el-input-number style="width: 100%;" v-model="form.totalAmount" :precision="2" :min="0"></el-input-number>
+                </el-form-item>
+                <el-button link type="primary" @click="handleAutoCalc" style="line-height: 32px">自动计算
+                </el-button>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="数量" prop="totalQuantity" >
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
-                                 :disabled="true"></el-input-number>
+                                 :disabled="true" style="width: 100%"></el-input-number>
               </el-form-item>
             </el-col>
           </el-row>
@@ -223,6 +235,19 @@ const handleOkClick = (item) => {
 
 // 初始化receipt-order-form ref
 const movementForm = ref()
+
+const handleAutoCalc = () => {
+  let sum = undefined
+  form.value.details.forEach(it => {
+    if (it.amount >= 0) {
+      if (!sum) {
+        sum = 0
+      }
+      sum = numSub(sum, -Number(it.amount))
+    }
+  })
+  form.value.totalAmount = sum
+}
 
 const save = async () => {
   await proxy?.$modal.confirm('确认暂存移库单吗？');
