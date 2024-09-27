@@ -126,11 +126,11 @@
                 ></el-input-number>
               </template>
             </el-table-column>
-            <el-table-column label="价格" prop="amount" width="180">
+            <el-table-column label="金额" prop="amount" width="180">
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.amount"
-                  placeholder="价格"
+                  placeholder="金额"
                   :precision="2"
                   :min="0"
                   :max="2147483647"

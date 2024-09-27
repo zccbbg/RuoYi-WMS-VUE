@@ -91,7 +91,7 @@
 <!--                </div>-->
               </template>
             </el-table-column>
-            <el-table-column label="价格(元)" width="160" align="left">
+            <el-table-column label="金额(元)" width="160" align="left">
               <template #default="{ row }">
                 <div v-if="row.costPrice" class="flex-space-between">
                   <span>成本价：</span>

@@ -101,7 +101,7 @@
                     <el-statistic :value="Number(row.quantity)" :precision="0"/>
                   </template>
                 </el-table-column>
-                <el-table-column label="价格(元)" align="right">
+                <el-table-column label="金额(元)" align="right">
                   <template #default="{ row }">
                     <el-statistic :precision="2" :value="Number(row.amount)"/>
                   </template>
