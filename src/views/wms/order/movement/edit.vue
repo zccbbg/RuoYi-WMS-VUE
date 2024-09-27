@@ -45,7 +45,7 @@
 
             <el-col :span="6">
               <div style="display: flex;align-items: start">
-                <el-form-item label="金额" prop="totalAmount">
+                <el-form-item label="总金额" prop="totalAmount">
                   <el-input-number style="width: 100%;" v-model="form.totalAmount" :precision="2" :min="0"></el-input-number>
                 </el-form-item>
                 <el-button link type="primary" @click="handleAutoCalc" style="line-height: 32px">自动计算
@@ -53,7 +53,7 @@
               </div>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="数量" prop="totalQuantity" >
+              <el-form-item label="总数量" prop="totalQuantity" >
                 <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
                                  :disabled="true" style="width: 100%"></el-input-number>
               </el-form-item>
@@ -111,7 +111,7 @@
                 <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="移库数量" prop="quantity" width="180">
+            <el-table-column label="移库数量" prop="quantity" width="180" align="center">
               <template #default="scope">
                 <el-input-number
                   v-model="scope.row.quantity"
@@ -119,6 +119,17 @@
                   :min="1"
                   :precision="0"
                   @change="handleChangeQuantity"
+                ></el-input-number>
+              </template>
+            </el-table-column>
+            <el-table-column label="金额" prop="amount" width="180" align="center">
+              <template #default="scope">
+                <el-input-number
+                  v-model="scope.row.amount"
+                  placeholder="金额"
+                  :precision="2"
+                  :min="0"
+                  :max="2147483647"
                 ></el-input-number>
               </template>
             </el-table-column>
@@ -178,6 +189,7 @@ const initFormData = {
   orderNo: undefined,
   shipmentOrderStatus: 0,
   remark: undefined,
+  totalAmount: undefined,
   sourceWarehouseId: undefined,
   targetWarehouseId: undefined,
   totalQuantity: 0,
@@ -226,6 +238,7 @@ const handleOkClick = (item) => {
           itemSku: it.itemSku,
           skuId: it.skuId,
           quantity: undefined,
+          amount: undefined,
           sourceWarehouseId: form.value.sourceWarehouseId
         })
     }
@@ -263,6 +276,7 @@ const getParams = (orderStatus) => {
         movementOrderId: form.value.id,
         skuId: it.skuId,
         quantity: it.quantity,
+        amount: it.amount,
         sourceWarehouseId: form.value.sourceWarehouseId,
         targetWarehouseId: form.value.targetWarehouseId,
       }
@@ -274,6 +288,7 @@ const getParams = (orderStatus) => {
     orderStatus,
     remark: form.value.remark,
     totalQuantity: form.value.totalQuantity,
+    totalAmount: form.value.totalAmount,
     sourceWarehouseId: form.value.sourceWarehouseId,
     targetWarehouseId: form.value.targetWarehouseId,
     details: details
