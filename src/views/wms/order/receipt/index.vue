@@ -111,10 +111,32 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="单号/业务单号" align="left" min-width="100">
+        <el-table-column label="单号/业务单号" align="left" min-width="120">
           <template #default="{ row }">
             <div>单号：{{ row.orderNo }}</div>
             <div v-if="row.bizOrderNo">业务单号：{{ row.bizOrderNo }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="仓库" align="left">
+          <template #default="{ row }">
+            <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="总数量/总金额(元)" align="left" min-width="100">
+          <template #default="{ row }">
+            <div class="flex-space-between">
+              <span>数量：</span>
+              <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
+            </div>
+            <div class="flex-space-between" v-if="row.totalAmount || row.totalAmount === 0">
+              <span>金额：</span>
+              <el-statistic :value="Number(row.totalAmount)" :precision="2"/>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="入库状态" align="center" prop="orderStatus" width="80">
+          <template #default="{ row }">
+            <dict-tag :options="wms_receipt_status" :value="row.orderStatus" />
           </template>
         </el-table-column>
         <el-table-column label="入库类型" align="center" prop="optType" width="100">
@@ -127,28 +149,9 @@
             <div>{{ useWmsStore().merchantMap.get(row.merchantId)?.merchantName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="仓库" align="left">
-          <template #default="{ row }">
-            <div>{{ useWmsStore().warehouseMap.get(row.warehouseId)?.warehouseName }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="入库状态" align="center" prop="orderStatus" width="80">
-          <template #default="{ row }">
-            <dict-tag :options="wms_receipt_status" :value="row.orderStatus" />
-          </template>
-        </el-table-column>
-        <el-table-column label="总数量/总金额(元)" align="left">
-          <template #default="{ row }">
-            <div class="flex-space-between">
-              <span>数量：</span>
-              <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
-            </div>
-            <div class="flex-space-between" v-if="row.totalAmount || row.totalAmount === 0">
-              <span>金额：</span>
-              <el-statistic :value="Number(row.totalAmount)" :precision="2"/>
-            </div>
-          </template>
-        </el-table-column>
+
+
+
         <el-table-column label="创建时间/更新时间" align="left" width="150">
           <template #default="{ row }">
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
