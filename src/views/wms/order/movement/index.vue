@@ -76,6 +76,12 @@
                     <el-statistic :value="Number(row.quantity)" :precision="0"/>
                   </template>
                 </el-table-column>
+                <el-table-column label="金额(元)" align="right">
+                  <template #default="{ row }">
+                    <el-statistic v-if="row.amount || row.amount === 0" :precision="2" :value="Number(row.amount)"/>
+                    <div v-else>-</div>
+                  </template>
+                </el-table-column>
               </el-table>
             </div>
           </template>
@@ -96,9 +102,16 @@
             <dict-tag :options="wms_movement_status" :value="row.orderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量" align="right" width="80">
+        <el-table-column label="数量/金额(元)" align="left">
           <template #default="{ row }">
+            <div class="flex-space-between">
+              <span>数量：</span>
               <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
+            </div>
+            <div class="flex-space-between" v-if="row.totalAmount || row.totalAmount === 0">
+              <span>金额：</span>
+              <el-statistic :value="Number(row.totalAmount)" :precision="2"/>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="创建时间/更新时间" align="left" width="150">
