@@ -21,14 +21,14 @@ export default {
             "fields": [
               {
                 "text": "移库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "订单号",
                 "field": "orderNo"
               }
             ],
-            "field": "movementOrderNo",
+            "field": "orderNo",
             "coordinateSync": false,
             "widthHeightSync": false
           },
@@ -45,8 +45,8 @@ export default {
             "width": 350,
             "fields": [
               {
-                "text": "出库单号",
-                "field": "movementOrderNo"
+                "text": "移库单号",
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -57,12 +57,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -78,7 +78,7 @@ export default {
               }
             ],
             "title": "移库单",
-            "field": "movementOrderNo",
+            "field": "orderNo",
             "coordinateSync": false,
             "widthHeightSync": false,
             "fontSize": 18,
@@ -100,7 +100,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -111,12 +111,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -128,7 +128,7 @@ export default {
               }
             ],
             "title": "移库状态",
-            "field": "movementOrderStatus",
+            "field": "orderStatus",
             "coordinateSync": false,
             "widthHeightSync": false,
             "qrCodeLevel": 0,
@@ -151,7 +151,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -162,12 +162,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -178,7 +178,7 @@ export default {
                 "field": "remark"
               }
             ],
-            "title": "数量",
+            "title": "总数量",
             "field": "totalQuantity",
             "coordinateSync": false,
             "widthHeightSync": false,
@@ -198,7 +198,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -209,12 +209,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -238,57 +238,6 @@ export default {
         },
         {
           "options": {
-            "left": 340,
-            "top": 122.5,
-            "height": 9.75,
-            "width": 150,
-            "fields": [
-              {
-                "text": "入库单号",
-                "field": "movementOrderNo"
-              },
-              {
-                "text": "客户",
-                "field": "merchantName"
-              },
-              {
-                "text": "订单号",
-                "field": "orderNo"
-              },
-              {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
-              },
-              {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
-              },
-              {
-                "text": "创建日期",
-                "field": "createTime"
-              },
-              {
-                "text": "备注",
-                "field": "remark"
-              }
-            ],
-            "title": "源库区",
-            "field": "sourceAreaName",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "qrCodeLevel": 0,
-            "right": 489.75,
-            "bottom": 131.25,
-            "vCenter": 414.75,
-            "hCenter": 126.375
-          },
-          "printElementType": {
-            "title": "文本",
-            "type": "text"
-          }
-        },
-        {
-          "options": {
             "left": 20,
             "top": 147.5,
             "height": 9.75,
@@ -296,7 +245,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -307,12 +256,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -336,57 +285,6 @@ export default {
         },
         {
           "options": {
-            "left": 340,
-            "top": 147.5,
-            "height": 9.75,
-            "width": 150,
-            "fields": [
-              {
-                "text": "入库单号",
-                "field": "movementOrderNo"
-              },
-              {
-                "text": "客户",
-                "field": "merchantName"
-              },
-              {
-                "text": "订单号",
-                "field": "orderNo"
-              },
-              {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
-              },
-              {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
-              },
-              {
-                "text": "创建日期",
-                "field": "createTime"
-              },
-              {
-                "text": "备注",
-                "field": "remark"
-              }
-            ],
-            "title": "目标库区",
-            "field": "targetAreaName",
-            "coordinateSync": false,
-            "widthHeightSync": false,
-            "qrCodeLevel": 0,
-            "right": 489.75,
-            "bottom": 131.25,
-            "vCenter": 414.75,
-            "hCenter": 126.375
-          },
-          "printElementType": {
-            "title": "文本",
-            "type": "text"
-          }
-        },
-        {
-          "options": {
             "left": 20,
             "top": 172.5,
             "height": 9.75,
@@ -394,7 +292,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -405,12 +303,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -441,7 +339,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -452,12 +350,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -492,7 +390,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -503,12 +401,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -539,7 +437,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -550,12 +448,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -612,56 +510,6 @@ export default {
                   "colspan": 1
                 },
                 {
-                  "width": 90,
-                  "title": "源库区",
-                  "field": "sourceAreaName",
-                  "checked": true,
-                  "columnId": "sourceAreaName",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1
-                },
-                {
-                  "width": 90,
-                  "title": "目标库区",
-                  "field": "targetAreaName",
-                  "checked": true,
-                  "columnId": "targetAreaName",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1
-                },
-                {
-                  "width": 78.57142857142857,
-                  "title": "批号",
-                  "field": "batchNo",
-                  "checked": true,
-                  "columnId": "batchNo",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                },
-                {
-                  "width": 78.57142857142857,
-                  "title": "生产日期",
-                  "field": "productionDate",
-                  "checked": true,
-                  "columnId": "productionDate",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                },
-                {
-                  "width": 78.57142857142857,
-                  "title": "过期日期",
-                  "field": "expirationDate",
-                  "checked": true,
-                  "columnId": "expirationDate",
-                  "fixed": false,
-                  "rowspan": 1,
-                  "colspan": 1,
-                },
-                {
                   "width": 78.57142857142857,
                   "align": "right",
                   "title": "数量",
@@ -705,7 +553,7 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "movementOrderNo"
+                "field": "orderNo"
               },
               {
                 "text": "客户",
@@ -716,12 +564,12 @@ export default {
                 "field": "orderNo"
               },
               {
-                "text": "出库类型",
-                "field": "shipmentOrderType"
+                "text": "移库类型",
+                "field": "optType"
               },
               {
-                "text": "出库状态",
-                "field": "movementOrderStatus"
+                "text": "移库状态",
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
