@@ -21,14 +21,14 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
+                "field": "orderNo"
               },
               {
-                "text": "订单号",
-                "field": "orderNo"
+                "text": "业务订单号",
+                "field": "bizOrderNo"
               }
             ],
-            "field": "receiptOrderNo",
+            "field": "orderNo",
             "coordinateSync": false,
             "widthHeightSync": false
           },
@@ -46,23 +46,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -78,7 +78,7 @@ export default {
               }
             ],
             "title": "入库单",
-            "field": "receiptOrderNo",
+            "field": "orderNo",
             "coordinateSync": false,
             "widthHeightSync": false,
             "fontSize": 18,
@@ -100,23 +100,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -128,7 +128,7 @@ export default {
               }
             ],
             "title": "入库类型",
-            "field": "receiptOrderType",
+            "field": "optType",
             "coordinateSync": false,
             "widthHeightSync": false,
             "qrCodeLevel": 0,
@@ -151,23 +151,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -179,7 +179,7 @@ export default {
               }
             ],
             "title": "入库状态",
-            "field": "receiptOrderStatus",
+            "field": "orderStatus",
             "coordinateSync": false,
             "widthHeightSync": false,
             "qrCodeLevel": 0
@@ -198,23 +198,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -245,23 +245,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -272,8 +272,8 @@ export default {
                 "field": "remark"
               }
             ],
-            "title": "订单号",
-            "field": "orderNo",
+            "title": "业务订单号",
+            "field": "bizOrderNo",
             "coordinateSync": false,
             "widthHeightSync": false,
             "qrCodeLevel": 0,
@@ -296,23 +296,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -343,23 +343,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -390,23 +390,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -417,7 +417,7 @@ export default {
                 "field": "remark"
               }
             ],
-            "title": "金额",
+            "title": "总金额",
             "field": "payableAmount",
             "coordinateSync": false,
             "widthHeightSync": false,
@@ -441,23 +441,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -488,23 +488,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -539,23 +539,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -586,23 +586,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
@@ -675,7 +675,7 @@ export default {
                 {
                   "width": 78.57142857142857,
                   "align": "right",
-                  "title": "价格(元)",
+                  "title": "金额(元)",
                   "field": "amount",
                   "checked": true,
                   "columnId": "amount",
@@ -715,23 +715,23 @@ export default {
             "fields": [
               {
                 "text": "入库单号",
-                "field": "receiptOrderNo"
-              },
-              {
-                "text": "供应商",
-                "field": "supplierName"
-              },
-              {
-                "text": "订单号",
                 "field": "orderNo"
               },
               {
+                "text": "供应商",
+                "field": "merchantName"
+              },
+              {
+                "text": "业务订单号",
+                "field": "bizOrderNo"
+              },
+              {
                 "text": "入库类型",
-                "field": "receiptOrderType"
+                "field": "optType"
               },
               {
                 "text": "入库状态",
-                "field": "receiptOrderStatus"
+                "field": "orderStatus"
               },
               {
                 "text": "创建日期",
