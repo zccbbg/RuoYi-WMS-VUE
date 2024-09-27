@@ -418,7 +418,7 @@ export default {
               }
             ],
             "title": "总金额",
-            "field": "payableAmount",
+            "field": "totalAmount",
             "coordinateSync": false,
             "widthHeightSync": false,
             "qrCodeLevel": 0,
