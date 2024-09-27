@@ -132,7 +132,7 @@
     <check-order-detail
       ref="checkOrderDetailRef"
       :model-value="watchDetailObj.show"
-      :check-order-no="watchDetailObj.orderNo"
+      :order-no="watchDetailObj.orderNo"
       @handle-cancel-click="watchDetailObj.show = false"
     />
   </div>

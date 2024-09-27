@@ -277,7 +277,7 @@ const getParams = (orderStatus) => {
     details = form.value.details.map(it => {
       return {
         id: it.id,
-        checkOrderId: form.value.id,
+        orderId: form.value.id,
         skuId: it.skuId,
         quantity: it.quantity,
         checkQuantity: it.checkQuantity,

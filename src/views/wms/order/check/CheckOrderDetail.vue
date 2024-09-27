@@ -69,7 +69,7 @@ const props = defineProps({
 const queryParams = ref({
   pageNum: 1,
   pageSize: 10,
-  checkOrderId: null,
+  orderId: null,
   haveProfitAndLoss: false,
 });
 const total = ref(0)
@@ -79,8 +79,8 @@ const show = computed(() => {
 })
 const emit = defineEmits(["handleCancelClick"]);
 
-function setCheckOrderId(checkOrderId) {
-  queryParams.value.checkOrderId = checkOrderId
+function setCheckOrderId(orderId) {
+  queryParams.value.orderId = orderId
 }
 
 defineExpose({
