@@ -21,8 +21,8 @@
         <el-form label-width="108px" :model="form" ref="checkForm" :rules="rules">
           <el-row :gutter="24">
             <el-col :span="11">
-              <el-form-item label="盘库单号" prop="checkOrderNo">
-                <el-input class="w200" v-model="form.checkOrderNo" placeholder="盘库单号"
+              <el-form-item label="盘库单号" prop="orderNo">
+                <el-input class="w200" v-model="form.orderNo" placeholder="盘库单号"
                           :disabled="form.id"></el-input>
               </el-form-item>
             </el-col>
@@ -50,8 +50,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="盈亏数" prop="checkOrderTotal">
-                <el-input-number v-model="form.checkOrderTotal" :controls="false" :precision="0"
+              <el-form-item label="盈亏数" prop="totalQuantity">
+                <el-input-number v-model="form.totalQuantity" :controls="false" :precision="0"
                                  :disabled="true"></el-input-number>
               </el-form-item>
             </el-col>
@@ -174,17 +174,17 @@ const loading = ref(false)
 const selectedSku = ref([])
 const initFormData = {
   id: undefined,
-  checkOrderNo: undefined,
-  checkOrderStatus: 0,
+  orderNo: undefined,
+  orderStatus: 0,
   remark: undefined,
   warehouseId: undefined,
-  checkOrderTotal: 0,
+  totalQuantity: 0,
   details: [],
 }
 const data = reactive({
   form: {...initFormData},
   rules: {
-    checkOrderNo: [
+    orderNo: [
       {required: true, message: "盘库单号不能为空", trigger: "blur"}
     ],
     warehouseId: [
@@ -270,7 +270,7 @@ const save = async () => {
   await proxy?.$modal.confirm('确认暂存盘库单吗？');
   doSave()
 }
-const getParams = (checkOrderStatus) => {
+const getParams = (orderStatus) => {
   let details = []
   if (form.value.details?.length) {
     // 构建参数
@@ -288,22 +288,22 @@ const getParams = (checkOrderStatus) => {
   }
   return  {
     id: form.value.id,
-    checkOrderNo: form.value.checkOrderNo,
-    checkOrderStatus,
+    orderNo: form.value.orderNo,
+    orderStatus,
     remark: form.value.remark,
-    checkOrderTotal: form.value.checkOrderTotal,
+    totalQuantity: form.value.totalQuantity,
     warehouseId: form.value.warehouseId,
     details: details
   }
 }
-const doSave = (checkOrderStatus = 0) => {
+const doSave = (orderStatus = 0) => {
   //验证shipmentForm表单
   checkForm.value?.validate((valid) => {
     // 校验
     if (!valid) {
       return ElMessage.error('请填写必填项')
     }
-    const params = getParams(checkOrderStatus);
+    const params = getParams(orderStatus);
     loading.value = true
     if (params.id) {
       updateCheckOrder(params).then((res) => {
@@ -366,7 +366,7 @@ onMounted(() => {
     checking.value = true
     loadDetail(id)
   } else {
-    form.value.checkOrderNo = 'PK' + generateNo()
+    form.value.orderNo = 'PK' + generateNo()
   }
 })
 
@@ -409,13 +409,13 @@ const handleDeleteDetail = (row, index) => {
 }
 
 const handleChangeQuantity = () => {
-  let checkOrderTotal = 0
+  let totalQuantity = 0
   form.value.details.forEach(it => {
     if (it.quantity !== it.checkQuantity) {
-      checkOrderTotal += (it.checkQuantity - it.quantity)
+      totalQuantity += (it.checkQuantity - it.quantity)
     }
   })
-  form.value.checkOrderTotal = checkOrderTotal
+  form.value.totalQuantity = totalQuantity
 }
 
 const goSaasTip = () => {

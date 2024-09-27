@@ -1,5 +1,5 @@
 <template>
-  <el-drawer :model-value="show" :title="'盘库单【' + checkOrderNo + '】的商品明细'" @close="handleCancelClick" :size="size" :close-on-click-modal="false"
+  <el-drawer :model-value="show" :title="'盘库单【' + orderNo + '】的商品明细'" @close="handleCancelClick" :size="size" :close-on-click-modal="false"
              append-to-body>
     <div class="flex-space-between">
       <div></div>
@@ -61,7 +61,7 @@ const props = defineProps({
     type: String,
     default: '80%'
   },
-  checkOrderNo: {
+  orderNo: {
     type: String,
     default: ''
   }
