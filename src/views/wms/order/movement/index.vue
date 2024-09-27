@@ -102,7 +102,7 @@
             <dict-tag :options="wms_movement_status" :value="row.orderStatus" />
           </template>
         </el-table-column>
-        <el-table-column label="数量/金额(元)" align="left">
+        <el-table-column label="总数量/总金额(元)" align="left">
           <template #default="{ row }">
             <div class="flex-space-between">
               <span>数量：</span>

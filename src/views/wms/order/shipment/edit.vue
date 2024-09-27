@@ -20,7 +20,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="数量" prop="totalQuantity">
+              <el-form-item label="总数量" prop="totalQuantity">
                 <el-input-number style="width: 100%" v-model="form.totalQuantity" :controls="false" :precision="0"
                                  :disabled="true"></el-input-number>
               </el-form-item>
