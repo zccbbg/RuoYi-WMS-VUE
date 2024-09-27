@@ -114,13 +114,13 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间/更新时间" align="left" width="150">
+        <el-table-column label="操作时间" align="left" width="150">
           <template #default="{ row }">
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>更新：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="创建/更新" align="left">
+        <el-table-column label="操作人" align="left">
           <template #default="{ row }">
             <div>{{ row.createBy }}</div>
             <div v-if="row.updateBy">{{ row.updateBy }}</div>

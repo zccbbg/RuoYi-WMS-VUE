@@ -70,18 +70,19 @@
             <el-statistic :value="Number(row.totalQuantity)" :precision="0"/>
           </template>
         </el-table-column>
-        <el-table-column label="创建/更新" align="left">
-          <template #default="{ row }">
-            <div>创建：{{ row.createBy }}</div>
-            <div v-if="row.updateBy">更新：{{ row.updateBy }}</div>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建时间/更新时间" align="left" width="200">
+        <el-table-column label="操作时间" align="left" width="200">
           <template #default="{ row }">
             <div>创建：{{ parseTime(row.createTime, '{mm}-{dd} {hh}:{ii}') }}</div>
             <div>更新：{{ parseTime(row.updateTime, '{mm}-{dd} {hh}:{ii}') }}</div>
           </template>
         </el-table-column>
+        <el-table-column label="操作人" align="left">
+          <template #default="{ row }">
+            <div>{{ row.createBy }}</div>
+            <div v-if="row.updateBy">{{ row.updateBy }}</div>
+          </template>
+        </el-table-column>
+
         <el-table-column label="备注" prop="remark" />
         <el-table-column label="操作" align="right" class-name="small-padding fixed-width" width="120">
           <template #default="scope">
@@ -208,21 +209,10 @@ function handleDelete(row) {
     loading.value = true;
     return delCheckOrder(_ids);
   }).then(() => {
-    loading.value = true;
-    getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch((e) => {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>盘库单【' + row.shipmentOrderNo + '】已盘库完成，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
   }).finally(() => {
     loading.value = false;
+    getList();
   });
 }
 
