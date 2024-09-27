@@ -117,6 +117,7 @@
                   v-model="scope.row.checkQuantity"
                   placeholder="实际库存"
                   :min="0"
+                  :precision="0"
                   @change="handleChangeQuantity"
                 ></el-input-number>
               </template>
