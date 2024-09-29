@@ -539,19 +539,8 @@ const handleDeleteItemSku = async (row, index) => {
     return proxy?.$modal.msgError("至少包含一个商品规格");
   }
   await proxy?.$modal.confirm('确认删除规格【' + row.skuName + '】吗？');
-  try {
-    await delItemSku(row.id);
-  } catch (e) {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>规格【' + row.skuName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
-  }
+  loading.value = true;
+  await delItemSku(row.id).finally(()=> loading.value = false);
   proxy?.$modal.msgSuccess("删除成功");
   const res = await getItem(row.itemId);
   skuForm.itemSkuList = res.data.sku
@@ -706,19 +695,8 @@ const submitCategoryForm = () => {
 const handleDelete = async (row) => {
   const _ids = row?.itemId || ids.value;
   await proxy?.$modal.confirm('确认删除商品【' + row?.item.itemName + '】吗？');
-  try {
-    await delItem(_ids);
-  } catch (e) {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>商品【' + row.item.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
-  }
+  loading.value = true;
+  await delItem(_ids).finally(()=> loading.value = false);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
 }
