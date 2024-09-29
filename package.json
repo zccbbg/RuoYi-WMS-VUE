@@ -25,13 +25,15 @@
     "js-cookie": "3.0.1",
     "jsbarcode": "^3.11.6",
     "jsencrypt": "3.3.1",
+    "moment": "^2.30.1",
     "nprogress": "0.2.0",
     "pinia": "2.0.22",
     "qrcode": "^1.5.3",
     "vue": "3.2.45",
     "vue-cropper": "1.0.3",
     "vue-plugin-hiprint": "^0.0.56",
-    "vue-router": "4.1.4"
+    "vue-router": "4.1.4",
+    "vue3-seamless-scroll": "^2.0.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "3.1.0",
