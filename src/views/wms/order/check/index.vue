@@ -235,7 +235,7 @@ async function handlePrint(row) {
   if (checkOrder.details?.length) {
     table = checkOrder.details.map(detail => {
       return {
-        itemName: detail.itemSku.item.itemName,
+        itemName: detail.item.itemName,
         skuName: detail.itemSku.skuName,
         quantity: Number(detail.quantity).toFixed(0),
         profitAndLoss: Number(detail.checkQuantity - detail.quantity).toFixed(0),

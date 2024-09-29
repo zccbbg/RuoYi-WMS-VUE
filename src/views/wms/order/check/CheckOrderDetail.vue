@@ -9,7 +9,7 @@
               cell-class-name="my-cell" class="mt20">
       <el-table-column label="商品名称">
         <template #default="{ row }">
-          <div>{{ row?.itemSku?.item?.itemName }}</div>
+          <div>{{ row?.item?.itemName }}</div>
         </template>
       </el-table-column>
       <el-table-column label="规格名称">
