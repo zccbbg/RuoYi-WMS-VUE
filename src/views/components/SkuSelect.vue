@@ -40,32 +40,32 @@
               </el-table-column>
               <el-table-column label="规格信息">
                 <template #default="{ row }">
-                  <div>{{ row.skuName }}</div>
-                  <div v-if="row.skuCode">编号：{{ row.skuCode }}</div>
-                  <div v-if="row.barcode">条码：{{ row.barcode }}</div>
+                  <div>{{ row.itemSku.skuName }}</div>
+                  <div v-if="row.itemSku.skuCode">编号：{{ row.itemSku.skuCode }}</div>
+                  <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
                 </template>
               </el-table-column>
               <el-table-column label="价格(元)" width="160" align="left">
                 <template #default="{ row }">
-                  <div v-if="row.costPrice" class="flex-space-between">
+                  <div v-if="row.itemSku.costPrice" class="flex-space-between">
                     <span>成本价：</span>
-                    <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
+                    <div>{{ (row.itemSku.costPrice || row.itemSku.costPrice === 0) ? row.itemSku.costPrice : '' }}</div>
                   </div>
-                  <div v-if="row.sellingPrice" class="flex-space-between">
+                  <div v-if="row.itemSku.sellingPrice" class="flex-space-between">
                     <span>销售价：</span>
-                    <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
+                    <div>{{ (row.itemSku.sellingPrice || row.itemSku.sellingPrice === 0) ? row.itemSku.sellingPrice : '' }}</div>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column label="重量(kg)" width="160" align="left">
                 <template #default="{ row }">
-                  <div v-if="row.netWeight" class="flex-space-between">
+                  <div v-if="row.itemSku.netWeight" class="flex-space-between">
                     <span>净重：</span>
-                    <div>{{ (row.netWeight || row.netWeight === 0) ? row.netWeight : '' }}</div>
+                    <div>{{ (row.itemSku.netWeight || row.itemSku.netWeight === 0) ? row.itemSku.netWeight : '' }}</div>
                   </div>
-                  <div v-if="row.grossWeight" class="flex-space-between">
+                  <div v-if="row.itemSku.grossWeight" class="flex-space-between">
                     <span>毛重：</span>
-                    <div>{{ (row.grossWeight || row.grossWeight === 0) ? row.grossWeight : '' }}</div>
+                    <div>{{ (row.itemSku.grossWeight || row.itemSku.grossWeight === 0) ? row.itemSku.grossWeight : '' }}</div>
                   </div>
                 </template>
               </el-table-column>
@@ -101,14 +101,12 @@
 <script setup lang="ts" name="SkuSelect">
 import {computed, getCurrentInstance, onMounted, reactive, ref} from 'vue';
 import {ElForm} from "element-plus";
-import {getRowspanMethod} from "@/utils/getRowSpanMethod";
 import {listItemSkuPage} from "@/api/wms/itemSku";
 import {useRouter} from "vue-router";
 import {useWmsStore} from '@/store/modules/wms'
 
 const { proxy } = getCurrentInstance()
 
-const spanMethod = computed(() => getRowspanMethod(list.value, ['itemId']))
 const router = useRouter()
 const loading = ref(false)
 const deptOptions = ref([]);
@@ -133,10 +131,6 @@ const rightListKeySet = computed(() => {
   return set
 });
 
-const editableList = computed(() => {
-  return list.value.filter((it) => !rightListKeySet.value.has(it.id));
-});
-
 const loadAll = () => {
   pageReq.page = 1
   getList()
@@ -153,7 +147,7 @@ const getList = () => {
   loading.value = true
   listItemSkuPage(data).then((res) => {
     const content = [...res.rows];
-    list.value = content.map((item) => ({...item, checked: false}));
+    list.value = content.map((it) => ({...it, id: it.skuId, checked: false}));
     total.value = res.total;
   }).then(() => toggleSelection()).finally(() => loading.value = false);
 }

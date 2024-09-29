@@ -63,7 +63,7 @@
               <el-table :data="props.row.details" v-loading="detailLoading[props.$index]" empty-text="暂无商品明细">
                 <el-table-column label="商品名称">
                   <template #default="{ row }">
-                    <div>{{ row?.itemSku?.item?.itemName }}</div>
+                    <div>{{ row?.item?.itemName }}</div>
                   </template>
                 </el-table-column>
                 <el-table-column label="规格名称">
@@ -287,7 +287,7 @@ async function handlePrint(row) {
   if (movementOrder.details?.length) {
     table = movementOrder.details.map(detail => {
       return {
-        itemName: detail.itemSku.item.itemName,
+        itemName: detail.item.itemName,
         skuName: detail.itemSku.skuName,
         quantity: Number(detail.quantity).toFixed(0)
       }

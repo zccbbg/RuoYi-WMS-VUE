@@ -191,16 +191,6 @@ function handleDelete(row) {
     loading.value = true;
     getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch((e) => {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>品牌【' + row.brandName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
   }).finally(() => {
     loading.value = false;
   });

@@ -80,41 +80,35 @@
             </el-table-column>
             <el-table-column label="规格信息" prop="skuName" align="left">
               <template #default="{ row }">
-                <div>{{ row.skuName }}</div>
-                <div v-if="row.skuCode">编号：{{ row.skuCode }}</div>
-                <div v-if="row.barcode">条码：{{ row.barcode }}</div>
-<!--                <div>-->
-<!--                  <el-button link type="primary" icon="Download" @click="downloadBarcode(row)">下载条形码</el-button>-->
-<!--                  <el-button link type="primary" icon="Download" @click="downloadQrcode(row)" style="margin-left: 0!important;">-->
-<!--                    下载二维码-->
-<!--                  </el-button>-->
-<!--                </div>-->
+                <div>{{ row.itemSku.skuName }}</div>
+                <div v-if="row.itemSku.skuCode">编号：{{ row.itemSku.skuCode }}</div>
+                <div v-if="row.itemSku.barcode">条码：{{ row.itemSku.barcode }}</div>
               </template>
             </el-table-column>
             <el-table-column label="金额(元)" width="160" align="left">
               <template #default="{ row }">
-                <div v-if="row.costPrice" class="flex-space-between">
+                <div v-if="row.itemSku.costPrice" class="flex-space-between">
                   <span>成本价：</span>
-                  <div>{{ (row.costPrice || row.costPrice === 0) ? row.costPrice : '' }}</div>
+                  <div>{{ (row.itemSku.costPrice || row.itemSku.costPrice === 0) ? row.itemSku.costPrice : '' }}</div>
                 </div>
-                <div v-if="row.sellingPrice" class="flex-space-between">
+                <div v-if="row.itemSku.sellingPrice" class="flex-space-between">
                   <span>销售价：</span>
-                  <div>{{ (row.sellingPrice || row.sellingPrice === 0) ? row.sellingPrice : '' }}</div>
+                  <div>{{ (row.itemSku.sellingPrice || row.itemSku.sellingPrice === 0) ? row.itemSku.sellingPrice : '' }}</div>
                 </div>
               </template>
             </el-table-column>
             <el-table-column label="重量(kg)" width="160" align="left">
               <template #default="{ row }">
-                <div v-if="row.netWeight" class="flex-space-between">
+                <div v-if="row.itemSku.netWeight" class="flex-space-between">
                   <span>净重：</span>
                   <div>
-                    {{ (row.netWeight || row.netWeight === 0) ? row.netWeight : '' }}
+                    {{ (row.itemSku.netWeight || row.itemSku.netWeight === 0) ? row.itemSku.netWeight : '' }}
                   </div>
                 </div>
-                <div v-if="row.grossWeight" class="flex-space-between">
+                <div v-if="row.itemSku.grossWeight" class="flex-space-between">
                   <span>毛重：</span>
                   <div>
-                    {{ (row.grossWeight || row.grossWeight === 0) ? row.grossWeight : '' }}
+                    {{ (row.itemSku.grossWeight || row.itemSku.grossWeight === 0) ? row.itemSku.grossWeight : '' }}
                   </div>
                 </div>
               </template>
@@ -363,7 +357,7 @@ const queryFormRef = ref(ElForm);
 const itemFormRef = ref(ElForm);
 const itemCategoryFormRef = ref(ElForm);
 const spanMethod = computed(() => getRowspanMethod(itemList.value, rowSpanArray.value))
-const rowSpanArray = ref(['itemId', 'itemCategoryId'])
+const rowSpanArray = ref(['itemId'])
 const qrcode = ref(null)
 const append = (data) => {
   // resetType();
@@ -478,7 +472,8 @@ const currentType = ref()
 const getList = async () => {
   loading.value = true;
   const res = await listItemSkuPage(queryParams.value);
-  itemList.value = res.rows;
+  const content = [...res.rows];
+  itemList.value = content.map((it) => ({...it, id: it.skuId,itemId: it?.item?.id}));
   total.value = res.total;
   loading.value = false;
 }
@@ -544,19 +539,8 @@ const handleDeleteItemSku = async (row, index) => {
     return proxy?.$modal.msgError("至少包含一个商品规格");
   }
   await proxy?.$modal.confirm('确认删除规格【' + row.skuName + '】吗？');
-  try {
-    await delItemSku(row.id);
-  } catch (e) {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>规格【' + row.skuName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
-  }
+  loading.value = true;
+  await delItemSku(row.id).finally(()=> loading.value = false);
   proxy?.$modal.msgSuccess("删除成功");
   const res = await getItem(row.itemId);
   skuForm.itemSkuList = res.data.sku
@@ -711,19 +695,8 @@ const submitCategoryForm = () => {
 const handleDelete = async (row) => {
   const _ids = row?.itemId || ids.value;
   await proxy?.$modal.confirm('确认删除商品【' + row?.item.itemName + '】吗？');
-  try {
-    await delItem(_ids);
-  } catch (e) {
-    if (e === 409) {
-      return ElMessageBox.alert(
-        '<div>商品【' + row.item.itemName + '】已有业务数据关联，不能删除 ！</div><div>请联系管理员处理！</div>',
-        '系统提示',
-        {
-          dangerouslyUseHTMLString: true,
-        }
-      )
-    }
-  }
+  loading.value = true;
+  await delItem(_ids).finally(()=> loading.value = false);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
 }

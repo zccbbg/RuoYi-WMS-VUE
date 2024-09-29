@@ -97,11 +97,11 @@
             <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="{ row }">
                 <div>{{
-                    row.itemSku.item.itemName + (row.itemSku.item.itemCode ? ('(' + row.itemSku.item.itemCode + ')') : '')
+                    row.item.itemName + (row.item.itemCode ? ('(' + row.item.itemCode + ')') : '')
                   }}
                 </div>
-                <div v-if="row.itemSku.item.itemBrand">
-                  品牌：{{ useWmsStore().itemBrandMap.get(row.itemSku.item.itemBrand).brandName }}
+                <div v-if="row.item.itemBrand">
+                  品牌：{{ useWmsStore().itemBrandMap.get(row.item.itemBrand).brandName }}
                 </div>
               </template>
             </el-table-column>
@@ -236,6 +236,7 @@ const handleOkClick = (item) => {
       form.value.details.push(
         {
           itemSku: it.itemSku,
+          item: it.item,
           skuId: it.skuId,
           quantity: undefined,
           amount: undefined,

@@ -82,11 +82,11 @@
             <el-table-column label="商品信息" prop="itemSku.itemName">
               <template #default="scope">
                   <div>{{
-                      scope.row.itemSku.item.itemName + (scope.row.itemSku.item.itemCode ? ('(' + scope.row.itemSku.item.itemCode + ')') : '')
+                      scope.row.item.itemName + (scope.row.item.itemCode ? ('(' + scope.row.item.itemCode + ')') : '')
                     }}
                   </div>
-                  <div v-if="scope.row.itemSku.item.itemBrand">
-                    品牌：{{ useWmsStore().itemBrandMap.get(scope.row.itemSku.item.itemBrand).brandName }}
+                  <div v-if="scope.row.item.itemBrand">
+                    品牌：{{ useWmsStore().itemBrandMap.get(scope.row.item.itemBrand).brandName }}
                   </div>
                 </template>
             </el-table-column>
@@ -227,6 +227,7 @@ const startCheck = () => {
     res.data.forEach(it => {
         form.value.details.push({
             itemSku: it.itemSku,
+            item: it.item,
             inventoryId: it.id,
             skuId: it.itemSku.id,
             warehouseId: it.warehouseId,
@@ -246,7 +247,8 @@ const handleOkClick = (item) => {
     if (!form.value.details.find(detail => detail.itemSku.id === it.id)) {
       form.value.details.push(
         {
-          itemSku: {...it},
+          itemSku: it.itemSku,
+          item: it.item,
           skuId: it.id,
           warehouseId: form.value.warehouseId,
           inventoryId: null,
