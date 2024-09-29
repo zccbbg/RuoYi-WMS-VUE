@@ -227,6 +227,7 @@ const startCheck = () => {
     res.data.forEach(it => {
         form.value.details.push({
             itemSku: it.itemSku,
+            item: it.item,
             inventoryId: it.id,
             skuId: it.itemSku.id,
             warehouseId: it.warehouseId,
@@ -246,7 +247,8 @@ const handleOkClick = (item) => {
     if (!form.value.details.find(detail => detail.itemSku.id === it.id)) {
       form.value.details.push(
         {
-          itemSku: {...it},
+          itemSku: it.itemSku,
+          item: it.item,
           skuId: it.id,
           warehouseId: form.value.warehouseId,
           inventoryId: null,

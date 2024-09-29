@@ -255,6 +255,7 @@ const handleOkClick = (item) => {
       form.value.details.push(
         {
           itemSku: it.itemSku,
+          item: it.item,
           skuId: it.skuId,
           amount: undefined,
           quantity: undefined,

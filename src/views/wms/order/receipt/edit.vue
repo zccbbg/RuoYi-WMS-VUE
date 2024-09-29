@@ -244,7 +244,8 @@ const handleOkClick = (item) => {
     if (!form.value.details.find(detail => detail.itemSku.id === it.id)) {
       form.value.details.push(
         {
-          itemSku: {...it},
+          itemSku: it.itemSku,
+          item: it.item,
           amount: undefined,
           quantity: it.quantity,
           warehouseId: form.value.warehouseId
