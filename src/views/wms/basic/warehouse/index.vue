@@ -1,41 +1,32 @@
 <template>
   <div class="app-container">
     <el-card>
-      <div style="display: flex;align-items: start">
-        <div>
-          <div style="display: flex;justify-content: space-between;align-items: center">
-            <span style="font-size: 14px;line-height: 16px">仓库列表</span>
-            <el-button class="mr10" plain icon="Plus" style="font-size:12px;line-height: 14px" @click="handleAdd"
-                        type="primary" size="small">新增仓库
-            </el-button>
-          </div>
-          <el-tree
-            :data="warehouseList"
-            :props="{ value: 'id', label: 'warehouseName' }"
-            value-key="id"
-            style="width: 450px;"
-            class="mr10 mt10"
-            node-key="id"
-            :current-node-key="defaultCheckId"
-            @nodeClick="handleClickWarehouse"
-            :highlight-current="true"
-            draggable
-            :allow-drop="collapse"
-            @node-drop="handleNodeDrop"
-            ref="warehouseTreeRef"
-          >
-            <template #default="{ node, data }">
-            <span class="custom-tree-node">
-              <span>{{ node.data.warehouseName }}{{ node.data.warehouseCode ? ' ( 编号：' + node.data.warehouseCode + ' )' : ''}}</span>
-              <span>
-                <el-button link type="primary" icon="Delete" style="font-size: 12px" @click.stop="handleDelete(data)">删除</el-button>
-                <el-button link type="primary" icon="Edit" style="font-size: 12px" @click.stop="handleUpdate(data)">修改</el-button>
-              </span>
-            </span>
-            </template>
-          </el-tree>
-        </div>
-      </div>
+
+      <el-row :gutter="10" class="mb8" type="flex" justify="space-between">
+        <el-col :span="6"><span style="font-size: large">仓库列表</span></el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleAdd"
+            v-hasPermi="['wms:itemBrand:add']"
+          >新增</el-button>
+        </el-col>
+      </el-row>
+
+      <el-table v-loading="loading" :data="warehouseList" border class="mt20" empty-text="暂无品牌">
+        <el-table-column label="仓库名称" prop="warehouseName" />
+        <el-table-column label="仓库编号" prop="warehouseCode" />
+        <el-table-column label="创建时间" prop="createTime" width="180"/>
+        <el-table-column label="操作" align="right" class-name="small-padding fixed-width" width="180">
+          <template #default="scope">
+            <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['wms:itemBrand:edit']">修改</el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['wms:itemBrand:remove']">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
     </el-card>
     <!-- 添加或修改仓库对话框 -->
     <el-dialog :title="dialog.title" v-model="dialog.visible" width="500px" append-to-body :close-on-click-modal="false">
@@ -61,7 +52,13 @@
 </template>
 
 <script setup name="Warehouse">
-import { listWarehouse, getWarehouse, delWarehouse, addWarehouse, updateWarehouse, updateOrderNum } from '@/api/wms/warehouse';
+import {
+  getWarehouse,
+  delWarehouse,
+  addWarehouse,
+  updateWarehouse,
+  listWarehouseNoPage
+} from '@/api/wms/warehouse';
 import {getCurrentInstance, nextTick, onMounted, reactive, ref, toRefs} from 'vue';
 import {ElForm, ElMessageBox, ElTree} from 'element-plus';
 import useUserStore from "@/store/modules/user";
@@ -77,16 +74,14 @@ const customNodeClass = (data, node) => {
 }
 const warehouseList = ref([]);
 const buttonLoading = ref(false);
-const loading = ref(true);
+const loading = ref(false);
 const showSearch = ref(true);
 const ids = ref([]);
 const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
-const defaultCheckId = ref()
 const queryFormRef = ref(ElForm);
 const warehouseFormRef = ref(ElForm);
-const warehouseTreeRef = ref(null)
 const dialog = reactive({
   visible: false,
   title: ''
@@ -100,8 +95,6 @@ const initFormData = {
 const data = reactive({
   form: {...initFormData},
   queryParams: {
-    pageNum: 1,
-    pageSize: 100,
     warehouseCode: undefined,
     warehouseName: undefined,
   },
@@ -117,18 +110,17 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-// 移植
-const handleClickWarehouse = (node, data)=> {
-  selectedWarehouseId.value = data.data.id
-}
 
 const selectedWarehouseId = ref()
 
 
 /** 查询仓库列表 */
 const getList = async () => {
-  const res = await listWarehouse(queryParams.value);
-  warehouseList.value = res.rows;
+  loading.value = true;
+  const res = await listWarehouseNoPage(queryParams.value).finally(()=>{
+    loading.value = false;
+  });
+  warehouseList.value = res.data;
   total.value = res.total;
 }
 
@@ -193,7 +185,6 @@ const submitForm = () => {
       proxy?.$modal.msgSuccess(form.value.id ? '修改成功' : '新增成功');
       dialog.visible = false;
       await getList();
-      await chooseFirstWarehouse(warehouseList.value);
       wmsStore.getWarehouseList()
     }
   });
@@ -206,15 +197,7 @@ const handleDelete = async (data) => {
   await delWarehouse(_ids);
   proxy?.$modal.msgSuccess("删除成功");
   await getList();
-  await chooseFirstWarehouse(warehouseList.value);
   wmsStore.getWarehouseList()
-}
-const chooseFirstWarehouse = async (warehouseList) => {
-  if (warehouseList && warehouseList.length !== 0) {
-    const warehouseId = warehouseList[0].id;
-    defaultCheckId.value = warehouseId
-    warehouseTreeRef.value.setCurrentKey(defaultCheckId.value)
-  }
 }
 
 /** 导出按钮操作 */
@@ -223,25 +206,8 @@ const handleExport = () => {
     ...queryParams.value
   }, `warehouse_${new Date().getTime()}.xlsx`)
 }
-const collapse = (draggingNode, dropNode, type) => {
-  //注掉的是同级拖拽
-  if (draggingNode.level === dropNode.level && draggingNode.parent.id == dropNode.parent.id) {
-      return type === 'prev' || type === 'next'
-  } else {
-    // 不同级进行处理
-    return false
-  }
-}
-const handleNodeDrop = async (draggingNode, dropNode, dropType, ev) => {
-  ('drop', dropNode)
-  ('children', dropNode.parent.data)
-  await updateOrderNum(dropNode.parent.data);
-}
 onMounted(async () => {
   await getList();
-  ('id', warehouseList.value)
-  const warehouseId = warehouseList.value[0].id;
-  defaultCheckId.value = warehouseId;
 });
 </script>
 <style lang="scss">
