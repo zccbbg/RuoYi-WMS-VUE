@@ -13,3 +13,9 @@ onMounted(() => {
   })
 })
 </script>
+
+<style>
+.anchorBL {
+  display: none !important;
+}
+</style>
