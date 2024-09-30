@@ -60,7 +60,7 @@ export const useWmsStore = defineStore('wms', () => {
     return new Promise((resolve, reject) => {
       treeSelectItemCategory().then(res => {
         itemCategoryTreeList.value = res.data
-        resolve()
+        resolve(res.data)
       }).catch(() => reject())
     })
   }

@@ -478,7 +478,10 @@ const getList = async () => {
   loading.value = false;
 }
 const getItemCategoryTreeSelect = async () => {
-  const data = [...useWmsStore().itemCategoryTreeList];
+  let data = [...useWmsStore().itemCategoryTreeList];
+  if (!data.length) {
+    data = await useWmsStore().getItemCategoryTreeList()
+  }
   deptOptions2.value = [...useWmsStore().itemCategoryTreeList];
   data.unshift({
     id: -1,
@@ -738,11 +741,13 @@ const getVolumeText = (row) => {
     + ((row.height || row.height === 0) ? (' 高：' + row.height) : '')
 }
 onMounted(() => {
-  getList();
-  getItemCategoryTreeSelect();
-  if (route.query.openDrawer) {
-    handleAdd()
-  }
+  nextTick(()=>{
+    getList();
+    getItemCategoryTreeSelect();
+    if (route.query.openDrawer) {
+      handleAdd()
+    }
+  })
 });
 </script>
 <style>
