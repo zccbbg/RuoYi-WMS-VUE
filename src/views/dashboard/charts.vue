@@ -1,7 +1,7 @@
 <template>
   <div class="app-container home">
     <div class="station-top">
-      <el-row :gutter="12">
+      <el-row :gutter="12" class="mt5">
         <el-col :span="6">
           <div class="top-item-box item-box-one" style="display: flex;">
             <div style="flex:2;height:100%;">
@@ -66,7 +66,7 @@
       <el-row :gutter="12">
         <el-col :span="6">
           <el-card class="box-card" shadow="never">
-            <div class="card-title">充电终端状态</div>
+            <div class="card-title">仓库货物占比</div>
             <div style="height: calc(100% - 30px);">
               <StationPie height="100%"></StationPie>
               <div></div>

@@ -27,11 +27,11 @@ const props = defineProps({
     type: Array,
     default: function () {
       return [
-        { value: 23, name: "睡眠" },
-        { value: 11, name: "充电" },
-        { value: 5, name: "待机" },
-        { value: 0, name: "其他" },
-        { value: 0, name: "故障" },
+        { value: 23, name: "园区仓" },
+        { value: 11, name: "盛泽仓" },
+        { value: 5, name: "常熟仓" },
+        { value: 0, name: "吴江仓" },
+        { value: 0, name: "南京仓" },
       ];
     },
   },
@@ -91,7 +91,7 @@ function initChart() {
         let item = props.pieData.find(c => c.name === param)
         if(!item) return ''
         let rate = !totalCount.value ? 0 : item.value / totalCount.value * 100
-        return `{name|${param}}{count|${item.value}` + props.unit + `}{percent|${rate.toFixed(1)}%}`
+        return `{name|${param}}    占比： {percent|${rate.toFixed(1)}%}`
       },
       itemWidth: 14,
       itemGap: 15,
