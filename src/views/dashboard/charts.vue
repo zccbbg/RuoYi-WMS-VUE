@@ -5,56 +5,58 @@
         <el-col :span="6">
           <div class="top-item-box item-box-one" style="display: flex;">
             <div style="flex:2;height:100%;">
-              <div>充电用户（户）</div>
-              <div style="text-align:center;margin-top:30px;"><span style="font-size:26px;font-weight:bold;">325</span>
+              <div>入库</div>
+              <div style="text-align:center;margin-top:30px;"><span style="font-size:26px;font-weight:bold;">33</span>
               </div>
             </div>
             <div style="flex:3;display: flex;flex-direction:column;justify-content:space-evenly">
-              <div>累计用户：2344 户</div>
-              <div>环比增长：13.46%</div>
-              <div>同比增长：27.37%</div>
+              <div>待入库：15</div>
+              <div>待质检：15</div>
+              <div>待上架：2</div>
+              <div>待完成：1 </div>
             </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="top-item-box item-box-two" style="display: flex;">
             <div style="flex:2;height:100%;">
-              <div>充电金额（元）</div>
+              <div>出库</div>
               <div style="text-align:center;margin-top:30px;"><span style="font-size:26px;font-weight:bold;"
-              >4386.42</span></div>
+              >20</span></div>
             </div>
             <div style="flex:3;display: flex;flex-direction:column;justify-content:space-evenly">
-              <div>累计金额：764351.39 元</div>
-              <div>环比增长：32.0%</div>
-              <div>同比增长：16.78%</div>
+              <div>待配货：5</div>
+              <div>待波次：5</div>
+              <div>待拣货：5</div>
+              <div>待出库：5</div>
             </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="top-item-box item-box-three" style="display: flex;">
             <div style="flex:2;height:100%;">
-              <div>充电电量（kW·h）</div>
+              <div>其他</div>
               <div style="text-align:center;margin-top:30px;"><span style="font-size:26px;font-weight:bold;"
-              >3671.58</span></div>
+              >15</span></div>
             </div>
             <div style="flex:3;display: flex;flex-direction:column;justify-content:space-evenly">
-              <div>累计电量：52412 kW·h</div>
-              <div>环比增长：41.27%</div>
-              <div>同比增长：36.82%</div>
+              <div>待截单：5</div>
+              <div>异常单：5</div>
+              <div>今日到货：5</div>
             </div>
           </div>
         </el-col>
         <el-col :span="6">
           <div class="top-item-box item-box-four" style="display: flex;">
             <div style="flex:2;height:100%;">
-              <div>充电次数（次）</div>
-              <div style="text-align:center;margin-top:30px;"><span style="font-size:26px;font-weight:bold;">167</span>
+              <div>库存预警</div>
+              <div style="text-align:center;margin-top:30px;"><span style="font-size:26px;font-weight:bold;">5</span>
               </div>
             </div>
             <div style="flex:3;display: flex;flex-direction:column;justify-content:space-evenly">
-              <div>累计次数：2412 次</div>
-              <div>环比增长：23.4%</div>
-              <div>同比增长：21.67%</div>
+              <div>松陵仓：1</div>
+              <div>盛泽仓：2</div>
+              <div>园区仓：2</div>
             </div>
           </div>
         </el-col>
