@@ -35,7 +35,7 @@
             </el-button>
           </div>
           <el-tree
-            :data="deptOptions"
+            :data="itemCategoryTreeOptionsList"
             :props="{ value: 'id', label: 'label', children: 'children' }"
             value-key="id"
             style="width: 400px;"
@@ -146,7 +146,7 @@
                   <el-tree-select
                     ref="treeRef"
                     v-model="form.itemCategory"
-                    :data="deptOptions2"
+                    :data="itemCategoryTreeSelectList"
                     :props="{ value: 'id', label: 'label', children: 'children' }"
                     value-key="id"
                     placeholder="请选择分类"
@@ -293,7 +293,7 @@
         <el-form-item label="上级分类" prop="parentId">
           <el-tree-select
             v-model="categoryForm.parentId"
-            :data="deptOptions2"
+            :data="itemCategoryTreeSelectList"
             :props="{ value: 'id', label: 'label', children: 'children' }"
             value-key="id"
             placeholder="上级分类"
@@ -324,9 +324,8 @@
 <script setup name="Item">
 import {getItem, delItem, addItem, updateItem} from '@/api/wms/item';
 import {computed, getCurrentInstance, nextTick, onMounted, reactive, ref, toRefs} from 'vue';
-import {ElForm, ElMessageBox, ElTree, ElTreeSelect} from 'element-plus';
+import {ElForm, ElTree, ElTreeSelect} from 'element-plus';
 import {
-  treeSelectItemCategory,
   updateItemCategory,
   addItemCategory,
   delItemCategory,
@@ -343,8 +342,16 @@ const barcode = ref(null)
 const route = useRoute()
 const {proxy} = getCurrentInstance();
 const itemList = ref([]);
-const deptOptions = ref([]);
-const deptOptions2 = ref([]);
+const itemCategoryTreeSelectList = computed(() => useWmsStore().itemCategoryTreeList);
+const itemCategoryTreeOptionsList = computed(() => {
+  let data = [...itemCategoryTreeSelectList.value];
+  data.unshift({
+    id: -1,
+    label: '全部',
+    children: []
+  });
+  return data;
+});
 const buttonLoading = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -371,7 +378,8 @@ const remove = async (node, data) => {
   await proxy?.$modal.confirm('确认删除分类【' + data.label + '】吗？');
   await delItemCategory(ids);
   proxy?.$modal.msgSuccess("删除成功");
-  Promise.all([useWmsStore().getItemCategoryList(), useWmsStore().getItemCategoryTreeList()]).then(() => getItemCategoryTreeSelect())
+  useWmsStore().getItemCategoryList();
+  useWmsStore().getItemCategoryTreeList();
 }
 const edit = (node, data) => {
   if (node.level > 1) {
@@ -476,19 +484,6 @@ const getList = async () => {
   itemList.value = content.map((it) => ({...it, id: it.skuId,itemId: it?.item?.id}));
   total.value = res.total;
   loading.value = false;
-}
-const getItemCategoryTreeSelect = async () => {
-  let data = [...useWmsStore().itemCategoryTreeList];
-  if (!data.length) {
-    data = await useWmsStore().getItemCategoryTreeList()
-  }
-  deptOptions2.value = [...useWmsStore().itemCategoryTreeList];
-  data.unshift({
-    id: -1,
-    label: '全部',
-    children: []
-  })
-  deptOptions.value = data;
 }
 const handleAddType = (show) => {
   categoryDialog.title = "新增商品分类";
@@ -684,7 +679,8 @@ const submitCategoryForm = () => {
       }
       proxy?.$modal.msgSuccess(categoryForm.value.id ? '修改成功' : '新增成功');
       categoryDialog.visible = false;
-      Promise.all([useWmsStore().getItemCategoryList(), useWmsStore().getItemCategoryTreeList()]).then(() => getItemCategoryTreeSelect())
+      useWmsStore().getItemCategoryList();
+      useWmsStore().getItemCategoryTreeList();
     }
   });
 }
@@ -743,7 +739,6 @@ const getVolumeText = (row) => {
 onMounted(() => {
   nextTick(()=>{
     getList();
-    getItemCategoryTreeSelect();
     if (route.query.openDrawer) {
       handleAdd()
     }
