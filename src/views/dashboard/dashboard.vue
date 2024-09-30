@@ -7,24 +7,24 @@
     <div class="board-content flex-between">
       <div class="content-left flex-column-between">
         <div class="content-overview">
-          <div class="box-title">项目总览</div>
+          <div class="box-title">库存总览</div>
           <div class="box-content flex-between">
             <div class="overview-object flex-column-center">
-              <div class="object-count">3</div>
-              <div class="object-name">项目总数</div>
+              <div class="object-count">5</div>
+              <div class="object-name">仓库总数</div>
             </div>
             <div class="overview-meter flex-column-center">
-              <div class="object-count">{{ deviceTotal }}</div>
-              <div class="object-name">仪表总数</div>
+              <div class="object-count">981</div>
+              <div class="object-name">库位总数</div>
             </div>
             <div class="overview-alarm flex-column-center">
-              <div class="object-count">{{ alarmTotal }}</div>
-              <div class="object-name">报警记录</div>
+              <div class="object-count">4</div>
+              <div class="object-name">异常库位</div>
             </div>
           </div>
         </div>
         <div class="content-status">
-          <div class="box-title">设备状态</div>
+          <div class="box-title">监控设备状态</div>
           <div class="box-content">
             <CirclePieChart height="100%" :pieData="pieData"/>
           </div>
@@ -39,7 +39,7 @@
       <div class="content-middle flex-column-between">
         <div class="content-map" id="boardMap"></div>
         <div class="content-chart">
-          <div class="box-title">今日能源趋势</div>
+          <div class="box-title">今日仓库耗能</div>
           <div class="box-content">
             <el-tabs
               v-model="activeName"
@@ -79,38 +79,73 @@
       </div>
       <div class="content-right flex-column-between">
         <div class="content-statistics">
-          <div class="box-title">今日用能统计</div>
+          <div class="box-title">入库统计</div>
           <div class="box-content flex-between">
             <div class="statistics-item flex-column-center">
 <!--              <lightning theme="outline" size="25" fill="#00d1ff"/>-->
-              <div class="item-count">{{ electricityTotal }}</div>
-              <div style="text-align: center">电(kW·h)</div>
+              <div class="item-count">58</div>
+              <div style="text-align: center">待入库</div>
             </div>
             <div class="statistics-item flex-column-center">
 <!--              <dashboard theme="outline" size="25" fill="#00d1ff"/>-->
-              <div class="item-count">{{ powerTotal }}</div>
-              <div style="text-align: center">综合能耗(kgce)</div>
+              <div class="item-count">10</div>
+              <div style="text-align: center">待质检</div>
             </div>
             <div class="statistics-item flex-column-center">
 <!--              <cycle theme="outline" size="25" fill="#00d1ff"/>-->
-              <div class="item-count">{{ carbonTotal }}</div>
-              <div style="text-align: center">今日碳排放量(kg)</div>
+              <div class="item-count">5</div>
+              <div style="text-align: center">待上架</div>
             </div>
           </div>
         </div>
-        <div class="content-trend">
-          <div class="box-title">日用电功率曲线</div>
-          <div class="box-content">
-            <LineChart height="100%" :chartData="dailyP" :yName="'kW'" xName=""/>
+        <div class="content-statistics">
+          <div class="box-title">出库统计</div>
+          <div class="box-content flex-between">
+            <div class="statistics-item flex-column-center">
+              <!--              <lightning theme="outline" size="25" fill="#00d1ff"/>-->
+              <div class="item-count">15</div>
+              <div style="text-align: center">待配货</div>
+            </div>
+            <div class="statistics-item flex-column-center">
+              <!--              <dashboard theme="outline" size="25" fill="#00d1ff"/>-->
+              <div class="item-count">10</div>
+              <div style="text-align: center">待拣货</div>
+            </div>
+            <div class="statistics-item flex-column-center">
+              <!--              <cycle theme="outline" size="25" fill="#00d1ff"/>-->
+              <div class="item-count">5</div>
+              <div style="text-align: center">待出库</div>
+            </div>
           </div>
         </div>
+        <div class="content-statistics">
+          <div class="box-title">其他</div>
+          <div class="box-content flex-between">
+            <div class="statistics-item flex-column-center">
+              <!--              <lightning theme="outline" size="25" fill="#00d1ff"/>-->
+              <div class="item-count">15</div>
+              <div style="text-align: center">待截单</div>
+            </div>
+            <div class="statistics-item flex-column-center">
+              <!--              <dashboard theme="outline" size="25" fill="#00d1ff"/>-->
+              <div class="item-count">10</div>
+              <div style="text-align: center">异常单</div>
+            </div>
+            <div class="statistics-item flex-column-center">
+              <!--              <cycle theme="outline" size="25" fill="#00d1ff"/>-->
+              <div class="item-count">5</div>
+              <div style="text-align: center">今日到货</div>
+            </div>
+          </div>
+        </div>
+
         <div class="content-carbon">
-          <div class="box-title">今日碳排放量</div>
+          <div class="box-title">今日出入库流水</div>
           <div class="box-content">
             <barChart
               :height="'100%'"
               :barColor="['#1c508e', '#1be5e7']"
-              :yName="'kg'"
+              :yName="'件'"
               :xData="xData"
               :yData="carbonData"
             />
@@ -867,6 +902,7 @@ onBeforeUnmount(() => {
 }
 
 .item-count {
+  text-align: center;
   font-size: 28px;
   font-weight: bold;
   color: #1be5e7;

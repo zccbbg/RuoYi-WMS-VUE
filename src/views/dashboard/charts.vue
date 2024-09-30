@@ -76,7 +76,7 @@
         <el-col :span="18">
           <el-card class="box-card" shadow="never">
             <div style="display:flex;justify-content: space-between;align-items: center;">
-              <div class="card-title">充电订单趋势</div>
+              <div class="card-title">生产入库趋势</div>
               <el-radio-group v-model="tabPosition" @change="dateChange">
                 <!-- <el-radio-button label="day">当日</el-radio-button> -->
                 <el-radio-button label="month">本月</el-radio-button>
@@ -94,25 +94,25 @@
       <el-row :gutter="12">
         <el-col :span="6">
           <el-card class="box-card" shadow="never">
-            <div class="card-title">近7日充电次数</div>
+            <div class="card-title">近7日销售出库</div>
             <div style="height: calc(100% - 30px);">
-              <StationLine height="100%" itemColor="#ee4368" :chartData="lineDataOne"/>
+              <StationLine height="100%" itemColor="#ee4368" yName="件" :chartData="lineDataOne"/>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
           <el-card class="box-card" shadow="never">
-            <div class="card-title">近7日充电时长</div>
+            <div class="card-title">近7日领料出库</div>
             <div style="height: calc(100% - 30px);">
-              <StationLine height="100%" yName="h" seriesName="充电时长" :chartData="lineDataTwo" itemColor="#5470c6"/>
+              <StationLine height="100%" :chartData="lineDataTwo" yName="件" itemColor="#5470c6"/>
             </div>
           </el-card>
         </el-col>
         <el-col :span="6">
           <el-card class="box-card" shadow="never">
-            <div class="card-title">近7日充电电量</div>
+            <div class="card-title">近7日移库</div>
             <div style="height: calc(100% - 30px);">
-              <StationLine height="100%" yName="kW·h" seriesName="充电电量" :chartData="lineDataThree"
+              <StationLine height="100%"  :chartData="lineDataThree" yName="件"
                            itemColor="#c58bea"
               />
             </div>
@@ -120,9 +120,9 @@
         </el-col>
         <el-col :span="6">
           <el-card class="box-card" shadow="never">
-            <div class="card-title">近7日充电金额</div>
+            <div class="card-title">近7日退货入库</div>
             <div style="height: calc(100% - 30px);">
-              <StationLine height="100%" yName="元" seriesName="充电金额" :chartData="lineDataFour"
+              <StationLine height="100%" yName="件" :chartData="lineDataFour"
                            itemColor="#c7a428"
               />
             </div>
@@ -141,27 +141,22 @@ import moment from 'moment';
 
 const tabPosition = ref('month')
 const barChartData = ref({
-  xData: ['10-01', '10-02', '10-03', '10-04', '10-05', '10-06', '10-07', '10-08', '10-09', '10-10', '10-12', '10-13', '10-14', '10-15'],
   yData: [79, 68, 56, 72, 51, 63, 67, 71, 58, 81, 64, 77, 56, 69]
 })
 const barXName = ref('日')
 const lineDataOne = ref({
   yData: [79, 65, 21, 67, 21, 89, 56],
-  xData: ['09-22', '09-23', '09-24', '09-25', '09-26', '09-27', '09-28']
 })
 const lineDataTwo = ref({
   yData: [45, 72, 16, 37, 64, 28, 46],
-  xData: ['09-22', '09-23', '09-24', '09-25', '09-26', '09-27', '09-28']
 })
 const lineDataThree = ref(
   {
     yData: [16, 27, 37, 16, 27, 21, 11],
-    xData: ['09-22', '09-23', '09-24', '09-25', '09-26', '09-27', '09-28']
   }
 )
 const lineDataFour = ref({
   yData: [134, 107, 94, 173, 37, 143, 86],
-  xData: ['09-22', '09-23', '09-24', '09-25', '09-26', '09-27', '09-28']
 })
 
 onMounted((()=>{
