@@ -72,7 +72,7 @@
       :show-close="false"
       width="30%">
       <div style="text-align: center">
-        <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">仓库</span>获取体验账号</span>
+        <span class="font-title-large"><span class="color-main font-extra-large">关注公众号</span>回复<span class="color-main font-extra-large">库存</span>获取体验账号</span>
         <br>
         <img src="@/assets/logo/gzh.jpg" width="160" height="160" style="margin-top: 10px">
       </div>

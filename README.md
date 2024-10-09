@@ -25,7 +25,7 @@ https://github.com/zccbbg/wms-ruoyi
 
 ```bash
 # 进入项目目录
-cd ruoyi-wms-vue
+cd ruoyi-wms-lite-vue
 
 # 安装依赖
 npm install --registry=https://registry.npmmirror.com

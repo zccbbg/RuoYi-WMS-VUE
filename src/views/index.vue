@@ -21,10 +21,13 @@
           <div>
             <div style="font-size:20px;line-height: 50px;background: linear-gradient(to right, red, blue);-webkit-background-clip: text;color: transparent;">
               <div>
-                <span style="font-size: large;font-weight: bold">wms1.0预览：</span><a href="http://wms.ichengle.top/" target="_blank">http://wms.ichengle.top/</a>
+                <span style="font-size: large;font-weight: bold">v2 advance预览：</span><a href="http://kucun.ichengle.top/" target="_blank">http://kucun.ichengle.top/</a>
               </div>
               <div>
-                <span style="font-size: large;font-weight: bold">wms1.0讲解视频：</span><a href="https://www.bilibili.com/video/BV1ys4y1q7uG/" target="_blank">https://www.bilibili.com/video/BV1ys4y1q7uG/</a>
+                <span style="font-size: large;font-weight: bold">v1.0预览：</span><a href="http://wms.ichengle.top/" target="_blank">http://wms.ichengle.top/</a>
+              </div>
+              <div>
+                <span style="font-size: large;font-weight: bold">讲解视频：</span><a href="https://www.bilibili.com/video/BV1ys4y1q7uG/" target="_blank">https://www.bilibili.com/video/BV1ys4y1q7uG/</a>
               </div>
               <div>
                 <span style="font-size: large;font-weight: bold">若依实战视频：</span><a href="https://www.bilibili.com/video/BV1Fi4y1q74p/" target="_blank">https://www.bilibili.com/video/BV1Fi4y1q74p/</a>
