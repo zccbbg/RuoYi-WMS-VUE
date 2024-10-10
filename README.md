@@ -6,7 +6,7 @@
 - 最近版V2 Lite演示地址：http://cangku.ichengle.top/
 - 最新版V2 Advance演示地址：http://kucun.ichengle.top
 - 旧版V1演示地址：http://wms.ichengle.top
--
+
 ## 不同分支介绍
 lite: jdk17+vue3，支持多仓库，没有库区概念，操作简单，覆盖大部分库存应用场景。
 
