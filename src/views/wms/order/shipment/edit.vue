@@ -458,7 +458,7 @@ const handleDeleteDetail = (row, index) => {
   selectedInventory.value.splice(indexOfSelected, 1)
 }
 const goSaasTip = () => {
-  ElMessageBox.alert('请去Saas版本体验，关注公众号回复：saas', '系统提示', {
+  ElMessageBox.alert('如需体验，请在公众号内回复：saas', '请去Saas版本体验', {
     confirmButtonText: '确定'
   })
   return false
