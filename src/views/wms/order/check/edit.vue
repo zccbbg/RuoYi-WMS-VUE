@@ -422,7 +422,7 @@ const handleChangeQuantity = () => {
 }
 
 const goSaasTip = () => {
-  ElMessageBox.alert('审批 | 一物一码请去Saas版本体验！', '系统提示', {
+  ElMessageBox.alert('请去Saas版本体验，关注公众号回复：saas', '系统提示', {
     confirmButtonText: '确定'
   })
   return false
