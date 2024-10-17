@@ -7,6 +7,15 @@
 - 最新版V2 Advance演示地址：http://kucun.ichengle.top
 - 旧版V1演示地址：http://wms.ichengle.top
 
+## 不同分支介绍
+`lite` jdk17+vue3，支持多仓库，没有库区概念，操作简单，覆盖大部分库存应用场景。
+
+`advance` jdk17+vue3，支持多仓库、多库区，记录生产日期、过期日期、sn，可适配一物一码，操作相对复杂。
+
+`v1` jdk8+vue2
+
+`master` 同步lite分支
+
 ## 后端项目地址
 #### gitee地址
 https://gitee.com/zccbbg/ruoyi-wms
