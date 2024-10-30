@@ -115,7 +115,7 @@
             </el-table-column>
             <el-table-column label="长宽高(cm)" align="right" width="250">
               <template #default="{ row }">
-                <div>{{ getVolumeText(row) }}</div>
+                <div>{{ getVolumeText(row.itemSku) }}</div>
               </template>
             </el-table-column>
             <el-table-column label="操作" align="right" prop="itemId" width="200">
@@ -728,13 +728,13 @@ const downloadQrcode = async (row) => {
   //提示信息
   // this.$message.warn('下载中，请稍后...')
 }
-const getVolumeText = (row) => {
-  if((row.length || row.length === 0) && (row.width || row.width === 0) && (row.height || row.height === 0)) {
-    return row.length + ' * ' + row.width + ' * ' + row.height
+const getVolumeText = (itemSku) => {
+  if((itemSku.length || itemSku.length === 0) && (itemSku.width || itemSku.width === 0) && (itemSku.height || itemSku.height === 0)) {
+    return itemSku.length + ' * ' + itemSku.width + ' * ' + itemSku.height
   }
-  return ((row.length || row.length === 0) ? ('长：' + row.length) : '')
-    + ((row.width || row.width === 0) ? (' 宽：' + row.width) : '')
-    + ((row.height || row.height === 0) ? (' 高：' + row.height) : '')
+  return ((itemSku.length || itemSku.length === 0) ? ('长：' + itemSku.length) : '')
+    + ((itemSku.width || itemSku.width === 0) ? (' 宽：' + itemSku.width) : '')
+    + ((itemSku.height || itemSku.height === 0) ? (' 高：' + itemSku.height) : '')
 }
 onMounted(() => {
   nextTick(()=>{
