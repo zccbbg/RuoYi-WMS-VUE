@@ -183,6 +183,7 @@ const handleQuery = () => {
 
 /** 重置按钮操作 */
 const resetQuery = () => {
+  queryType.value = "warehouse"
   proxy.resetForm("queryRef");
   handleQuery();
 }
