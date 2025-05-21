@@ -196,6 +196,7 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
+  queryType.value = "warehouse"
   proxy.resetForm("queryRef");
   handleQuery();
 }

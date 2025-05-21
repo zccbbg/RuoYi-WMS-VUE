@@ -19,7 +19,7 @@
             </el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="入库类型" prop="receiptOrderStatus">
+        <el-form-item label="入库类型" prop="receiptOrderType">
           <el-radio-group v-model="queryParams.receiptOrderType" @change="handleQuery">
             <el-radio-button
               :key="-1"

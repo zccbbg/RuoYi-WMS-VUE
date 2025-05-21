@@ -27,10 +27,10 @@
             @keyup.enter="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="源仓库库区">
+        <el-form-item label="源仓库库区" prop="sourcePlace">
           <WarehouseCascader v-model:value="queryParams.sourcePlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
-        <el-form-item label="目标仓库库区">
+        <el-form-item label="目标仓库库区" prop="targetPlace">
           <WarehouseCascader v-model:value="queryParams.targetPlace" :show-all-levels="true" size="default" @keyup.enter="handleQuery"></WarehouseCascader>
         </el-form-item>
         <el-form-item>
@@ -215,6 +215,8 @@ const data = reactive({
     pageSize: 10,
     movementOrderNo: undefined,
     movementOrderStatus: -2,
+    sourcePlace: undefined,
+    targetPlace: undefined
   },
 });
 
