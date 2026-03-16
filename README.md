@@ -1,6 +1,6 @@
 ## 后端项目地址
 #### gitee地址
-https://gitee.com/zccbbg/wms-ruoyi
+https://gitee.com/zccbbg/ruoyi-wms-service
 
 #### github地址
 https://github.com/zccbbg/wms-ruoyi
@@ -44,10 +44,6 @@ npm run dev
 ![库存统计](docs/库存统计.jpg)
 ![库存明细](docs/库存明细.jpg)
 ![库存记录](docs/库存记录.jpg)
-
-## 科技企业招聘、内推渠道
-如果投简历经常已读不回，可以试试这个小程序，回复率相对高一点：
-![内推](docs/内推.png)
 
 ## 贡献代码
 
