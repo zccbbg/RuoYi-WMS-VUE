@@ -189,7 +189,7 @@ function cancel() {
 function reset() {
   form.value = {
     deptId: undefined,
-    parentId: undefined,
+    parentId: 0,
     deptName: undefined,
     orderNum: 0,
     leader: undefined,
