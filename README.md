@@ -8,6 +8,10 @@ https://github.com/zccbbg/wms-ruoyi
 ## 在线体验
 https://wms.ichengle.top/
 
+|                  小程序                   |
+|:--------------------------------------:|
+| <img src="docs/xcx.jpg" width="200px"> |
+
 ## 不同分支介绍
 master: jdk17+vue3，支持多仓库，没有库区概念，操作简单，覆盖大部分库存应用场景。
 
